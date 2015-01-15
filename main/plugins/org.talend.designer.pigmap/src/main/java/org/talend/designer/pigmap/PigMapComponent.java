@@ -333,7 +333,11 @@ public class PigMapComponent extends MapperExternalNode implements IHashableInpu
 
     @Override
     public boolean isReadOnly() {
-        return super.isReadOnly() || this.getProcess().isReadOnly();
+        if (this.getOriginalNode().getJobletNode() != null) {
+            return this.isReadOnly() || this.getOriginalNode().isReadOnly();
+        }
+
+        return super.isReadOnly() || this.getProcess().isReadOnly() || this.getOriginalNode().isReadOnly();
     }
 
     /*
