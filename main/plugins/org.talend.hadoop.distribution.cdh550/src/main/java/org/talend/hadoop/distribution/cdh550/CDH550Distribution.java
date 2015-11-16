@@ -28,6 +28,7 @@ import org.talend.hadoop.distribution.cdh550.modulegroup.CDH550HBaseModuleGroup;
 import org.talend.hadoop.distribution.cdh550.modulegroup.CDH550HCatalogModuleGroup;
 import org.talend.hadoop.distribution.cdh550.modulegroup.CDH550HDFSModuleGroup;
 import org.talend.hadoop.distribution.cdh550.modulegroup.CDH550HiveModuleGroup;
+import org.talend.hadoop.distribution.cdh550.modulegroup.CDH550HiveOnSparkModuleGroup;
 import org.talend.hadoop.distribution.cdh550.modulegroup.CDH550ImpalaModuleGroup;
 import org.talend.hadoop.distribution.cdh550.modulegroup.CDH550MapReduceModuleGroup;
 import org.talend.hadoop.distribution.cdh550.modulegroup.CDH550PigModuleGroup;
@@ -35,8 +36,10 @@ import org.talend.hadoop.distribution.cdh550.modulegroup.CDH550PigOutputModuleGr
 import org.talend.hadoop.distribution.cdh550.modulegroup.CDH550PigOutputNodeModuleGroup;
 import org.talend.hadoop.distribution.cdh550.modulegroup.CDH550SparkBatchModuleGroup;
 import org.talend.hadoop.distribution.cdh550.modulegroup.CDH550SparkBatchParquetNodeModuleGroup;
+import org.talend.hadoop.distribution.cdh550.modulegroup.CDH550SparkBatchS3NodeModuleGroup;
 import org.talend.hadoop.distribution.cdh550.modulegroup.CDH550SparkStreamingModuleGroup;
 import org.talend.hadoop.distribution.cdh550.modulegroup.CDH550SparkStreamingParquetNodeModuleGroup;
+import org.talend.hadoop.distribution.cdh550.modulegroup.CDH550SparkStreamingS3NodeModuleGroup;
 import org.talend.hadoop.distribution.cdh550.modulegroup.CDH550SqoopModuleGroup;
 import org.talend.hadoop.distribution.component.HBaseComponent;
 import org.talend.hadoop.distribution.component.HCatalogComponent;
@@ -84,6 +87,7 @@ public class CDH550Distribution extends AbstractDistribution implements HDFSComp
         moduleGroups.put(ComponentType.IMPALA, CDH550ImpalaModuleGroup.getModuleGroups());
         moduleGroups.put(ComponentType.SPARKBATCH, CDH550SparkBatchModuleGroup.getModuleGroups());
         moduleGroups.put(ComponentType.SPARKSTREAMING, CDH550SparkStreamingModuleGroup.getModuleGroups());
+        moduleGroups.put(ComponentType.HIVEONSPARK, CDH550HiveOnSparkModuleGroup.getModuleGroups());
 
         // Used to add a module group import for a specific node. The given node must have a HADOOP_LIBRARIES parameter.
         nodeModuleGroups = new HashMap<>();
@@ -95,6 +99,8 @@ public class CDH550Distribution extends AbstractDistribution implements HDFSComp
                 CDH550SparkBatchParquetNodeModuleGroup.getModuleGroups());
         nodeModuleGroups.put(new NodeComponentTypeBean(ComponentType.SPARKBATCH, SparkBatchConstant.PARQUET_OUTPUT_COMPONENT),
                 CDH550SparkBatchParquetNodeModuleGroup.getModuleGroups());
+        nodeModuleGroups.put(new NodeComponentTypeBean(ComponentType.SPARKBATCH, SparkBatchConstant.S3_CONFIGURATION_COMPONENT),
+                CDH550SparkBatchS3NodeModuleGroup.getModuleGroups());
         nodeModuleGroups.put(new NodeComponentTypeBean(ComponentType.SPARKSTREAMING,
                 SparkStreamingConstant.PARQUET_INPUT_COMPONENT), CDH550SparkStreamingParquetNodeModuleGroup.getModuleGroups());
         nodeModuleGroups.put(new NodeComponentTypeBean(ComponentType.SPARKSTREAMING,
@@ -102,6 +108,8 @@ public class CDH550Distribution extends AbstractDistribution implements HDFSComp
         nodeModuleGroups.put(new NodeComponentTypeBean(ComponentType.SPARKSTREAMING,
                 SparkStreamingConstant.PARQUET_STREAM_INPUT_COMPONENT), CDH550SparkStreamingParquetNodeModuleGroup
                 .getModuleGroups());
+        nodeModuleGroups.put(new NodeComponentTypeBean(ComponentType.SPARKSTREAMING,
+                SparkStreamingConstant.S3_CONFIGURATION_COMPONENT), CDH550SparkStreamingS3NodeModuleGroup.getModuleGroups());
 
         // Used to hide the distribution according to other parameters in the component.
         displayConditions = new HashMap<>();

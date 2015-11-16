@@ -18,6 +18,7 @@ import java.util.Set;
 import org.talend.core.hadoop.version.EHadoopDistributions;
 import org.talend.hadoop.distribution.ComponentType;
 import org.talend.hadoop.distribution.DistributionModuleGroup;
+import org.talend.hadoop.distribution.cdh550.CDH550Constant;
 import org.talend.hadoop.distribution.cdh550.CDH550Distribution;
 import org.talend.hadoop.distribution.condition.BooleanOperator;
 import org.talend.hadoop.distribution.condition.ComponentCondition;
@@ -28,8 +29,6 @@ import org.talend.hadoop.distribution.condition.SimpleComponentCondition;
 import org.talend.hadoop.distribution.constants.PigOutputConstant;
 
 public class CDH550PigOutputNodeModuleGroup {
-
-    private static final String PIG_PARQUET_MODULE_GROUP_NAME = "PIG-PARQUET-LIB-CDH_5_5"; //$NON-NLS-1$
 
     // This condition stands for:
     // (#LINK@NODE.ASSOCIATED_PIG_LOAD.DISTRIBUTION=='CLOUDERA' AND #LINK@NODE.ASSOCIATED_PIG_LOAD=='Cloudera_CDH5_5')
@@ -42,7 +41,8 @@ public class CDH550PigOutputNodeModuleGroup {
 
     public static Set<DistributionModuleGroup> getModuleGroups() {
         Set<DistributionModuleGroup> hs = new HashSet<>();
-        DistributionModuleGroup dmg = new DistributionModuleGroup(PIG_PARQUET_MODULE_GROUP_NAME, false, condition);
+        DistributionModuleGroup dmg = new DistributionModuleGroup(CDH550Constant.PIG_PARQUET_MODULE_GROUP.getModuleName(), false,
+                condition);
         hs.add(dmg);
         return hs;
     }

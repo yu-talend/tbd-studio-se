@@ -28,6 +28,11 @@ public interface SparkComponent extends MRComponent {
     public ESparkVersion getSparkVersion();
 
     /**
+     * @return true if the Spark version included in the distribution is 1.3.
+     */
+    public boolean isSpark13();
+
+    /**
      * @return true if the Spark version included in the distribution is 1.4.
      */
     public boolean isSpark14();

@@ -76,11 +76,13 @@ public class CDH550DistributionTest {
         assertTrue(((HiveComponent) distribution).doSupportStoreAsParquet());
         assertFalse(((HiveComponent) distribution).doSupportClouderaNavigator());
         assertFalse(((SparkBatchComponent) distribution).isSpark14());
+        assertFalse(((SparkBatchComponent) distribution).isSpark13());
         assertTrue(((SparkBatchComponent) distribution).doSupportDynamicMemoryAllocation());
         assertFalse(((SparkBatchComponent) distribution).isExecutedThroughSparkJobServer());
         assertTrue(((SparkBatchComponent) distribution).doSupportSparkStandaloneMode());
         assertTrue(((SparkBatchComponent) distribution).doSupportSparkYarnClientMode());
         assertFalse(((SparkStreamingComponent) distribution).isSpark14());
+        assertFalse(((SparkStreamingComponent) distribution).isSpark13());
         assertTrue(((SparkStreamingComponent) distribution).doSupportDynamicMemoryAllocation());
         assertFalse(((SparkStreamingComponent) distribution).isExecutedThroughSparkJobServer());
         assertTrue(((SparkStreamingComponent) distribution).doSupportCheckpointing());

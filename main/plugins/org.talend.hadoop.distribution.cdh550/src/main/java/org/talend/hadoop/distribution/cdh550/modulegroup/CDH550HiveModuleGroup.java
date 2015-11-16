@@ -16,6 +16,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.talend.hadoop.distribution.DistributionModuleGroup;
+import org.talend.hadoop.distribution.cdh550.CDH550Constant;
 import org.talend.hadoop.distribution.condition.BasicExpression;
 import org.talend.hadoop.distribution.condition.BooleanOperator;
 import org.talend.hadoop.distribution.condition.ComponentCondition;
@@ -27,19 +28,11 @@ import org.talend.hadoop.distribution.constants.HiveConstant;
 
 public class CDH550HiveModuleGroup {
 
-    private static final String MODULE_GROUP_NAME = "HIVE-LIB-CDH_5_5"; //$NON-NLS-1$
-
-    private static final String MAPREDUCE_MODULE_GROUP_NAME = "MAPREDUCE-LIB-CDH_5_5"; //$NON-NLS-1$
-
-    private static final String HDFS_MODULE_GROUP_NAME = "HDFS-LIB-CDH_5_5"; //$NON-NLS-1$
-
-    private static final String HIVE_HBASE_MODULE_GROUP_NAME = "HIVE-HBASE-LIB-CDH_5_5"; //$NON-NLS-1$
-
     public static Set<DistributionModuleGroup> getModuleGroups() {
         Set<DistributionModuleGroup> hs = new HashSet<>();
-        hs.add(new DistributionModuleGroup(MODULE_GROUP_NAME));
-        hs.add(new DistributionModuleGroup(HDFS_MODULE_GROUP_NAME));
-        hs.add(new DistributionModuleGroup(MAPREDUCE_MODULE_GROUP_NAME));
+        hs.add(new DistributionModuleGroup(CDH550Constant.HIVE_MODULE_GROUP.getModuleName()));
+        hs.add(new DistributionModuleGroup(CDH550Constant.HDFS_MODULE_GROUP.getModuleName()));
+        hs.add(new DistributionModuleGroup(CDH550Constant.MAPREDUCE_MODULE_GROUP.getModuleName()));
 
         // The following condition instance stands for:
         // (isShow[STORE_BY_HBASE] AND STORE_BY_HBASE=='true')
@@ -47,7 +40,7 @@ public class CDH550HiveModuleGroup {
                 new SimpleComponentCondition(new BasicExpression(HiveConstant.HIVE_CONFIGURATION_COMPONENT_HBASEPARAMETER,
                         "true", EqualityOperator.EQ)), new SimpleComponentCondition(new ShowExpression(HiveConstant.HIVE_CONFIGURATION_COMPONENT_HBASEPARAMETER)), BooleanOperator.AND); //$NON-NLS-1$
         // The Hive components need to import some hbase libraries if the "Use HBase storage" is checked.
-        hs.add(new DistributionModuleGroup(HIVE_HBASE_MODULE_GROUP_NAME, false, hbaseLoaderCondition));
+        hs.add(new DistributionModuleGroup(CDH550Constant.HIVE_HBASE_MODULE_GROUP.getModuleName(), false, hbaseLoaderCondition));
 
         return hs;
     }

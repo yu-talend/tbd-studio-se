@@ -18,13 +18,13 @@ import java.util.Set;
 import org.talend.hadoop.distribution.DistributionModuleGroup;
 import org.talend.hadoop.distribution.cdh550.CDH550Constant;
 
-public class CDH550SqoopModuleGroup {
+public class CDH550HiveOnSparkModuleGroup {
 
     public static Set<DistributionModuleGroup> getModuleGroups() {
         Set<DistributionModuleGroup> hs = new HashSet<>();
-        hs.add(new DistributionModuleGroup(CDH550Constant.SQOOP_MODULE_GROUP.getModuleName()));
-        hs.add(new DistributionModuleGroup(CDH550Constant.HDFS_MODULE_GROUP.getModuleName()));
-        hs.add(new DistributionModuleGroup(CDH550Constant.MAPREDUCE_MODULE_GROUP.getModuleName()));
+        DistributionModuleGroup dmg = new DistributionModuleGroup(
+                CDH550Constant.SPARK_HIVE_MRREQUIRED_MODULE_GROUP.getModuleName(), true, null);
+        hs.add(dmg);
         return hs;
     }
 

@@ -16,6 +16,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.talend.hadoop.distribution.DistributionModuleGroup;
+import org.talend.hadoop.distribution.cdh550.CDH550Constant;
 import org.talend.hadoop.distribution.condition.BasicExpression;
 import org.talend.hadoop.distribution.condition.ComponentCondition;
 import org.talend.hadoop.distribution.condition.EqualityOperator;
@@ -23,18 +24,6 @@ import org.talend.hadoop.distribution.condition.SimpleComponentCondition;
 import org.talend.hadoop.distribution.constants.PigOutputConstant;
 
 public class CDH550PigOutputModuleGroup {
-
-    private static final String PIG_HCAT_MODULE_GROUP_NAME = "PIG-HCATALOG-LIB-CDH_5_5"; //$NON-NLS-1$
-
-    private static final String HBASE_MODULE_GROUP_NAME = "HBASE-LIB-CDH_5_5"; //$NON-NLS-1$
-
-    private static final String PIG_HBASE_MODULE_GROUP_NAME = "PIG-HBASE-LIB-CDH_5_5"; //$NON-NLS-1$
-
-    private static final String PIG_AVRO_MODULE_GROUP_NAME = "PIG-AVRO-LIB-CDH_5_5"; //$NON-NLS-1$
-
-    private static final String PIG_RCFILE_MODULE_GROUP_NAME = "PIG-RCFILE-LIB-CDH_5_5"; //$NON-NLS-1$
-
-    private static final String PIG_SEQUENCEFILE_MODULE_GROUP_NAME = "PIG-SEQUENCEFILE-LIB-CDH_5_5"; //$NON-NLS-1$
 
     public static Set<DistributionModuleGroup> getModuleGroups() {
         ComponentCondition hbaseStorerCondition = new SimpleComponentCondition(new BasicExpression(
@@ -49,12 +38,13 @@ public class CDH550PigOutputModuleGroup {
                 PigOutputConstant.STORER_PARAMETER, PigOutputConstant.SEQUENCEFILE_STORER_VALUE, EqualityOperator.EQ));
 
         Set<DistributionModuleGroup> hs = new HashSet<>();
-        hs.add(new DistributionModuleGroup(PIG_HCAT_MODULE_GROUP_NAME, false, hcatStorerCondition));
-        hs.add(new DistributionModuleGroup(HBASE_MODULE_GROUP_NAME, false, hbaseStorerCondition));
-        hs.add(new DistributionModuleGroup(PIG_HBASE_MODULE_GROUP_NAME, false, hbaseStorerCondition));
-        hs.add(new DistributionModuleGroup(PIG_AVRO_MODULE_GROUP_NAME, false, avroStorerCondition));
-        hs.add(new DistributionModuleGroup(PIG_RCFILE_MODULE_GROUP_NAME, false, rcfileStorerCondition));
-        hs.add(new DistributionModuleGroup(PIG_SEQUENCEFILE_MODULE_GROUP_NAME, false, sequencefileStorerCondition));
+        hs.add(new DistributionModuleGroup(CDH550Constant.PIG_HCATALOG_MODULE_GROUP.getModuleName(), false, hcatStorerCondition));
+        hs.add(new DistributionModuleGroup(CDH550Constant.HBASE_MODULE_GROUP.getModuleName(), false, hbaseStorerCondition));
+        hs.add(new DistributionModuleGroup(CDH550Constant.PIG_HBASE_MODULE_GROUP.getModuleName(), false, hbaseStorerCondition));
+        hs.add(new DistributionModuleGroup(CDH550Constant.PIG_AVRO_MODULE_GROUP.getModuleName(), false, avroStorerCondition));
+        hs.add(new DistributionModuleGroup(CDH550Constant.PIG_RCFILE_MODULE_GROUP.getModuleName(), false, rcfileStorerCondition));
+        hs.add(new DistributionModuleGroup(CDH550Constant.PIG_SEQUENCEFILE_MODULE_GROUP.getModuleName(), false,
+                sequencefileStorerCondition));
         return hs;
     }
 

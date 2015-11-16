@@ -66,6 +66,11 @@ public abstract class AbstractDistribution {
     }
 
     // Only used if SparkComponent is implemented
+    public boolean isSpark13() {
+        return getSparkVersion() == ESparkVersion.SPARK_1_3;
+    }
+
+    // Only used if SparkComponent is implemented
     public boolean isSpark14() {
         return getSparkVersion() == ESparkVersion.SPARK_1_4;
     }

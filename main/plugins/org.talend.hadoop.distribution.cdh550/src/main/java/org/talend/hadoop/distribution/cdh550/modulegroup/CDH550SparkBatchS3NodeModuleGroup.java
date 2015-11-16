@@ -15,17 +15,22 @@ package org.talend.hadoop.distribution.cdh550.modulegroup;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.talend.core.hadoop.version.EHadoopDistributions;
 import org.talend.hadoop.distribution.DistributionModuleGroup;
 import org.talend.hadoop.distribution.cdh550.CDH550Constant;
+import org.talend.hadoop.distribution.cdh550.CDH550Distribution;
+import org.talend.hadoop.distribution.condition.common.SparkBatchLinkedNodeCondition;
+import org.talend.hadoop.distribution.constants.SparkBatchConstant;
 
-public class CDH550SqoopModuleGroup {
+public class CDH550SparkBatchS3NodeModuleGroup {
 
     public static Set<DistributionModuleGroup> getModuleGroups() {
         Set<DistributionModuleGroup> hs = new HashSet<>();
-        hs.add(new DistributionModuleGroup(CDH550Constant.SQOOP_MODULE_GROUP.getModuleName()));
-        hs.add(new DistributionModuleGroup(CDH550Constant.HDFS_MODULE_GROUP.getModuleName()));
-        hs.add(new DistributionModuleGroup(CDH550Constant.MAPREDUCE_MODULE_GROUP.getModuleName()));
+        DistributionModuleGroup dmg = new DistributionModuleGroup(
+                CDH550Constant.SPARK_S3_MRREQUIRED_MODULE_GROUP.getModuleName(), true, new SparkBatchLinkedNodeCondition(
+                        EHadoopDistributions.CLOUDERA.getName(), CDH550Distribution.VERSION,
+                        SparkBatchConstant.SPARK_BATCH_S3_SPARKCONFIGURATION_LINKEDPARAMETER).getCondition());
+        hs.add(dmg);
         return hs;
     }
-
 }

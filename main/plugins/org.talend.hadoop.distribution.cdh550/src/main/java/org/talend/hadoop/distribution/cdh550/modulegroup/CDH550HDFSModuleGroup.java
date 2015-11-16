@@ -16,14 +16,13 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.talend.hadoop.distribution.DistributionModuleGroup;
+import org.talend.hadoop.distribution.cdh550.CDH550Constant;
 
 public class CDH550HDFSModuleGroup {
 
-    private static final String MODULE_GROUP_NAME = "HDFS-LIB-CDH_5_5"; //$NON-NLS-1$
-
     public static Set<DistributionModuleGroup> getModuleGroups() {
         Set<DistributionModuleGroup> hs = new HashSet<>();
-        DistributionModuleGroup dmg = new DistributionModuleGroup(MODULE_GROUP_NAME);
+        DistributionModuleGroup dmg = new DistributionModuleGroup(CDH550Constant.HDFS_MODULE_GROUP.getModuleName());
         hs.add(dmg);
         return hs;
     }
