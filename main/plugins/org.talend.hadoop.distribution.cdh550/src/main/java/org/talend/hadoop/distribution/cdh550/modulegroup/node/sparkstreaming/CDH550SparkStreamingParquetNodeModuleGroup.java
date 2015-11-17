@@ -10,7 +10,7 @@
 // 9 rue Pages 92150 Suresnes, France
 //
 // ============================================================================
-package org.talend.hadoop.distribution.cdh550.modulegroup;
+package org.talend.hadoop.distribution.cdh550.modulegroup.node.sparkstreaming;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -20,16 +20,15 @@ import org.talend.hadoop.distribution.DistributionModuleGroup;
 import org.talend.hadoop.distribution.cdh550.CDH550Constant;
 import org.talend.hadoop.distribution.cdh550.CDH550Distribution;
 import org.talend.hadoop.distribution.condition.common.SparkStreamingLinkedNodeCondition;
-import org.talend.hadoop.distribution.constants.SparkStreamingConstant;
 
-public class CDH550SparkStreamingS3NodeModuleGroup {
+public class CDH550SparkStreamingParquetNodeModuleGroup {
 
     public static Set<DistributionModuleGroup> getModuleGroups() {
         Set<DistributionModuleGroup> hs = new HashSet<>();
         DistributionModuleGroup dmg = new DistributionModuleGroup(
-                CDH550Constant.SPARK_S3_MRREQUIRED_MODULE_GROUP.getModuleName(), true, new SparkStreamingLinkedNodeCondition(
-                        EHadoopDistributions.CLOUDERA.getName(), CDH550Distribution.VERSION,
-                        SparkStreamingConstant.S3_SPARKCONFIGURATION_LINKEDPARAMETER).getCondition());
+                CDH550Constant.SPARK_PARQUET_MRREQUIRED_MODULE_GROUP.getModuleName(), true,
+                new SparkStreamingLinkedNodeCondition(EHadoopDistributions.CLOUDERA.getName(), CDH550Distribution.VERSION)
+                        .getCondition());
         hs.add(dmg);
         return hs;
     }

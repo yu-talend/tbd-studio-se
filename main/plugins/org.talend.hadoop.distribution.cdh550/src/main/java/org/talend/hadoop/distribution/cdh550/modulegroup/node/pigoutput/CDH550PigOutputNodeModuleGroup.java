@@ -10,7 +10,7 @@
 // 9 rue Pages 92150 Suresnes, France
 //
 // ============================================================================
-package org.talend.hadoop.distribution.cdh550.modulegroup;
+package org.talend.hadoop.distribution.cdh550.modulegroup.node.pigoutput;
 
 import java.util.HashSet;
 import java.util.Set;

@@ -368,6 +368,69 @@
             name="aws-java-sdk-1.7.4.jar"
             mvn_uri="mvn:org.talend.libraries/aws-java-sdk-1.7.4/6.0.0">
         </libraryNeeded>        
+                
+        <libraryNeeded
+            context="plugin:org.talend.hadoop.distribution.cdh550"
+            id="spark-streaming-kinesis-asl_2.10-1.5.0.jar"
+            name="spark-streaming-kinesis-asl_2.10-1.5.0.jar"
+            mvn_uri="mvn:org.talend.libraries/spark-streaming-kinesis-asl_2.10-1.5.0/6.0.0">
+        </libraryNeeded>        
+                
+        <libraryNeeded
+            context="plugin:org.talend.hadoop.distribution.cdh550"
+            id="amazon-kinesis-client-1.2.1.jar"
+            name="amazon-kinesis-client-1.2.1.jar"
+            mvn_uri="mvn:org.talend.libraries/amazon-kinesis-client-1.2.1/6.0.0">
+        </libraryNeeded>        
+                
+        <libraryNeeded
+            context="plugin:org.talend.hadoop.distribution.cdh550"
+            id="aws-java-sdk-kinesis-1.9.16.jar"
+            name="aws-java-sdk-kinesis-1.9.16.jar"
+            mvn_uri="mvn:org.talend.libraries/aws-java-sdk-kinesis-1.9.16/6.0.0">
+        </libraryNeeded>        
+                
+        <libraryNeeded
+            context="plugin:org.talend.hadoop.distribution.cdh550"
+            id="aws-java-sdk-dynamodb-1.9.16.jar"
+            name="aws-java-sdk-dynamodb-1.9.16.jar"
+            mvn_uri="mvn:org.talend.libraries/aws-java-sdk-dynamodb-1.9.16/6.0.0">
+        </libraryNeeded>        
+                
+        <libraryNeeded
+            context="plugin:org.talend.hadoop.distribution.cdh550"
+            id="aws-java-sdk-cloudwatch-1.9.16.jar"
+            name="aws-java-sdk-cloudwatch-1.9.16.jar"
+            mvn_uri="mvn:org.talend.libraries/aws-java-sdk-cloudwatch-1.9.16/6.0.0">
+        </libraryNeeded>        
+                
+        <libraryNeeded
+            context="plugin:org.talend.hadoop.distribution.cdh550"
+            id="aws-java-sdk-core-1.9.16.jar"
+            name="aws-java-sdk-core-1.9.16.jar"
+            mvn_uri="mvn:org.talend.libraries/aws-java-sdk-core-1.9.16/6.0.0">
+        </libraryNeeded>        
+                
+        <libraryNeeded
+            context="plugin:org.talend.hadoop.distribution.cdh550"
+            id="spark-streaming-kafka-assembly_2.10-1.5.0.jar"
+            name="spark-streaming-kafka-assembly_2.10-1.5.0.jar"
+            mvn_uri="mvn:org.talend.libraries/spark-streaming-kafka-assembly_2.10-1.5.0/6.0.0">
+        </libraryNeeded>        
+                
+        <libraryNeeded
+            context="plugin:org.talend.libraries.esb"
+            id="joda-time-2.7.jar"
+            name="joda-time-2.7.jar"
+            mvn_uri="mvn:org.talend.libraries/joda-time-2.7/6.0.0">
+        </libraryNeeded>        
+                
+        <libraryNeeded
+            context="plugin:org.talend.libraries.apache.kafka"
+            id="kafka-clients-0.8.2.1.jar"
+            name="kafka-clients-0.8.2.1.jar"
+            mvn_uri="mvn:org.talend.libraries/kafka-clients-0.8.2.1/6.0.0">
+        </libraryNeeded>        
                         
         <!-- Groups -->
         
@@ -632,6 +695,46 @@
             <library id="hive-exec-cdh5.5.0"/>
             <library id="hive-metastore-cdh5.5.0"/>
             <library id="libfb303-0.9.2.jar"/>            
+        </libraryNeededGroup>
+        
+        <!-- Spark Kinesis group MRREQUIRED -->
+        <libraryNeededGroup
+                description="Spark Kinesis libraries for CDH 5.5 that are MRREQUIRED"
+                id="SPARK-KINESIS-LIB-MRREQUIRED-CDH_5_5"
+                name="SPARK-KINESIS-LIB-MRREQUIRED-CDH_5_5">
+            <library id="spark-streaming-kinesis-asl_2.10-1.5.0.jar"/>
+            <library id="amazon-kinesis-client-1.2.1.jar"/>
+            <library id="aws-java-sdk-kinesis-1.9.16.jar"/>
+            <library id="aws-java-sdk-core-1.9.16.jar"/>            
+            <library id="aws-java-sdk-dynamodb-1.9.16.jar"/>            
+            <library id="aws-java-sdk-cloudwatch-1.9.16.jar"/>            
+            <library id="joda-time-2.7.jar"/>            
+        </libraryNeededGroup>
+        
+        <!-- Spark Kafka group MRREQUIRED -->
+        <libraryNeededGroup
+                description="Spark Kafka assembly libraries for CDH 5.5 that are MRREQUIRED"
+                id="SPARK-KAFKA-ASSEMBLY-LIB-MRREQUIRED-CDH_5_5"
+                name="SPARK-KAFKA-ASSEMBLY-LIB-MRREQUIRED-CDH_5_5">
+            <library id="spark-streaming-kafka-assembly_2.10-1.5.0.jar"/>
+        </libraryNeededGroup>
+        
+        <!-- Spark Kafka Client group MRREQUIRED -->
+        <libraryNeededGroup
+                description="Spark Kafka client libraries for CDH 5.5 that are MRREQUIRED"
+                id="SPARK-KAFKA-CLIENT-LIB-MRREQUIRED-CDH_5_5"
+                name="SPARK-KAFKA-CLIENT-LIB-MRREQUIRED-CDH_5_5">
+            <library id="kafka-clients-0.8.2.1.jar"/>
+        </libraryNeededGroup>
+        
+        <!-- Spark Kafka Avro group MRREQUIRED -->
+        <libraryNeededGroup
+                description="Spark Kafka Avro libraries for CDH 5.5 that are MRREQUIRED"
+                id="SPARK-KAFKA-AVRO-LIB-MRREQUIRED-CDH_5_5"
+                name="SPARK-KAFKA-AVRO-LIB-MRREQUIRED-CDH_5_5">
+            <library id="avro-cdh5.5.0"/>
+            <library id="jackson-mapper-asl-1.8.8.jar" />
+            <library id="jackson-core-asl-1.8.8.jar" />
         </libraryNeededGroup>
     </extension>
 </plugin>
