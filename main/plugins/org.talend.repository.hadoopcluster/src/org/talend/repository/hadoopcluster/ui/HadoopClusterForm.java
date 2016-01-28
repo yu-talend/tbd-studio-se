@@ -36,6 +36,7 @@ import org.talend.core.hadoop.version.EHadoopDistributions;
 import org.talend.core.hadoop.version.EHadoopVersion4Drivers;
 import org.talend.core.hadoop.version.custom.HadoopCustomVersionDefineDialog;
 import org.talend.core.model.properties.ConnectionItem;
+import org.talend.metadata.managment.ui.wizard.AbstractForm;
 import org.talend.repository.hadoopcluster.i18n.Messages;
 import org.talend.repository.hadoopcluster.ui.common.AbstractHadoopForm;
 import org.talend.repository.hadoopcluster.ui.common.IHadoopClusterInfoForm;
@@ -217,7 +218,7 @@ public class HadoopClusterForm extends AbstractHadoopForm<HadoopClusterConnectio
     }
 
     @Override
-    public void setListener(ICheckListener listener) {
+    public void setListener(org.talend.core.ui.check.ICheckListener<AbstractForm> listener) {
         super.setListener(listener);
         if (hcInfoForm != null) {
             hcInfoForm.setListener(listener);

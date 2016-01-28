@@ -12,7 +12,8 @@
 // ============================================================================
 package org.talend.repository.hadoopcluster.ui.common;
 
-import org.talend.metadata.managment.ui.wizard.AbstractForm.ICheckListener;
+import org.talend.core.ui.check.ICheckListener;
+import org.talend.metadata.managment.ui.wizard.AbstractForm;
 
 /**
  * created by ycbai on 2014年9月15日 Detailled comment
@@ -24,7 +25,7 @@ public interface IHadoopClusterInfoForm {
 
     public void init();
 
-    public void setListener(ICheckListener listener);
+    public void setListener(ICheckListener<AbstractForm> listener);
 
     public void setReadOnly(boolean readOnly);
 
