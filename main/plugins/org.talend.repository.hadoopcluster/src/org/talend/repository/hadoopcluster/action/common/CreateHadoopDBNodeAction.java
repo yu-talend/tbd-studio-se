@@ -18,12 +18,18 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.eclipse.jface.wizard.IWizard;
+import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbench;
 import org.talend.commons.runtime.model.repository.ERepositoryStatus;
 import org.talend.commons.ui.runtime.image.IImage;
+import org.talend.components.api.service.ComponentService;
 import org.talend.core.database.conn.template.EDatabaseConnTemplate;
 import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
+import org.talend.core.runtime.services.IGenericWizardService;
+import org.talend.core.ui.metadata.generic.GenericWizardDialog;
+import org.talend.metadata.managment.generic.GenericDBWizardUtil;
 import org.talend.repository.ProjectManager;
 import org.talend.repository.hadoopcluster.node.HadoopFolderRepositoryNode;
 import org.talend.repository.hadoopcluster.util.EHadoopClusterImage;
@@ -92,6 +98,16 @@ public abstract class CreateHadoopDBNodeAction extends CreateHadoopNodeAction {
             return new DatabaseWizard(workbench, isCreate, node, existingNames);
         }
 
+    }
+
+    @Override
+    protected WizardDialog getWizardDialog(IWizard wizard) {
+        ComponentService componentService = null;
+        IGenericWizardService genericWizardService = GenericDBWizardUtil.getGenericWizardService();
+        if (genericWizardService != null) {
+            componentService = genericWizardService.getComponentService();
+        }
+        return new GenericWizardDialog(Display.getCurrent().getActiveShell(), wizard, componentService);
     }
 
     protected void initConnectionParameters(Map<String, String> initMap, HadoopClusterConnectionItem hcConnectionItem) {

@@ -64,7 +64,7 @@ public abstract class CreateHadoopNodeAction extends AbstractCreateAction {
         if (isToolbar()) {
             init(repositoryNode);
         }
-        WizardDialog wizardDialog = new WizardDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), wizard);
+        WizardDialog wizardDialog = getWizardDialog(wizard);
         if (Platform.getOS().equals(Platform.OS_LINUX)) {
             wizardDialog.setPageSize(getWizardWidth(), getWizardHeight() + 80);
         }
@@ -168,5 +168,9 @@ public abstract class CreateHadoopNodeAction extends AbstractCreateAction {
     protected abstract IImage getNodeImage();
 
     protected abstract IWizard getWizard(IWorkbench workbench, boolean isCreate, RepositoryNode node, String[] existingNames);
+
+    protected WizardDialog getWizardDialog(IWizard wizard) {
+        return new WizardDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), wizard);
+    }
 
 }
