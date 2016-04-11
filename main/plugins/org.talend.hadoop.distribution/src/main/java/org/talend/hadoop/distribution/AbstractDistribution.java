@@ -44,6 +44,14 @@ public abstract class AbstractDistribution {
         return false;
     }
 
+    public boolean isExecutedThroughSparkJobServer() {
+        return false;
+    }
+
+    public boolean isExecutedThroughLivy() {
+        return false;
+    }
+
     public boolean doSupportClouderaNavigator() {
         return false;
     }
@@ -103,7 +111,19 @@ public abstract class AbstractDistribution {
         return true;
     }
 
+    public boolean doSupportCustomMRApplicationCP() {
+        return false;
+    }
+
+    public String getCustomMRApplicationCP() {
+        return ""; //$NON-NLS-1$
+    }
+
     public boolean doSupportSecurity() {
+        return false;
+    }
+
+    public boolean doSupportSparkYarnClusterMode() {
         return false;
     }
 

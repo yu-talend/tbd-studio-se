@@ -18,7 +18,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.talend.commons.utils.platform.PluginChecker;
-import org.talend.commons.utils.system.EnvironmentUtils;
+import org.talend.core.hadoop.version.EHadoopVersion4Drivers;
 import org.talend.hadoop.distribution.AbstractDistribution;
 import org.talend.hadoop.distribution.ComponentType;
 import org.talend.hadoop.distribution.DistributionModuleGroup;
@@ -41,11 +41,13 @@ import org.talend.hadoop.distribution.hdp220.modulegroup.HDP220PigOutputNodeModu
 public class HDP220Distribution extends AbstractDistribution implements HDFSComponent, MRComponent, HBaseComponent,
         SqoopComponent, PigComponent, HiveComponent, HCatalogComponent, IHortonworksDistribution {
 
-    public static final String VERSION = "HDP_2_2";
+    public static final String VERSION = EHadoopVersion4Drivers.HDP_2_2.getVersionValue();
 
     public static final String VERSION_DISPLAY = "Hortonworks Data Platform V2.2.0";
 
     private final static String YARN_APPLICATION_CLASSPATH = "$HADOOP_CONF_DIR,/usr/hdp/current/hadoop-client/*,/usr/hdp/current/hadoop-client/lib/*,/usr/hdp/current/hadoop-hdfs-client/*,/usr/hdp/current/hadoop-hdfs-client/lib/*,/usr/hdp/current/hadoop-mapreduce-client/*,/usr/hdp/current/hadoop-mapreduce-client/lib/*,/usr/hdp/current/hadoop-yarn-client/*,/usr/hdp/current/hadoop-yarn-client/lib/*"; //$NON-NLS-1$
+
+    private final static String CUSTOM_MR_APPLICATION_CLASSPATH = "$PWD/mr-framework/hadoop/share/hadoop/mapreduce/*:$PWD/mr-framework/hadoop/share/hadoop/mapreduce/lib/*:$PWD/mr-framework/hadoop/share/hadoop/common/*:$PWD/mr-framework/hadoop/share/hadoop/common/lib/*:$PWD/mr-framework/hadoop/share/hadoop/yarn/*:$PWD/mr-framework/hadoop/share/hadoop/yarn/lib/*:$PWD/mr-framework/hadoop/share/hadoop/hdfs/*:$PWD/mr-framework/hadoop/share/hadoop/hdfs/lib/*:/etc/hadoop/conf/secure"; //$NON-NLS-1$
 
     private static Map<ComponentType, Set<DistributionModuleGroup>> moduleGroups;
 
@@ -174,9 +176,6 @@ public class HDP220Distribution extends AbstractDistribution implements HDFSComp
         if (PluginChecker.isOnlyTopLoaded()) { // don't support in TOS for DQ product.
             return false;
         }
-        if (EnvironmentUtils.isWindowsSystem()) { // don't support on windows
-            return false;
-        }
         return super.doSupportEmbeddedMode();
     }
 
@@ -236,6 +235,16 @@ public class HDP220Distribution extends AbstractDistribution implements HDFSComp
     @Override
     public boolean doSupportStoreAsParquet() {
         return false;
+    }
+
+    @Override
+    public boolean doSupportCustomMRApplicationCP() {
+        return true;
+    }
+
+    @Override
+    public String getCustomMRApplicationCP() {
+        return CUSTOM_MR_APPLICATION_CLASSPATH;
     }
 
     @Override
