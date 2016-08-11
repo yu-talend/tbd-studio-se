@@ -697,7 +697,7 @@ public class OozieSettingComposite extends ScrolledComposite {
                     RepositoryReviewDialog dialog = new RepositoryReviewDialog(new Shell(), ERepositoryObjectType.METADATA,
                             "OOZIE");
                     if (dialog.open() == RepositoryReviewDialog.OK) {
-                        String id = dialog.getResult().getObject().getId();
+                        String id = dialog.getSelectedFullId();
                         repositoryId = id;
                         oozieRepositoryText.setText(dialog.getResult().getObject().getLabel());
                         IProcess2 process = OozieJobTrackerListener.getProcess();
