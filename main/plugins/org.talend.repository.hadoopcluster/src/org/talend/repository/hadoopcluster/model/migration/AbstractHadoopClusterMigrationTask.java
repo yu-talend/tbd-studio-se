@@ -161,9 +161,9 @@ public abstract class AbstractHadoopClusterMigrationTask extends AbstractItemMig
             factory.save(hcConnItem);
 
             if (hcConnItem != null) {
-                hadoopSubConnection.setRelativeHadoopClusterId(hcConnItem.getProperty().getId());
+                hadoopSubConnection.setRelativeHadoopClusterId(factory.getFullId(hcConnItem.getProperty()));
                 factory.save(item);
-                HCRepositoryUtil.setupConnectionToHadoopCluster(hcConnItem, item.getProperty().getId());
+                HCRepositoryUtil.setupConnectionToHadoopCluster(hcConnItem, factory.getFullId(item.getProperty()));
             }
         }
     }

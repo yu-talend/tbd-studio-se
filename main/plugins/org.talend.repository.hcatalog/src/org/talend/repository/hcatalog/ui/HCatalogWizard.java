@@ -25,6 +25,7 @@ import org.talend.core.context.RepositoryContext;
 import org.talend.core.database.conn.ConnParameterKeys;
 import org.talend.core.model.properties.ConnectionItem;
 import org.talend.core.model.properties.PropertiesFactory;
+import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.core.runtime.CoreRuntimePlugin;
 import org.talend.designer.core.IDesignerCoreService;
 import org.talend.designer.hdfsbrowse.manager.HadoopParameterUtil;
@@ -117,7 +118,8 @@ public class HCatalogWizard extends HadoopRepositoryWizard<HCatalogConnection> {
         HadoopClusterConnectionItem hcConnectionItem = HCRepositoryUtil.getHCConnectionItemFromRepositoryNode(node);
         if (hcConnectionItem != null) {
             HadoopClusterConnection hcConnection = (HadoopClusterConnection) hcConnectionItem.getConnection();
-            hadoopConnection.setRelativeHadoopClusterId(hcConnectionItem.getProperty().getId());
+            hadoopConnection
+                    .setRelativeHadoopClusterId(ProxyRepositoryFactory.getInstance().getFullId(hcConnectionItem.getProperty()));
             if (HCVersionUtil.isHDI(hcConnection)) {
                 hadoopConnection.setUserName(hcConnection.getParameters().get(ConnParameterKeys.CONN_PARA_KEY_WEB_HCAT_USERNAME));
                 hadoopConnection.setHostName(hcConnection.getParameters().get(ConnParameterKeys.CONN_PARA_KEY_WEB_HCAT_HOSTNAME));

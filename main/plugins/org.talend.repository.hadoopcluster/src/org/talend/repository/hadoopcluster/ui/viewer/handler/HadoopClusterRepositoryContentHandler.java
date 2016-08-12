@@ -46,6 +46,7 @@ import org.talend.repository.model.hadoopcluster.HadoopClusterConnection;
 import org.talend.repository.model.hadoopcluster.HadoopClusterConnectionItem;
 import org.talend.repository.model.hadoopcluster.HadoopClusterFactory;
 import org.talend.repository.model.hadoopcluster.HadoopClusterPackage;
+
 import orgomg.cwm.foundation.businessinformation.BusinessinformationPackage;
 
 /**
@@ -191,7 +192,8 @@ public class HadoopClusterRepositoryContentHandler extends AbstractHadoopReposit
                 parentNode.getChildren().add(hadoopFolderNode);
                 for (DatabaseConnectionItem dbItem : dbItems) {
                     RepositoryNode hadoopSubNode = createHadoopSubNode(hadoopFolderNode, dbItem);
-                    IRepositoryNode dbNode = linkedDbNodesMap.get(dbItem.getProperty().getId());
+                    IRepositoryNode dbNode = linkedDbNodesMap
+                            .get(ProxyRepositoryFactory.getInstance().getFullId(dbItem.getProperty()));
                     if (dbNode != null) { // add the children, make sure be same as DB connections
                         hadoopSubNode.getChildren().addAll(dbNode.getChildren());
                     }
@@ -221,7 +223,7 @@ public class HadoopClusterRepositoryContentHandler extends AbstractHadoopReposit
                     DatabaseConnection connection = (DatabaseConnection) item.getConnection();
                     String hcId = connection.getParameters().get(ConnParameterKeys.CONN_PARA_KEY_HADOOP_CLUSTER_ID);
                     if (hcId != null) { // linked DB, for Hive and HBase
-                        linkedDbNodesMap.put(property.getId(), curNode);
+                        linkedDbNodesMap.put(ProxyRepositoryFactory.getInstance().getFullId(property), curNode);
                     }
                 }
             }

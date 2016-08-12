@@ -63,7 +63,7 @@ public abstract class AbstractHadoopSubnodeRepositoryContentHandler extends Abst
             project = ProjectManager.getInstance().getCurrentProject();
         }
 
-        String clusterId = parentObject.getProperty().getId();
+        String clusterId = ProxyRepositoryFactory.getInstance().getFullId(parentObject.getProperty());
         ERepositoryObjectType objectType = getProcessType();
         List<HadoopSubConnectionItem> items = new ArrayList<HadoopSubConnectionItem>();
         try {

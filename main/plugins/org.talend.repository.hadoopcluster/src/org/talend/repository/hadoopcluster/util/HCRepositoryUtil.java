@@ -243,7 +243,11 @@ public class HCRepositoryUtil {
     }
 
     public static HadoopClusterConnectionItem getHadoopClusterItemBySubitemId(String subitemId) {
-        return getHadoopClusterItemBySubitemId(ProjectManager.getInstance().getCurrentProject(), subitemId);
+        Project project = ProxyRepositoryFactory.getInstance().getProjectFromItemId(subitemId);
+        if (project == null) {
+            project = ProjectManager.getInstance().getCurrentProject();
+        }
+        return getHadoopClusterItemBySubitemId(project, subitemId);
     }
 
     public static HadoopClusterConnectionItem getHadoopClusterItemBySubitemId(Project project, String subitemId) {

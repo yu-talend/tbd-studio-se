@@ -34,7 +34,7 @@ public class OozieUpdateManager {
      * @return
      */
     public static boolean updateOozieConnection(ConnectionItem connectionItem, boolean show, final boolean onlySimpleShow) {
-        List<Relation> relations = RelationshipItemBuilder.getInstance().getItemsRelatedTo(connectionItem.getProperty().getId(),
+        List<Relation> relations = RelationshipItemBuilder.getInstance().getItemsRelatedTo(connectionItem.getProperty(),
                 RelationshipItemBuilder.LATEST_VERSION, RelationshipItemBuilder.PROPERTY_RELATION);
 
         RepositoryUpdateManager repositoryUpdateManager = new RepositoryUpdateManager(connectionItem, relations) {

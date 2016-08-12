@@ -217,7 +217,7 @@ public class HadoopClusterService implements IHadoopClusterService {
             }
             HadoopClusterConnection targetClusterConnection = (HadoopClusterConnection) targetClusterItem.getConnection();
             targetClusterConnection.getConnectionList().clear();
-            String targetClusterId = targetClusterItem.getProperty().getId();
+            String targetClusterId = factory.getFullId(targetClusterItem.getProperty());
             Set<Item> sourceSubitems = HCRepositoryUtil.getSubitemsOfHadoopCluster(sourceClusterItem);
             for (Item subitem : sourceSubitems) {
                 Item newSubitem = factory.copy(subitem, path, true);

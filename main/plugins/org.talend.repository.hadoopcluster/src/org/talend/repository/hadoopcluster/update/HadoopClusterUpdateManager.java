@@ -54,15 +54,14 @@ public class HadoopClusterUpdateManager {
      * @return
      */
     public static boolean updateHadoopClusterConnection(ConnectionItem connectionItem, boolean show, final boolean onlySimpleShow) {
-        List<Relation> relations = RelationshipItemBuilder.getInstance().getItemsRelatedTo(connectionItem.getProperty().getId(),
+        List<Relation> relations = RelationshipItemBuilder.getInstance().getItemsRelatedTo(connectionItem.getProperty(),
                 RelationshipItemBuilder.LATEST_VERSION, RelationshipItemBuilder.PROPERTY_RELATION);
 
         try {
             Set<Item> subitems = HCRepositoryUtil.getSubitemsOfHadoopCluster(connectionItem);
             for (Item subitem : subitems) {
-                List<Relation> subitemRelations = RelationshipItemBuilder.getInstance().getItemsRelatedTo(
-                        subitem.getProperty().getId(), RelationshipItemBuilder.LATEST_VERSION,
-                        RelationshipItemBuilder.PROPERTY_RELATION);
+                List<Relation> subitemRelations = RelationshipItemBuilder.getInstance().getItemsRelatedTo(subitem.getProperty(),
+                        RelationshipItemBuilder.LATEST_VERSION, RelationshipItemBuilder.PROPERTY_RELATION);
                 relations.addAll(subitemRelations);
             }
         } catch (PersistenceException e) {

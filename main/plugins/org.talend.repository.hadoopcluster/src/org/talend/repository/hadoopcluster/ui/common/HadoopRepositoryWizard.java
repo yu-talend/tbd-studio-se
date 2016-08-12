@@ -89,7 +89,8 @@ public abstract class HadoopRepositoryWizard<E extends HadoopSubConnection> exte
     protected void initConnectionFromHadoopCluster(E hadoopSubConnection, RepositoryNode node) {
         HadoopClusterConnectionItem hcConnectionItem = HCRepositoryUtil.getHCConnectionItemFromRepositoryNode(node);
         if (hcConnectionItem != null) {
-            hadoopSubConnection.setRelativeHadoopClusterId(hcConnectionItem.getProperty().getId());
+            hadoopSubConnection
+                    .setRelativeHadoopClusterId(ProxyRepositoryFactory.getInstance().getFullId(hcConnectionItem.getProperty()));
         }
     }
 

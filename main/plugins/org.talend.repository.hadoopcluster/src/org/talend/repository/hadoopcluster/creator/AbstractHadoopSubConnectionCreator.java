@@ -13,6 +13,7 @@
 package org.talend.repository.hadoopcluster.creator;
 
 import org.talend.core.hadoop.creator.AbstractHadoopConnectionCreator;
+import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.repository.model.hadoopcluster.HadoopClusterConnection;
 import org.talend.repository.model.hadoopcluster.HadoopClusterConnectionItem;
 import org.talend.repository.model.hadoopcluster.HadoopSubConnection;
@@ -30,7 +31,7 @@ public abstract class AbstractHadoopSubConnectionCreator extends AbstractHadoopC
                 .getConnection();
         if (hcConnection != null) {
             connection.setRelativeHadoopClusterId(relativeHadoopClusterId);
-            hcConnection.getConnectionList().add(connectionItem.getProperty().getId());
+            hcConnection.getConnectionList().add(ProxyRepositoryFactory.getInstance().getFullId(connectionItem.getProperty()));
         }
     }
 
