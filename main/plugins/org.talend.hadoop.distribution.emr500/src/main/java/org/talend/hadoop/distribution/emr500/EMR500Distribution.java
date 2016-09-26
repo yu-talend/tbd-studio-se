@@ -39,6 +39,8 @@ import org.talend.hadoop.distribution.constants.PigOutputConstant;
 import org.talend.hadoop.distribution.constants.SparkBatchConstant;
 import org.talend.hadoop.distribution.constants.SparkStreamingConstant;
 import org.talend.hadoop.distribution.constants.emr.IAmazonEMRDistribution;
+
+import org.talend.hadoop.distribution.emr500.modulegroup.EMR500HBaseModuleGroup;
 import org.talend.hadoop.distribution.emr500.modulegroup.EMR500HCatalogModuleGroup;
 import org.talend.hadoop.distribution.emr500.modulegroup.EMR500HDFSModuleGroup;
 import org.talend.hadoop.distribution.emr500.modulegroup.EMR500HiveModuleGroup;
@@ -116,6 +118,8 @@ public class EMR500Distribution extends AbstractDistribution implements HBaseCom
         result.put(ComponentType.SPARKBATCH, EMR500SparkBatchModuleGroup.getModuleGroups());
         result.put(ComponentType.SPARKSTREAMING, EMR500SparkStreamingModuleGroup.getModuleGroups());
         result.put(ComponentType.SQOOP, EMR500SqoopModuleGroup.getModuleGroups());
+        result.put(ComponentType.HBASE, EMR500HBaseModuleGroup.getModuleGroups());
+
         return result;
     }
 
@@ -321,7 +325,7 @@ public class EMR500Distribution extends AbstractDistribution implements HBaseCom
 
     @Override
     public ESparkVersion getSparkVersion() {
-        return ESparkVersion.SPARK_1_6;
+        return ESparkVersion.SPARK_2_0;
     }
 
     @Override
