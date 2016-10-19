@@ -163,7 +163,7 @@ public class HCatalogServiceUtil {
             } else {
                 ReflectionUtils.invokeMethod(mapRClientConfig, "setCheckUGI", new Object[] { false }, boolean.class);//$NON-NLS-1$
             }
-            String version = hcConnection.getVersion();
+            String version = hcConnection.getDfVersion();
             Object[] argsObj = new Object[] { mapRTicketCluster, mapRTicketUsername, mapRTicketPassword, desiredTicketDurInSecs };
             if (version != null && "MAPR520".compareTo(version) <= 0) {//$NON-NLS-1$
                 argsObj = new Object[] { mapRTicketCluster, mapRTicketUsername, mapRTicketPassword, desiredTicketDurInSecs, "" };//$NON-NLS-1$
