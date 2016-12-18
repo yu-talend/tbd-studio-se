@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: CDH 5.9.0 distribution jars fragment
+Bundle-SymbolicName: org.talend.hadoop.distribution.cdh590.jars
+Bundle-Version: 6.3.1.qualifier
+Fragment-Host: org.talend.hadoop.distribution.cdh590
+Eclipse-BundleShape: dir

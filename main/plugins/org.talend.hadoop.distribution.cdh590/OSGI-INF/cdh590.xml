@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<component name="CDH580Distribution">
+  <implementation class="org.talend.hadoop.distribution.cdh590.CDH590Distribution"/>
+  <service>
+    <provide interface="org.talend.hadoop.distribution.component.HadoopComponent"/>
+  </service>
+</component>
