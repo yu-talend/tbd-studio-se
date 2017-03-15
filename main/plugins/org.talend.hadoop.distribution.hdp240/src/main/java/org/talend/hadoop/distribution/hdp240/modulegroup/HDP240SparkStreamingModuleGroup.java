@@ -33,7 +33,6 @@ public class HDP240SparkStreamingModuleGroup {
         hs.add(new DistributionModuleGroup(HDP240Constant.SPARK_MODULE_GROUP.getModuleName(), false, condition));
         hs.add(new DistributionModuleGroup(HDP240Constant.HDFS_MODULE_GROUP.getModuleName(), false, condition));
         hs.add(new DistributionModuleGroup(HDP240Constant.MAPREDUCE_MODULE_GROUP.getModuleName(), false, condition));
-        hs.add(new DistributionModuleGroup(HDP240Constant.TEZ_MODULE_GROUP.getModuleName(), false, condition));
         return hs;
     }
 
