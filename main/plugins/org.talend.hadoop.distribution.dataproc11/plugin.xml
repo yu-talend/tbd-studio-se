@@ -297,7 +297,6 @@
                 
              <library id="kryo-shaded-3.0.3.jar"/>
              <library id="scala-library-2.11.8.jar"/>
-             <library id="hadoop-mapreduce-client-core-2.7.3.jar"/>
 
              <library id="spark-catalyst_2.11-2.0.2.jar"/>
              <library id="spark-core_2.11-2.0.2.jar"/>
