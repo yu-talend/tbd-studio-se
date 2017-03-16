@@ -40,7 +40,7 @@ public class Dataproc11Distribution extends AbstractDistribution implements HDFS
 
     public static final String VERSION_DISPLAY = "Dataproc 1.1 (Apache 2.7.3)"; //$NON-NLS-1$
 
-    private final static String SPARK_MODULE_GROUP_NAME = "SPARK2-LIB-DATAPROC_1_1_LATEST"; //$NON-NLS-1$
+    private final static String SPARK_MODULE_GROUP_NAME = "SPARK2-LIB-DATAPROC11"; //$NON-NLS-1$
 
     protected Map<ComponentType, Set<DistributionModuleGroup>> moduleGroups;
 
@@ -94,7 +94,7 @@ public class Dataproc11Distribution extends AbstractDistribution implements HDFS
 
     @Override
     public boolean doSupportUseDatanodeHostname() {
-        return false;
+        return true;
     }
 
     @Override
@@ -184,4 +184,13 @@ public class Dataproc11Distribution extends AbstractDistribution implements HDFS
         return true;
     }
 
+    @Override
+    public boolean doSupportS3() {
+        return true;
+    }
+
+    @Override
+    public boolean doSupportOldImportMode() {
+        return false;
+    }
 }
