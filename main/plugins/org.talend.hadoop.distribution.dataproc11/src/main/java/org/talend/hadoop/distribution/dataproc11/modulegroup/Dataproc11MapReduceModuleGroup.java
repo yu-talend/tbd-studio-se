@@ -25,6 +25,7 @@ public class Dataproc11MapReduceModuleGroup {
         hs.add(new DistributionModuleGroup(Dataproc11Constant.HDFS_MODULE_GROUP.getModuleName()));
         hs.add(new DistributionModuleGroup(Dataproc11Constant.MAPREDUCE_MODULE_GROUP.getModuleName()));
         hs.add(new DistributionModuleGroup(Dataproc11Constant.MAPREDUCE_PARQUET_MODULE_GROUP.getModuleName()));
+        hs.add(new DistributionModuleGroup(Dataproc11Constant.BIGDATALAUNCHER_MODULE_GROUP.getModuleName(), true, null));
         hs.add(new DistributionModuleGroup(Dataproc11Constant.MAPREDUCE_PARQUET_MRREQUIRED_MODULE_GROUP.getModuleName(), true,
                 null));
         return hs;

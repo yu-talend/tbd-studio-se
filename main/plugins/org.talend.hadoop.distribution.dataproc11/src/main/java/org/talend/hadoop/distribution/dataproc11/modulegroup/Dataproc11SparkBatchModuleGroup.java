@@ -26,13 +26,15 @@ import org.talend.hadoop.distribution.dataproc11.Dataproc11Constant;
 public class Dataproc11SparkBatchModuleGroup {
 
     private final static ComponentCondition condition = new SimpleComponentCondition(new BasicExpression(
-            SparkBatchConstant.SPARK_LOCAL_MODE_PARAMETER, EqualityOperator.EQ, "false")); //$NON-NLS-1$
+                                                              SparkBatchConstant.SPARK_LOCAL_MODE_PARAMETER, EqualityOperator.EQ,
+                                                              "false")); //$NON-NLS-1$
 
     public static Set<DistributionModuleGroup> getModuleGroups() {
         Set<DistributionModuleGroup> hs = new HashSet<>();
         hs.add(new DistributionModuleGroup(Dataproc11Constant.HDFS_MODULE_GROUP.getModuleName(), false, condition));
         hs.add(new DistributionModuleGroup(Dataproc11Constant.MAPREDUCE_MODULE_GROUP.getModuleName(), false, condition));
         hs.add(new DistributionModuleGroup(Dataproc11Constant.SPARK_MODULE_GROUP.getModuleName(), false, condition));
+        hs.add(new DistributionModuleGroup(Dataproc11Constant.BIGDATALAUNCHER_MODULE_GROUP.getModuleName(), true, condition));
         hs.add(new DistributionModuleGroup(Dataproc11Constant.SPARK_MRREQUIRED_MODULE_GROUP.getModuleName(), false, condition));
         return hs;
     }

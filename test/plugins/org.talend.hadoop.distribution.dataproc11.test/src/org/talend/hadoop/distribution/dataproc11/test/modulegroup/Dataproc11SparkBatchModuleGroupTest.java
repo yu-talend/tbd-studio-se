@@ -12,7 +12,8 @@
 // ============================================================================
 package org.talend.hadoop.distribution.dataproc11.test.modulegroup;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -32,9 +33,9 @@ public class Dataproc11SparkBatchModuleGroupTest {
         results.put(Dataproc11Constant.MAPREDUCE_MODULE_GROUP.getModuleName(), "(SPARK_LOCAL_MODE=='false')"); //$NON-NLS-1$
         results.put(Dataproc11Constant.SPARK_MODULE_GROUP.getModuleName(), "(SPARK_LOCAL_MODE=='false')"); //$NON-NLS-1$
         results.put(Dataproc11Constant.SPARK_MRREQUIRED_MODULE_GROUP.getModuleName(), "(SPARK_LOCAL_MODE=='false')"); //$NON-NLS-1$
-
+        results.put(Dataproc11Constant.BIGDATALAUNCHER_MODULE_GROUP.getModuleName(), "(SPARK_LOCAL_MODE=='false')");
         Set<DistributionModuleGroup> moduleGroups = Dataproc11SparkBatchModuleGroup.getModuleGroups();
-        assertEquals(4, moduleGroups.size());
+        assertEquals(5, moduleGroups.size());
 
         for (DistributionModuleGroup module : moduleGroups) {
             assertTrue("Should contain module " + module.getModuleName(), results.containsKey(module.getModuleName())); //$NON-NLS-1$
