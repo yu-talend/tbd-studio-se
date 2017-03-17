@@ -378,6 +378,20 @@
             mvn_uri="mvn:org.talend.libraries/commons-collections-3.2.2/6.1.0">
         </libraryNeeded>
 
+		<!-- hive on spark -->
+        <libraryNeeded
+            context="plugin:org.talend.hadoop.distribution.dataproc11"
+            id="hive-exec-2.1.0-dataprop1.1"
+            name="hive-exec-2.1.0-dataprop1.1.jar"
+            mvn_uri="mvn:org.talend.libraries/hive-exec-2.1.0-dataprop1.1/6.4.0">
+        </libraryNeeded>
+        <libraryNeeded
+            context="plugin:org.talend.hadoop.distribution.dataproc11"
+            id="hive-metastore-2.1.0-dataprop1.1"
+            name="hive-metastore-2.1.0-dataprop1.1.jar"
+            mvn_uri="mvn:org.talend.libraries/hive-metastore-2.1.0-dataprop1.1/6.4.0">
+        </libraryNeeded>
+
         <!-- Groups -->
         
         <!-- Big Data launcher group -->
@@ -457,6 +471,7 @@
                 id="SPARK-LIB-DATAPROC11"
                 name="SPARK-LIB-DATAPROC11">  
              <library id="talend-bigdata-launcher-1.2.0-20160316" />
+			 <library id="scala-reflect-2.11.8.jar"/>
              <library id="kryo-shaded-3.0.3.jar"/>
              <library id="scala-library-2.11.8.jar"/>
 
@@ -486,6 +501,15 @@
              <library id="snappy-java-dataproc11"/>
         </libraryNeededGroup>
 
+        <!-- Spark Hive group MRREQUIRED -->
+        <libraryNeededGroup
+                description="Spark Hive libraries for GOOGLE DATAPROC 1.1 that are MRREQUIRED"
+                id="SPARK-HIVE-LIB-MRREQUIRED-DATAPROC11"
+                name="SPARK-HIVE-LIB-MRREQUIRED-DATAPROC11">
+            <library id="hive-exec-2.1.0-dataprop1.1"/>
+            <library id="hive-metastore-2.1.0-dataprop1.1"/>
+            <library id="libfb303-0.9.3.jar"/>
+        </libraryNeededGroup>
     </extension>
 
 </plugin>
