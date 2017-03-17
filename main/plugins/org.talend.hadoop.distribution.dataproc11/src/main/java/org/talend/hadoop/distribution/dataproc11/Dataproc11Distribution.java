@@ -183,6 +183,11 @@ public class Dataproc11Distribution extends AbstractDistribution implements HDFS
     }
 
     @Override
+    public boolean useCloudLauncher() {
+        return true;
+    }
+
+    @Override
     public boolean isGoogleDataprocDistribution() {
         return true;
     }
