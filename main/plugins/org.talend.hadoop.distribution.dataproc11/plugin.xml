@@ -87,7 +87,7 @@
 		    context="plugin:org.talend.hadoop.distribution.dataproc11"
 		    id="google-auth-library-oauth2-http-0.6.0"
 		    name="google-auth-library-oauth2-http-0.6.0.jar"
-		    mvn_uri="mvn:org.google-auth-library-oauth2-http-0.6.0talend.libraries//6.4.0">
+		    mvn_uri="mvn:org.talend.libraries/google-auth-library-oauth2-http-0.6.0/6.4.0">
         </libraryNeeded>
         <libraryNeeded
 		    context="plugin:org.talend.hadoop.distribution.dataproc11"
