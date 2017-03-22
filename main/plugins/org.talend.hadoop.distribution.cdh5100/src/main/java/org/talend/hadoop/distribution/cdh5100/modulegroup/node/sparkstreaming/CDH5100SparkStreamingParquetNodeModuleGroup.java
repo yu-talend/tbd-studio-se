@@ -19,7 +19,7 @@ import org.talend.hadoop.distribution.DistributionModuleGroup;
 import org.talend.hadoop.distribution.cdh5100.CDH5100Constant;
 import org.talend.hadoop.distribution.condition.common.SparkStreamingLinkedNodeCondition;
 
-public class CDH580SparkStreamingParquetNodeModuleGroup {
+public class CDH5100SparkStreamingParquetNodeModuleGroup {
 
     public static Set<DistributionModuleGroup> getModuleGroups(String distribution, String version) {
         Set<DistributionModuleGroup> hs = new HashSet<>();

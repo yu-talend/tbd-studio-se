@@ -23,7 +23,7 @@ import org.talend.hadoop.distribution.condition.EqualityOperator;
 import org.talend.hadoop.distribution.condition.SimpleComponentCondition;
 import org.talend.hadoop.distribution.constants.SparkBatchConstant;
 
-public class CDH580SparkBatchModuleGroup {
+public class CDH5100SparkBatchModuleGroup {
 
     private final static ComponentCondition condition = new SimpleComponentCondition(new BasicExpression(
             SparkBatchConstant.SPARK_LOCAL_MODE_PARAMETER, EqualityOperator.EQ, "false")); //$NON-NLS-1$

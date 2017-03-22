@@ -23,7 +23,7 @@ import org.talend.hadoop.distribution.condition.EqualityOperator;
 import org.talend.hadoop.distribution.condition.SimpleComponentCondition;
 import org.talend.hadoop.distribution.constants.PigOutputConstant;
 
-public class CDH580PigOutputModuleGroup {
+public class CDH5100PigOutputModuleGroup {
 
     public static Set<DistributionModuleGroup> getModuleGroups() {
         ComponentCondition hbaseStorerCondition = new SimpleComponentCondition(new BasicExpression(

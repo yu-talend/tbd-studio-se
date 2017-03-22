@@ -20,7 +20,7 @@ import org.talend.hadoop.distribution.cdh5100.CDH5100Constant;
 import org.talend.hadoop.distribution.condition.common.SparkStreamingLinkedNodeCondition;
 import org.talend.hadoop.distribution.constants.SparkStreamingConstant;
 
-public class CDH580SparkStreamingKafkaAvroModuleGroup {
+public class CDH5100SparkStreamingKafkaAvroModuleGroup {
 
     public static Set<DistributionModuleGroup> getModuleGroups(String distribution, String version) {
         Set<DistributionModuleGroup> hs = new HashSet<>();
@@ -30,7 +30,7 @@ public class CDH580SparkStreamingKafkaAvroModuleGroup {
                         SparkStreamingConstant.KAFKA_SPARKCONFIGURATION_LINKEDPARAMETER).getCondition());
         hs.add(dmg);
         // Add Spark Streaming Kafka dependencies as well
-        hs.addAll(CDH580SparkStreamingKafkaAssemblyModuleGroup.getModuleGroups(distribution, version));
+        hs.addAll(CDH5100SparkStreamingKafkaAssemblyModuleGroup.getModuleGroups(distribution, version));
         return hs;
     }
 }

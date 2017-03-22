@@ -22,7 +22,7 @@ import org.talend.hadoop.distribution.condition.ComponentCondition;
 import org.talend.hadoop.distribution.condition.SimpleComponentCondition;
 import org.talend.hadoop.distribution.constants.MRConstant;
 
-public class CDH580MapReduceModuleGroup {
+public class CDH5100MapReduceModuleGroup {
 
     public static Set<DistributionModuleGroup> getModuleGroups() {
         Set<DistributionModuleGroup> hs = new HashSet<>();

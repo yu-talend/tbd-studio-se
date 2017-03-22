@@ -23,7 +23,7 @@ import org.talend.hadoop.distribution.condition.EqualityOperator;
 import org.talend.hadoop.distribution.condition.SimpleComponentCondition;
 import org.talend.hadoop.distribution.constants.SparkStreamingConstant;
 
-public class CDH580SparkStreamingModuleGroup {
+public class CDH5100SparkStreamingModuleGroup {
 
     private final static ComponentCondition condition = new SimpleComponentCondition(new BasicExpression(
             SparkStreamingConstant.SPARKCONFIGURATION_IS_LOCAL_MODE_PARAMETER, EqualityOperator.EQ, "false")); //$NON-NLS-1$

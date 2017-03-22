@@ -25,7 +25,7 @@ import org.talend.hadoop.distribution.condition.ShowExpression;
 import org.talend.hadoop.distribution.condition.SimpleComponentCondition;
 import org.talend.hadoop.distribution.constants.HiveConstant;
 
-public class CDH580HiveModuleGroup {
+public class CDH5100HiveModuleGroup {
 
     public static Set<DistributionModuleGroup> getModuleGroups() {
         Set<DistributionModuleGroup> hs = new HashSet<>();

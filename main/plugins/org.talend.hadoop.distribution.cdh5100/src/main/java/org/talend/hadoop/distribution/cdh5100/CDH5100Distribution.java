@@ -25,29 +25,29 @@ import org.talend.hadoop.distribution.EHadoopVersion;
 import org.talend.hadoop.distribution.ESparkVersion;
 import org.talend.hadoop.distribution.NodeComponentTypeBean;
 import org.talend.hadoop.distribution.cdh5100.modulegroup.CDH5100HBaseModuleGroup;
-import org.talend.hadoop.distribution.cdh5100.modulegroup.CDH580HCatalogModuleGroup;
-import org.talend.hadoop.distribution.cdh5100.modulegroup.CDH580HDFSModuleGroup;
-import org.talend.hadoop.distribution.cdh5100.modulegroup.CDH580HiveModuleGroup;
-import org.talend.hadoop.distribution.cdh5100.modulegroup.CDH580HiveOnSparkModuleGroup;
-import org.talend.hadoop.distribution.cdh5100.modulegroup.CDH580ImpalaModuleGroup;
-import org.talend.hadoop.distribution.cdh5100.modulegroup.CDH580MapReduceModuleGroup;
-import org.talend.hadoop.distribution.cdh5100.modulegroup.CDH580PigModuleGroup;
-import org.talend.hadoop.distribution.cdh5100.modulegroup.CDH580PigOutputModuleGroup;
-import org.talend.hadoop.distribution.cdh5100.modulegroup.CDH580SparkBatchModuleGroup;
-import org.talend.hadoop.distribution.cdh5100.modulegroup.CDH580SparkStreamingModuleGroup;
-import org.talend.hadoop.distribution.cdh5100.modulegroup.CDH580SqoopModuleGroup;
+import org.talend.hadoop.distribution.cdh5100.modulegroup.CDH5100HCatalogModuleGroup;
+import org.talend.hadoop.distribution.cdh5100.modulegroup.CDH5100HDFSModuleGroup;
+import org.talend.hadoop.distribution.cdh5100.modulegroup.CDH5100HiveModuleGroup;
+import org.talend.hadoop.distribution.cdh5100.modulegroup.CDH5100HiveOnSparkModuleGroup;
+import org.talend.hadoop.distribution.cdh5100.modulegroup.CDH5100ImpalaModuleGroup;
+import org.talend.hadoop.distribution.cdh5100.modulegroup.CDH5100MapReduceModuleGroup;
+import org.talend.hadoop.distribution.cdh5100.modulegroup.CDH5100PigModuleGroup;
+import org.talend.hadoop.distribution.cdh5100.modulegroup.CDH5100PigOutputModuleGroup;
+import org.talend.hadoop.distribution.cdh5100.modulegroup.CDH5100SparkBatchModuleGroup;
+import org.talend.hadoop.distribution.cdh5100.modulegroup.CDH5100SparkStreamingModuleGroup;
+import org.talend.hadoop.distribution.cdh5100.modulegroup.CDH5100SqoopModuleGroup;
 import org.talend.hadoop.distribution.cdh5100.modulegroup.node.mr.CDH5100MRS3NodeModuleGroup;
 import org.talend.hadoop.distribution.cdh5100.modulegroup.node.pigoutput.CDH5100PigOutputNodeModuleGroup;
 import org.talend.hadoop.distribution.cdh5100.modulegroup.node.sparkbatch.CDH5100GraphFramesNodeModuleGroup;
 import org.talend.hadoop.distribution.cdh5100.modulegroup.node.sparkbatch.CDH5100SparkBatchParquetNodeModuleGroup;
 import org.talend.hadoop.distribution.cdh5100.modulegroup.node.sparkbatch.CDH5100SparkBatchS3NodeModuleGroup;
-import org.talend.hadoop.distribution.cdh5100.modulegroup.node.sparkstreaming.CDH580SparkStreamingFlumeNodeModuleGroup;
-import org.talend.hadoop.distribution.cdh5100.modulegroup.node.sparkstreaming.CDH580SparkStreamingKafkaAssemblyModuleGroup;
-import org.talend.hadoop.distribution.cdh5100.modulegroup.node.sparkstreaming.CDH580SparkStreamingKafkaAvroModuleGroup;
-import org.talend.hadoop.distribution.cdh5100.modulegroup.node.sparkstreaming.CDH580SparkStreamingKafkaClientModuleGroup;
-import org.talend.hadoop.distribution.cdh5100.modulegroup.node.sparkstreaming.CDH580SparkStreamingKinesisNodeModuleGroup;
-import org.talend.hadoop.distribution.cdh5100.modulegroup.node.sparkstreaming.CDH580SparkStreamingParquetNodeModuleGroup;
-import org.talend.hadoop.distribution.cdh5100.modulegroup.node.sparkstreaming.CDH580SparkStreamingS3NodeModuleGroup;
+import org.talend.hadoop.distribution.cdh5100.modulegroup.node.sparkstreaming.CDH5100SparkStreamingFlumeNodeModuleGroup;
+import org.talend.hadoop.distribution.cdh5100.modulegroup.node.sparkstreaming.CDH5100SparkStreamingKafkaAssemblyModuleGroup;
+import org.talend.hadoop.distribution.cdh5100.modulegroup.node.sparkstreaming.CDH5100SparkStreamingKafkaAvroModuleGroup;
+import org.talend.hadoop.distribution.cdh5100.modulegroup.node.sparkstreaming.CDH5100SparkStreamingKafkaClientModuleGroup;
+import org.talend.hadoop.distribution.cdh5100.modulegroup.node.sparkstreaming.CDH5100SparkStreamingKinesisNodeModuleGroup;
+import org.talend.hadoop.distribution.cdh5100.modulegroup.node.sparkstreaming.CDH5100SparkStreamingParquetNodeModuleGroup;
+import org.talend.hadoop.distribution.cdh5100.modulegroup.node.sparkstreaming.CDH5100SparkStreamingS3NodeModuleGroup;
 import org.talend.hadoop.distribution.component.HBaseComponent;
 import org.talend.hadoop.distribution.component.HCatalogComponent;
 import org.talend.hadoop.distribution.component.HDFSComponent;
@@ -71,9 +71,9 @@ public class CDH5100Distribution extends AbstractDistribution implements ICloude
         HCatalogComponent, PigComponent, MRComponent, HiveComponent, HiveOnSparkComponent, ImpalaComponent, SqoopComponent,
         SparkBatchComponent, SparkStreamingComponent {
 
-    public final static String VERSION = "Cloudera_CDH5_8";
+    public final static String VERSION = "Cloudera_CDH5_10";
 
-    public static final String VERSION_DISPLAY = "Cloudera CDH5.8(YARN mode)";
+    public static final String VERSION_DISPLAY = "Cloudera CDH5.10(YARN mode)";
 
     private final static String YARN_APPLICATION_CLASSPATH = "$HADOOP_CONF_DIR,$HADOOP_COMMON_HOME/*,$HADOOP_COMMON_HOME/lib/*,$HADOOP_HDFS_HOME/*,$HADOOP_HDFS_HOME/lib/*,$HADOOP_MAPRED_HOME/*,$HADOOP_MAPRED_HOME/lib/*,$YARN_HOME/*,$YARN_HOME/lib/*,$HADOOP_YARN_HOME/*,$HADOOP_YARN_HOME/lib/*,$HADOOP_COMMON_HOME/share/hadoop/common/*,$HADOOP_COMMON_HOME/share/hadoop/common/lib/*,$HADOOP_HDFS_HOME/share/hadoop/hdfs/*,$HADOOP_HDFS_HOME/share/hadoop/hdfs/lib/*,$HADOOP_YARN_HOME/share/hadoop/yarn/*,$HADOOP_YARN_HOME/share/hadoop/yarn/lib/*"; //$NON-NLS-1$
 
@@ -91,18 +91,18 @@ public class CDH5100Distribution extends AbstractDistribution implements ICloude
         // Used to add a module group import for the components that have a HADOOP_DISTRIBUTION parameter, aka. the
         // components that have the distribution list.
         moduleGroups = new HashMap<>();
-        moduleGroups.put(ComponentType.HDFS, CDH580HDFSModuleGroup.getModuleGroups());
+        moduleGroups.put(ComponentType.HDFS, CDH5100HDFSModuleGroup.getModuleGroups());
         moduleGroups.put(ComponentType.HBASE, CDH5100HBaseModuleGroup.getModuleGroups());
-        moduleGroups.put(ComponentType.HCATALOG, CDH580HCatalogModuleGroup.getModuleGroups());
-        moduleGroups.put(ComponentType.MAPREDUCE, CDH580MapReduceModuleGroup.getModuleGroups());
-        moduleGroups.put(ComponentType.PIG, CDH580PigModuleGroup.getModuleGroups());
-        moduleGroups.put(ComponentType.PIGOUTPUT, CDH580PigOutputModuleGroup.getModuleGroups());
-        moduleGroups.put(ComponentType.SQOOP, CDH580SqoopModuleGroup.getModuleGroups());
-        moduleGroups.put(ComponentType.HIVE, CDH580HiveModuleGroup.getModuleGroups());
-        moduleGroups.put(ComponentType.IMPALA, CDH580ImpalaModuleGroup.getModuleGroups());
-        moduleGroups.put(ComponentType.SPARKBATCH, CDH580SparkBatchModuleGroup.getModuleGroups());
-        moduleGroups.put(ComponentType.SPARKSTREAMING, CDH580SparkStreamingModuleGroup.getModuleGroups());
-        moduleGroups.put(ComponentType.HIVEONSPARK, CDH580HiveOnSparkModuleGroup.getModuleGroups());
+        moduleGroups.put(ComponentType.HCATALOG, CDH5100HCatalogModuleGroup.getModuleGroups());
+        moduleGroups.put(ComponentType.MAPREDUCE, CDH5100MapReduceModuleGroup.getModuleGroups());
+        moduleGroups.put(ComponentType.PIG, CDH5100PigModuleGroup.getModuleGroups());
+        moduleGroups.put(ComponentType.PIGOUTPUT, CDH5100PigOutputModuleGroup.getModuleGroups());
+        moduleGroups.put(ComponentType.SQOOP, CDH5100SqoopModuleGroup.getModuleGroups());
+        moduleGroups.put(ComponentType.HIVE, CDH5100HiveModuleGroup.getModuleGroups());
+        moduleGroups.put(ComponentType.IMPALA, CDH5100ImpalaModuleGroup.getModuleGroups());
+        moduleGroups.put(ComponentType.SPARKBATCH, CDH5100SparkBatchModuleGroup.getModuleGroups());
+        moduleGroups.put(ComponentType.SPARKSTREAMING, CDH5100SparkStreamingModuleGroup.getModuleGroups());
+        moduleGroups.put(ComponentType.HIVEONSPARK, CDH5100HiveOnSparkModuleGroup.getModuleGroups());
 
         // moduleGroups.put(ComponentType.SPARKBATCH, CDH580SparkBatchModuleGroup.getModuleGroups());
 
@@ -126,19 +126,19 @@ public class CDH5100Distribution extends AbstractDistribution implements ICloude
                 CDH5100GraphFramesNodeModuleGroup.getModuleGroups(distribution, version));
 
         nodeModuleGroups.put(new NodeComponentTypeBean(ComponentType.SPARKSTREAMING,
-                SparkStreamingConstant.PARQUET_INPUT_COMPONENT), CDH580SparkStreamingParquetNodeModuleGroup.getModuleGroups(
+                SparkStreamingConstant.PARQUET_INPUT_COMPONENT), CDH5100SparkStreamingParquetNodeModuleGroup.getModuleGroups(
                 distribution, version));
         nodeModuleGroups.put(new NodeComponentTypeBean(ComponentType.SPARKSTREAMING,
-                SparkStreamingConstant.PARQUET_OUTPUT_COMPONENT), CDH580SparkStreamingParquetNodeModuleGroup.getModuleGroups(
+                SparkStreamingConstant.PARQUET_OUTPUT_COMPONENT), CDH5100SparkStreamingParquetNodeModuleGroup.getModuleGroups(
                 distribution, version));
         nodeModuleGroups.put(new NodeComponentTypeBean(ComponentType.SPARKSTREAMING,
-                SparkStreamingConstant.PARQUET_STREAM_INPUT_COMPONENT), CDH580SparkStreamingParquetNodeModuleGroup
+                SparkStreamingConstant.PARQUET_STREAM_INPUT_COMPONENT), CDH5100SparkStreamingParquetNodeModuleGroup
                 .getModuleGroups(distribution, version));
         nodeModuleGroups.put(new NodeComponentTypeBean(ComponentType.SPARKSTREAMING,
-                SparkStreamingConstant.S3_CONFIGURATION_COMPONENT), CDH580SparkStreamingS3NodeModuleGroup.getModuleGroups(
+                SparkStreamingConstant.S3_CONFIGURATION_COMPONENT), CDH5100SparkStreamingS3NodeModuleGroup.getModuleGroups(
                 distribution, version));
 
-        Set<DistributionModuleGroup> kinesisNodeModuleGroups = CDH580SparkStreamingKinesisNodeModuleGroup.getModuleGroups(
+        Set<DistributionModuleGroup> kinesisNodeModuleGroups = CDH5100SparkStreamingKinesisNodeModuleGroup.getModuleGroups(
                 distribution, version);
         nodeModuleGroups.put(new NodeComponentTypeBean(ComponentType.SPARKSTREAMING,
                 SparkStreamingConstant.KINESIS_INPUT_COMPONENT), kinesisNodeModuleGroups);
@@ -147,7 +147,7 @@ public class CDH5100Distribution extends AbstractDistribution implements ICloude
         nodeModuleGroups.put(new NodeComponentTypeBean(ComponentType.SPARKSTREAMING,
                 SparkStreamingConstant.KINESIS_OUTPUT_COMPONENT), kinesisNodeModuleGroups);
 
-        Set<DistributionModuleGroup> flumeNodeModuleGroups = CDH580SparkStreamingFlumeNodeModuleGroup.getModuleGroups(
+        Set<DistributionModuleGroup> flumeNodeModuleGroups = CDH5100SparkStreamingFlumeNodeModuleGroup.getModuleGroups(
                 distribution, version);
         nodeModuleGroups.put(
                 new NodeComponentTypeBean(ComponentType.SPARKSTREAMING, SparkStreamingConstant.FLUME_INPUT_COMPONENT),
@@ -155,9 +155,9 @@ public class CDH5100Distribution extends AbstractDistribution implements ICloude
         nodeModuleGroups.put(new NodeComponentTypeBean(ComponentType.SPARKSTREAMING,
                 SparkStreamingConstant.FLUME_OUTPUT_COMPONENT), flumeNodeModuleGroups);
 
-        Set<DistributionModuleGroup> kafkaAssemblyModuleGroups = CDH580SparkStreamingKafkaAssemblyModuleGroup.getModuleGroups(
+        Set<DistributionModuleGroup> kafkaAssemblyModuleGroups = CDH5100SparkStreamingKafkaAssemblyModuleGroup.getModuleGroups(
                 distribution, version);
-        Set<DistributionModuleGroup> kafkaAvroModuleGroups = CDH580SparkStreamingKafkaAvroModuleGroup.getModuleGroups(
+        Set<DistributionModuleGroup> kafkaAvroModuleGroups = CDH5100SparkStreamingKafkaAvroModuleGroup.getModuleGroups(
                 distribution, version);
         nodeModuleGroups.put(
                 new NodeComponentTypeBean(ComponentType.SPARKSTREAMING, SparkStreamingConstant.KAFKA_INPUT_COMPONENT),
@@ -165,7 +165,7 @@ public class CDH5100Distribution extends AbstractDistribution implements ICloude
         nodeModuleGroups.put(new NodeComponentTypeBean(ComponentType.SPARKSTREAMING,
                 SparkStreamingConstant.KAFKA_AVRO_INPUT_COMPONENT), kafkaAvroModuleGroups);
         nodeModuleGroups.put(new NodeComponentTypeBean(ComponentType.SPARKSTREAMING,
-                SparkStreamingConstant.KAFKA_OUTPUT_COMPONENT), CDH580SparkStreamingKafkaClientModuleGroup.getModuleGroups(
+                SparkStreamingConstant.KAFKA_OUTPUT_COMPONENT), CDH5100SparkStreamingKafkaClientModuleGroup.getModuleGroups(
                 distribution, version));
 
         displayConditions = new HashMap<>();

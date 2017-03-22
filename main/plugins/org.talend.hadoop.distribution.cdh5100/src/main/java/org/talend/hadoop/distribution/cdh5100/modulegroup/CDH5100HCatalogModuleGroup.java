@@ -18,7 +18,7 @@ import java.util.Set;
 import org.talend.hadoop.distribution.DistributionModuleGroup;
 import org.talend.hadoop.distribution.cdh5100.CDH5100Constant;
 
-public class CDH580HCatalogModuleGroup {
+public class CDH5100HCatalogModuleGroup {
 
     public static Set<DistributionModuleGroup> getModuleGroups() {
         Set<DistributionModuleGroup> hs = new HashSet<>();
