@@ -20,9 +20,9 @@ import java.util.Set;
 
 import org.junit.Test;
 import org.talend.hadoop.distribution.DistributionModuleGroup;
-import org.talend.hadoop.distribution.cdh580.CDH580Constant;
-import org.talend.hadoop.distribution.cdh580.CDH580Distribution;
-import org.talend.hadoop.distribution.cdh580.modulegroup.node.sparkbatch.CDH580SparkBatchParquetNodeModuleGroup;
+import org.talend.hadoop.distribution.cdh5100.CDH5100Constant;
+import org.talend.hadoop.distribution.cdh5100.CDH5100Distribution;
+import org.talend.hadoop.distribution.cdh5100.modulegroup.node.sparkbatch.CDH5100SparkBatchParquetNodeModuleGroup;
 
 public class CDH5100SparkBatchParquetNodeModuleGroupTest {
 
@@ -31,11 +31,11 @@ public class CDH5100SparkBatchParquetNodeModuleGroupTest {
         Map<String, String> results = new HashMap<>();
 
         results.put(
-                CDH580Constant.SPARK_PARQUET_MRREQUIRED_MODULE_GROUP.getModuleName(),
+                CDH5100Constant.SPARK_PARQUET_MRREQUIRED_MODULE_GROUP.getModuleName(),
                 "((#LINK@NODE.SPARK_CONFIGURATION.DISTRIBUTION=='CLOUDERA') AND (#LINK@NODE.SPARK_CONFIGURATION.SPARK_VERSION=='Cloudera_CDH5_8')) AND (#LINK@NODE.SPARK_CONFIGURATION.SPARK_LOCAL_MODE=='false')"); //$NON-NLS-1$
 
-        Set<DistributionModuleGroup> moduleGroups = CDH580SparkBatchParquetNodeModuleGroup.getModuleGroups(
-                CDH580Distribution.DISTRIBUTION_NAME, CDH580Distribution.VERSION);
+        Set<DistributionModuleGroup> moduleGroups = CDH5100SparkBatchParquetNodeModuleGroup.getModuleGroups(
+                CDH5100Distribution.DISTRIBUTION_NAME, CDH5100Distribution.VERSION);
         assertEquals(results.size(), moduleGroups.size());
         moduleGroups.iterator();
         for (DistributionModuleGroup module : moduleGroups) {

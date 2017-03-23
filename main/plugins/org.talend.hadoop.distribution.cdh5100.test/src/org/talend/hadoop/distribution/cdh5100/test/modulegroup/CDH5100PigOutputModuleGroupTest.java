@@ -20,23 +20,23 @@ import java.util.Set;
 
 import org.junit.Test;
 import org.talend.hadoop.distribution.DistributionModuleGroup;
-import org.talend.hadoop.distribution.cdh580.CDH580Constant;
-import org.talend.hadoop.distribution.cdh580.modulegroup.CDH580PigOutputModuleGroup;
+import org.talend.hadoop.distribution.cdh5100.CDH5100Constant;
+import org.talend.hadoop.distribution.cdh5100.modulegroup.CDH5100PigOutputModuleGroup;
 
-public class CDH580PigOutputModuleGroupTest {
+public class CDH5100PigOutputModuleGroupTest {
 
     @Test
     public void testModuleGroups() throws Exception {
         Map<String, String> results = new HashMap<>();
 
-        results.put(CDH580Constant.PIG_HCATALOG_MODULE_GROUP.getModuleName(), "(STORE=='HCATSTORER')"); //$NON-NLS-1$
-        results.put(CDH580Constant.HBASE_MODULE_GROUP.getModuleName(), "(STORE=='HBASESTORAGE')"); //$NON-NLS-1$
-        results.put(CDH580Constant.PIG_HBASE_MODULE_GROUP.getModuleName(), "(STORE=='HBASESTORAGE')"); //$NON-NLS-1$
-        results.put(CDH580Constant.PIG_AVRO_MODULE_GROUP.getModuleName(), "(STORE=='AVROSTORAGE')"); //$NON-NLS-1$
-        results.put(CDH580Constant.PIG_RCFILE_MODULE_GROUP.getModuleName(), "(STORE=='RCFILEPIGSTORAGE')"); //$NON-NLS-1$
-        results.put(CDH580Constant.PIG_SEQUENCEFILE_MODULE_GROUP.getModuleName(), "(STORE=='SEQUENCEFILESTORAGE')"); //$NON-NLS-1$
+        results.put(CDH5100Constant.PIG_HCATALOG_MODULE_GROUP.getModuleName(), "(STORE=='HCATSTORER')"); //$NON-NLS-1$
+        results.put(CDH5100Constant.HBASE_MODULE_GROUP.getModuleName(), "(STORE=='HBASESTORAGE')"); //$NON-NLS-1$
+        results.put(CDH5100Constant.PIG_HBASE_MODULE_GROUP.getModuleName(), "(STORE=='HBASESTORAGE')"); //$NON-NLS-1$
+        results.put(CDH5100Constant.PIG_AVRO_MODULE_GROUP.getModuleName(), "(STORE=='AVROSTORAGE')"); //$NON-NLS-1$
+        results.put(CDH5100Constant.PIG_RCFILE_MODULE_GROUP.getModuleName(), "(STORE=='RCFILEPIGSTORAGE')"); //$NON-NLS-1$
+        results.put(CDH5100Constant.PIG_SEQUENCEFILE_MODULE_GROUP.getModuleName(), "(STORE=='SEQUENCEFILESTORAGE')"); //$NON-NLS-1$
 
-        Set<DistributionModuleGroup> moduleGroups = CDH580PigOutputModuleGroup.getModuleGroups();
+        Set<DistributionModuleGroup> moduleGroups = CDH5100PigOutputModuleGroup.getModuleGroups();
         assertEquals(6, moduleGroups.size());
         moduleGroups.iterator();
         for (DistributionModuleGroup module : moduleGroups) {

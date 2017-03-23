@@ -18,13 +18,13 @@ import java.util.Set;
 
 import org.junit.Test;
 import org.talend.hadoop.distribution.DistributionModuleGroup;
-import org.talend.hadoop.distribution.cdh580.modulegroup.CDH580HDFSModuleGroup;
+import org.talend.hadoop.distribution.cdh5100.modulegroup.CDH5100HDFSModuleGroup;
 
-public class CDH580HDFSModuleGroupTest {
+public class CDH5100HDFSModuleGroupTest {
 
     @Test
     public void testModuleGroups() throws Exception {
-        Set<DistributionModuleGroup> moduleGroups = CDH580HDFSModuleGroup.getModuleGroups();
+        Set<DistributionModuleGroup> moduleGroups = CDH5100HDFSModuleGroup.getModuleGroups();
         assertEquals(1, moduleGroups.size());
         for (DistributionModuleGroup module : moduleGroups) {
             assertEquals("HDFS-LIB-CDH_5_8", module.getModuleName()); //$NON-NLS-1$

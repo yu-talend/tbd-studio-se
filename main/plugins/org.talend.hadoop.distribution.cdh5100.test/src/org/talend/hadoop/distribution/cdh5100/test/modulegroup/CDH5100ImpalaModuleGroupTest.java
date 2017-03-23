@@ -20,18 +20,18 @@ import java.util.Set;
 
 import org.junit.Test;
 import org.talend.hadoop.distribution.DistributionModuleGroup;
-import org.talend.hadoop.distribution.cdh580.CDH580Constant;
-import org.talend.hadoop.distribution.cdh580.modulegroup.CDH580ImpalaModuleGroup;
+import org.talend.hadoop.distribution.cdh5100.CDH5100Constant;
+import org.talend.hadoop.distribution.cdh5100.modulegroup.CDH5100ImpalaModuleGroup;
 
-public class CDH580ImpalaModuleGroupTest {
+public class CDH5100ImpalaModuleGroupTest {
 
     @Test
     public void testModuleGroups() throws Exception {
         Map<String, String> results = new HashMap<>();
-        results.put(CDH580Constant.HIVE_MODULE_GROUP.getModuleName(), null);
-        results.put(CDH580Constant.HDFS_MODULE_GROUP.getModuleName(), null);
-        results.put(CDH580Constant.MAPREDUCE_MODULE_GROUP.getModuleName(), null);
-        Set<DistributionModuleGroup> moduleGroups = CDH580ImpalaModuleGroup.getModuleGroups();
+        results.put(CDH5100Constant.HIVE_MODULE_GROUP.getModuleName(), null);
+        results.put(CDH5100Constant.HDFS_MODULE_GROUP.getModuleName(), null);
+        results.put(CDH5100Constant.MAPREDUCE_MODULE_GROUP.getModuleName(), null);
+        Set<DistributionModuleGroup> moduleGroups = CDH5100ImpalaModuleGroup.getModuleGroups();
         assertEquals(3, moduleGroups.size());
         moduleGroups.iterator();
         for (DistributionModuleGroup module : moduleGroups) {

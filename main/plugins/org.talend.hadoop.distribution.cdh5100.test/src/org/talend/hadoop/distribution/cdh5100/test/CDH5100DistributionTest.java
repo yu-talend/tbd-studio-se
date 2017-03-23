@@ -17,7 +17,7 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 import org.talend.hadoop.distribution.EHadoopVersion;
 import org.talend.hadoop.distribution.ESparkVersion;
-import org.talend.hadoop.distribution.cdh580.CDH580Distribution;
+import org.talend.hadoop.distribution.cdh5100.CDH5100Distribution;
 import org.talend.hadoop.distribution.component.HBaseComponent;
 import org.talend.hadoop.distribution.component.HCatalogComponent;
 import org.talend.hadoop.distribution.component.HDFSComponent;
@@ -31,7 +31,7 @@ import org.talend.hadoop.distribution.component.SparkStreamingComponent;
 import org.talend.hadoop.distribution.component.SqoopComponent;
 
 /**
- * Test class for the {@link CDH580Distribution} distribution.
+ * Test class for the {@link CDH5100Distribution} distribution.
  *
  */
 public class CDH5100DistributionTest {
@@ -39,12 +39,12 @@ public class CDH5100DistributionTest {
     private final static String DEFAULT_YARN_APPLICATION_CLASSPATH = "$HADOOP_CONF_DIR,$HADOOP_COMMON_HOME/*,$HADOOP_COMMON_HOME/lib/*,$HADOOP_HDFS_HOME/*,$HADOOP_HDFS_HOME/lib/*,$HADOOP_MAPRED_HOME/*,$HADOOP_MAPRED_HOME/lib/*,$YARN_HOME/*,$YARN_HOME/lib/*,$HADOOP_YARN_HOME/*,$HADOOP_YARN_HOME/lib/*,$HADOOP_COMMON_HOME/share/hadoop/common/*,$HADOOP_COMMON_HOME/share/hadoop/common/lib/*,$HADOOP_HDFS_HOME/share/hadoop/hdfs/*,$HADOOP_HDFS_HOME/share/hadoop/hdfs/lib/*,$HADOOP_YARN_HOME/share/hadoop/yarn/*,$HADOOP_YARN_HOME/share/hadoop/yarn/lib/*"; //$NON-NLS-1$
 
     @Test
-    public void testCDH580Distribution() throws Exception {
-        HadoopComponent distribution = new CDH580Distribution();
+    public void testCDH5100Distribution() throws Exception {
+        HadoopComponent distribution = new CDH5100Distribution();
         assertNotNull(distribution.getDistributionName());
         assertNotNull(distribution.getVersionName(null));
-        assertEquals(CDH580Distribution.DISTRIBUTION_NAME, distribution.getDistribution());
-        assertEquals(CDH580Distribution.VERSION, distribution.getVersion());
+        assertEquals(CDH5100Distribution.DISTRIBUTION_NAME, distribution.getDistribution());
+        assertEquals(CDH5100Distribution.VERSION, distribution.getVersion());
         assertEquals(EHadoopVersion.HADOOP_2, distribution.getHadoopVersion());
         assertTrue(distribution.doSupportKerberos());
         assertTrue(distribution.doSupportUseDatanodeHostname());

@@ -20,20 +20,20 @@ import java.util.Set;
 
 import org.junit.Test;
 import org.talend.hadoop.distribution.DistributionModuleGroup;
-import org.talend.hadoop.distribution.cdh580.CDH580Constant;
-import org.talend.hadoop.distribution.cdh580.modulegroup.CDH580MapReduceModuleGroup;
+import org.talend.hadoop.distribution.cdh5100.CDH5100Constant;
+import org.talend.hadoop.distribution.cdh5100.modulegroup.CDH5100MapReduceModuleGroup;
 
-public class CDH580MapReduceModuleGroupTest {
+public class CDH5100MapReduceModuleGroupTest {
 
     @Test
     public void testModuleGroups() throws Exception {
         Map<String, String> results = new HashMap<>();
-        results.put(CDH580Constant.HDFS_MODULE_GROUP.getModuleName(), null);
-        results.put(CDH580Constant.MAPREDUCE_MODULE_GROUP.getModuleName(), null);
-        results.put(CDH580Constant.MAPREDUCE_PARQUET_MODULE_GROUP.getModuleName(), null);
-        results.put(CDH580Constant.MAPREDUCE_PARQUET_MRREQUIRED_MODULE_GROUP.getModuleName(), null);
-        results.put(CDH580Constant.TALEND_CLOUDERA_CDH_5_5_NAVIGATOR.getModuleName(), "(USE_CLOUDERA_NAVIGATOR=='true')"); //$NON-NLS-1$
-        Set<DistributionModuleGroup> moduleGroups = CDH580MapReduceModuleGroup.getModuleGroups();
+        results.put(CDH5100Constant.HDFS_MODULE_GROUP.getModuleName(), null);
+        results.put(CDH5100Constant.MAPREDUCE_MODULE_GROUP.getModuleName(), null);
+        results.put(CDH5100Constant.MAPREDUCE_PARQUET_MODULE_GROUP.getModuleName(), null);
+        results.put(CDH5100Constant.MAPREDUCE_PARQUET_MRREQUIRED_MODULE_GROUP.getModuleName(), null);
+        results.put(CDH5100Constant.TALEND_CLOUDERA_CDH_5_5_NAVIGATOR.getModuleName(), "(USE_CLOUDERA_NAVIGATOR=='true')"); //$NON-NLS-1$
+        Set<DistributionModuleGroup> moduleGroups = CDH5100MapReduceModuleGroup.getModuleGroups();
         assertEquals(5, moduleGroups.size());
         for (DistributionModuleGroup module : moduleGroups) {
             assertTrue("Should contain module " + module.getModuleName(), results.containsKey(module.getModuleName())); //$NON-NLS-1$
