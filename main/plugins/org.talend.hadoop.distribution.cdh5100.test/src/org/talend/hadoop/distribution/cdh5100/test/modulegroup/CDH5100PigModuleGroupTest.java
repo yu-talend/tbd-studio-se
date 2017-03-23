@@ -20,27 +20,27 @@ import java.util.Set;
 
 import org.junit.Test;
 import org.talend.hadoop.distribution.DistributionModuleGroup;
-import org.talend.hadoop.distribution.cdh580.CDH580Constant;
-import org.talend.hadoop.distribution.cdh580.modulegroup.CDH580PigModuleGroup;
+import org.talend.hadoop.distribution.cdh5100.CDH5100Constant;
+import org.talend.hadoop.distribution.cdh5100.modulegroup.CDH5100PigModuleGroup;
 
-public class CDH580PigModuleGroupTest {
+public class CDH5100PigModuleGroupTest {
 
     @Test
     public void testModuleGroups() throws Exception {
         Map<String, String> results = new HashMap<>();
-        results.put(CDH580Constant.PIG_MODULE_GROUP.getModuleName(), null);
-        results.put(CDH580Constant.HDFS_MODULE_GROUP.getModuleName(), null);
-        results.put(CDH580Constant.MAPREDUCE_MODULE_GROUP.getModuleName(), null);
-        results.put(CDH580Constant.PIG_HCATALOG_MODULE_GROUP.getModuleName(), "(LOAD=='HCATLOADER')"); //$NON-NLS-1$
-        results.put(CDH580Constant.HBASE_MODULE_GROUP.getModuleName(), "(LOAD=='HBASESTORAGE')"); //$NON-NLS-1$
-        results.put(CDH580Constant.PIG_HBASE_MODULE_GROUP.getModuleName(), "(LOAD=='HBASESTORAGE')"); //$NON-NLS-1$
-        results.put(CDH580Constant.PIG_PARQUET_MODULE_GROUP.getModuleName(), "(LOAD=='PARQUETLOADER')"); //$NON-NLS-1$
-        results.put(CDH580Constant.PIG_AVRO_MODULE_GROUP.getModuleName(), "(LOAD=='AVROSTORAGE')"); //$NON-NLS-1$
-        results.put(CDH580Constant.PIG_RCFILE_MODULE_GROUP.getModuleName(), "(LOAD=='RCFILEPIGSTORAGE')"); //$NON-NLS-1$
-        results.put(CDH580Constant.PIG_SEQUENCEFILE_MODULE_GROUP.getModuleName(), "(LOAD=='SEQUENCEFILELOADER')"); //$NON-NLS-1$
-        results.put(CDH580Constant.PIG_S3_MODULE_GROUP.getModuleName(), "(S3_LOCATION_LOAD=='true')"); //$NON-NLS-1$
+        results.put(CDH5100Constant.PIG_MODULE_GROUP.getModuleName(), null);
+        results.put(CDH5100Constant.HDFS_MODULE_GROUP.getModuleName(), null);
+        results.put(CDH5100Constant.MAPREDUCE_MODULE_GROUP.getModuleName(), null);
+        results.put(CDH5100Constant.PIG_HCATALOG_MODULE_GROUP.getModuleName(), "(LOAD=='HCATLOADER')"); //$NON-NLS-1$
+        results.put(CDH5100Constant.HBASE_MODULE_GROUP.getModuleName(), "(LOAD=='HBASESTORAGE')"); //$NON-NLS-1$
+        results.put(CDH5100Constant.PIG_HBASE_MODULE_GROUP.getModuleName(), "(LOAD=='HBASESTORAGE')"); //$NON-NLS-1$
+        results.put(CDH5100Constant.PIG_PARQUET_MODULE_GROUP.getModuleName(), "(LOAD=='PARQUETLOADER')"); //$NON-NLS-1$
+        results.put(CDH5100Constant.PIG_AVRO_MODULE_GROUP.getModuleName(), "(LOAD=='AVROSTORAGE')"); //$NON-NLS-1$
+        results.put(CDH5100Constant.PIG_RCFILE_MODULE_GROUP.getModuleName(), "(LOAD=='RCFILEPIGSTORAGE')"); //$NON-NLS-1$
+        results.put(CDH5100Constant.PIG_SEQUENCEFILE_MODULE_GROUP.getModuleName(), "(LOAD=='SEQUENCEFILELOADER')"); //$NON-NLS-1$
+        results.put(CDH5100Constant.PIG_S3_MODULE_GROUP.getModuleName(), "(S3_LOCATION_LOAD=='true')"); //$NON-NLS-1$
 
-        Set<DistributionModuleGroup> moduleGroups = CDH580PigModuleGroup.getModuleGroups();
+        Set<DistributionModuleGroup> moduleGroups = CDH5100PigModuleGroup.getModuleGroups();
         assertEquals(11, moduleGroups.size());
         moduleGroups.iterator();
         for (DistributionModuleGroup module : moduleGroups) {

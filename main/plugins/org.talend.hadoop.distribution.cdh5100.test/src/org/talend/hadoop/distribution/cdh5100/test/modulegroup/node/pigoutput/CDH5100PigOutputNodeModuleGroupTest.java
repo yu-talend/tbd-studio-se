@@ -20,9 +20,9 @@ import java.util.Set;
 
 import org.junit.Test;
 import org.talend.hadoop.distribution.DistributionModuleGroup;
-import org.talend.hadoop.distribution.cdh580.CDH580Constant;
-import org.talend.hadoop.distribution.cdh580.CDH580Distribution;
-import org.talend.hadoop.distribution.cdh580.modulegroup.node.pigoutput.CDH580PigOutputNodeModuleGroup;
+import org.talend.hadoop.distribution.cdh5100.CDH5100Constant;
+import org.talend.hadoop.distribution.cdh5100.CDH5100Distribution;
+import org.talend.hadoop.distribution.cdh5100.modulegroup.node.pigoutput.CDH5100PigOutputNodeModuleGroup;
 
 public class CDH5100PigOutputNodeModuleGroupTest {
 
@@ -30,14 +30,14 @@ public class CDH5100PigOutputNodeModuleGroupTest {
     public void testModuleGroups() throws Exception {
         Map<String, String> results = new HashMap<>();
 
-        results.put(CDH580Constant.PIG_PARQUET_MODULE_GROUP.getModuleName(),
+        results.put(CDH5100Constant.PIG_PARQUET_MODULE_GROUP.getModuleName(),
                 "(#LINK@NODE.ASSOCIATED_PIG_LOAD.DISTRIBUTION=='CLOUDERA') AND (#LINK@NODE.ASSOCIATED_PIG_LOAD.PIG_VERSION=='Cloudera_CDH5_8')"); //$NON-NLS-1$
-        results.put(CDH580Constant.PIG_S3_MODULE_GROUP.getModuleName(),
+        results.put(CDH5100Constant.PIG_S3_MODULE_GROUP.getModuleName(),
                 "(#LINK@NODE.ASSOCIATED_PIG_LOAD.DISTRIBUTION=='CLOUDERA') AND (#LINK@NODE.ASSOCIATED_PIG_LOAD.PIG_VERSION=='Cloudera_CDH5_8') " //$NON-NLS-1$
                         + "AND (S3_LOCATION=='true') AND (STORE!='HCATSTORER') AND (STORE!='HBASESTORAGE')"); //$NON-NLS-1$
 
-        Set<DistributionModuleGroup> moduleGroups = CDH580PigOutputNodeModuleGroup.getModuleGroups(
-                CDH580Distribution.DISTRIBUTION_NAME, CDH580Distribution.VERSION);
+        Set<DistributionModuleGroup> moduleGroups = CDH5100PigOutputNodeModuleGroup.getModuleGroups(
+                CDH5100Distribution.DISTRIBUTION_NAME, CDH5100Distribution.VERSION);
         assertEquals(results.size(), moduleGroups.size());
         moduleGroups.iterator();
         for (DistributionModuleGroup module : moduleGroups) {

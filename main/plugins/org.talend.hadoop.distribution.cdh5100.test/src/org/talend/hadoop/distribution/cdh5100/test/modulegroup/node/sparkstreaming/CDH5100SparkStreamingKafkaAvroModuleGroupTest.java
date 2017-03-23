@@ -20,9 +20,9 @@ import java.util.Set;
 
 import org.junit.Test;
 import org.talend.hadoop.distribution.DistributionModuleGroup;
-import org.talend.hadoop.distribution.cdh580.CDH580Constant;
-import org.talend.hadoop.distribution.cdh580.CDH580Distribution;
-import org.talend.hadoop.distribution.cdh580.modulegroup.node.sparkstreaming.CDH580SparkStreamingKafkaAvroModuleGroup;
+import org.talend.hadoop.distribution.cdh5100.CDH5100Constant;
+import org.talend.hadoop.distribution.cdh5100.CDH5100Distribution;
+import org.talend.hadoop.distribution.cdh5100.modulegroup.node.sparkstreaming.CDH5100SparkStreamingKafkaAvroModuleGroup;
 
 public class CDH5100SparkStreamingKafkaAvroModuleGroupTest {
 
@@ -30,14 +30,14 @@ public class CDH5100SparkStreamingKafkaAvroModuleGroupTest {
     public void testModuleGroups() throws Exception {
         Map<String, String> results = new HashMap<>();
         results.put(
-                CDH580Constant.SPARK_KAFKA_ASSEMBLY_MRREQUIRED_MODULE_GROUP.getModuleName(),
+                CDH5100Constant.SPARK_KAFKA_ASSEMBLY_MRREQUIRED_MODULE_GROUP.getModuleName(),
                 "((#LINK@NODE.STORAGE_CONFIGURATION.DISTRIBUTION=='CLOUDERA') AND (#LINK@NODE.STORAGE_CONFIGURATION.SPARK_VERSION=='Cloudera_CDH5_8')) AND (#LINK@NODE.STORAGE_CONFIGURATION.SPARK_LOCAL_MODE=='false')"); //$NON-NLS-1$
         results.put(
-                CDH580Constant.SPARK_KAFKA_AVRO_MRREQUIRED_MODULE_GROUP.getModuleName(),
+                CDH5100Constant.SPARK_KAFKA_AVRO_MRREQUIRED_MODULE_GROUP.getModuleName(),
                 "((#LINK@NODE.STORAGE_CONFIGURATION.DISTRIBUTION=='CLOUDERA') AND (#LINK@NODE.STORAGE_CONFIGURATION.SPARK_VERSION=='Cloudera_CDH5_8')) AND (#LINK@NODE.STORAGE_CONFIGURATION.SPARK_LOCAL_MODE=='false')"); //$NON-NLS-1$
 
-        Set<DistributionModuleGroup> moduleGroups = CDH580SparkStreamingKafkaAvroModuleGroup.getModuleGroups(
-                CDH580Distribution.DISTRIBUTION_NAME, CDH580Distribution.VERSION);
+        Set<DistributionModuleGroup> moduleGroups = CDH5100SparkStreamingKafkaAvroModuleGroup.getModuleGroups(
+                CDH5100Distribution.DISTRIBUTION_NAME, CDH5100Distribution.VERSION);
         assertEquals(results.size(), moduleGroups.size());
         moduleGroups.iterator();
         for (DistributionModuleGroup module : moduleGroups) {

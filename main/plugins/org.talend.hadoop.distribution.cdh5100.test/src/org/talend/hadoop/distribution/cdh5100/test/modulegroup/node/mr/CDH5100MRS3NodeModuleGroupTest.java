@@ -20,9 +20,9 @@ import java.util.Set;
 
 import org.junit.Test;
 import org.talend.hadoop.distribution.DistributionModuleGroup;
-import org.talend.hadoop.distribution.cdh580.CDH580Constant;
-import org.talend.hadoop.distribution.cdh580.CDH580Distribution;
-import org.talend.hadoop.distribution.cdh580.modulegroup.node.mr.CDH580MRS3NodeModuleGroup;
+import org.talend.hadoop.distribution.cdh5100.CDH5100Constant;
+import org.talend.hadoop.distribution.cdh5100.CDH5100Distribution;
+import org.talend.hadoop.distribution.cdh5100.modulegroup.node.mr.CDH5100MRS3NodeModuleGroup;
 
 public class CDH5100MRS3NodeModuleGroupTest {
 
@@ -30,11 +30,11 @@ public class CDH5100MRS3NodeModuleGroupTest {
     public void testModuleGroups() throws Exception {
         Map<String, String> results = new HashMap<>();
 
-        results.put(CDH580Constant.SPARK_S3_MRREQUIRED_MODULE_GROUP.getModuleName(),
+        results.put(CDH5100Constant.SPARK_S3_MRREQUIRED_MODULE_GROUP.getModuleName(),
                 "((#LINK@NODE.MR_CONFIGURATION.DISTRIBUTION=='CLOUDERA') AND (#LINK@NODE.MR_CONFIGURATION.MR_VERSION=='Cloudera_CDH5_8'))"); //$NON-NLS-1$
 
-        Set<DistributionModuleGroup> moduleGroups = CDH580MRS3NodeModuleGroup.getModuleGroups(
-                CDH580Distribution.DISTRIBUTION_NAME, CDH580Distribution.VERSION);
+        Set<DistributionModuleGroup> moduleGroups = CDH5100MRS3NodeModuleGroup.getModuleGroups(
+                CDH5100Distribution.DISTRIBUTION_NAME, CDH5100Distribution.VERSION);
         assertEquals(results.size(), moduleGroups.size());
         moduleGroups.iterator();
         for (DistributionModuleGroup module : moduleGroups) {

@@ -20,21 +20,21 @@ import java.util.Set;
 
 import org.junit.Test;
 import org.talend.hadoop.distribution.DistributionModuleGroup;
-import org.talend.hadoop.distribution.cdh580.CDH580Constant;
-import org.talend.hadoop.distribution.cdh580.modulegroup.CDH580SqoopModuleGroup;
+import org.talend.hadoop.distribution.cdh5100.CDH5100Constant;
+import org.talend.hadoop.distribution.cdh5100.modulegroup.CDH5100SqoopModuleGroup;
 
-public class CDH580SqoopModuleGroupTest {
+public class CDH5100SqoopModuleGroupTest {
 
     @Test
     public void testModuleGroups() throws Exception {
         Map<String, String> results = new HashMap<>();
 
-        results.put(CDH580Constant.SQOOP_MODULE_GROUP.getModuleName(), null);
-        results.put(CDH580Constant.HDFS_MODULE_GROUP.getModuleName(), null);
-        results.put(CDH580Constant.MAPREDUCE_MODULE_GROUP.getModuleName(), null);
-        results.put(CDH580Constant.SQOOP_PARQUET_MODULE_GROUP.getModuleName(), null);
+        results.put(CDH5100Constant.SQOOP_MODULE_GROUP.getModuleName(), null);
+        results.put(CDH5100Constant.HDFS_MODULE_GROUP.getModuleName(), null);
+        results.put(CDH5100Constant.MAPREDUCE_MODULE_GROUP.getModuleName(), null);
+        results.put(CDH5100Constant.SQOOP_PARQUET_MODULE_GROUP.getModuleName(), null);
 
-        Set<DistributionModuleGroup> moduleGroups = CDH580SqoopModuleGroup.getModuleGroups();
+        Set<DistributionModuleGroup> moduleGroups = CDH5100SqoopModuleGroup.getModuleGroups();
         assertEquals(results.size(), moduleGroups.size());
         moduleGroups.iterator();
         for (DistributionModuleGroup module : moduleGroups) {

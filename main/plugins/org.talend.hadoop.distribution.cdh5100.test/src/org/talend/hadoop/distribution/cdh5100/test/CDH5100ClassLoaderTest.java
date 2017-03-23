@@ -17,7 +17,7 @@ import org.talend.core.database.EDatabaseTypeName;
 import org.talend.core.hadoop.EHadoopCategory;
 import org.talend.core.model.metadata.connection.hive.HiveModeInfo;
 import org.talend.core.model.metadata.connection.hive.HiveServerVersionInfo;
-import org.talend.hadoop.distribution.cdh580.CDH580Distribution;
+import org.talend.hadoop.distribution.cdh5100.CDH5100Distribution;
 import org.talend.hadoop.distribution.component.HadoopComponent;
 import org.talend.hadoop.distribution.test.classloader.AbstractTest4ClassLoaderProvider;
 
@@ -30,7 +30,7 @@ public class CDH5100ClassLoaderTest extends AbstractTest4ClassLoaderProvider {
 
     @Override
     protected Class<? extends HadoopComponent> getHadoopComponentClass() {
-        return CDH580Distribution.class;
+        return CDH5100Distribution.class;
     }
 
     @Test
