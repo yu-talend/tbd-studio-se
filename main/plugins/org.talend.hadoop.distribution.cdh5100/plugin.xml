@@ -230,16 +230,16 @@
         <!-- Spark libraries -->
         <libraryNeeded
             context="plugin:org.talend.hadoop.distribution.cdh5100"
-            id="spark-assembly-cdh5.10"
-            name="talend-spark-assembly-1.6.0-cdh5.8.1-hadoop2.6.0-cdh5.8.1-with-hive.jar"
-            mvn_uri="mvn:org.talend.libraries/talend-spark-assembly-1.6.0-cdh5.8.1-hadoop2.6.0-cdh5.8.1-with-hive/6.1.0">
+            id="spark-assembly-1.6.0-cdh5.10.0-hadoop2.6.0-cdh5.10.0"
+            name="spark-assembly-1.6.0-cdh5.10.0-hadoop2.6.0-cdh5.10.0"
+            mvn_uri="mvn:org.talend.libraries/spark-assembly-1.6.0-cdh5.10.0-hadoop2.6.0-cdh5.10.0/6.1.0">
         </libraryNeeded>
         
         <libraryNeeded
             context="plugin:org.talend.hadoop.distribution.cdh5100"
-            id="parquet-avro-cdh5.7.0"
-            name="parquet-avro-1.5.0-cdh5.7.0.jar"
-            mvn_uri="mvn:org.talend.libraries/parquet-avro-1.5.0-cdh5.7.0/6.1.0">
+            id="parquet-avro-1.5.0-cdh5.10.0"
+            name="parquet-avro-1.5.0-cdh5.10.0"
+            mvn_uri="mvn:org.talend.libraries/parquet-avro-1.5.0-cdh5.10.0/6.1.0">
         </libraryNeeded>
               
         <!-- Sqoop libraries -->
@@ -770,7 +770,7 @@
             <library id="high-scale-lib-1.1.1.jar"/>
             <library id="hive-hbase-handler-cdh5.10"/>
             <library id="netty-all-4.0.23.Final.jar"/>
-            <library id="parquet-avro-cdh5.7.0"/>
+            <library id="parquet-avro-1.5.0-cdh5.10.0"/>
         </libraryNeededGroup>
         
          <!-- Spark group -->
@@ -778,7 +778,7 @@
                 description="Spark libraries for CDH 5.10"
                 id="SPARK-LIB-CDH_5_10"
                 name="SPARK-LIB-CDH_5_10">
-             <library id="spark-assembly-cdh5.10" />
+             <library id="spark-assembly-1.6.0-cdh5.10.0-hadoop2.6.0-cdh5.10.0" />
              <library id="jersey-server-1.14.jar" />
              <library id="jersey-servlet-1.14.jar" />
              <library id="jackson-databind-2.3.1.jar" />
@@ -801,7 +801,7 @@
                 description="Spark libraries for CDH 5.10 that are MRREQUIRED"
                 id="SPARK-PARQUET-LIB-MRREQUIRED-CDH_5_10"
                 name="SPARK-PARQUET-LIB-MRREQUIRED-CDH_5_10">
-             <library id="parquet-avro-cdh5.7.0"/>
+             <library id="parquet-avro-1.5.0-cdh5.10.0"/>
              <library id="parquet-hadoop-bundle-cdh5.7.0"/>
              <library id="jodd-core-3.5.2.jar" />             
         </libraryNeededGroup>
@@ -932,7 +932,7 @@
             <library id="kite-hadoop-compatibility-1.0.0-cdh5.10"/>
             <library id="jackson-databind-2.2.3.jar"/>
             <library id="jackson-core-2.2.3.jar"/>
-            <library id="parquet-avro-cdh5.7.0"/>
+            <library id="parquet-avro-1.5.0-cdh5.10.0"/>
         </libraryNeededGroup>
     </extension>
     <extension
@@ -943,15 +943,15 @@
       </classloader>
       <classloader
             index="HIVE:CLOUDERA:Cloudera_CDH5_10:STANDALONE"
-            libraries="antlr-runtime-3.4.jar;avro-1.7.6-cdh5.8.1.jar;commons-cli-1.2.jar;commons-codec-1.9.jar;commons-collections-3.2.2.jar;commons-configuration-1.6.jar;commons-httpclient-3.0.1.jar;commons-io-2.4.jar;commons-lang-2.6.jar;commons-logging-1.2.jar;curator-client-2.6.0.jar;curator-framework-2.6.0.jar;datanucleus-api-jdo-3.2.6.jar;datanucleus-core-3.2.10.jar;datanucleus-rdbms-3.2.9.jar;derby-10.11.1.1.jar;guava-12.0.1.jar;hadoop-auth-2.6.0-cdh5.8.1.jar;hadoop-common-2.6.0-cdh5.8.1.jar;hadoop-hdfs-2.6.0-cdh5.8.1.jar;hadoop-mapreduce-client-common-2.6.0-cdh5.8.1.jar;hadoop-mapreduce-client-core-2.6.0-cdh5.8.1.jar;hadoop-mapreduce-client-jobclient-2.6.0-cdh5.8.1.jar;hadoop-yarn-api-2.6.0-cdh5.8.1.jar;hadoop-yarn-client-2.6.0-cdh5.8.1.jar;hadoop-yarn-common-2.6.0-cdh5.8.1.jar;hadoop-yarn-server-web-proxy-2.6.0-cdh5.8.1.jar;hbase-client-1.2.0-cdh5.8.1.jar;hbase-common-1.2.0-cdh5.8.1.jar;hbase-hadoop-compat-1.2.0-cdh5.8.1.jar;hbase-protocol-1.2.0-cdh5.8.1.jar;hbase-server-1.2.0-cdh5.8.1.jar;high-scale-lib-1.1.1.jar;hive-exec-1.1.0-cdh5.8.1.jar;hive-hbase-handler-1.1.0-cdh5.8.1.jar;hive-jdbc-1.1.0-cdh5.8.1.jar;hive-metastore-1.1.0-cdh5.8.1.jar;hive-service-1.1.0-cdh5.8.1.jar;htrace-core-3.2.0-incubating.jar;htrace-core4-4.0.1-incubating.jar;httpclient-4.2.5.jar;httpcore-4.2.5.jar;jackson-core-asl-1.8.8.jar;jackson-jaxrs-1.8.8.jar;jackson-mapper-asl-1.8.8.jar;jackson-xc-1.8.8.jar;jdo-api-3.0.1.jar;jersey-client-1.9.jar;jersey-core-1.9.jar;libfb303-0.9.2.jar;libthrift-0.9.2.jar;log4j-1.2.17.jar;netty-all-4.0.23.Final.jar;parquet-avro-1.5.0-cdh5.7.0.jar;protobuf-java-2.5.0.jar;servlet-api-2.5.jar;slf4j-api-1.7.5.jar;slf4j-log4j12-1.7.5.jar;zookeeper-3.4.5-cdh5.8.1.jar">
+            libraries="antlr-runtime-3.4.jar;avro-1.7.6-cdh5.8.1.jar;commons-cli-1.2.jar;commons-codec-1.9.jar;commons-collections-3.2.2.jar;commons-configuration-1.6.jar;commons-httpclient-3.0.1.jar;commons-io-2.4.jar;commons-lang-2.6.jar;commons-logging-1.2.jar;curator-client-2.6.0.jar;curator-framework-2.6.0.jar;datanucleus-api-jdo-3.2.6.jar;datanucleus-core-3.2.10.jar;datanucleus-rdbms-3.2.9.jar;derby-10.11.1.1.jar;guava-12.0.1.jar;hadoop-auth-2.6.0-cdh5.8.1.jar;hadoop-common-2.6.0-cdh5.8.1.jar;hadoop-hdfs-2.6.0-cdh5.8.1.jar;hadoop-mapreduce-client-common-2.6.0-cdh5.8.1.jar;hadoop-mapreduce-client-core-2.6.0-cdh5.8.1.jar;hadoop-mapreduce-client-jobclient-2.6.0-cdh5.8.1.jar;hadoop-yarn-api-2.6.0-cdh5.8.1.jar;hadoop-yarn-client-2.6.0-cdh5.8.1.jar;hadoop-yarn-common-2.6.0-cdh5.8.1.jar;hadoop-yarn-server-web-proxy-2.6.0-cdh5.8.1.jar;hbase-client-1.2.0-cdh5.8.1.jar;hbase-common-1.2.0-cdh5.8.1.jar;hbase-hadoop-compat-1.2.0-cdh5.8.1.jar;hbase-protocol-1.2.0-cdh5.8.1.jar;hbase-server-1.2.0-cdh5.8.1.jar;high-scale-lib-1.1.1.jar;hive-exec-1.1.0-cdh5.8.1.jar;hive-hbase-handler-1.1.0-cdh5.8.1.jar;hive-jdbc-1.1.0-cdh5.8.1.jar;hive-metastore-1.1.0-cdh5.8.1.jar;hive-service-1.1.0-cdh5.8.1.jar;htrace-core-3.2.0-incubating.jar;htrace-core4-4.0.1-incubating.jar;httpclient-4.2.5.jar;httpcore-4.2.5.jar;jackson-core-asl-1.8.8.jar;jackson-jaxrs-1.8.8.jar;jackson-mapper-asl-1.8.8.jar;jackson-xc-1.8.8.jar;jdo-api-3.0.1.jar;jersey-client-1.9.jar;jersey-core-1.9.jar;libfb303-0.9.2.jar;libthrift-0.9.2.jar;log4j-1.2.17.jar;netty-all-4.0.23.Final.jar;parquet-avro-1.5.0-cdh5.10.0.jar;protobuf-java-2.5.0.jar;servlet-api-2.5.jar;slf4j-api-1.7.5.jar;slf4j-log4j12-1.7.5.jar;zookeeper-3.4.5-cdh5.8.1.jar">
       </classloader>
       <classloader
             index="HIVE2:CLOUDERA:Cloudera_CDH5_10:EMBEDDED"
-            libraries="antlr-runtime-3.4.jar;avro-1.7.6-cdh5.8.1.jar;commons-cli-1.2.jar;commons-codec-1.9.jar;commons-collections-3.2.2.jar;commons-configuration-1.6.jar;commons-httpclient-3.0.1.jar;commons-io-2.4.jar;commons-lang-2.6.jar;commons-logging-1.2.jar;curator-client-2.6.0.jar;curator-framework-2.6.0.jar;datanucleus-api-jdo-3.2.6.jar;datanucleus-core-3.2.10.jar;datanucleus-rdbms-3.2.9.jar;derby-10.11.1.1.jar;guava-12.0.1.jar;hadoop-auth-2.6.0-cdh5.8.1.jar;hadoop-common-2.6.0-cdh5.8.1.jar;hadoop-hdfs-2.6.0-cdh5.8.1.jar;hadoop-mapreduce-client-common-2.6.0-cdh5.8.1.jar;hadoop-mapreduce-client-core-2.6.0-cdh5.8.1.jar;hadoop-mapreduce-client-jobclient-2.6.0-cdh5.8.1.jar;hadoop-yarn-api-2.6.0-cdh5.8.1.jar;hadoop-yarn-client-2.6.0-cdh5.8.1.jar;hadoop-yarn-common-2.6.0-cdh5.8.1.jar;hadoop-yarn-server-web-proxy-2.6.0-cdh5.8.1.jar;hbase-client-1.2.0-cdh5.8.1.jar;hbase-common-1.2.0-cdh5.8.1.jar;hbase-hadoop-compat-1.2.0-cdh5.8.1.jar;hbase-protocol-1.2.0-cdh5.8.1.jar;hbase-server-1.2.0-cdh5.8.1.jar;high-scale-lib-1.1.1.jar;hive-exec-1.1.0-cdh5.8.1.jar;hive-hbase-handler-1.1.0-cdh5.8.1.jar;hive-jdbc-1.1.0-cdh5.8.1.jar;hive-metastore-1.1.0-cdh5.8.1.jar;hive-service-1.1.0-cdh5.8.1.jar;htrace-core-3.2.0-incubating.jar;htrace-core4-4.0.1-incubating.jar;httpclient-4.2.5.jar;httpcore-4.2.5.jar;jackson-core-asl-1.8.8.jar;jackson-jaxrs-1.8.8.jar;jackson-mapper-asl-1.8.8.jar;jackson-xc-1.8.8.jar;jdo-api-3.0.1.jar;jersey-client-1.9.jar;jersey-core-1.9.jar;libfb303-0.9.2.jar;libthrift-0.9.2.jar;log4j-1.2.17.jar;netty-all-4.0.23.Final.jar;parquet-avro-1.5.0-cdh5.7.0.jar;protobuf-java-2.5.0.jar;servlet-api-2.5.jar;slf4j-api-1.7.5.jar;slf4j-log4j12-1.7.5.jar;zookeeper-3.4.5-cdh5.8.1.jar">
+            libraries="antlr-runtime-3.4.jar;avro-1.7.6-cdh5.8.1.jar;commons-cli-1.2.jar;commons-codec-1.9.jar;commons-collections-3.2.2.jar;commons-configuration-1.6.jar;commons-httpclient-3.0.1.jar;commons-io-2.4.jar;commons-lang-2.6.jar;commons-logging-1.2.jar;curator-client-2.6.0.jar;curator-framework-2.6.0.jar;datanucleus-api-jdo-3.2.6.jar;datanucleus-core-3.2.10.jar;datanucleus-rdbms-3.2.9.jar;derby-10.11.1.1.jar;guava-12.0.1.jar;hadoop-auth-2.6.0-cdh5.8.1.jar;hadoop-common-2.6.0-cdh5.8.1.jar;hadoop-hdfs-2.6.0-cdh5.8.1.jar;hadoop-mapreduce-client-common-2.6.0-cdh5.8.1.jar;hadoop-mapreduce-client-core-2.6.0-cdh5.8.1.jar;hadoop-mapreduce-client-jobclient-2.6.0-cdh5.8.1.jar;hadoop-yarn-api-2.6.0-cdh5.8.1.jar;hadoop-yarn-client-2.6.0-cdh5.8.1.jar;hadoop-yarn-common-2.6.0-cdh5.8.1.jar;hadoop-yarn-server-web-proxy-2.6.0-cdh5.8.1.jar;hbase-client-1.2.0-cdh5.8.1.jar;hbase-common-1.2.0-cdh5.8.1.jar;hbase-hadoop-compat-1.2.0-cdh5.8.1.jar;hbase-protocol-1.2.0-cdh5.8.1.jar;hbase-server-1.2.0-cdh5.8.1.jar;high-scale-lib-1.1.1.jar;hive-exec-1.1.0-cdh5.8.1.jar;hive-hbase-handler-1.1.0-cdh5.8.1.jar;hive-jdbc-1.1.0-cdh5.8.1.jar;hive-metastore-1.1.0-cdh5.8.1.jar;hive-service-1.1.0-cdh5.8.1.jar;htrace-core-3.2.0-incubating.jar;htrace-core4-4.0.1-incubating.jar;httpclient-4.2.5.jar;httpcore-4.2.5.jar;jackson-core-asl-1.8.8.jar;jackson-jaxrs-1.8.8.jar;jackson-mapper-asl-1.8.8.jar;jackson-xc-1.8.8.jar;jdo-api-3.0.1.jar;jersey-client-1.9.jar;jersey-core-1.9.jar;libfb303-0.9.2.jar;libthrift-0.9.2.jar;log4j-1.2.17.jar;netty-all-4.0.23.Final.jar;parquet-avro-1.5.0-cdh5.10.0.jar;protobuf-java-2.5.0.jar;servlet-api-2.5.jar;slf4j-api-1.7.5.jar;slf4j-log4j12-1.7.5.jar;zookeeper-3.4.5-cdh5.8.1.jar">
       </classloader>
       <classloader
             index="HIVE2:CLOUDERA:Cloudera_CDH5_10:STANDALONE"
-            libraries="antlr-runtime-3.4.jar;avro-1.7.6-cdh5.8.1.jar;commons-cli-1.2.jar;commons-codec-1.9.jar;commons-collections-3.2.2.jar;commons-configuration-1.6.jar;commons-httpclient-3.0.1.jar;commons-io-2.4.jar;commons-lang-2.6.jar;commons-logging-1.2.jar;curator-client-2.6.0.jar;curator-framework-2.6.0.jar;datanucleus-api-jdo-3.2.6.jar;datanucleus-core-3.2.10.jar;datanucleus-rdbms-3.2.9.jar;derby-10.11.1.1.jar;guava-12.0.1.jar;hadoop-auth-2.6.0-cdh5.8.1.jar;hadoop-common-2.6.0-cdh5.8.1.jar;hadoop-hdfs-2.6.0-cdh5.8.1.jar;hadoop-mapreduce-client-common-2.6.0-cdh5.8.1.jar;hadoop-mapreduce-client-core-2.6.0-cdh5.8.1.jar;hadoop-mapreduce-client-jobclient-2.6.0-cdh5.8.1.jar;hadoop-yarn-api-2.6.0-cdh5.8.1.jar;hadoop-yarn-client-2.6.0-cdh5.8.1.jar;hadoop-yarn-common-2.6.0-cdh5.8.1.jar;hadoop-yarn-server-web-proxy-2.6.0-cdh5.8.1.jar;hbase-client-1.2.0-cdh5.8.1.jar;hbase-common-1.2.0-cdh5.8.1.jar;hbase-hadoop-compat-1.2.0-cdh5.8.1.jar;hbase-protocol-1.2.0-cdh5.8.1.jar;hbase-server-1.2.0-cdh5.8.1.jar;high-scale-lib-1.1.1.jar;hive-exec-1.1.0-cdh5.8.1.jar;hive-hbase-handler-1.1.0-cdh5.8.1.jar;hive-jdbc-1.1.0-cdh5.8.1.jar;hive-metastore-1.1.0-cdh5.8.1.jar;hive-service-1.1.0-cdh5.8.1.jar;htrace-core-3.2.0-incubating.jar;htrace-core4-4.0.1-incubating.jar;httpclient-4.2.5.jar;httpcore-4.2.5.jar;jackson-core-asl-1.8.8.jar;jackson-jaxrs-1.8.8.jar;jackson-mapper-asl-1.8.8.jar;jackson-xc-1.8.8.jar;jdo-api-3.0.1.jar;jersey-client-1.9.jar;jersey-core-1.9.jar;libfb303-0.9.2.jar;libthrift-0.9.2.jar;log4j-1.2.17.jar;netty-all-4.0.23.Final.jar;parquet-avro-1.5.0-cdh5.7.0.jar;protobuf-java-2.5.0.jar;servlet-api-2.5.jar;slf4j-api-1.7.5.jar;slf4j-log4j12-1.7.5.jar;zookeeper-3.4.5-cdh5.8.1.jar">
+            libraries="antlr-runtime-3.4.jar;avro-1.7.6-cdh5.8.1.jar;commons-cli-1.2.jar;commons-codec-1.9.jar;commons-collections-3.2.2.jar;commons-configuration-1.6.jar;commons-httpclient-3.0.1.jar;commons-io-2.4.jar;commons-lang-2.6.jar;commons-logging-1.2.jar;curator-client-2.6.0.jar;curator-framework-2.6.0.jar;datanucleus-api-jdo-3.2.6.jar;datanucleus-core-3.2.10.jar;datanucleus-rdbms-3.2.9.jar;derby-10.11.1.1.jar;guava-12.0.1.jar;hadoop-auth-2.6.0-cdh5.8.1.jar;hadoop-common-2.6.0-cdh5.8.1.jar;hadoop-hdfs-2.6.0-cdh5.8.1.jar;hadoop-mapreduce-client-common-2.6.0-cdh5.8.1.jar;hadoop-mapreduce-client-core-2.6.0-cdh5.8.1.jar;hadoop-mapreduce-client-jobclient-2.6.0-cdh5.8.1.jar;hadoop-yarn-api-2.6.0-cdh5.8.1.jar;hadoop-yarn-client-2.6.0-cdh5.8.1.jar;hadoop-yarn-common-2.6.0-cdh5.8.1.jar;hadoop-yarn-server-web-proxy-2.6.0-cdh5.8.1.jar;hbase-client-1.2.0-cdh5.8.1.jar;hbase-common-1.2.0-cdh5.8.1.jar;hbase-hadoop-compat-1.2.0-cdh5.8.1.jar;hbase-protocol-1.2.0-cdh5.8.1.jar;hbase-server-1.2.0-cdh5.8.1.jar;high-scale-lib-1.1.1.jar;hive-exec-1.1.0-cdh5.8.1.jar;hive-hbase-handler-1.1.0-cdh5.8.1.jar;hive-jdbc-1.1.0-cdh5.8.1.jar;hive-metastore-1.1.0-cdh5.8.1.jar;hive-service-1.1.0-cdh5.8.1.jar;htrace-core-3.2.0-incubating.jar;htrace-core4-4.0.1-incubating.jar;httpclient-4.2.5.jar;httpcore-4.2.5.jar;jackson-core-asl-1.8.8.jar;jackson-jaxrs-1.8.8.jar;jackson-mapper-asl-1.8.8.jar;jackson-xc-1.8.8.jar;jdo-api-3.0.1.jar;jersey-client-1.9.jar;jersey-core-1.9.jar;libfb303-0.9.2.jar;libthrift-0.9.2.jar;log4j-1.2.17.jar;netty-all-4.0.23.Final.jar;parquet-avro-1.5.0-cdh5.10.0.jar;protobuf-java-2.5.0.jar;servlet-api-2.5.jar;slf4j-api-1.7.5.jar;slf4j-log4j12-1.7.5.jar;zookeeper-3.4.5-cdh5.8.1.jar">
       </classloader>
       <classloader
             index="HBASE:CLOUDERA:Cloudera_CDH5_10"
@@ -971,7 +971,7 @@
       </classloader>
       <classloader
             index="IMPALA:CLOUDERA:Cloudera_CDH5_10?USE_KRB"
-            libraries="antlr-runtime-3.4.jar;avro-1.7.6-cdh5.8.1.jar;commons-cli-1.2.jar;commons-codec-1.9.jar;commons-collections-3.2.2.jar;commons-configuration-1.6.jar;commons-httpclient-3.0.1.jar;commons-io-2.4.jar;commons-lang-2.6.jar;commons-logging-1.2.jar;curator-client-2.6.0.jar;curator-framework-2.6.0.jar;datanucleus-api-jdo-3.2.6.jar;datanucleus-core-3.2.10.jar;datanucleus-rdbms-3.2.9.jar;derby-10.11.1.1.jar;guava-12.0.1.jar;hadoop-auth-2.6.0-cdh5.8.1.jar;hadoop-common-2.6.0-cdh5.8.1.jar;hadoop-hdfs-2.6.0-cdh5.8.1.jar;hadoop-mapreduce-client-common-2.6.0-cdh5.8.1.jar;hadoop-mapreduce-client-core-2.6.0-cdh5.8.1.jar;hadoop-mapreduce-client-jobclient-2.6.0-cdh5.8.1.jar;hadoop-yarn-api-2.6.0-cdh5.8.1.jar;hadoop-yarn-client-2.6.0-cdh5.8.1.jar;hadoop-yarn-common-2.6.0-cdh5.8.1.jar;hadoop-yarn-server-web-proxy-2.6.0-cdh5.8.1.jar;hbase-client-1.2.0-cdh5.8.1.jar;hbase-common-1.2.0-cdh5.8.1.jar;hbase-hadoop-compat-1.2.0-cdh5.8.1.jar;hbase-protocol-1.2.0-cdh5.8.1.jar;hbase-server-1.2.0-cdh5.8.1.jar;high-scale-lib-1.1.1.jar;hive-exec-1.1.0-cdh5.8.1.jar;hive-hbase-handler-1.1.0-cdh5.8.1.jar;hive-jdbc-1.1.0-cdh5.8.1.jar;hive-metastore-1.1.0-cdh5.8.1.jar;hive-service-1.1.0-cdh5.8.1.jar;htrace-core-3.2.0-incubating.jar;htrace-core4-4.0.1-incubating.jar;httpclient-4.2.5.jar;httpcore-4.2.5.jar;jackson-core-asl-1.8.8.jar;jackson-jaxrs-1.8.8.jar;jackson-mapper-asl-1.8.8.jar;jackson-xc-1.8.8.jar;jdo-api-3.0.1.jar;jersey-client-1.9.jar;jersey-core-1.9.jar;libfb303-0.9.2.jar;libthrift-0.9.2.jar;log4j-1.2.17.jar;netty-all-4.0.23.Final.jar;parquet-avro-1.5.0-cdh5.7.0.jar;protobuf-java-2.5.0.jar;servlet-api-2.5.jar;slf4j-api-1.7.5.jar;slf4j-log4j12-1.7.5.jar;zookeeper-3.4.5-cdh5.8.1.jar;hadoop-conf-kerberos.jar">
+            libraries="antlr-runtime-3.4.jar;avro-1.7.6-cdh5.8.1.jar;commons-cli-1.2.jar;commons-codec-1.9.jar;commons-collections-3.2.2.jar;commons-configuration-1.6.jar;commons-httpclient-3.0.1.jar;commons-io-2.4.jar;commons-lang-2.6.jar;commons-logging-1.2.jar;curator-client-2.6.0.jar;curator-framework-2.6.0.jar;datanucleus-api-jdo-3.2.6.jar;datanucleus-core-3.2.10.jar;datanucleus-rdbms-3.2.9.jar;derby-10.11.1.1.jar;guava-12.0.1.jar;hadoop-auth-2.6.0-cdh5.8.1.jar;hadoop-common-2.6.0-cdh5.8.1.jar;hadoop-hdfs-2.6.0-cdh5.8.1.jar;hadoop-mapreduce-client-common-2.6.0-cdh5.8.1.jar;hadoop-mapreduce-client-core-2.6.0-cdh5.8.1.jar;hadoop-mapreduce-client-jobclient-2.6.0-cdh5.8.1.jar;hadoop-yarn-api-2.6.0-cdh5.8.1.jar;hadoop-yarn-client-2.6.0-cdh5.8.1.jar;hadoop-yarn-common-2.6.0-cdh5.8.1.jar;hadoop-yarn-server-web-proxy-2.6.0-cdh5.8.1.jar;hbase-client-1.2.0-cdh5.8.1.jar;hbase-common-1.2.0-cdh5.8.1.jar;hbase-hadoop-compat-1.2.0-cdh5.8.1.jar;hbase-protocol-1.2.0-cdh5.8.1.jar;hbase-server-1.2.0-cdh5.8.1.jar;high-scale-lib-1.1.1.jar;hive-exec-1.1.0-cdh5.8.1.jar;hive-hbase-handler-1.1.0-cdh5.8.1.jar;hive-jdbc-1.1.0-cdh5.8.1.jar;hive-metastore-1.1.0-cdh5.8.1.jar;hive-service-1.1.0-cdh5.8.1.jar;htrace-core-3.2.0-incubating.jar;htrace-core4-4.0.1-incubating.jar;httpclient-4.2.5.jar;httpcore-4.2.5.jar;jackson-core-asl-1.8.8.jar;jackson-jaxrs-1.8.8.jar;jackson-mapper-asl-1.8.8.jar;jackson-xc-1.8.8.jar;jdo-api-3.0.1.jar;jersey-client-1.9.jar;jersey-core-1.9.jar;libfb303-0.9.2.jar;libthrift-0.9.2.jar;log4j-1.2.17.jar;netty-all-4.0.23.Final.jar;parquet-avro-1.5.0-cdh5.10.0.jar;protobuf-java-2.5.0.jar;servlet-api-2.5.jar;slf4j-api-1.7.5.jar;slf4j-log4j12-1.7.5.jar;zookeeper-3.4.5-cdh5.8.1.jar;hadoop-conf-kerberos.jar">
       </classloader>
     </extension>
 </plugin>
