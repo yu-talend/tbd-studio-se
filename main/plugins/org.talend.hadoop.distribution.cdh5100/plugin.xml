@@ -7,24 +7,25 @@
         <libraryNeeded
             context="plugin:org.talend.hadoop.distribution.cdh5100"
             id="hadoop-common-cdh5.10"
-            name="hadoop-common-2.6.0-cdh5.8.1.jar"
+            name="hadoop-common-2.6.0-cdh5.10.0.jar"
             mvn_uri="mvn:org.talend.libraries/hadoop-common-2.6.0-cdh5.8.1/6.1.0">
         </libraryNeeded>
 
         <libraryNeeded
             context="plugin:org.talend.hadoop.distribution.cdh5100"
             id="hadoop-hdfs-cdh5.10"
-            name="hadoop-hdfs-2.6.0-cdh5.8.1.jar"
+            name="hadoop-hdfs-2.6.0-cdh5.10.0.jar"
             mvn_uri="mvn:org.talend.libraries/hadoop-hdfs-2.6.0-cdh5.8.1/6.1.0">
         </libraryNeeded>
 
         <libraryNeeded
             context="plugin:org.talend.hadoop.distribution.cdh5100"
             id="hadoop-auth-cdh5.10"
-            name="hadoop-auth-2.6.0-cdh5.8.1.jar"
+            name="hadoop-auth-2.6.0-cdh5.10.0.jar"
             mvn_uri="mvn:org.talend.libraries/hadoop-auth-2.6.0-cdh5.8.1/6.1.0">
         </libraryNeeded>
         
+        <!-- cdh5.10 uses httpclient-4.2.5 -->
         <libraryNeeded
             context="plugin:org.talend.hadoop.distribution.cdh5100"
             id="httpclient-4.3.3.jar"
@@ -32,6 +33,7 @@
             mvn_uri="mvn:org.talend.libraries/httpclient-4.3.3/6.0.0">
         </libraryNeeded>
 
+		<!-- cdh5.10 uses httpclient-4.2.5 -->
         <libraryNeeded
             context="plugin:org.talend.hadoop.distribution.cdh5100"
             id="httpcore-4.3.3.jar"
@@ -43,35 +45,35 @@
         <libraryNeeded
             context="plugin:org.talend.hadoop.distribution.cdh5100"
             id="hbase-common-cdh5.10"
-            name="hbase-common-1.2.0-cdh5.8.1.jar"
+            name="hbase-common-1.2.0-cdh5.10.0.jar"
             mvn_uri="mvn:org.talend.libraries/hbase-common-1.2.0-cdh5.8.1/6.1.0">
         </libraryNeeded>
                 
         <libraryNeeded
             context="plugin:org.talend.hadoop.distribution.cdh5100"
             id="hbase-client-cdh5.10"
-            name="hbase-client-1.2.0-cdh5.8.1.jar"
+            name="hbase-client-1.2.0-cdh5.10.0.jar"
             mvn_uri="mvn:org.talend.libraries/hbase-client-1.2.0-cdh5.8.1/6.1.0">
         </libraryNeeded>
                 
         <libraryNeeded
             context="plugin:org.talend.hadoop.distribution.cdh5100"
             id="hbase-protocol-cdh5.10"
-            name="hbase-protocol-1.2.0-cdh5.8.1.jar"
+            name="hbase-protocol-1.2.0-cdh5.10.0.jar"
             mvn_uri="mvn:org.talend.libraries/hbase-protocol-1.2.0-cdh5.8.1/6.1.0">
         </libraryNeeded>
         
         <libraryNeeded
             context="plugin:org.talend.hadoop.distribution.cdh5100"
             id="hbase-server-cdh5.10"
-            name="hbase-server-1.2.0-cdh5.8.1.jar"
+            name="hbase-server-1.2.0-cdh5.10.0.jar"
             mvn_uri="mvn:org.talend.libraries/hbase-server-1.2.0-cdh5.8.1/6.1.0">
         </libraryNeeded>
         
         <libraryNeeded
             context="plugin:org.talend.hadoop.distribution.cdh5100"
             id="hbase-hadoop-compat-cdh5.10"
-            name="hbase-hadoop-compat-1.2.0-cdh5.8.1.jar"
+            name="hbase-hadoop-compat-1.2.0-cdh5.10.0.jar"
             mvn_uri="mvn:org.talend.libraries/hbase-hadoop-compat-1.2.0-cdh5.8.1/6.1.0">
         </libraryNeeded>
         
@@ -79,65 +81,65 @@
         <libraryNeeded
             context="plugin:org.talend.hadoop.distribution.cdh5100"
             id="hadoop-yarn-api-cdh5.10"
-            name="hadoop-yarn-api-2.6.0-cdh5.8.1.jar"
+            name="hadoop-yarn-api-2.6.0-cdh5.10.0.jar"
             mvn_uri="mvn:org.talend.libraries/hadoop-yarn-api-2.6.0-cdh5.8.1/6.1.0">
         </libraryNeeded>
 
         <libraryNeeded
             context="plugin:org.talend.hadoop.distribution.cdh5100"
             id="hadoop-yarn-common-cdh5.10"
-            name="hadoop-yarn-common-2.6.0-cdh5.8.1.jar"
+            name="hadoop-yarn-common-2.6.0-cdh5.10.0.jar"
             mvn_uri="mvn:org.talend.libraries/hadoop-yarn-common-2.6.0-cdh5.8.1/6.1.0">
         </libraryNeeded>
 
         <libraryNeeded
             context="plugin:org.talend.hadoop.distribution.cdh5100"
             id="hadoop-yarn-client-cdh5.10"
-            name="hadoop-yarn-client-2.6.0-cdh5.8.1.jar"
+            name="hadoop-yarn-client-2.6.0-cdh5.10.0.jar"
             mvn_uri="mvn:org.talend.libraries/hadoop-yarn-client-2.6.0-cdh5.8.1/6.1.0">
         </libraryNeeded>
         
         <libraryNeeded
             context="plugin:org.talend.hadoop.distribution.cdh5100"
             id="hadoop-yarn-server-web-proxy-cdh5.10"
-            name="hadoop-yarn-server-web-proxy-2.6.0-cdh5.8.1.jar"
+            name="hadoop-yarn-server-web-proxy-2.6.0-cdh5.10.0.jar"
             mvn_uri="mvn:org.talend.libraries/hadoop-yarn-server-web-proxy-2.6.0-cdh5.8.1/6.1.0">
         </libraryNeeded>
                 
         <libraryNeeded
             context="plugin:org.talend.hadoop.distribution.cdh5100"
             id="hadoop-mapreduce-client-common-cdh5.10"
-            name="hadoop-mapreduce-client-common-2.6.0-cdh5.8.1.jar"
+            name="hadoop-mapreduce-client-common-2.6.0-cdh5.10.0.jar"
             mvn_uri="mvn:org.talend.libraries/hadoop-mapreduce-client-common-2.6.0-cdh5.8.1/6.1.0">
         </libraryNeeded>
 
         <libraryNeeded
             context="plugin:org.talend.hadoop.distribution.cdh5100"
             id="hadoop-mapreduce-client-core-cdh5.10"
-            name="hadoop-mapreduce-client-core-2.6.0-cdh5.8.1.jar"
+            name="hadoop-mapreduce-client-core-2.6.0-cdh5.10.0.jar"
             mvn_uri="mvn:org.talend.libraries/hadoop-mapreduce-client-core-2.6.0-cdh5.8.1/6.1.0">
         </libraryNeeded>
 
         <libraryNeeded
             context="plugin:org.talend.hadoop.distribution.cdh5100"
             id="hadoop-mapreduce-client-jobclient-cdh5.10"
-            name="hadoop-mapreduce-client-jobclient-2.6.0-cdh5.8.1.jar"
+            name="hadoop-mapreduce-client-jobclient-2.6.0-cdh5.10.0.jar"
             mvn_uri="mvn:org.talend.libraries/hadoop-mapreduce-client-jobclient-2.6.0-cdh5.8.1/6.1.0">
         </libraryNeeded>
         
         <libraryNeeded
             context="plugin:org.talend.hadoop.distribution.cdh5100"
-            id="parquet-hadoop-bundle-cdh5.7.0"
-            name="parquet-hadoop-bundle-1.5.0-cdh5.7.0.jar"
+            id="parquet-hadoop-bundle-cdh5.10.0"
+            name="parquet-hadoop-bundle-1.5.0-cdh5.10.0.jar"
             mvn_uri="mvn:org.talend.libraries/parquet-hadoop-bundle-1.5.0-cdh5.7.0/6.1.0">
         </libraryNeeded>
-                        
+                    
         <libraryNeeded
             context="plugin:org.talend.hadoop.distribution.cdh5100"
             id="jodd-core-3.5.2.jar"
             name="jodd-core-3.5.2.jar"
             mvn_uri="mvn:org.talend.libraries/jodd-core-3.5.2/6.0.0">
-        </libraryNeeded>  
+        </libraryNeeded>
         
         <!-- Hive libraries -->
 
@@ -145,85 +147,85 @@
         <libraryNeeded
             context="plugin:org.talend.hadoop.distribution.cdh5100"
             id="hive-exec-cdh5.10"
-            name="hive-exec-1.1.0-cdh5.8.1.jar"
+            name="hive-exec-1.1.0-cdh5.10.0.jar"
             mvn_uri="mvn:org.talend.libraries/hive-exec-1.1.0-cdh5.8.1/6.1.0">
         </libraryNeeded>
         
         <libraryNeeded
             context="plugin:org.talend.hadoop.distribution.cdh5100"
             id="hive-common-cdh5.10"
-            name="hive-common-1.1.0-cdh5.8.1.jar"
+            name="hive-common-1.1.0-cdh5.10.0.jar"
             mvn_uri="mvn:org.talend.libraries/hive-common-1.1.0-cdh5.8.1/6.1.0">
         </libraryNeeded>
         
         <libraryNeeded
             context="plugin:org.talend.hadoop.distribution.cdh5100"
             id="hive-serde-cdh5.10"
-            name="hive-serde-1.1.0-cdh5.8.1.jar"
+            name="hive-serde-1.1.0-cdh5.10.0.jar"
             mvn_uri="mvn:org.talend.libraries/hive-serde-1.1.0-cdh5.8.1/6.1.0">
         </libraryNeeded>
                 
         <libraryNeeded
             context="plugin:org.talend.hadoop.distribution.cdh5100"
             id="hive-metastore-cdh5.10"
-            name="hive-metastore-1.1.0-cdh5.8.1.jar"
+            name="hive-metastore-1.1.0-cdh5.10.0.jar"
             mvn_uri="mvn:org.talend.libraries/hive-metastore-1.1.0-cdh5.8.1/6.1.0">
         </libraryNeeded>
                 
         <libraryNeeded
             context="plugin:org.talend.hadoop.distribution.cdh5100"
             id="hive-service-cdh5.10"
-            name="hive-service-1.1.0-cdh5.8.1.jar"
+            name="hive-service-1.1.0-cdh5.10.0.jar"
             mvn_uri="mvn:org.talend.libraries/hive-service-1.1.0-cdh5.8.1/6.1.0">
         </libraryNeeded>
                 
         <libraryNeeded
             context="plugin:org.talend.hadoop.distribution.cdh5100"
             id="hive-jdbc-cdh5.10"
-            name="hive-jdbc-1.1.0-cdh5.8.1.jar"
+            name="hive-jdbc-1.1.0-cdh5.10.0.jar"
             mvn_uri="mvn:org.talend.libraries/hive-jdbc-1.1.0-cdh5.8.1/6.1.0">
         </libraryNeeded>
                 
         <libraryNeeded
             context="plugin:org.talend.hadoop.distribution.cdh5100"
             id="hive-hcatalog-core-cdh5.10"
-            name="hive-hcatalog-core-1.1.0-cdh5.8.1.jar"
+            name="hive-hcatalog-core-1.1.0-cdh5.10.0.jar"
             mvn_uri="mvn:org.talend.libraries/hive-hcatalog-core-1.1.0-cdh5.8.1/6.1.0">
         </libraryNeeded>
                         
         <libraryNeeded
             context="plugin:org.talend.hadoop.distribution.cdh5100"
             id="hive-hcatalog-pig-adapter-cdh5.10"
-            name="hive-hcatalog-pig-adapter-1.1.0-cdh5.8.1.jar"
+            name="hive-hcatalog-pig-adapter-1.1.0-cdh5.10.0.jar"
             mvn_uri="mvn:org.talend.libraries/hive-hcatalog-pig-adapter-1.1.0-cdh5.8.1/6.1.0">
         </libraryNeeded>                
                         
         <libraryNeeded
             context="plugin:org.talend.hadoop.distribution.cdh5100"
             id="hive-hcatalog-server-extensions-cdh5.10"
-            name="hive-hcatalog-server-extensions-1.1.0-cdh5.8.1.jar"
+            name="hive-hcatalog-server-extensions-1.1.0-cdh5.10.0.jar"
             mvn_uri="mvn:org.talend.libraries/hive-hcatalog-server-extensions-1.1.0-cdh5.8.1/6.1.0">
         </libraryNeeded>
            
         <libraryNeeded
             context="plugin:org.talend.hadoop.distribution.cdh5100"
             id="hive-hbase-handler-cdh5.10"
-            name="hive-hbase-handler-1.1.0-cdh5.8.1.jar"
+            name="hive-hbase-handler-1.1.0-cdh5.10.0.jar"
             mvn_uri="mvn:org.talend.libraries/hive-hbase-handler-1.1.0-cdh5.8.1/6.1.0">
         </libraryNeeded>
         
         <!-- Pig libraries -->
         <libraryNeeded
             context="plugin:org.talend.hadoop.distribution.cdh5100"
-            id="parquet-pig-bundle-cdh5.7.0"
-            name="parquet-pig-bundle-1.5.0-cdh5.7.0.jar"
+            id="parquet-pig-bundle-cdh5.10.0"
+            name="parquet-pig-bundle-1.5.0-cdh5.10.0.jar"
             mvn_uri="mvn:org.talend.libraries/parquet-pig-bundle-1.5.0-cdh5.7.0/6.1.0">
         </libraryNeeded>
         
         <libraryNeeded
             context="plugin:org.talend.hadoop.distribution.cdh5100"
             id="pig-cdh5.10"
-            name="pig-0.12.0-cdh5.8.1.jar"
+            name="pig-0.12.0-cdh5.10.0.jar"
             mvn_uri="mvn:org.talend.libraries/pig-0.12.0-cdh5.8.1/6.1.0">
         </libraryNeeded>
         
@@ -246,14 +248,14 @@
         <libraryNeeded
             context="plugin:org.talend.libraries.apache"
             id="avro-mapred-cdh5.10"
-            name="avro-mapred-1.7.6-cdh5.8.1.jar"
+            name="avro-mapred-1.7.6-cdh5.10.0.jar"
             mvn_uri="mvn:org.talend.libraries/avro-mapred-1.7.6-cdh5.8.1/6.1.0">
         </libraryNeeded>
         
         <libraryNeeded
             context="plugin:org.talend.hadoop.distribution.cdh5100"
             id="sqoop-cdh5.10"
-            name="sqoop-1.4.6-cdh5.8.1.jar"
+            name="sqoop-1.4.6-cdh5.10.0.jar"
             mvn_uri="mvn:org.talend.libraries/sqoop-1.4.6-cdh5.8.1/6.1.0">
         </libraryNeeded>
         
@@ -269,7 +271,7 @@
         <libraryNeeded
             context="plugin:org.talend.hadoop.distribution.cdh5100"
             id="avro-cdh5.10"
-            name="avro-1.7.6-cdh5.8.1.jar"
+            name="avro-1.7.6-cdh5.10.0.jar"
             mvn_uri="mvn:org.talend.libraries/avro-1.7.6-cdh5.8.1/6.1.0">
         </libraryNeeded>
         <libraryNeeded
@@ -323,7 +325,7 @@
         <libraryNeeded
             context="plugin:org.talend.hadoop.distribution.cdh5100"
             id="zookeeper-cdh5.10"
-            name="zookeeper-3.4.5-cdh5.8.1.jar"
+            name="zookeeper-3.4.5-cdh5.10.0.jar"
             mvn_uri="mvn:org.talend.libraries/zookeeper-3.4.5-cdh5.8.1/6.1.0">
         </libraryNeeded>
         
@@ -400,7 +402,7 @@
         <libraryNeeded
             context="plugin:org.talend.hadoop.distribution.cdh5100"
             id="hadoop-aws-cdh5.10"
-            name="hadoop-aws-2.6.0-cdh5.8.1.jar"
+            name="hadoop-aws-2.6.0-cdh5.10.0.jar"
             mvn_uri="mvn:org.talend.libraries/hadoop-aws-2.6.0-cdh5.8.1/6.1.0">
         </libraryNeeded>
                 
@@ -414,7 +416,7 @@
         <libraryNeeded
             context="plugin:org.talend.hadoop.distribution.cdh5100"
             id="avro-ipc-1.7.6-cdh5.10"
-            name="avro-ipc-1.7.6-cdh5.8.1.jar"
+            name="avro-ipc-1.7.6-cdh5.10.0.jar"
             uripath="platform:/plugin/org.talend.libraries.apache/lib/avro-ipc-1.7.6-cdh5.8.1.jar"
             mvn_uri="mvn:org.talend.libraries/avro-ipc-1.7.6-cdh5.8.1/6.1.0">
         </libraryNeeded>        
@@ -465,7 +467,7 @@
         <libraryNeeded
             context="plugin:org.talend.hadoop.distribution.cdh5100"
             id="spark-streaming-kafka-cdh5.10"
-            name="spark-streaming-kafka_2.10-1.6.0-cdh5.8.1.jar"
+            name="spark-streaming-kafka_2.10-1.6.0-cdh5.10.0.jar"
             mvn_uri="mvn:org.talend.libraries/spark-streaming-kafka_2.10-1.6.0-cdh5.8.1/6.1.0">
         </libraryNeeded>
                 
@@ -493,35 +495,35 @@
         <libraryNeeded
             context="plugin:org.talend.hadoop.distribution.cdh5100"
             id="kite-data-core-1.0.0-cdh5.10"
-            name="kite-data-core-1.0.0-cdh5.8.1.jar"
+            name="kite-data-core-1.0.0-cdh5.10.0.jar"
             mvn_uri="mvn:org.talend.libraries/kite-data-core-1.0.0-cdh5.8.1/6.1.0">
         </libraryNeeded>
         
         <libraryNeeded
             context="plugin:org.talend.hadoop.distribution.cdh5100"
-            id="kite-data-mapreduce-1.0.0-cdh5.8.1.jar"
-            name="kite-data-mapreduce-1.0.0-cdh5.8.1.jar"
+            id="kite-data-mapreduce-1.0.0-cdh5.10.0.jar"
+            name="kite-data-mapreduce-1.0.0-cdh5.10.0.jar"
             mvn_uri="mvn:org.talend.libraries/kite-data-mapreduce-1.0.0-cdh5.8.1/6.1.0">
         </libraryNeeded>
         
         <libraryNeeded
             context="plugin:org.talend.hadoop.distribution.cdh5100"
             id="kite-hadoop-compatibility-1.0.0-cdh5.10"
-            name="kite-hadoop-compatibility-1.0.0-cdh5.8.1.jar"
+            name="kite-hadoop-compatibility-1.0.0-cdh5.10.0.jar"
             mvn_uri="mvn:org.talend.libraries/kite-hadoop-compatibility-1.0.0-cdh5.8.1/6.1.0">
         </libraryNeeded> 
         
         <libraryNeeded
             context="plugin:org.talend.hadoop.distribution.cdh5100"
             id="flume-ng-core-1.6.0-cdh5.10"
-            name="flume-ng-core-1.6.0-cdh5.8.1.jar"
+            name="flume-ng-core-1.6.0-cdh5.10.0.jar"
             mvn_uri="mvn:org.talend.libraries/flume-ng-core-1.6.0-cdh5.8.1/6.1.0">
         </libraryNeeded>
 
         <libraryNeeded
             context="plugin:org.talend.hadoop.distribution.cdh5100"
             id="flume-ng-sdk-1.6.0-cdh5.10"
-            name="flume-ng-sdk-1.6.0-cdh5.8.1.jar"
+            name="flume-ng-sdk-1.6.0-cdh5.10.0.jar"
             mvn_uri="mvn:org.talend.libraries/flume-ng-sdk-1.6.0-cdh5.8.1/6.1.0">
         </libraryNeeded>
         
@@ -535,7 +537,7 @@
         <libraryNeeded
             context="plugin:org.talend.hadoop.distribution.cdh5100"
             id="spark-streaming-flume-sink_2.10-1.6.0-cdh5.10"
-            name="spark-streaming-flume-sink_2.10-1.6.0-cdh5.8.1.jar"
+            name="spark-streaming-flume-sink_2.10-1.6.0-cdh5.10.0.jar"
             mvn_uri="mvn:org.talend.libraries/spark-streaming-flume-sink_2.10-1.6.0-cdh5.8.1/6.1.0">
         </libraryNeeded>
         <!-- Groups -->
@@ -597,7 +599,7 @@
                 description="Map/Reduce parquet libraries for CDH 5.10"
                 id="MAPREDUCE-PARQUET-LIB-CDH_5_10"
                 name="MAPREDUCE-PARQUET-LIB-CDH_5_10"  >
-             <library id="parquet-hadoop-bundle-cdh5.7.0" />
+             <library id="parquet-hadoop-bundle-cdh5.10.0" />
              <library id="snappy-java-1.0.4.1.jar" />
         </libraryNeededGroup>
         
@@ -651,7 +653,7 @@
             <library id="snappy-java-1.0.4.1.jar"/>
             <library id="datafu-1.2.0.jar"/>
             <library id="automaton-1.11-8"/>
-            <library id="parquet-pig-bundle-1.6.0.jar"/>
+            <library id="parquet-pig-bundle-cdh5.10.0"/>
         </libraryNeededGroup>
         
         <!-- Pig HCatalog group -->
@@ -684,7 +686,7 @@
                 description="Pig Parquet libraries for CDH 5.10"
                 id="PIG-PARQUET-LIB-CDH_5_10"
                 name="PIG-PARQUET-LIB-CDH_5_10">
-            <library id="parquet-pig-bundle-cdh5.7.0"/>
+            <library id="parquet-pig-bundle-cdh5.10.0"/>
         </libraryNeededGroup>
         
         <!-- Pig avro group -->
@@ -694,7 +696,7 @@
                 name="PIG-AVRO-LIB-CDH_5_10">
             <library id="avro-cdh5.10" />
             <library id="commons-io-2.4.jar"/>
-            <library id="piggybank-cdh5.4.jar"/>
+            <library id="piggybank-cdh5.4.jar"/><!-- Where it is defined??? -->
         </libraryNeededGroup>
         
         <!-- Pig RCFile group -->
@@ -785,7 +787,7 @@
              <library id="jackson-core-2.3.1.jar" />
              <library id="jackson-annotations-2.3.0.jar" />
              <library id="snappy-java-1.0.4.1.jar"/>
-             <library id="parquet-hadoop-bundle-cdh5.7.0"/>
+             <library id="parquet-hadoop-bundle-cdh5.10.0"/>
         </libraryNeededGroup>
         
         <!-- Spark group MRREQUIRED -->
@@ -802,7 +804,7 @@
                 id="SPARK-PARQUET-LIB-MRREQUIRED-CDH_5_10"
                 name="SPARK-PARQUET-LIB-MRREQUIRED-CDH_5_10">
              <library id="parquet-avro-1.5.0-cdh5.10.0"/>
-             <library id="parquet-hadoop-bundle-cdh5.7.0"/>
+             <library id="parquet-hadoop-bundle-cdh5.10.0"/>
              <library id="jodd-core-3.5.2.jar" />             
         </libraryNeededGroup>
         
@@ -928,7 +930,7 @@
                 id="SQOOP-PARQUET-LIB-CDH_5_10"
                 name="SQOOP-PARQUET-LIB-CDH_5_10">
             <library id="kite-data-core-1.0.0-cdh5.10"/>
-            <library id="kite-data-mapreduce-1.0.0-cdh5.8.1.jar"/>
+            <library id="kite-data-mapreduce-1.0.0-cdh5.10.0.jar"/>
             <library id="kite-hadoop-compatibility-1.0.0-cdh5.10"/>
             <library id="jackson-databind-2.2.3.jar"/>
             <library id="jackson-core-2.2.3.jar"/>
