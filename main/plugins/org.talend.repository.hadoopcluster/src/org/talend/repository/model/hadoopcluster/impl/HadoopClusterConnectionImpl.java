@@ -29,7 +29,6 @@ import org.talend.repository.model.hadoopcluster.HadoopClusterPackage;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
- * </p>
  * <ul>
  *   <li>{@link org.talend.repository.model.hadoopcluster.impl.HadoopClusterConnectionImpl#getDistribution <em>Distribution</em>}</li>
  *   <li>{@link org.talend.repository.model.hadoopcluster.impl.HadoopClusterConnectionImpl#getDfVersion <em>Df Version</em>}</li>
@@ -78,7 +77,11 @@ import org.talend.repository.model.hadoopcluster.HadoopClusterPackage;
  *   <li>{@link org.talend.repository.model.hadoopcluster.impl.HadoopClusterConnectionImpl#isPreloadAuthentification <em>Preload Authentification</em>}</li>
  *   <li>{@link org.talend.repository.model.hadoopcluster.impl.HadoopClusterConnectionImpl#getConfFile <em>Conf File</em>}</li>
  *   <li>{@link org.talend.repository.model.hadoopcluster.impl.HadoopClusterConnectionImpl#getConfFiles <em>Conf Files</em>}</li>
+ *   <li>{@link org.talend.repository.model.hadoopcluster.impl.HadoopClusterConnectionImpl#isUseWebHDFSSSL <em>Use Web HDFSSSL</em>}</li>
+ *   <li>{@link org.talend.repository.model.hadoopcluster.impl.HadoopClusterConnectionImpl#getWebHDFSSSLTrustStorePath <em>Web HDFSSSL Trust Store Path</em>}</li>
+ *   <li>{@link org.talend.repository.model.hadoopcluster.impl.HadoopClusterConnectionImpl#getWebHDFSSSLTrustStorePassword <em>Web HDFSSSL Trust Store Password</em>}</li>
  * </ul>
+ * </p>
  *
  * @generated
  */
@@ -992,6 +995,66 @@ public class HadoopClusterConnectionImpl extends ConnectionImpl implements Hadoo
      * @ordered
      */
     protected EMap<String, byte[]> confFiles;
+
+    /**
+     * The default value of the '{@link #isUseWebHDFSSSL() <em>Use Web HDFSSSL</em>}' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see #isUseWebHDFSSSL()
+     * @generated
+     * @ordered
+     */
+    protected static final boolean USE_WEB_HDFSSSL_EDEFAULT = false;
+
+    /**
+     * The cached value of the '{@link #isUseWebHDFSSSL() <em>Use Web HDFSSSL</em>}' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see #isUseWebHDFSSSL()
+     * @generated
+     * @ordered
+     */
+    protected boolean useWebHDFSSSL = USE_WEB_HDFSSSL_EDEFAULT;
+
+    /**
+     * The default value of the '{@link #getWebHDFSSSLTrustStorePath() <em>Web HDFSSSL Trust Store Path</em>}' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see #getWebHDFSSSLTrustStorePath()
+     * @generated
+     * @ordered
+     */
+    protected static final String WEB_HDFSSSL_TRUST_STORE_PATH_EDEFAULT = "";
+
+    /**
+     * The cached value of the '{@link #getWebHDFSSSLTrustStorePath() <em>Web HDFSSSL Trust Store Path</em>}' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see #getWebHDFSSSLTrustStorePath()
+     * @generated
+     * @ordered
+     */
+    protected String webHDFSSSLTrustStorePath = WEB_HDFSSSL_TRUST_STORE_PATH_EDEFAULT;
+
+    /**
+     * The default value of the '{@link #getWebHDFSSSLTrustStorePassword() <em>Web HDFSSSL Trust Store Password</em>}' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see #getWebHDFSSSLTrustStorePassword()
+     * @generated
+     * @ordered
+     */
+    protected static final String WEB_HDFSSSL_TRUST_STORE_PASSWORD_EDEFAULT = "";
+
+    /**
+     * The cached value of the '{@link #getWebHDFSSSLTrustStorePassword() <em>Web HDFSSSL Trust Store Password</em>}' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see #getWebHDFSSSLTrustStorePassword()
+     * @generated
+     * @ordered
+     */
+    protected String webHDFSSSLTrustStorePassword = WEB_HDFSSSL_TRUST_STORE_PASSWORD_EDEFAULT;
 
     /**
      * <!-- begin-user-doc -->
@@ -2068,6 +2131,69 @@ public class HadoopClusterConnectionImpl extends ConnectionImpl implements Hadoo
      * <!-- end-user-doc -->
      * @generated
      */
+    public boolean isUseWebHDFSSSL() {
+        return useWebHDFSSSL;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public void setUseWebHDFSSSL(boolean newUseWebHDFSSSL) {
+        boolean oldUseWebHDFSSSL = useWebHDFSSSL;
+        useWebHDFSSSL = newUseWebHDFSSSL;
+        if (eNotificationRequired())
+            eNotify(new ENotificationImpl(this, Notification.SET, HadoopClusterPackage.HADOOP_CLUSTER_CONNECTION__USE_WEB_HDFSSSL, oldUseWebHDFSSSL, useWebHDFSSSL));
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public String getWebHDFSSSLTrustStorePath() {
+        return webHDFSSSLTrustStorePath;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public void setWebHDFSSSLTrustStorePath(String newWebHDFSSSLTrustStorePath) {
+        String oldWebHDFSSSLTrustStorePath = webHDFSSSLTrustStorePath;
+        webHDFSSSLTrustStorePath = newWebHDFSSSLTrustStorePath;
+        if (eNotificationRequired())
+            eNotify(new ENotificationImpl(this, Notification.SET, HadoopClusterPackage.HADOOP_CLUSTER_CONNECTION__WEB_HDFSSSL_TRUST_STORE_PATH, oldWebHDFSSSLTrustStorePath, webHDFSSSLTrustStorePath));
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public String getWebHDFSSSLTrustStorePassword() {
+        return webHDFSSSLTrustStorePassword;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public void setWebHDFSSSLTrustStorePassword(String newWebHDFSSSLTrustStorePassword) {
+        String oldWebHDFSSSLTrustStorePassword = webHDFSSSLTrustStorePassword;
+        webHDFSSSLTrustStorePassword = newWebHDFSSSLTrustStorePassword;
+        if (eNotificationRequired())
+            eNotify(new ENotificationImpl(this, Notification.SET, HadoopClusterPackage.HADOOP_CLUSTER_CONNECTION__WEB_HDFSSSL_TRUST_STORE_PASSWORD, oldWebHDFSSSLTrustStorePassword, webHDFSSSLTrustStorePassword));
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
     @Override
     public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
         switch (featureID) {
@@ -2183,6 +2309,12 @@ public class HadoopClusterConnectionImpl extends ConnectionImpl implements Hadoo
             case HadoopClusterPackage.HADOOP_CLUSTER_CONNECTION__CONF_FILES:
                 if (coreType) return getConfFiles();
                 else return getConfFiles().map();
+            case HadoopClusterPackage.HADOOP_CLUSTER_CONNECTION__USE_WEB_HDFSSSL:
+                return isUseWebHDFSSSL();
+            case HadoopClusterPackage.HADOOP_CLUSTER_CONNECTION__WEB_HDFSSSL_TRUST_STORE_PATH:
+                return getWebHDFSSSLTrustStorePath();
+            case HadoopClusterPackage.HADOOP_CLUSTER_CONNECTION__WEB_HDFSSSL_TRUST_STORE_PASSWORD:
+                return getWebHDFSSSLTrustStorePassword();
         }
         return super.eGet(featureID, resolve, coreType);
     }
@@ -2338,6 +2470,15 @@ public class HadoopClusterConnectionImpl extends ConnectionImpl implements Hadoo
             case HadoopClusterPackage.HADOOP_CLUSTER_CONNECTION__CONF_FILES:
                 ((EStructuralFeature.Setting)getConfFiles()).set(newValue);
                 return;
+            case HadoopClusterPackage.HADOOP_CLUSTER_CONNECTION__USE_WEB_HDFSSSL:
+                setUseWebHDFSSSL((Boolean)newValue);
+                return;
+            case HadoopClusterPackage.HADOOP_CLUSTER_CONNECTION__WEB_HDFSSSL_TRUST_STORE_PATH:
+                setWebHDFSSSLTrustStorePath((String)newValue);
+                return;
+            case HadoopClusterPackage.HADOOP_CLUSTER_CONNECTION__WEB_HDFSSSL_TRUST_STORE_PASSWORD:
+                setWebHDFSSSLTrustStorePassword((String)newValue);
+                return;
         }
         super.eSet(featureID, newValue);
     }
@@ -2491,6 +2632,15 @@ public class HadoopClusterConnectionImpl extends ConnectionImpl implements Hadoo
             case HadoopClusterPackage.HADOOP_CLUSTER_CONNECTION__CONF_FILES:
                 getConfFiles().clear();
                 return;
+            case HadoopClusterPackage.HADOOP_CLUSTER_CONNECTION__USE_WEB_HDFSSSL:
+                setUseWebHDFSSSL(USE_WEB_HDFSSSL_EDEFAULT);
+                return;
+            case HadoopClusterPackage.HADOOP_CLUSTER_CONNECTION__WEB_HDFSSSL_TRUST_STORE_PATH:
+                setWebHDFSSSLTrustStorePath(WEB_HDFSSSL_TRUST_STORE_PATH_EDEFAULT);
+                return;
+            case HadoopClusterPackage.HADOOP_CLUSTER_CONNECTION__WEB_HDFSSSL_TRUST_STORE_PASSWORD:
+                setWebHDFSSSLTrustStorePassword(WEB_HDFSSSL_TRUST_STORE_PASSWORD_EDEFAULT);
+                return;
         }
         super.eUnset(featureID);
     }
@@ -2597,6 +2747,12 @@ public class HadoopClusterConnectionImpl extends ConnectionImpl implements Hadoo
                 return CONF_FILE_EDEFAULT == null ? confFile != null : !CONF_FILE_EDEFAULT.equals(confFile);
             case HadoopClusterPackage.HADOOP_CLUSTER_CONNECTION__CONF_FILES:
                 return confFiles != null && !confFiles.isEmpty();
+            case HadoopClusterPackage.HADOOP_CLUSTER_CONNECTION__USE_WEB_HDFSSSL:
+                return useWebHDFSSSL != USE_WEB_HDFSSSL_EDEFAULT;
+            case HadoopClusterPackage.HADOOP_CLUSTER_CONNECTION__WEB_HDFSSSL_TRUST_STORE_PATH:
+                return WEB_HDFSSSL_TRUST_STORE_PATH_EDEFAULT == null ? webHDFSSSLTrustStorePath != null : !WEB_HDFSSSL_TRUST_STORE_PATH_EDEFAULT.equals(webHDFSSSLTrustStorePath);
+            case HadoopClusterPackage.HADOOP_CLUSTER_CONNECTION__WEB_HDFSSSL_TRUST_STORE_PASSWORD:
+                return WEB_HDFSSSL_TRUST_STORE_PASSWORD_EDEFAULT == null ? webHDFSSSLTrustStorePassword != null : !WEB_HDFSSSL_TRUST_STORE_PASSWORD_EDEFAULT.equals(webHDFSSSLTrustStorePassword);
         }
         return super.eIsSet(featureID);
     }
@@ -2701,6 +2857,12 @@ public class HadoopClusterConnectionImpl extends ConnectionImpl implements Hadoo
         result.append(preloadAuthentification);
         result.append(", confFile: ");
         result.append(confFile);
+        result.append(", useWebHDFSSSL: ");
+        result.append(useWebHDFSSSL);
+        result.append(", webHDFSSSLTrustStorePath: ");
+        result.append(webHDFSSSLTrustStorePath);
+        result.append(", webHDFSSSLTrustStorePassword: ");
+        result.append(webHDFSSSLTrustStorePassword);
         result.append(')');
         return result.toString();
     }
