@@ -36,7 +36,7 @@ public class CDH5100SparkBatchModuleGroup {
         hs.add(new DistributionModuleGroup(CDH5100Constant.MAPREDUCE_MODULE_GROUP.getModuleName(), false, condition));
         ComponentCondition conditionUseNavigator = new SimpleComponentCondition(new BasicExpression(
                 SparkBatchConstant.USE_CLOUDERA_NAVIGATOR));
-        hs.add(new DistributionModuleGroup(CDH5100Constant.TALEND_CLOUDERA_CDH_5_5_NAVIGATOR.getModuleName(), true,
+        hs.add(new DistributionModuleGroup(CDH5100Constant.TALEND_CLOUDERA_CDH_5_10_NAVIGATOR.getModuleName(), true,
                 conditionUseNavigator));
         return hs;
     }

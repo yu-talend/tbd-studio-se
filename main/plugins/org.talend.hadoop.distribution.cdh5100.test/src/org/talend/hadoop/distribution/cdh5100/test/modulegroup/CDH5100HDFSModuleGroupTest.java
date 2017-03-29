@@ -27,7 +27,7 @@ public class CDH5100HDFSModuleGroupTest {
         Set<DistributionModuleGroup> moduleGroups = CDH5100HDFSModuleGroup.getModuleGroups();
         assertEquals(1, moduleGroups.size());
         for (DistributionModuleGroup module : moduleGroups) {
-            assertEquals("HDFS-LIB-CDH_5_8", module.getModuleName()); //$NON-NLS-1$
+            assertEquals("HDFS-LIB-CDH_5_10", module.getModuleName()); //$NON-NLS-1$
             assertNull(module.getRequiredIf());
         }
 
