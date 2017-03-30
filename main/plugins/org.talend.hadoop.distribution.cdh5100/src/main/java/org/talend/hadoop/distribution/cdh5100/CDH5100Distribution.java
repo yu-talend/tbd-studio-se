@@ -379,6 +379,11 @@ public class CDH5100Distribution extends AbstractDistribution implements ICloude
     }
 
     @Override
+    public boolean doSupportS3V4() {
+        return true;
+    }
+
+    @Override
     public boolean doSupportSSLwithKerberos() {
         return true;
     }
