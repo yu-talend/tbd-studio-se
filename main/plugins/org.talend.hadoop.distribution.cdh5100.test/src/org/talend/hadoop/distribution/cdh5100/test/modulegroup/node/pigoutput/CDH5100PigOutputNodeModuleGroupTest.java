@@ -31,9 +31,9 @@ public class CDH5100PigOutputNodeModuleGroupTest {
         Map<String, String> results = new HashMap<>();
 
         results.put(CDH5100Constant.PIG_PARQUET_MODULE_GROUP.getModuleName(),
-                "(#LINK@NODE.ASSOCIATED_PIG_LOAD.DISTRIBUTION=='CLOUDERA') AND (#LINK@NODE.ASSOCIATED_PIG_LOAD.PIG_VERSION=='Cloudera_CDH5_8')"); //$NON-NLS-1$
+                "(#LINK@NODE.ASSOCIATED_PIG_LOAD.DISTRIBUTION=='CLOUDERA') AND (#LINK@NODE.ASSOCIATED_PIG_LOAD.PIG_VERSION=='Cloudera_CDH5_10')"); //$NON-NLS-1$
         results.put(CDH5100Constant.PIG_S3_MODULE_GROUP.getModuleName(),
-                "(#LINK@NODE.ASSOCIATED_PIG_LOAD.DISTRIBUTION=='CLOUDERA') AND (#LINK@NODE.ASSOCIATED_PIG_LOAD.PIG_VERSION=='Cloudera_CDH5_8') " //$NON-NLS-1$
+                "(#LINK@NODE.ASSOCIATED_PIG_LOAD.DISTRIBUTION=='CLOUDERA') AND (#LINK@NODE.ASSOCIATED_PIG_LOAD.PIG_VERSION=='Cloudera_CDH5_10') " //$NON-NLS-1$
                         + "AND (S3_LOCATION=='true') AND (STORE!='HCATSTORER') AND (STORE!='HBASESTORAGE')"); //$NON-NLS-1$
 
         Set<DistributionModuleGroup> moduleGroups = CDH5100PigOutputNodeModuleGroup.getModuleGroups(
