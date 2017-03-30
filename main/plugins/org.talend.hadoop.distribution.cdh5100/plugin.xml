@@ -556,7 +556,7 @@
              <library id="commons-cli-1.2.jar" />
              <library id="commons-collections-3.2.2.jar" />
              <library id="commons-codec-1.9.jar" /> <!-- This jar is required for HDFS SSL connection-->
-             <library id="avro-cdh5.10.0" />
+             <library id="avro-cdh5.10" />
              <library id="guava-12.0.1.jar" />
              <library id="protobuf-java-2.5.0.jar" />
              <library id="slf4j-api-1.7.5.jar" />
@@ -694,7 +694,7 @@
                 description="Pig Avro libraries for CDH 5.10"
                 id="PIG-AVRO-LIB-CDH_5_10"
                 name="PIG-AVRO-LIB-CDH_5_10">
-            <library id="avro-cdh5.10.0" />
+            <library id="avro-cdh5.10" />
             <library id="commons-io-2.4.jar"/>
             <library id="piggybank-cdh5.4.jar"/><!-- Where it is defined??? -->
         </libraryNeededGroup>
@@ -899,7 +899,7 @@
                 description="Spark Kafka Avro libraries for CDH 5.10 that are MRREQUIRED"
                 id="SPARK-KAFKA-AVRO-LIB-MRREQUIRED-CDH_5_10"
                 name="SPARK-KAFKA-AVRO-LIB-MRREQUIRED-CDH_5_10">
-            <library id="avro-cdh5.10.0"/>
+            <library id="avro-cdh5.10"/>
             <library id="jackson-mapper-asl-1.8.8.jar" />
             <library id="jackson-core-asl-1.8.8.jar" />
         </libraryNeededGroup>
