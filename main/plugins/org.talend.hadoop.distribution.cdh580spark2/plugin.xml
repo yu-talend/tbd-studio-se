@@ -68,10 +68,7 @@
         
         
         
-        <!-- Spark2 libraries 
-        avro-1.7.6-cdh5.7.0.jar
-        avro-ipc-1.7.6-cdh5.7.0.jar
-        avro-mapred-1.7.6-cdh5.7.0-hadoop2.jar-->
+        <!-- Spark2 libraries -->
         <libraryNeeded context="plugin:org.talend.hadoop.distribution.cdh580spark2" id="akka-actor.jar" name="akka-actor.jar" mvn_uri="mvn:org.talend.libraries/akka-actor/6.0.0"/>
         <libraryNeeded context="plugin:org.talend.hadoop.distribution.cdh580spark2" id="antlr-2.7.7.jar" name="antlr-2.7.7.jar" mvn_uri="mvn:org.talend.libraries/antlr-2.7.7/6.0.0"/>
         <libraryNeeded context="plugin:org.talend.hadoop.distribution.cdh580spark2" id="antlr4-runtime-4.5.3.jar" name="antlr4-runtime-4.5.3.jar" mvn_uri="mvn:org.talend.libraries/antlr4-runtime-4.5.3/6.0.0"/>
@@ -243,7 +240,6 @@
             name="sqoop-1.4.6-cdh5.8.1.jar"
             mvn_uri="mvn:org.talend.libraries/sqoop-1.4.6-cdh5.8.1/6.1.0">
         </libraryNeeded>
-
 
         <!-- hive -->
         <libraryNeeded
