@@ -188,8 +188,8 @@
          <libraryNeeded
             context="plugin:org.talend.hadoop.distribution.dataproc11"
             id="kafka-clients-dataproc11"
-            name="kafka-clients-0.10.2.0.jar"
-            mvn_uri="mvn:org.talend.libraries/kafka-clients-0.10.2.0/6.3.0">
+            name="kafka-clients-0.10.0.1.jar"
+            mvn_uri="mvn:org.talend.libraries/kafka-clients-0.10.0.1/6.3.0">
         </libraryNeeded>
             
         <!-- SPARK libraries --> 
