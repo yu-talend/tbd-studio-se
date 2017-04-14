@@ -350,6 +350,7 @@ public class CDH5100Distribution extends AbstractDistribution implements ICloude
     public Set<ESparkVersion> getSparkVersions() {
         Set<ESparkVersion> version = new HashSet<>();
         version.add(ESparkVersion.SPARK_1_6);
+        version.add(ESparkVersion.SPARK_2_1);
         return version;
     }
 
