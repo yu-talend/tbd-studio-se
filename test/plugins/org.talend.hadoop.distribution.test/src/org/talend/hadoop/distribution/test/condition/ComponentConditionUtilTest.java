@@ -12,14 +12,17 @@
 // ============================================================================
 package org.talend.hadoop.distribution.test.condition;
 
+import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -110,7 +113,7 @@ public class ComponentConditionUtilTest {
         assertNull(ComponentConditionUtil.generateSparkVersionShowIfConditions(null));
 
         Map<ESparkVersion, Set<DistributionVersion>> sparkVersionsMap = new HashMap<>();
-        Set<DistributionVersion> distributionVersions = new HashSet<>();
+        Set<DistributionVersion> distributionVersions = new LinkedHashSet<>();
         distributionVersions.add(new DistributionVersion(null,
                 new DistributionBean(ComponentType.SPARKBATCH, "DISTRIB1", ""), "VERSION1", "")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
         sparkVersionsMap.put(ESparkVersion.SPARK_2_0, distributionVersions);
@@ -122,9 +125,9 @@ public class ComponentConditionUtilTest {
         sparkVersionsMap.put(ESparkVersion.SPARK_1_6, distributionVersions);
         String[] showIfs = ComponentConditionUtil.generateSparkVersionShowIfConditions(sparkVersionsMap);
         assertTrue(showIfs.length == 2);
-        assertEquals("(((DISTRIBUTION=='DISTRIB1') AND (SPARK_VERSION=='VERSION1')))", showIfs[1]); //$NON-NLS-1$
-        assertEquals(
-                "(((DISTRIBUTION=='DISTRIB3') AND (SPARK_VERSION=='VERSION3')) OR ((DISTRIBUTION=='DISTRIB2') AND (SPARK_VERSION=='VERSION2')))", showIfs[0]); //$NON-NLS-1$
-
+        assertThat(Arrays.asList(showIfs), hasItem("(((DISTRIBUTION=='DISTRIB1') AND (SPARK_VERSION=='VERSION1')))")); //$NON-NLS-1$
+        assertThat(
+                Arrays.asList(showIfs),
+                hasItem("(((DISTRIBUTION=='DISTRIB3') AND (SPARK_VERSION=='VERSION3')) OR ((DISTRIBUTION=='DISTRIB2') AND (SPARK_VERSION=='VERSION2')))")); //$NON-NLS-1$
     }
 }
