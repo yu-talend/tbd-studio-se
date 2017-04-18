@@ -15,6 +15,7 @@ package org.talend.hadoop.distribution.cdh5100;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -65,6 +66,7 @@ import org.talend.hadoop.distribution.constants.PigOutputConstant;
 import org.talend.hadoop.distribution.constants.SparkBatchConstant;
 import org.talend.hadoop.distribution.constants.SparkStreamingConstant;
 import org.talend.hadoop.distribution.constants.cdh.IClouderaDistribution;
+import org.talend.hadoop.distribution.spark.SparkClassPathUtils;
 
 @SuppressWarnings("nls")
 public class CDH5100Distribution extends AbstractDistribution implements IClouderaDistribution, HDFSComponent, HBaseComponent,
@@ -274,6 +276,11 @@ public class CDH5100Distribution extends AbstractDistribution implements ICloude
     @Override
     public boolean pigVersionPriorTo_0_12() {
         return false;
+    }
+    
+    @Override
+    public String generateSparkJarsPaths(List<String> commandLineJarsPaths) {
+        return SparkClassPathUtils.generateSparkJarsPaths(commandLineJarsPaths, CDH5100Constant.SPARK2_MODULE_GROUP.getModuleName());
     }
 
     @Override
