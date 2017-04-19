@@ -1344,6 +1344,12 @@
         	<library id="zkclient-0.7.jar"/>
         </libraryNeededGroup>
         
+        <libraryNeededGroup
+               description="The latest Spark libraries for CDH 5.10 spark 2 that are MRREQUIRED"
+                id="SPARK-LIB-MRREQUIRED-CDH_5_10_SPARK2"
+                name="SPARK-LIB-MRREQUIRED-CDH_5_10_SPARK2">
+        </libraryNeededGroup>
+        
         <!-- Spark group MRREQUIRED -->
         <libraryNeededGroup
                 description="Spark libraries for CDH 5.10 that are MRREQUIRED"
