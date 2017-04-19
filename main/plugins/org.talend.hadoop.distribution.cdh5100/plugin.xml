@@ -707,7 +707,7 @@
         <libraryNeeded context="plugin:org.talend.hadoop.distribution.cdh5100spark2" id="commons-cli-1.2.jar" name="commons-cli-1.2.jar" mvn_uri="mvn:org.talend.libraries/commons-cli-1.2/6.0.0"/>
         <libraryNeeded context="plugin:org.talend.hadoop.distribution.cdh5100spark2" id="commons-codec-1.10.jar" name="commons-codec-1.10.jar" mvn_uri="mvn:org.talend.libraries/commons-codec-1.10/6.0.0"/>
         <libraryNeeded context="plugin:org.talend.hadoop.distribution.cdh5100spark2" id="commons-collections-3.2.2.jar" name="commons-collections-3.2.2.jar" mvn_uri="mvn:org.talend.libraries/commons-collections-3.2.2/6.0.0"/>
-        <libraryNeeded context="plugin:org.talend.hadoop.distribution.cdh5100spark2" id="commons-compiler-2.7.6.jar" name="commons-compiler-2.7.6.jar" mvn_uri="mvn:org.talend.libraries/commons-compiler-2.7.6/6.0.0"/>
+        <libraryNeeded context="plugin:org.talend.hadoop.distribution.cdh5100spark2" id="commons-compiler-3.0.0.jar" name="commons-compiler-3.0.0.jar" mvn_uri="mvn:org.talend.libraries/commons-compiler-3.0.0/6.0.0"/>
         <libraryNeeded context="plugin:org.talend.hadoop.distribution.cdh5100spark2" id="commons-compress-1.4.1.jar" name="commons-compress-1.4.1.jar" mvn_uri="mvn:org.talend.libraries/commons-compress-1.4.1/6.0.0"/>
         <libraryNeeded context="plugin:org.talend.hadoop.distribution.cdh5100spark2" id="commons-crypto-1.0.0.jar" name="commons-crypto-1.0.0.jar" mvn_uri="mvn:org.talend.libraries/commons-crypto-1.0.0/6.0.0"/>
         <libraryNeeded context="plugin:org.talend.hadoop.distribution.cdh5100spark2" id="commons-dbcp-1.4.jar" name="commons-dbcp-1.4.jar" mvn_uri="mvn:org.talend.libraries/commons-dbcp-1.4/6.0.0"/>
@@ -743,7 +743,6 @@
         <libraryNeeded context="plugin:org.talend.hadoop.distribution.cdh5100spark2" id="jackson-databind-2.6.5.jar" name="jackson-databind-2.6.5.jar" mvn_uri="mvn:org.talend.libraries/jackson-databind-2.6.5/6.0.0"/>
         <libraryNeeded context="plugin:org.talend.hadoop.distribution.cdh5100spark2" id="jackson-module-paranamer-2.6.5.jar" name="jackson-module-paranamer-2.6.5.jar" mvn_uri="mvn:org.talend.libraries/jackson-module-paranamer-2.6.5/6.0.0"/>
         <libraryNeeded context="plugin:org.talend.hadoop.distribution.cdh5100spark2" id="jackson-module-scala_2.11-2.6.5.jar" name="jackson-module-scala_2.11-2.6.5.jar" mvn_uri="mvn:org.talend.libraries/jackson-module-scala_2.11-2.6.5/6.0.0"/>
-        <libraryNeeded context="plugin:org.talend.hadoop.distribution.cdh5100spark2" id="janino-2.7.8.jar" name="janino-2.7.8.jar" mvn_uri="mvn:org.talend.libraries/janino-2.7.8/6.0.0"/>
         <libraryNeeded context="plugin:org.talend.hadoop.distribution.cdh5100spark2" id="javassist-3.18.1-GA.jar" name="javassist-3.18.1-GA.jar" mvn_uri="mvn:org.talend.libraries/javassist-3.18.1-GA/6.0.0"/>
         <libraryNeeded context="plugin:org.talend.hadoop.distribution.cdh5100spark2" id="javax.annotation-api-1.2.jar" name="javax.annotation-api-1.2.jar" mvn_uri="mvn:org.talend.libraries/javax.annotation-api-1.2/6.0.0"/>
         <libraryNeeded context="plugin:org.talend.hadoop.distribution.cdh5100spark2" id="javax.inject-2.4.0-b34.jar" name="javax.inject-2.4.0-b34.jar" mvn_uri="mvn:org.talend.libraries/javax.inject-2.4.0-b34/6.0.0"/>
