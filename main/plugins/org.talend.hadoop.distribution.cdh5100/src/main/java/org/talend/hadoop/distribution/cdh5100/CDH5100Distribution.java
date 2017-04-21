@@ -106,8 +106,6 @@ public class CDH5100Distribution extends AbstractDistribution implements ICloude
         moduleGroups.put(ComponentType.SPARKSTREAMING, CDH5100SparkStreamingModuleGroup.getModuleGroups());
         moduleGroups.put(ComponentType.HIVEONSPARK, CDH5100HiveOnSparkModuleGroup.getModuleGroups());
 
-        // moduleGroups.put(ComponentType.SPARKBATCH, CDH580SparkBatchModuleGroup.getModuleGroups());
-
         // Used to add a module group import for a specific node. The given node must have a HADOOP_LIBRARIES parameter.
         nodeModuleGroups = new HashMap<>();
 
@@ -140,6 +138,7 @@ public class CDH5100Distribution extends AbstractDistribution implements ICloude
                 SparkStreamingConstant.S3_CONFIGURATION_COMPONENT), CDH5100SparkStreamingS3NodeModuleGroup.getModuleGroups(
                 distribution, version));
 
+        // Kinesis
         Set<DistributionModuleGroup> kinesisNodeModuleGroups = CDH5100SparkStreamingKinesisNodeModuleGroup.getModuleGroups(
                 distribution, version);
         nodeModuleGroups.put(new NodeComponentTypeBean(ComponentType.SPARKSTREAMING,
@@ -149,6 +148,7 @@ public class CDH5100Distribution extends AbstractDistribution implements ICloude
         nodeModuleGroups.put(new NodeComponentTypeBean(ComponentType.SPARKSTREAMING,
                 SparkStreamingConstant.KINESIS_OUTPUT_COMPONENT), kinesisNodeModuleGroups);
 
+        // Flume
         Set<DistributionModuleGroup> flumeNodeModuleGroups = CDH5100SparkStreamingFlumeNodeModuleGroup.getModuleGroups(
                 distribution, version);
         nodeModuleGroups.put(
@@ -157,6 +157,7 @@ public class CDH5100Distribution extends AbstractDistribution implements ICloude
         nodeModuleGroups.put(new NodeComponentTypeBean(ComponentType.SPARKSTREAMING,
                 SparkStreamingConstant.FLUME_OUTPUT_COMPONENT), flumeNodeModuleGroups);
 
+        // Kafka
         Set<DistributionModuleGroup> kafkaAssemblyModuleGroups = CDH5100SparkStreamingKafkaAssemblyModuleGroup.getModuleGroups(
                 distribution, version);
         Set<DistributionModuleGroup> kafkaAvroModuleGroups = CDH5100SparkStreamingKafkaAvroModuleGroup.getModuleGroups(
