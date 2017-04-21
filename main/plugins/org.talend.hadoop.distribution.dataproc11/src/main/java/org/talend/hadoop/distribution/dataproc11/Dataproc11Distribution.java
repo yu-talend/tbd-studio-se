@@ -237,7 +237,7 @@ public class Dataproc11Distribution extends AbstractDistribution implements HDFS
     }
     
     @Override
-    public SparkStreamingKafkaVersion getSparkStreamingKafkaVersion() {
+    public SparkStreamingKafkaVersion getSparkStreamingKafkaVersion(ESparkVersion sparkVersion) {
         return SparkStreamingKafkaVersion.KAFKA_0_10;
     }
 }
