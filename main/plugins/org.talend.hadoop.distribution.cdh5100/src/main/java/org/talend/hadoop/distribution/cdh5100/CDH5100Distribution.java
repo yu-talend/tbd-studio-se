@@ -66,7 +66,9 @@ import org.talend.hadoop.distribution.constants.PigOutputConstant;
 import org.talend.hadoop.distribution.constants.SparkBatchConstant;
 import org.talend.hadoop.distribution.constants.SparkStreamingConstant;
 import org.talend.hadoop.distribution.constants.cdh.IClouderaDistribution;
+import org.talend.hadoop.distribution.kafka.SparkStreamingKafkaVersion;
 import org.talend.hadoop.distribution.spark.SparkClassPathUtils;
+import org.talend.hadoop.distribution.spark.SparkVersionUtil;
 
 @SuppressWarnings("nls")
 public class CDH5100Distribution extends AbstractDistribution implements IClouderaDistribution, HDFSComponent, HBaseComponent,
@@ -278,10 +280,11 @@ public class CDH5100Distribution extends AbstractDistribution implements ICloude
     public boolean pigVersionPriorTo_0_12() {
         return false;
     }
-    
+
     @Override
     public String generateSparkJarsPaths(List<String> commandLineJarsPaths) {
-        return SparkClassPathUtils.generateSparkJarsPaths(commandLineJarsPaths, CDH5100Constant.SPARK2_MODULE_GROUP.getModuleName());
+        return SparkClassPathUtils.generateSparkJarsPaths(commandLineJarsPaths,
+                CDH5100Constant.SPARK2_MODULE_GROUP.getModuleName());
     }
 
     @Override
@@ -415,5 +418,15 @@ public class CDH5100Distribution extends AbstractDistribution implements ICloude
     @Override
     public boolean doSupportHDFSEncryption() {
         return true;
+    }
+
+    @Override
+    public SparkStreamingKafkaVersion getSparkStreamingKafkaVersion(ESparkVersion sparkVersion) {
+        // Using Kafka 0.10 for Spark 2
+        if (ESparkVersion.SPARK_2_0.compareTo(sparkVersion) <= 0) {
+            return SparkStreamingKafkaVersion.KAFKA_0_10;
+        }else {
+            return SparkStreamingKafkaVersion.KAFKA_0_8;
+        }
     }
 }
