@@ -37,10 +37,10 @@ import org.talend.hadoop.distribution.dataproc11.modulegroup.Dataproc11HiveOnSpa
 import org.talend.hadoop.distribution.dataproc11.modulegroup.Dataproc11SparkBatchModuleGroup;
 import org.talend.hadoop.distribution.dataproc11.modulegroup.Dataproc11SparkStreamingModuleGroup;
 import org.talend.hadoop.distribution.dataproc11.modulegroup.node.sparkbatch.Dataproc11SparkBatchParquetNodeModuleGroup;
-import org.talend.hadoop.distribution.dataproc11.modulegroup.node.sparkstreaming.Dataproc11SparkStreamingParquetNodeModuleGroup;
 import org.talend.hadoop.distribution.dataproc11.modulegroup.node.sparkstreaming.Dataproc11SparkStreamingKafkaAssemblyModuleGroup;
 import org.talend.hadoop.distribution.dataproc11.modulegroup.node.sparkstreaming.Dataproc11SparkStreamingKafkaAvroModuleGroup;
 import org.talend.hadoop.distribution.dataproc11.modulegroup.node.sparkstreaming.Dataproc11SparkStreamingKafkaClientModuleGroup;
+import org.talend.hadoop.distribution.dataproc11.modulegroup.node.sparkstreaming.Dataproc11SparkStreamingParquetNodeModuleGroup;
 import org.talend.hadoop.distribution.kafka.SparkStreamingKafkaVersion;
 import org.talend.hadoop.distribution.spark.SparkClassPathUtils;
 
