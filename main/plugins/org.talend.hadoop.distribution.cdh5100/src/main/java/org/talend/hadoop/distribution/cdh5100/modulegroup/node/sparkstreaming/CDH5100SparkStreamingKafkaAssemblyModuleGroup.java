@@ -61,18 +61,4 @@ public class CDH5100SparkStreamingKafkaAssemblyModuleGroup {
         
         return hs;
     }
-    
-    public static void main(String[] args){
-        
-        NestedComponentCondition condition = new NestedComponentCondition(new MultiComponentCondition(
-                new SparkStreamingLinkedNodeCondition(IClouderaDistribution.DISTRIBUTION_NAME, CDH5100Distribution.VERSION,
-                        SparkStreamingConstant.KAFKA_SPARKCONFIGURATION_LINKEDPARAMETER).getCondition(),
-                BooleanOperator.AND, spark21Condition));
-        
-        System.out.print(condition.getConditionString());
-        
-        
-    }
-    
-    
 }
