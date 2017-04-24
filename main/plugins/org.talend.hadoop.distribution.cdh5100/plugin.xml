@@ -863,7 +863,10 @@
         <libraryNeeded context="plugin:org.talend.hadoop.distribution.cdh5100spark2" id="commons-configuration-1.6.jar" name="commons-configuration-1.6.jar" mvn_uri="mvn:org.talend.libraries/commons-configuration-1.6/6.1.0"/>
         <libraryNeeded context="plugin:org.talend.hadoop.distribution.cdh5100spark2" id="aopalliance-1.0.jar" name="aopalliance-1.0.jar" mvn_uri="mvn:org.talend.libraries/aopalliance-1.0/6.1.0"/>
         <libraryNeeded context="plugin:org.talend.hadoop.distribution.cdh5100spark2" id="activation-1.1.1.jar" name="activation-1.1.1.jar" mvn_uri="mvn:org.talend.libraries/activation-1.1.1/6.1.0"/>
-        
+        <libraryNeeded context="plugin:org.talend.hadoop.distribution.cdh5100spark2" id="spark-streaming-kafka-0-10_2.11-2.1.0.cloudera1" name="spark-streaming-kafka-0-10_2.11-2.1.0.cloudera1.jar" mvn_uri="mvn:org.talend.libraries/spark-streaming-kafka-0-10_2.11-2.1.0.cloudera1/6.4.0"/>
+        <libraryNeeded context="plugin:org.talend.hadoop.distribution.cdh5100spark2" id="kafka_2.11-0.10.0-kafka-2.1.0" name="kafka_2.11-0.10.0-kafka-2.1.0.jar" mvn_uri="mvn:org.talend.libraries/kafka_2.11-0.10.0-kafka-2.1.0/6.4.0"/>
+        <libraryNeeded context="plugin:org.talend.hadoop.distribution.cdh5100spark2" id="kafka-clients-0.10.0-kafka-2.1.0" name="kafka-clients-0.10.0-kafka-2.1.0.jar" mvn_uri="mvn:org.talend.libraries/kafka-clients-0.10.0-kafka-2.1.0/6.4.0"/>
+            
         <!-- Groups -->
         
         <!-- HDFS common group -->
@@ -1447,6 +1450,18 @@
             <library id="kafka-clients-0.9.0-kafka-2.0.2"/>
             <library id="metrics-core-2.2.0"/>
         </libraryNeededGroup>
+
+        <!-- Spark 2 Kafka group MRREQUIRED -->
+        <libraryNeededGroup
+                description="Spark 2 Kafka assembly libraries for CDH 5.10 that are MRREQUIRED"
+                id="SPARK2-KAFKA-ASSEMBLY-LIB-MRREQUIRED-CDH_5_10"
+                name="SPARK2-KAFKA-ASSEMBLY-LIB-MRREQUIRED-CDH_5_10">
+            <library id="spark-streaming-kafka-0-10_2.11-2.1.0.cloudera1"/>                
+            <library id="kafka_2.11-0.10.0-kafka-2.1.0"/>
+            <library id="kafka-clients-0.10.0-kafka-2.1.0"/>
+            <library id="metrics-core-2.2.0-cdh510"/>
+        </libraryNeededGroup>
+
         
         <!-- Spark Kafka Client group MRREQUIRED -->
         <libraryNeededGroup
@@ -1454,6 +1469,14 @@
                 id="SPARK-KAFKA-CLIENT-LIB-MRREQUIRED-CDH_5_10"
                 name="SPARK-KAFKA-CLIENT-LIB-MRREQUIRED-CDH_5_10">
             <library id="kafka-clients-0.9.0-kafka-2.0.2"/>
+        </libraryNeededGroup>
+        
+        <!-- Spark 2 Kafka Client group MRREQUIRED -->
+        <libraryNeededGroup
+                description="Spark 2 Kafka client libraries for CDH 5.10 that are MRREQUIRED"
+                id="SPARK2-KAFKA-CLIENT-LIB-MRREQUIRED-CDH_5_10"
+                name="SPARK2-KAFKA-CLIENT-LIB-MRREQUIRED-CDH_5_10">
+            <library id="kafka-clients-0.10.0-kafka-2.1.0"/>
         </libraryNeededGroup>
         
         <!-- Spark Kafka Avro group MRREQUIRED -->

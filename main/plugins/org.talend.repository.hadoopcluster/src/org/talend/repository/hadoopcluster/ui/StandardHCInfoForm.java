@@ -42,6 +42,7 @@ import org.talend.core.hadoop.repository.HadoopRepositoryUtil;
 import org.talend.core.hadoop.version.EAuthenticationMode;
 import org.talend.core.hadoop.version.custom.ECustomVersionGroup;
 import org.talend.core.model.properties.ConnectionItem;
+import org.talend.core.model.properties.Property;
 import org.talend.designer.core.model.utils.emf.talendfile.ContextType;
 import org.talend.designer.hdfsbrowse.hadoop.service.EHadoopServiceType;
 import org.talend.designer.hdfsbrowse.hadoop.service.HadoopServiceProperties;
@@ -1024,7 +1025,7 @@ public class StandardHCInfoForm extends AbstractHadoopForm<HadoopClusterConnecti
     }
 
     private void initCommonProperties(HadoopServiceProperties properties) {
-        properties.setItem(this.connectionItem);
+        ((Property) properties).setItem(this.connectionItem);
         HadoopClusterConnection connection = getConnection();
         ContextType contextType = null;
         if (getConnection().isContextMode()) {
