@@ -686,7 +686,14 @@
             name="spark-streaming-kinesis-asl-assembly_2.10-1.6.0-cdh5.10.1.jar"
             mvn_uri="mvn:org.talend.libraries/spark-streaming-kinesis-asl-assembly_2.10-1.6.0-cdh5.10.1/6.4.0">
         </libraryNeeded>
-        
+
+        <libraryNeeded
+            context="plugin:org.talend.hadoop.distribution.cdh5100"
+            id="spark-streaming-kinesis-asl-assembly_2.11-2.1.0.cloudera1"
+            name="spark-streaming-kinesis-asl-assembly_2.11-2.1.0.cloudera1.jar"
+            mvn_uri="mvn:org.talend.libraries/spark-streaming-kinesis-asl-assembly_2.11-2.1.0.cloudera1/6.4.0">
+        </libraryNeeded>
+
         <!-- Spark2 libraries -->
         <libraryNeeded context="plugin:org.talend.hadoop.distribution.cdh5100spark2" id="akka-actor.jar" name="akka-actor.jar" mvn_uri="mvn:org.talend.libraries/akka-actor/6.0.0"/>
         <libraryNeeded context="plugin:org.talend.hadoop.distribution.cdh5100spark2" id="antlr-2.7.7.jar" name="antlr-2.7.7.jar" mvn_uri="mvn:org.talend.libraries/antlr-2.7.7/6.0.0"/>
@@ -1428,6 +1435,20 @@
             <library id="aws-java-sdk-cloudwatch-1.9.16.jar"/>            
             <library id="joda-time-2.7.jar"/>            
         </libraryNeededGroup>
+        
+        <!-- Spark 2 Kinesis group MRREQUIRED -->
+        <libraryNeededGroup
+                description="Spark Kinesis libraries for CDH 5.10 that are MRREQUIRED"
+                id="SPARK2-KINESIS-LIB-MRREQUIRED-CDH_5_10"
+                name="SPARK2-KINESIS-LIB-MRREQUIRED-CDH_5_10">
+            <library id="spark-streaming-kinesis-asl-assembly_2.11-2.1.0.cloudera1"/>
+            <library id="amazon-kinesis-client-1.2.1.jar"/>
+            <library id="aws-java-sdk-kinesis-1.9.16.jar"/>
+            <library id="aws-java-sdk-core-1.9.16.jar"/>
+            <library id="aws-java-sdk-dynamodb-1.9.16.jar"/>                         
+            <library id="aws-java-sdk-cloudwatch-1.9.16.jar"/>            
+            <library id="joda-time-2.7.jar"/>            
+        </libraryNeededGroup>        
         
         <!-- Spark Flume group MRREQUIRED -->
         <libraryNeededGroup
