@@ -44,12 +44,12 @@ public class CDH5100SparkStreamingKinesisNodeModuleGroup {
                 CDH5100Constant.SPARK_KINESIS_MRREQUIRED_MODULE_GROUP.getModuleName(), true, new NestedComponentCondition(new MultiComponentCondition(
                         new SparkStreamingLinkedNodeCondition(distribution, version).getCondition(), BooleanOperator.AND,
                         spark16Condition)));
+        hs.add(dmgSpark16);
         
         DistributionModuleGroup dmgSpark21 = new DistributionModuleGroup(
                 CDH5100Constant.SPARK2_KINESIS_MRREQUIRED_MODULE_GROUP.getModuleName(), true, new NestedComponentCondition(new MultiComponentCondition(
                         new SparkStreamingLinkedNodeCondition(distribution, version).getCondition(), BooleanOperator.AND,
                         spark21Condition)));
-        hs.add(dmgSpark16);
         hs.add(dmgSpark21);
         return hs;
     }
