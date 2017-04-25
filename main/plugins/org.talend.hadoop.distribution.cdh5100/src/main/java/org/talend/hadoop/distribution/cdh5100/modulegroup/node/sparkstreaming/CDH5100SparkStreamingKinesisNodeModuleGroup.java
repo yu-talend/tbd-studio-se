@@ -31,11 +31,11 @@ import org.talend.hadoop.distribution.constants.SparkStreamingConstant;
 public class CDH5100SparkStreamingKinesisNodeModuleGroup {
 
     private final static ComponentCondition spark16Condition = new SimpleComponentCondition(new LinkedNodeExpression(
-            SparkStreamingConstant.KINESIS_SPARKCONFIGURATION_LINKEDPARAMETER, "SUPPORTED_SPARK_VERSION", EqualityOperator.EQ,
+            SparkStreamingConstant.SPARK_STREAMING_SPARKCONFIGURATION_LINKEDPARAMETER, "SUPPORTED_SPARK_VERSION", EqualityOperator.EQ,
             ESparkVersion.SPARK_1_6.getSparkVersion()));
 
     private final static ComponentCondition spark21Condition = new SimpleComponentCondition(new LinkedNodeExpression(
-            SparkStreamingConstant.KINESIS_SPARKCONFIGURATION_LINKEDPARAMETER, "SUPPORTED_SPARK_VERSION", EqualityOperator.EQ,
+            SparkStreamingConstant.SPARK_STREAMING_SPARKCONFIGURATION_LINKEDPARAMETER, "SUPPORTED_SPARK_VERSION", EqualityOperator.EQ,
             ESparkVersion.SPARK_2_1.getSparkVersion()));
 
     public static Set<DistributionModuleGroup> getModuleGroups(String distribution, String version) {
@@ -49,7 +49,6 @@ public class CDH5100SparkStreamingKinesisNodeModuleGroup {
                 CDH5100Constant.SPARK2_KINESIS_MRREQUIRED_MODULE_GROUP.getModuleName(), true, new NestedComponentCondition(new MultiComponentCondition(
                         new SparkStreamingLinkedNodeCondition(distribution, version).getCondition(), BooleanOperator.AND,
                         spark21Condition)));
-        // TODO Conditions are not working
         hs.add(dmgSpark16);
         hs.add(dmgSpark21);
         return hs;
