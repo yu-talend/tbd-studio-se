@@ -57,7 +57,6 @@ public class CDH5100SparkStreamingKafkaClientModuleGroup {
                         new SparkStreamingLinkedNodeCondition(distribution, version,
                                 SparkStreamingConstant.KAFKA_SPARKCONFIGURATION_LINKEDPARAMETER).getCondition(),
                         BooleanOperator.AND, spark21Condition)));
-        hs.add(dmgSpark16);
         hs.add(dmgSpark21);
         return hs;
     }
