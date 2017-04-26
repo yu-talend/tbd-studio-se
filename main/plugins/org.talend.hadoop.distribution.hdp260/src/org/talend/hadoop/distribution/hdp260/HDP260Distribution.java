@@ -68,7 +68,7 @@ public class HDP260Distribution extends AbstractDistribution implements HDFSComp
         HiveComponent, HCatalogComponent, SparkBatchComponent, SparkStreamingComponent, HiveOnSparkComponent, SqoopComponent,
         IHortonworksDistribution {
 
-    public static final String VERSION_DISPLAY = "Hortonworks Data Platform V2.5.0"; //$NON-NLS-1$
+    public static final String VERSION_DISPLAY = "Hortonworks Data Platform V2.6.0"; //$NON-NLS-1$
 
     public final static String VERSION = "HDP_2_6"; //$NON-NLS-1$
 
@@ -311,6 +311,7 @@ public class HDP260Distribution extends AbstractDistribution implements HDFSComp
     public Set<ESparkVersion> getSparkVersions() {
         Set<ESparkVersion> version = new HashSet<>();
         version.add(ESparkVersion.SPARK_1_6);
+        version.add(ESparkVersion.SPARK_2_1);
         return version;
     }
 

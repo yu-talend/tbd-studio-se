@@ -36,7 +36,7 @@ public class HDP260SparkBatchModuleGroup {
         hs.add(new DistributionModuleGroup(HDP260Constant.HDFS_MODULE_GROUP.getModuleName(), false, condition));
         hs.add(new DistributionModuleGroup(HDP260Constant.MAPREDUCE_MODULE_GROUP.getModuleName(), false, condition));
         ComponentCondition useAtlas = new SimpleComponentCondition(new BasicExpression(MRConstant.USE_ATLAS));
-        hs.add(new DistributionModuleGroup(HDP260Constant.ATLAS_HDP_2_5.getModuleName(), true, useAtlas));
+        hs.add(new DistributionModuleGroup(HDP260Constant.ATLAS_HDP_2_6.getModuleName(), true, useAtlas));
         return hs;
     }
 
