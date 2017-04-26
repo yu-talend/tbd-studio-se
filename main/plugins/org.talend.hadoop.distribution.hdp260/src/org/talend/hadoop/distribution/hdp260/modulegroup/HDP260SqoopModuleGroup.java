@@ -28,8 +28,6 @@ public class HDP260SqoopModuleGroup {
     public static Set<DistributionModuleGroup> getModuleGroups() {
         Set<DistributionModuleGroup> hs = new HashSet<>();
         hs.add(new DistributionModuleGroup(HDP260Constant.SQOOP_MODULE_GROUP.getModuleName()));
-//        hs.add(new DistributionModuleGroup(HDP250Constant.HDFS_MODULE_GROUP.getModuleName()));
-//        hs.add(new DistributionModuleGroup(HDP250Constant.MAPREDUCE_MODULE_GROUP.getModuleName()));
         ComponentCondition parquetOutputCondition = new SimpleComponentCondition(new BasicExpression(SqoopConstant.FILE_FORMAT,
                 EqualityOperator.EQ, SqoopConstant.PAQUET_OUTPUT_FORMAT));
         hs.add(new DistributionModuleGroup(HDP260Constant.SQOOP_PARQUET_MODULE_GROUP.getModuleName(), true,
