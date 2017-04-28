@@ -90,10 +90,7 @@ imports="
 %>
         <%@ include file="@{org.talend.designer.components.localprovider}/components/templates/Hive/GetDataprocConnection.javajet"%>
 <%
-        if("false".equals(useExistingConn)) { // This variable is declared and initialized in the GetDataprocConnection.javajet
-            // TODO set the Memory option on GetDataprocConnection.javaje
-        }
-    } else {
+    } else { // normal mode
 %>
     <%@ include file="@{org.talend.designer.components.localprovider}/components/templates/Hive/GetConnection.javajet"%>
 <%
@@ -237,7 +234,7 @@ imports="
                             } else { // dataproc
                                 if(isLog4jEnabled) {
 %>
-                                    log.debug("Query for <%=cid%>: " + "ADD JAR " + stagingBucketPath_<%=cid%> + new java.io.File(getJarsToRegister_<%=cid %>.replaceJarPaths("<%=jars.get(j)%>")).getName() + ";";
+                                    log.debug("Query for <%=cid%>: " + "ADD JAR " + stagingBucketPath_<%=cid%> + new java.io.File(getJarsToRegister_<%=cid %>.replaceJarPaths("<%=jars.get(j)%>")).getName() + ";");
 <%
                                 }
 %>
