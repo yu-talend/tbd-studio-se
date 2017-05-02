@@ -351,6 +351,7 @@ imports="
             instance_<%=cid%>.addQuery(querySQL_<%=cid %>.replace("';'", "'\\;'") + ";");
             globalMap.put("<%=cid%>_QUERY", querySQL_<%=cid %>);
             int exitCode_<%=cid%> = instance_<%=cid%>.executeJob();
+            System.out.println(instance_<%=cid%>.getJobLog());
             if(exitCode_<%=cid%> > 0) {
     
 <%

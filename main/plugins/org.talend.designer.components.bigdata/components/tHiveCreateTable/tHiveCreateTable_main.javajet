@@ -369,10 +369,10 @@ if(likeTable) {
 %>
                 instance_<%=cid%>.addQuery(querySQL_<%=cid %>.replace("';'", "'\\;'") + ";");
                 if(libjars_<%=cid%>.length() > 0) {
-                    instance_<%=cid%>.setLibJars(libjars_<%=cid%>.toString().substring(0, libjars_<%=cid%>.length()-1));
+                    instance_<%=cid%>.addLibJars(libjars_<%=cid%>.toString().substring(0, libjars_<%=cid%>.length()-1));
                 }
-                instance_<%=cid%>.callWS(instance_<%=cid%>.sendFiles());
                 int exitCode_<%=cid%> = instance_<%=cid%>.executeJob();
+                System.out.println(instance_<%=cid%>.getJobLog());
                 if(exitCode_<%=cid%> > 0) {
 
 <%
@@ -731,6 +731,7 @@ if(originalHadoopUsername_<%=cid%>!=null) {
             instance_<%=cid%>.addQuery(querySQL_<%=cid %>.replace("';'", "'\\;'") + ";");
             globalMap.put("<%=cid%>_QUERY", querySQL_<%=cid %>);
             int exitCode_<%=cid%> = instance_<%=cid%>.executeJob();
+            System.out.println(instance_<%=cid%>.getJobLog());
             if(exitCode_<%=cid%> > 0) {
     
 <%
