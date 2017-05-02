@@ -88,16 +88,16 @@ public class HDP260Distribution extends AbstractDistribution implements HDFSComp
         // components that have the distribution list.
         moduleGroups = new HashMap<>();
         moduleGroups.put(ComponentType.HDFS, HDP260HDFSModuleGroup.getModuleGroups());
-        moduleGroups.put(ComponentType.HBASE, HDP260HBaseModuleGroup.getModuleGroups());
-        moduleGroups.put(ComponentType.HCATALOG, HDP260HCatalogModuleGroup.getModuleGroups());
-        moduleGroups.put(ComponentType.MAPREDUCE, HDP260MapReduceModuleGroup.getModuleGroups());
-        moduleGroups.put(ComponentType.PIG, HDP260PigModuleGroup.getModuleGroups());
-        moduleGroups.put(ComponentType.PIGOUTPUT, HDP260PigOutputModuleGroup.getModuleGroups());
-        moduleGroups.put(ComponentType.SQOOP, HDP260SqoopModuleGroup.getModuleGroups());
-        moduleGroups.put(ComponentType.HIVE, HDP260HiveModuleGroup.getModuleGroups());
+//        moduleGroups.put(ComponentType.HBASE, HDP260HBaseModuleGroup.getModuleGroups());
+//        moduleGroups.put(ComponentType.HCATALOG, HDP260HCatalogModuleGroup.getModuleGroups());
+//        moduleGroups.put(ComponentType.MAPREDUCE, HDP260MapReduceModuleGroup.getModuleGroups());
+//        moduleGroups.put(ComponentType.PIG, HDP260PigModuleGroup.getModuleGroups());
+//        moduleGroups.put(ComponentType.PIGOUTPUT, HDP260PigOutputModuleGroup.getModuleGroups());
+//        moduleGroups.put(ComponentType.SQOOP, HDP260SqoopModuleGroup.getModuleGroups());
+//        moduleGroups.put(ComponentType.HIVE, HDP260HiveModuleGroup.getModuleGroups());
         moduleGroups.put(ComponentType.SPARKBATCH, HDP260SparkBatchModuleGroup.getModuleGroups());
         moduleGroups.put(ComponentType.SPARKSTREAMING, HDP260SparkStreamingModuleGroup.getModuleGroups());
-        moduleGroups.put(ComponentType.HIVEONSPARK, HDP260HiveOnSparkModuleGroup.getModuleGroups());
+//        moduleGroups.put(ComponentType.HIVEONSPARK, HDP260HiveOnSparkModuleGroup.getModuleGroups());
 
         // Used to add a module group import for a specific node. The given node must have a HADOOP_LIBRARIES parameter.
         nodeModuleGroups = new HashMap<>();
