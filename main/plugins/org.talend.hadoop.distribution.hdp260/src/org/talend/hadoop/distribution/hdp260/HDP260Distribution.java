@@ -15,6 +15,7 @@ package org.talend.hadoop.distribution.hdp260;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -40,17 +41,9 @@ import org.talend.hadoop.distribution.constants.PigOutputConstant;
 import org.talend.hadoop.distribution.constants.SparkBatchConstant;
 import org.talend.hadoop.distribution.constants.SparkStreamingConstant;
 import org.talend.hadoop.distribution.constants.hdp.IHortonworksDistribution;
-import org.talend.hadoop.distribution.hdp260.modulegroup.HDP260HBaseModuleGroup;
-import org.talend.hadoop.distribution.hdp260.modulegroup.HDP260HCatalogModuleGroup;
 import org.talend.hadoop.distribution.hdp260.modulegroup.HDP260HDFSModuleGroup;
-import org.talend.hadoop.distribution.hdp260.modulegroup.HDP260HiveModuleGroup;
-import org.talend.hadoop.distribution.hdp260.modulegroup.HDP260HiveOnSparkModuleGroup;
-import org.talend.hadoop.distribution.hdp260.modulegroup.HDP260MapReduceModuleGroup;
-import org.talend.hadoop.distribution.hdp260.modulegroup.HDP260PigModuleGroup;
-import org.talend.hadoop.distribution.hdp260.modulegroup.HDP260PigOutputModuleGroup;
 import org.talend.hadoop.distribution.hdp260.modulegroup.HDP260SparkBatchModuleGroup;
 import org.talend.hadoop.distribution.hdp260.modulegroup.HDP260SparkStreamingModuleGroup;
-import org.talend.hadoop.distribution.hdp260.modulegroup.HDP260SqoopModuleGroup;
 import org.talend.hadoop.distribution.hdp260.modulegroup.node.mr.HDP260MRS3NodeModuleGroup;
 import org.talend.hadoop.distribution.hdp260.modulegroup.node.pigoutput.HDP260PigOutputNodeModuleGroup;
 import org.talend.hadoop.distribution.hdp260.modulegroup.node.sparkbatch.HDP260GraphFramesNodeModuleGroup;
@@ -63,6 +56,7 @@ import org.talend.hadoop.distribution.hdp260.modulegroup.node.sparkstreaming.HDP
 import org.talend.hadoop.distribution.hdp260.modulegroup.node.sparkstreaming.HDP260SparkStreamingKinesisNodeModuleGroup;
 import org.talend.hadoop.distribution.hdp260.modulegroup.node.sparkstreaming.HDP260SparkStreamingParquetNodeModuleGroup;
 import org.talend.hadoop.distribution.hdp260.modulegroup.node.sparkstreaming.HDP260SparkStreamingS3NodeModuleGroup;
+import org.talend.hadoop.distribution.spark.SparkClassPathUtils;
 
 public class HDP260Distribution extends AbstractDistribution implements HDFSComponent, MRComponent, HBaseComponent, PigComponent,
         HiveComponent, HCatalogComponent, SparkBatchComponent, SparkStreamingComponent, HiveOnSparkComponent, SqoopComponent,
@@ -414,4 +408,11 @@ public class HDP260Distribution extends AbstractDistribution implements HDFSComp
     public boolean isImpactedBySqoop2995() {
         return true;
     }
+    
+    @Override
+    public String generateSparkJarsPaths(List<String> commandLineJarsPaths) {
+        return SparkClassPathUtils.generateSparkJarsPaths(commandLineJarsPaths,
+                HDP260Constant.SPARK2_MODULE_GROUP.getModuleName());
+    }
+
 }
