@@ -42,6 +42,8 @@ import org.talend.hadoop.distribution.constants.SparkBatchConstant;
 import org.talend.hadoop.distribution.constants.SparkStreamingConstant;
 import org.talend.hadoop.distribution.constants.hdp.IHortonworksDistribution;
 import org.talend.hadoop.distribution.hdp260.modulegroup.HDP260HDFSModuleGroup;
+import org.talend.hadoop.distribution.hdp260.modulegroup.HDP260HiveModuleGroup;
+import org.talend.hadoop.distribution.hdp260.modulegroup.HDP260HiveOnSparkModuleGroup;
 import org.talend.hadoop.distribution.hdp260.modulegroup.HDP260SparkBatchModuleGroup;
 import org.talend.hadoop.distribution.hdp260.modulegroup.HDP260SparkStreamingModuleGroup;
 import org.talend.hadoop.distribution.hdp260.modulegroup.node.mr.HDP260MRS3NodeModuleGroup;
@@ -88,10 +90,10 @@ public class HDP260Distribution extends AbstractDistribution implements HDFSComp
 //        moduleGroups.put(ComponentType.PIG, HDP260PigModuleGroup.getModuleGroups());
 //        moduleGroups.put(ComponentType.PIGOUTPUT, HDP260PigOutputModuleGroup.getModuleGroups());
 //        moduleGroups.put(ComponentType.SQOOP, HDP260SqoopModuleGroup.getModuleGroups());
-//        moduleGroups.put(ComponentType.HIVE, HDP260HiveModuleGroup.getModuleGroups());
+        moduleGroups.put(ComponentType.HIVE, HDP260HiveModuleGroup.getModuleGroups());
         moduleGroups.put(ComponentType.SPARKBATCH, HDP260SparkBatchModuleGroup.getModuleGroups());
         moduleGroups.put(ComponentType.SPARKSTREAMING, HDP260SparkStreamingModuleGroup.getModuleGroups());
-//        moduleGroups.put(ComponentType.HIVEONSPARK, HDP260HiveOnSparkModuleGroup.getModuleGroups());
+        moduleGroups.put(ComponentType.HIVEONSPARK, HDP260HiveOnSparkModuleGroup.getModuleGroups());
 
         // Used to add a module group import for a specific node. The given node must have a HADOOP_LIBRARIES parameter.
         nodeModuleGroups = new HashMap<>();
