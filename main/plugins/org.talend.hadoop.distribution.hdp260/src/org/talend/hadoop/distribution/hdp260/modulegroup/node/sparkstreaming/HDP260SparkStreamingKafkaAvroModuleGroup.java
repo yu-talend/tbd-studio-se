@@ -24,7 +24,7 @@ import org.talend.hadoop.distribution.hdp260.HDP260Distribution;
 
 public class HDP260SparkStreamingKafkaAvroModuleGroup {
 
-    public static Set<DistributionModuleGroup> getModuleGroups() {
+    public static Set<DistributionModuleGroup> getModuleGroups(String distribution, String version) {
         Set<DistributionModuleGroup> hs = new HashSet<>();
         DistributionModuleGroup dmg = new DistributionModuleGroup(
                 HDP260Constant.SPARK_KAFKA_AVRO_MRREQUIRED_MODULE_GROUP.getModuleName(), true,
@@ -32,7 +32,7 @@ public class HDP260SparkStreamingKafkaAvroModuleGroup {
                         SparkStreamingConstant.KAFKA_SPARKCONFIGURATION_LINKEDPARAMETER).getCondition());
         hs.add(dmg);
         // Add Spark Streaming Kafka dependencies as well
-        hs.addAll(HDP260SparkStreamingKafkaAssemblyModuleGroup.getModuleGroups());
+        hs.addAll(HDP260SparkStreamingKafkaAssemblyModuleGroup.getModuleGroups(distribution, version));
         return hs;
     }
 }

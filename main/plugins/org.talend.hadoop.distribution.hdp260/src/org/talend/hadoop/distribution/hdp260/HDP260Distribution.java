@@ -58,6 +58,7 @@ import org.talend.hadoop.distribution.hdp260.modulegroup.node.sparkstreaming.HDP
 import org.talend.hadoop.distribution.hdp260.modulegroup.node.sparkstreaming.HDP260SparkStreamingKinesisNodeModuleGroup;
 import org.talend.hadoop.distribution.hdp260.modulegroup.node.sparkstreaming.HDP260SparkStreamingParquetNodeModuleGroup;
 import org.talend.hadoop.distribution.hdp260.modulegroup.node.sparkstreaming.HDP260SparkStreamingS3NodeModuleGroup;
+import org.talend.hadoop.distribution.kafka.SparkStreamingKafkaVersion;
 import org.talend.hadoop.distribution.spark.SparkClassPathUtils;
 
 public class HDP260Distribution extends AbstractDistribution implements HDFSComponent, MRComponent, HBaseComponent, PigComponent,
@@ -78,18 +79,21 @@ public class HDP260Distribution extends AbstractDistribution implements HDFSComp
 
     private static Map<ComponentType, ComponentCondition> displayConditions;
 
-    static {
+    public HDP260Distribution() {
+        
+        String distribution = getDistribution();
+        String version = getVersion();
 
         // Used to add a module group import for the components that have a HADOOP_DISTRIBUTION parameter, aka. the
         // components that have the distribution list.
         moduleGroups = new HashMap<>();
         moduleGroups.put(ComponentType.HDFS, HDP260HDFSModuleGroup.getModuleGroups());
-//        moduleGroups.put(ComponentType.HBASE, HDP260HBaseModuleGroup.getModuleGroups());
-//        moduleGroups.put(ComponentType.HCATALOG, HDP260HCatalogModuleGroup.getModuleGroups());
-//        moduleGroups.put(ComponentType.MAPREDUCE, HDP260MapReduceModuleGroup.getModuleGroups());
-//        moduleGroups.put(ComponentType.PIG, HDP260PigModuleGroup.getModuleGroups());
-//        moduleGroups.put(ComponentType.PIGOUTPUT, HDP260PigOutputModuleGroup.getModuleGroups());
-//        moduleGroups.put(ComponentType.SQOOP, HDP260SqoopModuleGroup.getModuleGroups());
+        // moduleGroups.put(ComponentType.HBASE, HDP260HBaseModuleGroup.getModuleGroups());
+        // moduleGroups.put(ComponentType.HCATALOG, HDP260HCatalogModuleGroup.getModuleGroups());
+        // moduleGroups.put(ComponentType.MAPREDUCE, HDP260MapReduceModuleGroup.getModuleGroups());
+        // moduleGroups.put(ComponentType.PIG, HDP260PigModuleGroup.getModuleGroups());
+        // moduleGroups.put(ComponentType.PIGOUTPUT, HDP260PigOutputModuleGroup.getModuleGroups());
+        // moduleGroups.put(ComponentType.SQOOP, HDP260SqoopModuleGroup.getModuleGroups());
         moduleGroups.put(ComponentType.HIVE, HDP260HiveModuleGroup.getModuleGroups());
         moduleGroups.put(ComponentType.SPARKBATCH, HDP260SparkBatchModuleGroup.getModuleGroups());
         moduleGroups.put(ComponentType.SPARKSTREAMING, HDP260SparkStreamingModuleGroup.getModuleGroups());
@@ -132,8 +136,9 @@ public class HDP260Distribution extends AbstractDistribution implements HDFSComp
         nodeModuleGroups.put(new NodeComponentTypeBean(ComponentType.SPARKSTREAMING,
                 SparkStreamingConstant.KINESIS_OUTPUT_COMPONENT), kinesisNodeModuleGroups);
 
-        Set<DistributionModuleGroup> kafkaAssemblyModuleGroups = HDP260SparkStreamingKafkaAssemblyModuleGroup.getModuleGroups();
-        Set<DistributionModuleGroup> kafkaAvroModuleGroups = HDP260SparkStreamingKafkaAvroModuleGroup.getModuleGroups();
+        // Kafka
+        Set<DistributionModuleGroup> kafkaAssemblyModuleGroups = HDP260SparkStreamingKafkaAssemblyModuleGroup.getModuleGroups(distribution, version);
+        Set<DistributionModuleGroup> kafkaAvroModuleGroups = HDP260SparkStreamingKafkaAvroModuleGroup.getModuleGroups(distribution, version);
         nodeModuleGroups.put(
                 new NodeComponentTypeBean(ComponentType.SPARKSTREAMING, SparkStreamingConstant.KAFKA_INPUT_COMPONENT),
                 kafkaAssemblyModuleGroups);
@@ -141,7 +146,8 @@ public class HDP260Distribution extends AbstractDistribution implements HDFSComp
                 SparkStreamingConstant.KAFKA_AVRO_INPUT_COMPONENT), kafkaAvroModuleGroups);
         nodeModuleGroups.put(new NodeComponentTypeBean(ComponentType.SPARKSTREAMING,
                 SparkStreamingConstant.KAFKA_OUTPUT_COMPONENT), HDP260SparkStreamingKafkaClientModuleGroup.getModuleGroups());
-
+        
+        // Flume
         Set<DistributionModuleGroup> flumeNodeModuleGroups = HDP260SparkStreamingFlumeNodeModuleGroup.getModuleGroups();
         nodeModuleGroups.put(
                 new NodeComponentTypeBean(ComponentType.SPARKSTREAMING, SparkStreamingConstant.FLUME_INPUT_COMPONENT),
@@ -410,11 +416,21 @@ public class HDP260Distribution extends AbstractDistribution implements HDFSComp
     public boolean isImpactedBySqoop2995() {
         return true;
     }
-    
+
     @Override
     public String generateSparkJarsPaths(List<String> commandLineJarsPaths) {
         return SparkClassPathUtils.generateSparkJarsPaths(commandLineJarsPaths,
                 HDP260Constant.SPARK2_MODULE_GROUP.getModuleName());
+    }
+
+    @Override
+    public SparkStreamingKafkaVersion getSparkStreamingKafkaVersion(ESparkVersion sparkVersion) {
+        // Using Kafka 0.10 for Spark 2
+        if (ESparkVersion.SPARK_2_0.compareTo(sparkVersion) <= 0) {
+            return SparkStreamingKafkaVersion.KAFKA_0_10;
+        } else {
+            return SparkStreamingKafkaVersion.KAFKA_0_8;
+        }
     }
 
 }

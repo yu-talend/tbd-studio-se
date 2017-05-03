@@ -803,6 +803,7 @@
         <libraryNeeded context="plugin:org.talend.hadoop.distribution.hdp260" id="xmlenc-0.52.jar" name="xmlenc-0.52.jar" mvn_uri="mvn:org.talend.libraries/xmlenc-0.52/6.4.0"/>
         <libraryNeeded context="plugin:org.talend.hadoop.distribution.hdp260" id="xz-1.0.jar" name="xz-1.0.jar" mvn_uri="mvn:org.talend.libraries/xz-1.0/6.4.0"/>
         <libraryNeeded context="plugin:org.talend.hadoop.distribution.hdp260" id="zookeeper-3.4.6.2.6.0.3-8.jar" name="zookeeper-3.4.6.2.6.0.3-8.jar" mvn_uri="mvn:org.talend.libraries/zookeeper-3.4.6.2.6.0.3-8/6.4.0"/>		
+        <libraryNeeded context="plugin:org.talend.hadoop.distribution.hdp260" id="spark-streaming-kafka-0-10-assembly_2.11-2.1.0.2.6.0.3-8.jar" name="spark-streaming-kafka-0-10-assembly_2.11-2.1.0.2.6.0.3-8.jar" mvn_uri="mvn:org.talend.libraries/spark-streaming-kafka-0-10-assembly_2.11-2.1.0.2.6.0.3-8/6.4.0"/>      
 		
         <!-- Groups -->
         
@@ -1498,14 +1499,22 @@
                 <library id="hive-exec-HDP_2_6"/>
         </libraryNeededGroup>        
         
-        <!-- Spark Kinesis group MRREQUIRED -->
-        
         <!-- Spark Kafka group MRREQUIRED -->
         <libraryNeededGroup
                 description="Spark Kafka assembly libraries for HDP 2.6 that are MRREQUIRED"
                 id="SPARK-KAFKA-ASSEMBLY-LIB-MRREQUIRED-HDP_2_6"
                 name="SPARK-KAFKA-ASSEMBLY-LIB-MRREQUIRED-HDP_2_6">
             <library id="spark-streaming-kafka-HDP_2_6"/>
+            <library id="kafka-HDP_2_6"/>
+            <library id="metrics-core-2.2.0.jar"/>
+        </libraryNeededGroup>
+
+        <!-- Spark 2 Kafka group MRREQUIRED -->
+        <libraryNeededGroup
+                description="Spark2 Kafka assembly libraries for HDP 2.6 that are MRREQUIRED"
+                id="SPARK2-KAFKA-ASSEMBLY-LIB-MRREQUIRED-HDP_2_6"
+                name="SPARK2-KAFKA-ASSEMBLY-LIB-MRREQUIRED-HDP_2_6">
+            <library id="spark-streaming-kafka-0-10-assembly_2.11-2.1.0.2.6.0.3-8.jar"/>
             <library id="kafka-HDP_2_6"/>
             <library id="metrics-core-2.2.0.jar"/>
         </libraryNeededGroup>
