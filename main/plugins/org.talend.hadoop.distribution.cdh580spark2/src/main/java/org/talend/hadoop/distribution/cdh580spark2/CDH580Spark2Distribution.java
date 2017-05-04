@@ -13,12 +13,14 @@
 
 package org.talend.hadoop.distribution.cdh580spark2;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.talend.core.hadoop.conf.EHadoopConfs;
 import org.talend.hadoop.distribution.AbstractDistribution;
 import org.talend.hadoop.distribution.ComponentType;
 import org.talend.hadoop.distribution.DistributionModuleGroup;
@@ -43,6 +45,7 @@ import org.talend.hadoop.distribution.condition.ComponentCondition;
 import org.talend.hadoop.distribution.constants.SparkBatchConstant;
 import org.talend.hadoop.distribution.constants.SparkStreamingConstant;
 import org.talend.hadoop.distribution.constants.cdh.IClouderaDistribution;
+import org.talend.hadoop.distribution.kafka.SparkStreamingKafkaVersion;
 import org.talend.hadoop.distribution.spark.SparkClassPathUtils;
 
 @SuppressWarnings("nls")
@@ -293,5 +296,29 @@ public class CDH580Spark2Distribution extends AbstractDistribution implements IC
     @Override
     public boolean doSupportOozie() {
         return false;
+    }
+    
+    @Override
+    public boolean doSupportCreateServiceConnection() {
+        return false;
+    }
+
+    @Override
+    public List<String> getNecessaryServiceName() {
+        List<String> list = new ArrayList<String>();
+        list.add(EHadoopConfs.HDFS.getName());
+        list.add(EHadoopConfs.YARN.getName());
+        list.add(EHadoopConfs.MAPREDUCE2.getName());
+        return list;
+    }
+
+    @Override
+    public SparkStreamingKafkaVersion getSparkStreamingKafkaVersion(ESparkVersion sparkVersion) {
+        return SparkStreamingKafkaVersion.KAFKA_0_10;
+    }
+
+    @Override
+    public short orderingWeight() {
+        return 5;
     }
 }
