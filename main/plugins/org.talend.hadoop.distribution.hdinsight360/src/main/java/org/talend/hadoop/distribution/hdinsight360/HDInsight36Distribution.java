@@ -24,14 +24,21 @@ import org.talend.hadoop.distribution.DistributionModuleGroup;
 import org.talend.hadoop.distribution.EHadoopVersion;
 import org.talend.hadoop.distribution.ESparkVersion;
 import org.talend.hadoop.distribution.NodeComponentTypeBean;
+import org.talend.hadoop.distribution.component.HiveComponent;
 import org.talend.hadoop.distribution.component.HiveOnSparkComponent;
+import org.talend.hadoop.distribution.component.MRComponent;
+import org.talend.hadoop.distribution.component.PigComponent;
 import org.talend.hadoop.distribution.component.SparkBatchComponent;
 import org.talend.hadoop.distribution.component.SparkStreamingComponent;
 import org.talend.hadoop.distribution.condition.ComponentCondition;
 import org.talend.hadoop.distribution.constants.SparkBatchConstant;
 import org.talend.hadoop.distribution.constants.SparkStreamingConstant;
 import org.talend.hadoop.distribution.constants.hdinsight.IMicrosoftHDInsightDistribution;
+import org.talend.hadoop.distribution.hdinsight360.modulegroup.HDInsight36HiveModuleGroup;
 import org.talend.hadoop.distribution.hdinsight360.modulegroup.HDInsight36HiveOnSparkModuleGroup;
+import org.talend.hadoop.distribution.hdinsight360.modulegroup.HDInsight36MapReduceModuleGroup;
+import org.talend.hadoop.distribution.hdinsight360.modulegroup.HDInsight36PigModuleGroup;
+import org.talend.hadoop.distribution.hdinsight360.modulegroup.HDInsight36PigOutputModuleGroup;
 import org.talend.hadoop.distribution.hdinsight360.modulegroup.HDInsight36SparkBatchModuleGroup;
 import org.talend.hadoop.distribution.hdinsight360.modulegroup.HDInsight36SparkStreamingModuleGroup;
 import org.talend.hadoop.distribution.hdinsight360.modulegroup.node.sparkbatch.HDInsight36SparkBatchParquetNodeModuleGroup;
@@ -42,7 +49,7 @@ import org.talend.hadoop.distribution.hdinsight360.modulegroup.node.sparkstreami
 import org.talend.hadoop.distribution.hdinsight360.modulegroup.node.sparkstreaming.HDInsight36SparkStreamingTModelEncoderNodeModuleGroup;
 
 public class HDInsight36Distribution extends AbstractDistribution implements SparkBatchComponent, SparkStreamingComponent,
-        IMicrosoftHDInsightDistribution, HiveOnSparkComponent {
+        IMicrosoftHDInsightDistribution, HiveOnSparkComponent, HiveComponent, PigComponent, MRComponent {
 
     public final static String VERSION = "MICROSOFT_HD_INSIGHT_3_6"; //$NON-NLS-1$
 
@@ -67,6 +74,11 @@ public class HDInsight36Distribution extends AbstractDistribution implements Spa
         moduleGroups.put(ComponentType.SPARKBATCH, HDInsight36SparkBatchModuleGroup.getModuleGroups());
         moduleGroups.put(ComponentType.HIVEONSPARK, HDInsight36HiveOnSparkModuleGroup.getModuleGroups());
         moduleGroups.put(ComponentType.SPARKSTREAMING, HDInsight36SparkStreamingModuleGroup.getModuleGroups());
+
+        moduleGroups.put(ComponentType.HIVE, HDInsight36HiveModuleGroup.getModuleGroups());
+        moduleGroups.put(ComponentType.PIG, HDInsight36PigModuleGroup.getModuleGroups());
+        moduleGroups.put(ComponentType.PIGOUTPUT, HDInsight36PigOutputModuleGroup.getModuleGroups());
+        moduleGroups.put(ComponentType.MAPREDUCE, HDInsight36MapReduceModuleGroup.getModuleGroups());
 
         // Used to add a module group import for a specific node. The given node must have a HADOOP_LIBRARIES parameter.
         nodeModuleGroups = new HashMap<>();
@@ -231,6 +243,11 @@ public class HDInsight36Distribution extends AbstractDistribution implements Spa
     }
 
     @Override
+    public boolean doSupportOozie() {
+        return false;
+    }
+
+    @Override
     public boolean isCloudDistribution() {
         return true;
     }
@@ -238,6 +255,66 @@ public class HDInsight36Distribution extends AbstractDistribution implements Spa
     @Override
     public boolean useCloudLauncher() {
         return true;
+    }
+
+    @Override
+    public boolean doSupportHive1() {
+        return false;
+    }
+
+    @Override
+    public boolean doSupportHive2() {
+        return false;
+    }
+
+    @Override
+    public boolean doSupportTezForHive() {
+        return false;
+    }
+
+    @Override
+    public boolean doSupportHBaseForHive() {
+        return false;
+    }
+
+    @Override
+    public boolean doSupportSSL() {
+        return false;
+    }
+
+    @Override
+    public boolean doSupportORCFormat() {
+        return true;
+    }
+
+    @Override
+    public boolean doSupportAvroFormat() {
+        return true;
+    }
+
+    @Override
+    public boolean doSupportParquetFormat() {
+        return true;
+    }
+
+    @Override
+    public boolean doSupportStoreAsParquet() {
+        return false;
+    }
+
+    @Override
+    public boolean doSupportHCatalog() {
+        return true;
+    }
+
+    @Override
+    public boolean doSupportHBase() {
+        return false;
+    }
+
+    @Override
+    public boolean pigVersionPriorTo_0_12() {
+        return false;
     }
 
 }
