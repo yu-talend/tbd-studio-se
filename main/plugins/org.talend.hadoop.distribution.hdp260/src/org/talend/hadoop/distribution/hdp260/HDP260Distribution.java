@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2017 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // %InstallDIR%\features\org.talend.rcp.branding.%PRODUCTNAME%\%PRODUCTNAME%license.txt
@@ -127,8 +127,9 @@ public class HDP260Distribution extends AbstractDistribution implements HDFSComp
                 .getModuleGroups());
         nodeModuleGroups.put(new NodeComponentTypeBean(ComponentType.SPARKSTREAMING,
                 SparkStreamingConstant.S3_CONFIGURATION_COMPONENT), HDP260SparkStreamingS3NodeModuleGroup.getModuleGroups());
-
-        Set<DistributionModuleGroup> kinesisNodeModuleGroups = HDP260SparkStreamingKinesisNodeModuleGroup.getModuleGroups();
+        
+        // Kinesis
+        Set<DistributionModuleGroup> kinesisNodeModuleGroups = HDP260SparkStreamingKinesisNodeModuleGroup.getModuleGroups(distribution, version);
         nodeModuleGroups.put(new NodeComponentTypeBean(ComponentType.SPARKSTREAMING,
                 SparkStreamingConstant.KINESIS_INPUT_COMPONENT), kinesisNodeModuleGroups);
         nodeModuleGroups.put(new NodeComponentTypeBean(ComponentType.SPARKSTREAMING,

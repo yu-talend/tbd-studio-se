@@ -289,6 +289,13 @@
             mvn_uri="mvn:org.talend.libraries/amazon-kinesis-client-1.4.0/6.0.0">
         </libraryNeeded>
         
+        <libraryNeeded
+            context="plugin:org.talend.hadoop.distribution.hdp260"
+            id="amazon-kinesis-client-1.6.1.jar"
+            name="amazon-kinesis-client-1.6.1.jar"
+            mvn_uri="mvn:org.talend.libraries/amazon-kinesis-client-1.6.1/6.4.0">
+        </libraryNeeded>
+        
         <!-- GraphFrames libraries -->
 		<libraryNeeded 
 			context="plugin:org.talend.hadoop.distribution.hdp260"
@@ -554,6 +561,13 @@
 		    name="aws-java-sdk-kinesis-1.10.6.jar"
 		    mvn_uri="mvn:org.talend.libraries/aws-java-sdk-kinesis-1.10.6/6.3.0">
 		</libraryNeeded>
+
+        <libraryNeeded
+            context="plugin:org.talend.hadoop.distribution.hdp260"
+            id="aws-java-sdk-kinesis-1.11.125.jar"
+            name="aws-java-sdk-kinesis-1.11.125.jar"
+            mvn_uri="mvn:org.talend.libraries/aws-java-sdk-kinesis-1.11.125/6.4.0">
+        </libraryNeeded>
 		
 		<libraryNeeded
 		    context="plugin:org.talend.hadoop.distribution.hdp260"
@@ -577,6 +591,11 @@
 		</libraryNeeded>
 		
 		<!-- Spark 2 libraries -->
+		
+        <libraryNeeded context="plugin:org.talend.hadoop.distribution.hdp260" id="aws-java-sdk-kinesis-1.10.20.jar" name="aws-java-sdk-kinesis-1.10.20.jar" mvn_uri="mvn:org.talend.libraries/aws-java-sdk-kinesis-1.10.20/6.4.0"/>
+        <libraryNeeded context="plugin:org.talend.hadoop.distribution.hdp260" id="aws-java-sdk-core-1.10.20.jar" name="aws-java-sdk-core-1.10.20.jar" mvn_uri="mvn:org.talend.libraries/aws-java-sdk-core-1.10.20/6.4.0"/>
+        <libraryNeeded context="plugin:org.talend.hadoop.distribution.hdp260" id="aws-java-sdk-dynamodb-1.10.20.jar" name="aws-java-sdk-dynamodb-1.10.20.jar" mvn_uri="mvn:org.talend.libraries/aws-java-sdk-dynamodb-1.10.20/6.4.0"/>
+        <libraryNeeded context="plugin:org.talend.hadoop.distribution.hdp260" id="aws-java-sdk-cloudwatch-1.10.20.jar" name="aws-java-sdk-cloudwatch-1.10.20.jar" mvn_uri="mvn:org.talend.libraries/aws-java-sdk-cloudwatch-1.10.20/6.4.0"/>
         <libraryNeeded context="plugin:org.talend.hadoop.distribution.hdp260" id="activation-1.1.1.jar" name="activation-1.1.1.jar" mvn_uri="mvn:org.talend.libraries/activation-1.1.1/6.4.0"/>
         <libraryNeeded context="plugin:org.talend.hadoop.distribution.hdp260" id="antlr-2.7.7.jar" name="antlr-2.7.7.jar" mvn_uri="mvn:org.talend.libraries/antlr-2.7.7/6.4.0"/>
         <libraryNeeded context="plugin:org.talend.hadoop.distribution.hdp260" id="antlr4-runtime-4.5.3.jar" name="antlr4-runtime-4.5.3.jar" mvn_uri="mvn:org.talend.libraries/antlr4-runtime-4.5.3/6.4.0"/>
@@ -804,6 +823,7 @@
         <libraryNeeded context="plugin:org.talend.hadoop.distribution.hdp260" id="xz-1.0.jar" name="xz-1.0.jar" mvn_uri="mvn:org.talend.libraries/xz-1.0/6.4.0"/>
         <libraryNeeded context="plugin:org.talend.hadoop.distribution.hdp260" id="zookeeper-3.4.6.2.6.0.3-8.jar" name="zookeeper-3.4.6.2.6.0.3-8.jar" mvn_uri="mvn:org.talend.libraries/zookeeper-3.4.6.2.6.0.3-8/6.4.0"/>		
         <libraryNeeded context="plugin:org.talend.hadoop.distribution.hdp260" id="spark-streaming-kafka-0-10-assembly_2.11-2.1.0.2.6.0.3-8.jar" name="spark-streaming-kafka-0-10-assembly_2.11-2.1.0.2.6.0.3-8.jar" mvn_uri="mvn:org.talend.libraries/spark-streaming-kafka-0-10-assembly_2.11-2.1.0.2.6.0.3-8/6.4.0"/>      
+        <libraryNeeded context="plugin:org.talend.hadoop.distribution.hdp260" id="spark-streaming-kinesis-asl_2.11-2.1.1.jar" name="spark-streaming-kinesis-asl_2.11-2.1.1.jar" mvn_uri="mvn:org.talend.libraries/spark-streaming-kinesis-asl_2.11-2.1.1/6.4.0"/>      
 		
         <!-- Groups -->
         
@@ -1548,6 +1568,20 @@
             <library id="aws-java-sdk-core-1.10.6.jar"/>            
             <library id="aws-java-sdk-dynamodb-1.10.6.jar"/>            
             <library id="aws-java-sdk-cloudwatch-1.10.6.jar"/>            
+            <library id="joda-time-2.8.1.jar"/>            
+        </libraryNeededGroup>   
+       
+        <!-- Spark 2 Kinesis group MRREQUIRED -->
+        <libraryNeededGroup
+                description="Spark 2 Kinesis libraries for HDP 2.6 that are MRREQUIRED"
+                id="SPARK2-KINESIS-LIB-MRREQUIRED-HDP_2_6"
+                name="SPARK2-KINESIS-LIB-MRREQUIRED-HDP_2_6">
+            <library id="spark-streaming-kinesis-asl_2.11-2.1.1.jar"/>
+            <library id="amazon-kinesis-client-1.6.1.jar"/>
+            <library id="aws-java-sdk-kinesis-1.10.20.jar"/>
+            <library id="aws-java-sdk-core-1.10.20.jar"/>            
+            <library id="aws-java-sdk-dynamodb-1.10.20.jar"/>            
+            <library id="aws-java-sdk-cloudwatch-1.10.20.jar"/>            
             <library id="joda-time-2.8.1.jar"/>            
         </libraryNeededGroup>   
         
