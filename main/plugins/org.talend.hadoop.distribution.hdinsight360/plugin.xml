@@ -106,7 +106,7 @@
         <libraryNeeded
             context="plugin:org.talend.hadoop.distribution.hdinsight360"
             id="talend-bigdata-launcher-1.2.0-20170410"
-            name="talend-bigdata-launcher-1.2.0-20170410"
+            name="talend-bigdata-launcher-1.2.0-20170410.jar"
             mvn_uri="mvn:org.talend.libraries/talend-bigdata-launcher-1.2.0-20170410/6.0.0">
         </libraryNeeded>
 
