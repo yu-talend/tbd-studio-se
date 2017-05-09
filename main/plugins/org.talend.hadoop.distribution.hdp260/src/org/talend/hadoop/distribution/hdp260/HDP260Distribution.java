@@ -436,7 +436,7 @@ public class HDP260Distribution extends AbstractDistribution implements HDFSComp
     
     @Override
     public boolean doSupportKerberizedKafka() {
-        return false;
+        return true;
     }
 
 }

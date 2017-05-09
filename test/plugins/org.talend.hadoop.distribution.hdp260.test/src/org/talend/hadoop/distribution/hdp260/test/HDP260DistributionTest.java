@@ -95,6 +95,7 @@ public class HDP260DistributionTest extends AbstractDistributionTest {
         assertFalse(((SparkBatchComponent) distribution).isExecutedThroughSparkJobServer());
         assertFalse(((SparkBatchComponent) distribution).doSupportSparkStandaloneMode());
         assertTrue(((SparkBatchComponent) distribution).doSupportSparkYarnClientMode());
+        assertTrue(((SparkStreamingComponent) distribution).getSparkVersions().contains(ESparkVersion.SPARK_2_1));
         assertFalse(((SparkStreamingComponent) distribution).getSparkVersions().contains(ESparkVersion.SPARK_2_0));
         assertTrue(((SparkStreamingComponent) distribution).getSparkVersions().contains(ESparkVersion.SPARK_1_6));
         assertFalse(((SparkStreamingComponent) distribution).getSparkVersions().contains(ESparkVersion.SPARK_1_5));
@@ -106,7 +107,7 @@ public class HDP260DistributionTest extends AbstractDistributionTest {
         assertFalse(((SparkStreamingComponent) distribution).doSupportSparkStandaloneMode());
         assertTrue(((SparkStreamingComponent) distribution).doSupportSparkYarnClientMode());
         assertTrue(((SparkStreamingComponent) distribution).doSupportBackpressure());
-        assertFalse(((SparkStreamingComponent) distribution).doSupportKerberizedKafka());
+        assertTrue(((SparkStreamingComponent) distribution).doSupportKerberizedKafka());
 
         assertTrue(distribution instanceof HCatalogComponent);
         assertFalse(distribution instanceof ImpalaComponent);

@@ -14,7 +14,6 @@ package org.talend.hadoop.distribution.hdp260.test;
 
 import static org.junit.Assert.assertTrue;
 
-import org.junit.Test;
 import org.talend.commons.utils.platform.PluginChecker;
 import org.talend.core.model.metadata.connection.hive.HiveServerVersionInfo;
 import org.talend.core.runtime.hd.hive.HiveMetadataHelper;
