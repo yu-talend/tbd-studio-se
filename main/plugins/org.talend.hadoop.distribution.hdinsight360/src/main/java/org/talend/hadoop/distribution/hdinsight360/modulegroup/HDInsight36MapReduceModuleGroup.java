@@ -24,7 +24,7 @@ public class HDInsight36MapReduceModuleGroup {
 
         Set<DistributionModuleGroup> hs = new HashSet<>();
         hs.add(new DistributionModuleGroup(HDInsight36Constant.BIGDATALAUNCHER_MODULE_GROUP.getModuleName(), true, null));
-        hs.add(new DistributionModuleGroup(HDInsight36Constant.HDINSIGHTCOMMON_MODULE_GROUP.getModuleName()));
+        hs.add(new DistributionModuleGroup(HDInsight36Constant.HDINSIGHT36COMMON_MODULE_GROUP.getModuleName()));
         hs.add(new DistributionModuleGroup(HDInsight36Constant.MAPREDUCE_MODULE_GROUP.getModuleName()));
         hs.add(new DistributionModuleGroup(HDInsight36Constant.MAPREDUCE_PARQUET_MODULE_GROUP.getModuleName(), true, null));
         return hs;
