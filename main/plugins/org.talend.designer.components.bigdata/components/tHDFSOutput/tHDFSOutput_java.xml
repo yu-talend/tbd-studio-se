@@ -927,7 +927,7 @@
 			<IMPORT NAME="hadoop-conf-kerberos" MODULE="hadoop-conf-kerberos.jar"
 				MVN="mvn:org.talend.libraries/hadoop-conf-kerberos/6.0.0"
 				UrlPath="platform:/plugin/org.talend.libraries.hadoop.mapr2/lib/hadoop-conf-kerberos.jar"
-				REQUIRED_IF="(()USE_KRB=='true') AND (USE_EXISTING_CONNECTION=='false') AND (DISTRIBUTION!='CUSTOM') AND DISTRIB[DISTRIBUTION, DB_VERSION].doSupportKerberos[]" />
+				REQUIRED_IF="(USE_KRB=='true') AND (USE_EXISTING_CONNECTION=='false') AND (DISTRIBUTION!='CUSTOM') AND DISTRIB[DISTRIBUTION, DB_VERSION].doSupportKerberos[]" />
 			<IMPORT NAME="jetty-util" MODULE="jetty-util-6.1.26.jar"
 				MVN="mvn:org.talend.libraries/jetty-util-6.1.26/6.0.0"
 				UrlPath="platform:/plugin/org.talend.libraries.jetty/lib/jetty-util-6.1.26.jar"
