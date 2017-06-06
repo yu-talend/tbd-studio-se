@@ -17,7 +17,6 @@ import java.util.Set;
 
 import org.talend.hadoop.distribution.DistributionModuleGroup;
 import org.talend.hadoop.distribution.ESparkVersion;
-import org.talend.hadoop.distribution.condition.BasicExpression;
 import org.talend.hadoop.distribution.condition.BooleanOperator;
 import org.talend.hadoop.distribution.condition.ComponentCondition;
 import org.talend.hadoop.distribution.condition.EqualityOperator;
@@ -27,10 +26,6 @@ import org.talend.hadoop.distribution.constants.SparkBatchConstant;
 import org.talend.hadoop.distribution.hdp260.HDP260Constant;
 
 public class HDP260HiveOnSparkModuleGroup {
-
-    private final static ComponentCondition spark16ConditionOld = new MultiComponentCondition(new BasicExpression(
-            SparkBatchConstant.SPARK_LOCAL_MODE_PARAMETER, EqualityOperator.EQ, "false"), BooleanOperator.AND,
-            new BasicExpression("SUPPORTED_SPARK_VERSION", EqualityOperator.EQ, ESparkVersion.SPARK_1_6.getSparkVersion()));
 
     private final static ComponentCondition spark16Condition = new MultiComponentCondition(new LinkedNodeExpression(
             SparkBatchConstant.SPARK_BATCH_SPARKCONFIGURATION_LINKEDPARAMETER, SparkBatchConstant.SPARK_LOCAL_MODE_PARAMETER,
