@@ -1,10 +1,10 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: CDH 5.7.0 distribution
-Bundle-SymbolicName: org.talend.hadoop.distribution.ibms210;singleton:=true
+Bundle-SymbolicName: org.talend.hadoop.distribution.ibms220;singleton:=true
 Bundle-Version: 6.2.3.qualifier
 Bundle-Vendor: .Talend SA.
-Service-Component: OSGI-INF/ibmspectrum210.xml
+Service-Component: OSGI-INF/ibmspectrum220.xml
 Require-Bundle: org.talend.core.runtime,
  org.talend.hadoop.distribution
 Bundle-ActivationPolicy: lazy

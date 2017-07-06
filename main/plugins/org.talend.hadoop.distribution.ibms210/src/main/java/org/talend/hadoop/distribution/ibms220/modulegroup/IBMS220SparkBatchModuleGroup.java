@@ -10,28 +10,29 @@
 // 9 rue Pages 92150 Suresnes, France
 //
 // ============================================================================
-package org.talend.hadoop.distribution.ibms210.modulegroup;
+package org.talend.hadoop.distribution.ibms220.modulegroup;
 
 import java.util.HashSet;
 import java.util.Set;
 
 import org.talend.hadoop.distribution.DistributionModuleGroup;
-import org.talend.hadoop.distribution.ibms210.IBMS210Constant;
+import org.talend.hadoop.distribution.ibms220.IBMS220Constant;
 import org.talend.hadoop.distribution.condition.BasicExpression;
 import org.talend.hadoop.distribution.condition.ComponentCondition;
 import org.talend.hadoop.distribution.condition.EqualityOperator;
 import org.talend.hadoop.distribution.condition.SimpleComponentCondition;
-import org.talend.hadoop.distribution.constants.SparkStreamingConstant;
+import org.talend.hadoop.distribution.constants.SparkBatchConstant;
 
-public class IBMS210SparkStreamingModuleGroup {
+public class IBMS220SparkBatchModuleGroup {
 
     private final static ComponentCondition condition = new SimpleComponentCondition(new BasicExpression(
-            SparkStreamingConstant.SPARKCONFIGURATION_IS_LOCAL_MODE_PARAMETER, EqualityOperator.EQ, "false")); //$NON-NLS-1$
+            SparkBatchConstant.SPARK_LOCAL_MODE_PARAMETER, EqualityOperator.EQ, "false")); //$NON-NLS-1$
 
     public static Set<DistributionModuleGroup> getModuleGroups() {
         Set<DistributionModuleGroup> hs = new HashSet<>();
-        hs.add(new DistributionModuleGroup(IBMS210Constant.SPARK_MODULE_GROUP.getModuleName(), false, condition));
-        hs.add(new DistributionModuleGroup(IBMS210Constant.HDFS_MODULE_GROUP.getModuleName(), false, condition));
+        hs.add(new DistributionModuleGroup(IBMS220Constant.SPARK_MODULE_GROUP.getModuleName(), false, condition));
+//        hs.add(new DistributionModuleGroup(IBMS210Constant.SPARK_MRREQUIRED_MODULE_GROUP.getModuleName(), true, condition));
+        hs.add(new DistributionModuleGroup(IBMS220Constant.HDFS_MODULE_GROUP.getModuleName(), false, condition));
 //        hs.add(new DistributionModuleGroup(IBMS210Constant.MAPREDUCE_MODULE_GROUP.getModuleName(), false, condition));
         return hs;
     }

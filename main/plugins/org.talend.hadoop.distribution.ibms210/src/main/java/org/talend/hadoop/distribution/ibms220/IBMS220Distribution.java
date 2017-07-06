@@ -11,7 +11,7 @@
 //
 // ============================================================================
 
-package org.talend.hadoop.distribution.ibms210;
+package org.talend.hadoop.distribution.ibms220;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,20 +27,20 @@ import org.talend.hadoop.distribution.component.HDFSComponent;
 import org.talend.hadoop.distribution.component.SparkBatchComponent;
 import org.talend.hadoop.distribution.component.SparkStreamingComponent;
 import org.talend.hadoop.distribution.condition.ComponentCondition;
-import org.talend.hadoop.distribution.ibms210.modulegroup.IBMS210HDFSModuleGroup;
-import org.talend.hadoop.distribution.ibms210.modulegroup.IBMS210SparkBatchModuleGroup;
-import org.talend.hadoop.distribution.ibms210.modulegroup.IBMS210SparkStreamingModuleGroup;
+import org.talend.hadoop.distribution.ibms220.modulegroup.IBMS220HDFSModuleGroup;
+import org.talend.hadoop.distribution.ibms220.modulegroup.IBMS220SparkBatchModuleGroup;
+import org.talend.hadoop.distribution.ibms220.modulegroup.IBMS220SparkStreamingModuleGroup;
 
 @SuppressWarnings("nls")
-public class IBMS210Distribution extends AbstractDistribution implements HDFSComponent, SparkBatchComponent, SparkStreamingComponent {//, IIBMSpectrumDistribution {
+public class IBMS220Distribution extends AbstractDistribution implements HDFSComponent, SparkBatchComponent, SparkStreamingComponent {//, IIBMSpectrumDistribution {
 
 	public static final String DISTRIBUTION_NAME = "IBMSPECTRUM";
 
 	public static final String DISTRIBUTION_DISPLAY_NAME = "IBMSpectrum";
 
-    public final static String VERSION = "IBMSpectrum_IBMS_2_1";
+    public final static String VERSION = "IBMSpectrum_IBMS_2_2";
 
-    public static final String VERSION_DISPLAY = "IBM Spectrum 2.1(Spark only)";
+    public static final String VERSION_DISPLAY = "IBM Spectrum 2.2(Spark only)";
 
     //private final static String YARN_APPLICATION_CLASSPATH = "$HADOOP_CONF_DIR,$HADOOP_COMMON_HOME/*,$HADOOP_COMMON_HOME/lib/*,$HADOOP_HDFS_HOME/*,$HADOOP_HDFS_HOME/lib/*,$HADOOP_MAPRED_HOME/*,$HADOOP_MAPRED_HOME/lib/*,$YARN_HOME/*,$YARN_HOME/lib/*,$HADOOP_YARN_HOME/*,$HADOOP_YARN_HOME/lib/*,$HADOOP_COMMON_HOME/share/hadoop/common/*,$HADOOP_COMMON_HOME/share/hadoop/common/lib/*,$HADOOP_HDFS_HOME/share/hadoop/hdfs/*,$HADOOP_HDFS_HOME/share/hadoop/hdfs/lib/*,$HADOOP_YARN_HOME/share/hadoop/yarn/*,$HADOOP_YARN_HOME/share/hadoop/yarn/lib/*"; //$NON-NLS-1$
 
@@ -50,7 +50,7 @@ public class IBMS210Distribution extends AbstractDistribution implements HDFSCom
 
     private static Map<ComponentType, ComponentCondition> displayConditions;
 
-    public IBMS210Distribution() {
+    public IBMS220Distribution() {
 
         String distribution = getDistribution();
         String version = getVersion();
@@ -58,9 +58,9 @@ public class IBMS210Distribution extends AbstractDistribution implements HDFSCom
         // Used to add a module group import for the components that have a HADOOP_DISTRIBUTION parameter, aka. the
         // components that have the distribution list.
         moduleGroups = new HashMap<>();
-        moduleGroups.put(ComponentType.HDFS, IBMS210HDFSModuleGroup.getModuleGroups());
-        moduleGroups.put(ComponentType.SPARKBATCH, IBMS210SparkBatchModuleGroup.getModuleGroups());
-        moduleGroups.put(ComponentType.SPARKSTREAMING, IBMS210SparkStreamingModuleGroup.getModuleGroups());
+        moduleGroups.put(ComponentType.HDFS, IBMS220HDFSModuleGroup.getModuleGroups());
+        moduleGroups.put(ComponentType.SPARKBATCH, IBMS220SparkBatchModuleGroup.getModuleGroups());
+        moduleGroups.put(ComponentType.SPARKSTREAMING, IBMS220SparkStreamingModuleGroup.getModuleGroups());
 
         // Used to add a module group import for a specific node. The given node must have a HADOOP_LIBRARIES parameter.
         nodeModuleGroups = new HashMap<>();

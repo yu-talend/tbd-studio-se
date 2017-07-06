@@ -6,43 +6,43 @@
         <!-- HDFS libraries -->    
         <!-- Spark libraries -->
         <libraryNeeded
-            context="plugin:org.talend.hadoop.distribution.ibms210"
-            id="spark-assembly-ibms2.1.0"
+            context="plugin:org.talend.hadoop.distribution.ibms220"
+            id="spark-assembly-ibms2.2.0"
             name="spark-assembly-1.6.1-hadoop2.6.0.jar"
             mvn_uri="mvn:org.talend.libraries/spark-assembly-1.6.1-hadoop2.6.0/6.2.0">
         </libraryNeeded>
         
         <libraryNeeded
-            context="plugin:org.talend.hadoop.distribution.ibms210"
-            id="spark-launcher-ibms2.1.0"
+            context="plugin:org.talend.hadoop.distribution.ibms220"
+            id="spark-launcher-ibms2.2.0"
             name="spark-launcher_2.10-1.6.1.jar"
             mvn_uri="mvn:org.talend.libraries/spark-launcher_2.10-1.6.1/6.2.0">
         </libraryNeeded>
 
-        <libraryNeeded
-            context="plugin:org.talend.hadoop.distribution.ibms210"
-            id="spark-yarn-shuffle-ibms2.1.0"
+        <!--libraryNeeded
+            context="plugin:org.talend.hadoop.distribution.ibms220"
+            id="spark-yarn-shuffle-ibms2.2.0"
             name="spark-1.6.1-yarn-shuffle.jar"
             mvn_uri="mvn:org.talend.libraries/spark-1.6.1-yarn-shuffle/6.2.0">
-        </libraryNeeded>
+        </libraryNeeded-->
 
         <!-- Third parties libraries -->
         <libraryNeeded
-            context="plugin:org.talend.hadoop.distribution.ibms210"
+            context="plugin:org.talend.hadoop.distribution.ibms220"
             id="datanucleus-rdbms"
             name="datanucleus-rdbms-3.2.9.jar"
             mvn_uri="mvn:org.talend.libraries/datanucleus-rdbms-3.2.9/6.2.0">
         </libraryNeeded>        
 
         <libraryNeeded
-            context="plugin:org.talend.hadoop.distribution.ibms210"
+            context="plugin:org.talend.hadoop.distribution.ibms220"
             id="datanucleus-core"
             name="datanucleus-core-3.2.10.jar"
             mvn_uri="mvn:org.talend.libraries/datanucleus-core-3.2.10/6.2.0">
         </libraryNeeded>        
                         
         <libraryNeeded
-            context="plugin:org.talend.hadoop.distribution.ibms210"
+            context="plugin:org.talend.hadoop.distribution.ibms220"
             id="datanucleus-api-jdo"
             name="datanucleus-api-jdo-3.2.6.jar"
             mvn_uri="mvn:org.talend.libraries/datanucleus-api-jdo-3.2.6/6.2.0">
@@ -52,18 +52,18 @@
         
         <!-- HDFS group -->
         <libraryNeededGroup
-                description="HDFS libraries for IBMS 2.1"
-                id="HDFS-LIB-IBMS_2_1"
-                name="HDFS-LIB-IBMS_2_1">
+                description="HDFS libraries for IBMS 2.2"
+                id="HDFS-LIB-IBMS_2_2"
+                name="HDFS-LIB-IBMS_2_2">
         </libraryNeededGroup>
         <!-- Spark group -->
         <libraryNeededGroup
-                description="Spark libraries for IBMS 2.1"
-                id="SPARK-LIB-IBMS_2_1"
-                name="SPARK-LIB-IBMS_2_1">
-             <library id="spark-assembly-ibms2.1.0" />
-             <library id="spark-launcher-ibms2.1.0" />
-             <library id="spark-yarn-shuffle-ibms2.1.0" />
+                description="Spark libraries for IBMS 2.2"
+                id="SPARK-LIB-IBMS_2_2"
+                name="SPARK-LIB-IBMS_2_2">
+             <library id="spark-assembly-ibms2.2.0" />
+             <library id="spark-launcher-ibms2.2.0" />
+             <!--library id="spark-yarn-shuffle-ibms2.2.0" /-->
              <library id="datanucleus-rdbms" />
              <library id="datanucleus-core" />
              <library id="datanucleus-api-jdo" />

@@ -10,16 +10,16 @@
 // 9 rue Pages 92150 Suresnes, France
 //
 // ============================================================================
-package org.talend.hadoop.distribution.ibms210;
+package org.talend.hadoop.distribution.ibms220;
 
-public enum IBMS210Constant {
-    HDFS_MODULE_GROUP("HDFS-LIB-IBMS_2_1"), //$NON-NLS-1$
-    SPARK_MODULE_GROUP("SPARK-LIB-IBMS_2_1"); //$NON-NLS-1$
+public enum IBMS220Constant {
+    HDFS_MODULE_GROUP("HDFS-LIB-IBMS_2_2"), //$NON-NLS-1$
+    SPARK_MODULE_GROUP("SPARK-LIB-IBMS_2_2"); //$NON-NLS-1$
 
 
     private String mModuleName;
 
-    IBMS210Constant(String moduleName) {
+    IBMS220Constant(String moduleName) {
         this.mModuleName = moduleName;
     }
 
