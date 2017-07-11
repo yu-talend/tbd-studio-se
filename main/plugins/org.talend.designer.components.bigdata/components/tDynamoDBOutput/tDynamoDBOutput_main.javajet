@@ -54,6 +54,7 @@ java.util.Map<String, Object> mapValues_<%=cid%> = new java.util.HashMap<>();
 		String columnNode	= conn.getName() + "." + column.getLabel(); 			
 		boolean isDate		= (javaType == JavaTypesManager.DATE);
 		boolean isString	= (javaType == JavaTypesManager.STRING);
+		boolean isByteArray	= (javaType == JavaTypesManager.BYTE_ARRAY);
 		
 		// This is the Hash Key
 		if(column.isKey() &&  name.equals(partitionKey)){ 
@@ -76,9 +77,9 @@ java.util.Map<String, Object> mapValues_<%=cid%> = new java.util.HashMap<>();
  		// Other row items 
 		}else {
 			   // Handle Nullable Items (also if String is empty we submitted as null)
-			   if(column.isNullable()){  %>
+			   if(column.isNullable()) {  %>
 			   
-			   		if(null == <%=columnNode%> <%if(isString) {%> || <%=columnNode%>.isEmpty() <%}%>) {
+			   		if(null == <%=columnNode%> <%if(isString) {%> || <%=columnNode%>.isEmpty() <%}%> <%if(isByteArray) {%> || <%=columnNode%>.length == 0 <%}%>) {
 			   			mapValues_<%=cid%>.put(<%=name%>, null);
 			   		}else {
 			   			<% if(isDate){ %>
@@ -91,7 +92,7 @@ java.util.Map<String, Object> mapValues_<%=cid%> = new java.util.HashMap<>();
 				// Handle the mandatory column (if columns are null or string empty we ignore them)  
 			   else { %>
 			   
-				   if(null != <%=columnNode%> <%if(isString) {%> && !<%=columnNode%>.isEmpty() <%}%>) {
+				   if(null != <%=columnNode%> <%if(isString) {%> && !<%=columnNode%>.isEmpty() <%}%> <%if(isByteArray) {%> && <%=columnNode%>.length != 0 <%}%>) {
 						<% if(isDate){ %>
 					 		mapValues_<%=cid%>.put(<%=name%>, FormatterUtils.format_DateInUTC(<%=columnNode%>,  <%=column.getPattern()%>));
 				 		<% } else { %>
