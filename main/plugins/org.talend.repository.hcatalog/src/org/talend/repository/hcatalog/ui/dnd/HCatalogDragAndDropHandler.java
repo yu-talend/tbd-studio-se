@@ -27,8 +27,8 @@ import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.model.utils.AbstractDragAndDropServiceHandler;
 import org.talend.core.model.utils.IComponentName;
 import org.talend.core.repository.RepositoryComponentSetting;
-import org.talend.core.utils.TalendQuoteUtils;
 import org.talend.designer.hdfsbrowse.util.EHDFSRepositoryToComponent;
+import org.talend.metadata.managment.ui.utils.ConnectionContextHelper;
 import org.talend.repository.hadoopcluster.util.HCRepositoryUtil;
 import org.talend.repository.hadoopcluster.util.HCVersionUtil;
 import org.talend.repository.hcatalog.i18n.Messages;
@@ -207,10 +207,8 @@ public class HCatalogDragAndDropHandler extends AbstractDragAndDropServiceHandle
             return getRepositoryValueOfStringType(connection,
                     StringUtils.trimToEmpty(hcConnection.getParameters().get(ConnParameterKeys.CONN_PARA_KEY_AZURE_DEPLOY_BLOB)));
         } else if (EHCatalogRepositoryToComponent.THRIFT_SERVER.getRepositoryValue().equals(value)) {
-            return TalendQuoteUtils.addQuotesIfNotExist("thrift://"
-                    + TalendQuoteUtils.removeQuotesIfExist(
-                            getRepositoryValueOfStringType(connection, StringUtils.trimToNull(connection.getHostName())))
-                    + ":9083");
+            return getRepositoryValueOfStringType(connection, StringUtils.trimToNull(connection.getThriftServer()));
+
         }
 
         return null;
@@ -317,6 +315,8 @@ public class HCatalogDragAndDropHandler extends AbstractDragAndDropServiceHandle
             String value = ComponentToRepositoryProperty.getParameterValue(connection, node, param);
             if (value != null) {
                 connection.setHostName(value);
+                connection.setThriftServer(ConnectionContextHelper.getParamValueOffContext(hcConnection,
+                        hcConnection.getParameters().get(ConnParameterKeys.CONN_PARA_KEY_WEB_HCAT_HOSTNAME)));
             }
         } else if (EHCatalogRepositoryToComponent.TEMPLETON_PORT.getRepositoryValue().equals(param.getRepositoryValue())) {
             String value = ComponentToRepositoryProperty.getParameterValue(connection, node, param);
