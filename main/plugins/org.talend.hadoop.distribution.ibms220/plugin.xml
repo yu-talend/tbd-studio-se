@@ -1,0 +1,423 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+    <extension point="org.talend.core.runtime.librariesNeeded">
+        
+        <!-- HDFS libraries -->
+
+ 		<libraryNeeded
+            context="plugin:org.talend.hadoop.distribution.ibms220"
+            id="hadoop-annotations-ibms2.2.0"
+            name="hadoop-annotations-2.7.3.jar" 
+            mvn_uri="mvn:org.talend.libraries/hadoop-annotations-2.7.3/6.3.0">
+        </libraryNeeded>
+        
+        <libraryNeeded
+            context="plugin:org.talend.hadoop.distribution.ibms220"
+            id="hadoop-auth-ibms2.2.0"
+            name="hadoop-auth-2.7.3.jar" 
+            mvn_uri="mvn:org.talend.libraries/hadoop-auth-2.7.3/6.3.0">
+        </libraryNeeded>
+        
+        <libraryNeeded
+            context="plugin:org.talend.hadoop.distribution.ibms220"
+            id="hadoop-common-ibms2.2.0"
+            name="hadoop-common-2.7.3.jar" 
+            mvn_uri="mvn:org.talend.libraries/hadoop-common-2.7.3/6.3.0">
+        </libraryNeeded>
+             
+        <libraryNeeded
+            context="plugin:org.talend.hadoop.distribution.ibms220"
+            id="hadoop-hdfs-ibms2.2.0"
+            name="hadoop-hdfs-2.7.3.jar" 
+            mvn_uri="mvn:org.talend.libraries/hadoop-hdfs-2.7.3/6.3.0">
+        </libraryNeeded>
+        
+        <libraryNeeded
+            context="plugin:org.talend.hadoop.distribution.ibms220"
+            id="hadoop-mapreduce-client-common-ibms2.2.0"
+            name="hadoop-mapreduce-client-common-2.7.3.jar" 
+            mvn_uri="mvn:org.talend.libraries/hadoop-mapreduce-client-common-2.7.3/6.3.0">
+        </libraryNeeded>
+        
+        <libraryNeeded
+            context="plugin:org.talend.hadoop.distribution.ibms220"
+            id="hadoop-mapreduce-client-core-ibms2.2.0"
+            name="hadoop-mapreduce-client-core-2.7.3.jar" 
+            mvn_uri="mvn:org.talend.libraries/hadoop-mapreduce-client-core-2.7.3/6.3.0">
+        </libraryNeeded>
+        
+        <libraryNeeded
+            context="plugin:org.talend.hadoop.distribution.ibms220"
+            id="hadoop-mapreduce-client-jobclient-ibms2.2.0"
+            name="hadoop-mapreduce-client-jobclient-2.7.3.jar" 
+            mvn_uri="mvn:org.talend.libraries/hadoop-mapreduce-client-jobclient-2.7.3/6.3.0">
+        </libraryNeeded>
+        
+        <libraryNeeded
+            context="plugin:org.talend.hadoop.distribution.ibms220"
+            id="hadoop-yarn-api-ibms2.2.0"
+            name="hadoop-yarn-api-2.7.3.jar" 
+            mvn_uri="mvn:org.talend.libraries/hadoop-yarn-api-2.7.3/6.3.0">
+        </libraryNeeded>
+        
+        <libraryNeeded
+            context="plugin:org.talend.hadoop.distribution.ibms220"
+            id="hadoop-yarn-client-ibms2.2.0"
+            name="hadoop-yarn-client-2.7.3.jar" 
+            mvn_uri="mvn:org.talend.libraries/hadoop-yarn-client-2.7.3/6.3.0">
+        </libraryNeeded>
+        
+        <libraryNeeded
+            context="plugin:org.talend.hadoop.distribution.ibms220"
+            id="hadoop-yarn-common-ibms2.2.0"
+            name="hadoop-yarn-common-2.7.3.jar" 
+            mvn_uri="mvn:org.talend.libraries/hadoop-yarn-common-2.7.3/6.3.0">
+        </libraryNeeded>        
+        
+            
+        <!-- Spark libraries -->
+        <libraryNeeded
+            context="plugin:org.talend.hadoop.distribution.ibms220"
+            id="spark-assembly-ibms2.2.0"
+            name="spark-assembly-1.6.1-hadoop2.6.0.jar"
+            mvn_uri="mvn:org.talend.libraries/spark-assembly-1.6.1-hadoop2.6.0/6.2.0">
+        </libraryNeeded>
+        
+        <libraryNeeded
+            context="plugin:org.talend.hadoop.distribution.ibms220"
+            id="spark-launcher-ibms2.2.0"
+            name="spark-launcher_2.10-1.6.1.jar"
+            mvn_uri="mvn:org.talend.libraries/spark-launcher_2.10-1.6.1/6.2.0">
+        </libraryNeeded>
+
+        <!-- Third parties libraries -->
+        <libraryNeeded
+            context="plugin:org.talend.hadoop.distribution.ibms220"
+            id="datanucleus-rdbms"
+            name="datanucleus-rdbms-3.2.9.jar"
+            mvn_uri="mvn:org.talend.libraries/datanucleus-rdbms-3.2.9/6.2.0">
+        </libraryNeeded>        
+
+        <libraryNeeded
+            context="plugin:org.talend.hadoop.distribution.ibms220"
+            id="datanucleus-core"
+            name="datanucleus-core-3.2.10.jar"
+            mvn_uri="mvn:org.talend.libraries/datanucleus-core-3.2.10/6.2.0">
+        </libraryNeeded>        
+                        
+        <libraryNeeded
+            context="plugin:org.talend.hadoop.distribution.ibms220"
+            id="datanucleus-api-jdo"
+            name="datanucleus-api-jdo-3.2.6.jar"
+            mvn_uri="mvn:org.talend.libraries/datanucleus-api-jdo-3.2.6/6.2.0">
+        </libraryNeeded>        
+
+        <libraryNeeded
+            context="plugin:org.talend.hadoop.distribution.ibms220"
+            id="snappy-java-1.0.4.1.jar"
+            name="snappy-java-1.0.4.1.jar"
+            mvn_uri="mvn:org.talend.libraries/snappy-java-1.0.4.1/6.2.0">
+        </libraryNeeded>        
+
+        <libraryNeeded
+            context="plugin:org.talend.hadoop.distribution.ibms220"
+            id="jets3t-0.9.0"
+            name="jets3t-0.9.0"
+            mvn_uri="mvn:org.talend.libraries/jets3t-0.9.0/6.2.0">
+        </libraryNeeded>        
+
+        <libraryNeeded
+            context="plugin:org.talend.hadoop.distribution.ibms220"
+            id="httpclient-4.2.5.jar"
+            name="httpclient-4.2.5.jar"
+            mvn_uri="mvn:org.talend.libraries/httpclient-4.2.5/6.2.0">
+        </libraryNeeded>        
+
+        <libraryNeeded
+            context="plugin:org.talend.hadoop.distribution.ibms220"
+            id="httpcore-4.2.5.jar"
+            name="httpcore-4.2.5.jar"
+            mvn_uri="mvn:org.talend.libraries/httpcore-4.2.5/6.2.0">
+        </libraryNeeded>        
+
+        <libraryNeeded
+            context="plugin:org.talend.hadoop.distribution.ibms220"
+            id="parquet-hadoop-bundle-1.6.0.jar"
+            name="parquet-hadoop-bundle-1.6.0.jar"
+            mvn_uri="mvn:org.talend.libraries/parquet-hadoop-bundle-1.6.0/6.2.0">
+        </libraryNeeded>        
+
+        <libraryNeeded
+            context="plugin:org.talend.hadoop.distribution.ibms220"
+            id="jodd-core-3.5.2.jar"
+            name="jodd-core-3.5.2.jar"
+            mvn_uri="mvn:org.talend.libraries/jodd-core-3.5.2/6.2.0">
+        </libraryNeeded>        
+
+        <libraryNeeded
+            context="plugin:org.talend.hadoop.distribution.ibms220"
+            id="metrics-core-2.2.0.jar"
+            name="metrics-core-2.2.0.jar"
+            mvn_uri="mvn:org.talend.libraries/metrics-core-2.2.0/6.2.0">
+        </libraryNeeded>        
+
+        <libraryNeeded
+            context="plugin:org.talend.hadoop.distribution.ibms220"
+            id="avro-1.7.5.jar"
+            name="avro-1.7.5.jar"
+            mvn_uri="mvn:org.talend.libraries/avro-1.7.5/6.2.0">
+        </libraryNeeded>        
+
+        <libraryNeeded
+            context="plugin:org.talend.hadoop.distribution.ibms220"
+            id="jackson-mapper-asl-1.9.13.jar"
+            name="jackson-mapper-asl-1.9.13.jar"
+            mvn_uri="mvn:org.talend.libraries/jackson-mapper-asl-1.9.13/6.2.0">
+        </libraryNeeded>        
+
+        <libraryNeeded
+            context="plugin:org.talend.hadoop.distribution.ibms220"
+            id="jackson-core-asl-1.9.13.jar"
+            name="jackson-core-asl-1.9.13.jar"
+            mvn_uri="mvn:org.talend.libraries/jackson-core-asl-1.9.13/6.2.0">
+        </libraryNeeded>        
+
+        <libraryNeeded
+            context="plugin:org.talend.hadoop.distribution.ibms220"
+            id="amazon-kinesis-client-1.4.0.jar"
+            name="amazon-kinesis-client-1.4.0.jar"
+            mvn_uri="mvn:org.talend.libraries/amazon-kinesis-client-1.4.0/6.2.0">
+        </libraryNeeded>        
+
+        <libraryNeeded
+            context="plugin:org.talend.hadoop.distribution.ibms220"
+            id="aws-java-sdk-kinesis-1.10.60.jar"
+            name="aws-java-sdk-kinesis-1.10.60.jar"
+            mvn_uri="mvn:org.talend.libraries/aws-java-sdk-kinesis-1.10.60/6.2.0">
+        </libraryNeeded>        
+
+        <libraryNeeded
+            context="plugin:org.talend.hadoop.distribution.ibms220"
+            id="aws-java-sdk-core-1.10.60.jar"
+            name="aws-java-sdk-core-1.10.60.jar"
+            mvn_uri="mvn:org.talend.libraries/aws-java-sdk-core-1.10.60/6.2.0">
+        </libraryNeeded>        
+
+        <libraryNeeded
+            context="plugin:org.talend.hadoop.distribution.ibms220"
+            id="aws-java-sdk-dynamodb-1.10.60.jar"
+            name="aws-java-sdk-dynamodb-1.10.60.jar"
+            mvn_uri="mvn:org.talend.libraries/aws-java-sdk-dynamodb-1.10.60/6.2.0">
+        </libraryNeeded>        
+
+        <libraryNeeded
+            context="plugin:org.talend.hadoop.distribution.ibms220"
+            id="aws-java-sdk-cloudwatch-1.10.60.jar"
+            name="aws-java-sdk-cloudwatch-1.10.60.jar"
+            mvn_uri="mvn:org.talend.libraries/aws-java-sdk-cloudwatch-1.10.60/6.2.0">
+        </libraryNeeded>        
+
+        <libraryNeeded
+            context="plugin:org.talend.hadoop.distribution.ibms220"
+            id="joda-time-2.8.1.jar"
+            name="joda-time-2.8.1.jar"
+            mvn_uri="mvn:org.talend.libraries/joda-time-2.8.1/6.2.0">
+        </libraryNeeded>        
+
+        <!-- AWS libraries -->
+        <libraryNeeded
+            context="plugin:org.talend.hadoop.distribution.ibms220"
+            id="hadoop-aws-ibms2.2.0"
+            name="hadoop-aws-2.7.3.jar" 
+            mvn_uri="mvn:org.talend.libraries/hadoop-aws-2.7.3/6.3.0">
+        </libraryNeeded>
+
+        <libraryNeeded
+            context="plugin:org.talend.hadoop.distribution.ibms220"
+            id="spark-streaming-kinesis-asl-ibms2.2.0"
+            name="spark-streaming-kinesis-asl_2.10-1.6.2.jar" 
+            mvn_uri="mvn:org.talend.libraries/spark-streaming-kinesis-asl_2.10-1.6.2/6.0.0">
+        </libraryNeeded>
+
+        <!-- GraphFrames libraries -->
+		<libraryNeeded 
+			context="plugin:org.talend.hadoop.distribution.ibms220"
+			id="graphframes-0.3.0-spark1.6-s_2.10.jar" 
+			name="graphframes-0.3.0-spark1.6-s_2.10.jar"
+			mvn_uri="mvn:org.talend.libraries/graphframes-0.3.0-spark1.6-s_2.10/6.0.0">
+		</libraryNeeded>
+
+        <!-- Kafka libraries -->
+        <libraryNeeded
+            context="plugin:org.talend.hadoop.distribution.ibms220"
+            id="spark-streaming-kafka-ibms2.2.0"
+            name="spark-streaming-kafka-assembly_2.10-1.6.2.jar"
+            mvn_uri="mvn:org.talend.libraries/spark-streaming-kafka-assembly_2.10-1.6.2/6.3.0">
+        </libraryNeeded>
+       
+        <libraryNeeded
+            context="plugin:org.talend.hadoop.distribution.ibms220"
+            id="kafka-ibms2.2.0"
+            name="kafka_2.10-0.10.0.jar"
+            mvn_uri="mvn:org.talend.libraries/kafka_2.10-0.10.0/6.3.0">
+        </libraryNeeded>
+
+        <libraryNeeded
+            context="plugin:org.talend.hadoop.distribution.ibms220"
+            id="kafka-clients-ibms2.2.0"
+            name="kafka-clients-0.10.0.jar"
+            mvn_uri="mvn:org.talend.libraries/kafka-clients-0.10.0/6.3.0">
+        </libraryNeeded>
+        
+        <!-- Fume libraries -->
+        <libraryNeeded
+            context="plugin:org.talend.hadoop.distribution.ibms220"
+            id="spark-streaming-flume-assembly-ibms2.2.0"
+            name="spark-streaming-flume-assembly_2.10-1.6.2.jar"
+            mvn_uri="mvn:org.talend.libraries/spark-streaming-flume-assembly_2.10-1.6.2/6.3.0">
+        </libraryNeeded>
+        
+        <libraryNeeded
+            context="plugin:org.talend.hadoop.distribution.ibms220"
+            id="flume-ng-sdk-ibms2.2.0"
+            name="flume-ng-sdk-1.5.2.jar"
+            mvn_uri="mvn:org.talend.libraries/flume-ng-sdk-1.5.2/6.3.0">
+        </libraryNeeded>
+
+        <libraryNeeded
+            context="plugin:org.talend.hadoop.distribution.ibms220"
+            id="flume-ng-core-ibms2.2.0"
+            name="flume-ng-core-1.5.2.jar"
+            mvn_uri="mvn:org.talend.libraries/flume-ng-core-1.5.2/6.3.0">
+        </libraryNeeded>
+
+        <libraryNeeded
+            context="plugin:org.talend.hadoop.distribution.ibms220"
+            id="avro-ipc-ibms2.2.0"
+            name="avro-ipc-1.7.5.jar"
+            mvn_uri="mvn:org.talend.libraries/avro-ipc-1.7.5/6.3.0">
+        </libraryNeeded>
+
+        <!-- Groups -->
+        
+        <!-- HDFS group -->
+        <libraryNeededGroup
+                description="HDFS libraries for IBMS 2.2"
+                id="HDFS-LIB-IBMS_2_2"
+                name="HDFS-LIB-IBMS_2_2">
+             <library id="hadoop-annotations-ibms2.2.0" />
+             <library id="hadoop-auth-ibms2.2.0" />
+             <library id="hadoop-common-ibms2.2.0" />
+             <library id="hadoop-hdfs-ibms2.2.0" />
+             <library id="hadoop-mapreduce-client-common-ibms2.2.0" />
+             <library id="hadoop-mapreduce-client-core-ibms2.2.0" />
+             <library id="hadoop-mapreduce-client-jobclient-ibms2.2.0" />
+             <library id="hadoop-yarn-api-ibms2.2.0" />
+             <library id="hadoop-yarn-client-ibms2.2.0" />
+             <library id="hadoop-yarn-common-ibms2.2.0" />
+        </libraryNeededGroup>
+        <!-- Spark group -->
+        <libraryNeededGroup
+                description="Spark libraries for IBMS 2.2"
+                id="SPARK-LIB-IBMS_2_2"
+                name="SPARK-LIB-IBMS_2_2">
+             <library id="spark-assembly-ibms2.2.0" />
+             <library id="spark-launcher-ibms2.2.0" />
+             <library id="datanucleus-rdbms" />
+             <library id="datanucleus-core" />
+             <library id="datanucleus-api-jdo" />
+        </libraryNeededGroup>
+        <!-- Spark group MRREQUIRED -->
+        <libraryNeededGroup
+                description="Spark libraries for IBMS 2.2 that are MRREQUIRED"
+                id="SPARK-LIB-MRREQUIRED-IBMS_2_2"
+                name="SPARK-LIB-MRREQUIRED-IBMS_2_2">
+             <library id="snappy-java-1.0.4.1.jar"/>
+        </libraryNeededGroup>
+        <!-- Spark S3 group MRREQUIRED -->
+        <libraryNeededGroup
+                description="Spark S3 libraries for IBMS 2.2 that are MRREQUIRED"
+                id="SPARK-S3-LIB-MRREQUIRED-IBMS_2_2"
+                name="SPARK-S3-LIB-MRREQUIRED-IBMS_2_2">
+             <library id="hadoop-aws-ibms2.2.0"/>
+             <library id="aws-java-sdk-core-1.10.60.jar"/>
+             <library id="jets3t-0.9.0" />
+             <library id="httpclient-4.2.5.jar" />
+             <library id="httpcore-4.2.5.jar" />
+        </libraryNeededGroup>
+        <!-- Spark Parquet group MRREQUIRED -->
+        <libraryNeededGroup
+                description="Spark libraries for IBMS 2.2 that are MRREQUIRED"
+                id="SPARK-PARQUET-LIB-MRREQUIRED-IBMS_2_2"
+                name="SPARK-PARQUET-LIB-MRREQUIRED-IBMS_2_2">
+             <!--library id="parquet-hadoop-bundle-1.8.1.jar" /--><!--??? -->
+             <library id="parquet-hadoop-bundle-1.6.0.jar" />
+             <library id="jodd-core-3.5.2.jar" />    
+             <library id="snappy-java-1.0.4.1.jar" />         
+        </libraryNeededGroup>
+        <!-- GraphFrames group MRREQUIRED -->
+		<libraryNeededGroup
+			description="GraphFrames libraries for IBMS 2.2 that are MRREQUIRED" 
+			id="SPARK-GRAPHFRAMES-LIB-MRREQUIRED-IBMS_2_2"
+			name="SPARK-GRAPHFRAMES-LIB-MRREQUIRED-IBMS_2_2">
+			<library id="graphframes-0.3.0-spark1.6-s_2.10.jar" />
+		</libraryNeededGroup>
+        <!-- Spark Kafka group MRREQUIRED -->
+        <libraryNeededGroup
+                description="Spark Kafka assembly libraries for IBMS 2.2 that are MRREQUIRED"
+                id="SPARK-KAFKA-ASSEMBLY-LIB-MRREQUIRED-IBMS_2_2"
+                name="SPARK-KAFKA-ASSEMBLY-LIB-MRREQUIRED-IBMS_2_2">
+            <library id="spark-streaming-kafka-ibms2.2.0"/>
+            <library id="kafka-ibms2.2.0"/>
+            <library id="metrics-core-2.2.0.jar"/>
+        </libraryNeededGroup>
+        <!-- Spark Kafka Client group MRREQUIRED -->
+        <libraryNeededGroup
+                description="Spark Kafka client libraries for IBMS 2.2 that are MRREQUIRED"
+                id="SPARK-KAFKA-CLIENT-LIB-MRREQUIRED-IBMS_2_2"
+                name="SPARK-KAFKA-CLIENT-LIB-MRREQUIRED-IBMS_2_2">
+            <library id="kafka-clients-ibms2.2.0"/>
+        </libraryNeededGroup>
+        <!-- Spark Kafka Avro group MRREQUIRED -->
+        <libraryNeededGroup
+                description="Spark Kafka Avro libraries for IBMS 2.2 that are MRREQUIRED"
+                id="SPARK-KAFKA-AVRO-LIB-MRREQUIRED-IBMS_2_2"
+                name="SPARK-KAFKA-AVRO-LIB-MRREQUIRED-IBMS_2_2">
+            <library id="avro-1.7.5.jar"/>
+            <library id="jackson-mapper-asl-1.9.13.jar"/>
+            <library id="jackson-core-asl-1.9.13.jar"/>
+        </libraryNeededGroup>
+        <!-- Spark Kinesis group MRREQUIRED -->
+        <libraryNeededGroup
+                description="Spark Kinesis libraries for IBMS 2.2 that are MRREQUIRED"
+                id="SPARK-KINESIS-LIB-MRREQUIRED-IBMS_2_2"
+                name="SPARK-KINESIS-LIB-MRREQUIRED-IBMS_2_2">
+            <library id="spark-streaming-kinesis-asl-ibms2.2.0"/>
+            <library id="amazon-kinesis-client-1.4.0.jar"/><!--AMAZON license-->
+            <library id="aws-java-sdk-kinesis-1.10.6.jar"/>
+            <library id="aws-java-sdk-core-1.10.6.jar"/>            
+            <library id="aws-java-sdk-dynamodb-1.10.6.jar"/>            
+            <library id="aws-java-sdk-cloudwatch-1.10.6.jar"/>            
+            <library id="joda-time-2.8.1.jar"/>            
+        </libraryNeededGroup>   
+        <!-- Spark Flume group MRREQUIRED -->
+        <libraryNeededGroup
+                description="Spark Flume libraries for IBMS 2.2 that are MRREQUIRED"
+                id="SPARK-FLUME-LIB-MRREQUIRED-IBMS_2_2"
+                name="SPARK-FLUME-LIB-MRREQUIRED-IBMS_2_2">
+            <library id="spark-streaming-flume-assembly-ibms2.2.0"/>
+            <library id="flume-ng-sdk-ibms2.2.0"/>
+            <library id="flume-ng-core-ibms2.2.0"/>            
+            <library id="avro-ipc-ibms2.2.0"/>            
+        </libraryNeededGroup>
+        
+    </extension>
+    <extension
+          point="org.talend.core.runtime.classloader_provider">
+      <classloader
+            index="HDFS:IBMSPECTRUM:IBMS_2_2"
+            libraries="avro-1.7.5.jar;commons-cli-1.2.jar;commons-collections-3.2.2.jar;commons-io-2.4.jar;commons-configuration-1.6.jar;commons-lang-2.6.jar;commons-logging-1.1.3.jar;guava-11.0.2.jar;hadoop-auth-2.7.3.2.5.0.0-1245.jar;hadoop-common-2.7.3.2.5.0.0-1245.jar;hadoop-hdfs-2.7.3.2.5.0.0-1245.jar;htrace-core-3.1.0-incubating.jar;jersey-core-1.9.jar;log4j-1.2.17.jar;protobuf-java-2.5.0.jar;servlet-api-2.5.jar;slf4j-api-1.7.10.jar;slf4j-log4j12-1.7.10.jar;jackson-core-asl-1.9.13.jar;jackson-mapper-asl-1.9.13.jar">
+      </classloader>   
+    </extension>
+</plugin>
