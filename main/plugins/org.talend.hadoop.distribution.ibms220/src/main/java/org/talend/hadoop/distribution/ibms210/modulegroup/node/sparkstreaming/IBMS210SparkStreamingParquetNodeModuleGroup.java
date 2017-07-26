@@ -10,21 +10,25 @@
 // 9 rue Pages 92150 Suresnes, France
 //
 // ============================================================================
-package org.talend.hadoop.distribution.ibms220.modulegroup;
+package org.talend.hadoop.distribution.ibms210.modulegroup.node.sparkstreaming;
 
 import java.util.HashSet;
 import java.util.Set;
 
 import org.talend.hadoop.distribution.DistributionModuleGroup;
-import org.talend.hadoop.distribution.ibms220.IBMS220Constant;
+import org.talend.hadoop.distribution.condition.common.SparkStreamingLinkedNodeCondition;
+import org.talend.hadoop.distribution.ibms210.IBMS210Constant;
+import org.talend.hadoop.distribution.ibms210.IBMS210Distribution;
 
-public class IBMS220HDFSModuleGroup {
+public class IBMS210SparkStreamingParquetNodeModuleGroup {
 
     public static Set<DistributionModuleGroup> getModuleGroups() {
         Set<DistributionModuleGroup> hs = new HashSet<>();
-        DistributionModuleGroup dmg = new DistributionModuleGroup(IBMS220Constant.HDFS_MODULE_GROUP.getModuleName());
+        DistributionModuleGroup dmg = new DistributionModuleGroup(
+        		IBMS210Constant.SPARK_PARQUET_MRREQUIRED_MODULE_GROUP.getModuleName(), true,
+                new SparkStreamingLinkedNodeCondition(IBMS210Distribution.DISTRIBUTION_NAME, IBMS210Distribution.VERSION)
+                        .getCondition());
         hs.add(dmg);
         return hs;
     }
-
 }

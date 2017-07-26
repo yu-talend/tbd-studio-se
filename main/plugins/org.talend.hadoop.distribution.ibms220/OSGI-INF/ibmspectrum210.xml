@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
-<component name="IBMS220Distribution">
-  <implementation class="org.talend.hadoop.distribution.ibms220.IBMS220Distribution"/>
+<component name="IBMS210Distribution">
+  <implementation class="org.talend.hadoop.distribution.ibms210.IBMS210Distribution"/>
   <service>
     <provide interface="org.talend.hadoop.distribution.component.HadoopComponent"/>
     <provide interface="org.talend.hadoop.distribution.component.HDFSComponent"/>

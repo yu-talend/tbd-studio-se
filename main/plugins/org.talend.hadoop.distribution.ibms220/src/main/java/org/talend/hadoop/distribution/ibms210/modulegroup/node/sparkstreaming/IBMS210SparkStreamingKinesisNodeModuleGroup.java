@@ -10,25 +10,24 @@
 // 9 rue Pages 92150 Suresnes, France
 //
 // ============================================================================
-package org.talend.hadoop.distribution.ibms220.modulegroup.node.sparkstreaming;
+package org.talend.hadoop.distribution.ibms210.modulegroup.node.sparkstreaming;
 
 import java.util.HashSet;
 import java.util.Set;
 
 import org.talend.hadoop.distribution.DistributionModuleGroup;
 import org.talend.hadoop.distribution.condition.common.SparkStreamingLinkedNodeCondition;
-import org.talend.hadoop.distribution.constants.SparkStreamingConstant;
-import org.talend.hadoop.distribution.ibms220.IBMS220Constant;
-import org.talend.hadoop.distribution.ibms220.IBMS220Distribution;
+import org.talend.hadoop.distribution.ibms210.IBMS210Constant;
+import org.talend.hadoop.distribution.ibms210.IBMS210Distribution;
 
-public class IBMS220SparkStreamingKafkaClientModuleGroup {
+public class IBMS210SparkStreamingKinesisNodeModuleGroup {
 
     public static Set<DistributionModuleGroup> getModuleGroups() {
         Set<DistributionModuleGroup> hs = new HashSet<>();
         DistributionModuleGroup dmg = new DistributionModuleGroup(
-        		IBMS220Constant.SPARK_KAFKA_CLIENT_MRREQUIRED_MODULE_GROUP.getModuleName(), true,
-                new SparkStreamingLinkedNodeCondition(IBMS220Distribution.DISTRIBUTION_NAME, IBMS220Distribution.VERSION,
-                        SparkStreamingConstant.KAFKA_SPARKCONFIGURATION_LINKEDPARAMETER).getCondition());
+                IBMS210Constant.SPARK_KINESIS_MRREQUIRED_MODULE_GROUP.getModuleName(), true,
+                new SparkStreamingLinkedNodeCondition(IBMS210Distribution.DISTRIBUTION_NAME, IBMS210Distribution.VERSION)
+                        .getCondition());
         hs.add(dmg);
         return hs;
     }

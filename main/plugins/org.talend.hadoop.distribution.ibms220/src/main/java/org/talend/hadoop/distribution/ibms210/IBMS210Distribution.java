@@ -11,7 +11,7 @@
 //
 // ============================================================================
 
-package org.talend.hadoop.distribution.ibms220;
+package org.talend.hadoop.distribution.ibms210;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,29 +29,29 @@ import org.talend.hadoop.distribution.component.SparkStreamingComponent;
 import org.talend.hadoop.distribution.condition.ComponentCondition;
 import org.talend.hadoop.distribution.constants.SparkBatchConstant;
 import org.talend.hadoop.distribution.constants.SparkStreamingConstant;
-import org.talend.hadoop.distribution.ibms220.modulegroup.IBMS220HDFSModuleGroup;
-import org.talend.hadoop.distribution.ibms220.modulegroup.IBMS220SparkBatchModuleGroup;
-import org.talend.hadoop.distribution.ibms220.modulegroup.IBMS220SparkStreamingModuleGroup;
-import org.talend.hadoop.distribution.ibms220.modulegroup.node.sparkbatch.IBMS220SparkBatchParquetNodeModuleGroup;
-import org.talend.hadoop.distribution.ibms220.modulegroup.node.sparkbatch.IBMS220SparkBatchS3NodeModuleGroup;
-import org.talend.hadoop.distribution.ibms220.modulegroup.node.sparkstreaming.IBMS220SparkStreamingFlumeNodeModuleGroup;
-import org.talend.hadoop.distribution.ibms220.modulegroup.node.sparkstreaming.IBMS220SparkStreamingKafkaAssemblyModuleGroup;
-import org.talend.hadoop.distribution.ibms220.modulegroup.node.sparkstreaming.IBMS220SparkStreamingKafkaAvroModuleGroup;
-import org.talend.hadoop.distribution.ibms220.modulegroup.node.sparkstreaming.IBMS220SparkStreamingKafkaClientModuleGroup;
-import org.talend.hadoop.distribution.ibms220.modulegroup.node.sparkstreaming.IBMS220SparkStreamingKinesisNodeModuleGroup;
-import org.talend.hadoop.distribution.ibms220.modulegroup.node.sparkstreaming.IBMS220SparkStreamingParquetNodeModuleGroup;
-import org.talend.hadoop.distribution.ibms220.modulegroup.node.sparkstreaming.IBMS220SparkStreamingS3NodeModuleGroup;
+import org.talend.hadoop.distribution.ibms210.modulegroup.IBMS210HDFSModuleGroup;
+import org.talend.hadoop.distribution.ibms210.modulegroup.IBMS210SparkBatchModuleGroup;
+import org.talend.hadoop.distribution.ibms210.modulegroup.IBMS210SparkStreamingModuleGroup;
+import org.talend.hadoop.distribution.ibms210.modulegroup.node.sparkbatch.IBMS210SparkBatchParquetNodeModuleGroup;
+import org.talend.hadoop.distribution.ibms210.modulegroup.node.sparkbatch.IBMS210SparkBatchS3NodeModuleGroup;
+import org.talend.hadoop.distribution.ibms210.modulegroup.node.sparkstreaming.IBMS210SparkStreamingFlumeNodeModuleGroup;
+import org.talend.hadoop.distribution.ibms210.modulegroup.node.sparkstreaming.IBMS210SparkStreamingKafkaAssemblyModuleGroup;
+import org.talend.hadoop.distribution.ibms210.modulegroup.node.sparkstreaming.IBMS210SparkStreamingKafkaAvroModuleGroup;
+import org.talend.hadoop.distribution.ibms210.modulegroup.node.sparkstreaming.IBMS210SparkStreamingKafkaClientModuleGroup;
+import org.talend.hadoop.distribution.ibms210.modulegroup.node.sparkstreaming.IBMS210SparkStreamingKinesisNodeModuleGroup;
+import org.talend.hadoop.distribution.ibms210.modulegroup.node.sparkstreaming.IBMS210SparkStreamingParquetNodeModuleGroup;
+import org.talend.hadoop.distribution.ibms210.modulegroup.node.sparkstreaming.IBMS210SparkStreamingS3NodeModuleGroup;
 
 @SuppressWarnings("nls")
-public class IBMS220Distribution extends AbstractDistribution implements HDFSComponent, SparkBatchComponent, SparkStreamingComponent {//, IIBMSpectrumDistribution {
+public class IBMS210Distribution extends AbstractDistribution implements HDFSComponent, SparkBatchComponent, SparkStreamingComponent {//, IIBMSpectrumDistribution {
 
 	public static final String DISTRIBUTION_NAME = "IBMSPECTRUM";
 
 	public static final String DISTRIBUTION_DISPLAY_NAME = "IBMSpectrum";
 
-    public final static String VERSION = "IBMS_2_2";
+    public final static String VERSION = "IBMS_2_1";
 
-    public static final String VERSION_DISPLAY = "IBM Spectrum 2.2(Spark only)";
+    public static final String VERSION_DISPLAY = "IBM Spectrum 2.1(Spark only)";
 
     //private final static String YARN_APPLICATION_CLASSPATH = "$HADOOP_CONF_DIR,$HADOOP_COMMON_HOME/*,$HADOOP_COMMON_HOME/lib/*,$HADOOP_HDFS_HOME/*,$HADOOP_HDFS_HOME/lib/*,$HADOOP_MAPRED_HOME/*,$HADOOP_MAPRED_HOME/lib/*,$YARN_HOME/*,$YARN_HOME/lib/*,$HADOOP_YARN_HOME/*,$HADOOP_YARN_HOME/lib/*,$HADOOP_COMMON_HOME/share/hadoop/common/*,$HADOOP_COMMON_HOME/share/hadoop/common/lib/*,$HADOOP_HDFS_HOME/share/hadoop/hdfs/*,$HADOOP_HDFS_HOME/share/hadoop/hdfs/lib/*,$HADOOP_YARN_HOME/share/hadoop/yarn/*,$HADOOP_YARN_HOME/share/hadoop/yarn/lib/*"; //$NON-NLS-1$
 
@@ -61,7 +61,7 @@ public class IBMS220Distribution extends AbstractDistribution implements HDFSCom
 
     private static Map<ComponentType, ComponentCondition> displayConditions;
 
-    public IBMS220Distribution() {
+    public IBMS210Distribution() {
 
         String distribution = getDistribution();
         String version = getVersion();
@@ -69,30 +69,30 @@ public class IBMS220Distribution extends AbstractDistribution implements HDFSCom
         // Used to add a module group import for the components that have a HADOOP_DISTRIBUTION parameter, aka. the
         // components that have the distribution list.
         moduleGroups = new HashMap<>();
-        moduleGroups.put(ComponentType.HDFS, IBMS220HDFSModuleGroup.getModuleGroups());
-        moduleGroups.put(ComponentType.SPARKBATCH, IBMS220SparkBatchModuleGroup.getModuleGroups());
-        moduleGroups.put(ComponentType.SPARKSTREAMING, IBMS220SparkStreamingModuleGroup.getModuleGroups());
+        moduleGroups.put(ComponentType.HDFS, IBMS210HDFSModuleGroup.getModuleGroups());
+        moduleGroups.put(ComponentType.SPARKBATCH, IBMS210SparkBatchModuleGroup.getModuleGroups());
+        moduleGroups.put(ComponentType.SPARKSTREAMING, IBMS210SparkStreamingModuleGroup.getModuleGroups());
 
         // Used to add a module group import for a specific node. The given node must have a HADOOP_LIBRARIES parameter.
         nodeModuleGroups = new HashMap<>();
 
         nodeModuleGroups.put(new NodeComponentTypeBean(ComponentType.SPARKBATCH, SparkBatchConstant.PARQUET_INPUT_COMPONENT),
-                IBMS220SparkBatchParquetNodeModuleGroup.getModuleGroups());
+                IBMS210SparkBatchParquetNodeModuleGroup.getModuleGroups());
         nodeModuleGroups.put(new NodeComponentTypeBean(ComponentType.SPARKBATCH, SparkBatchConstant.PARQUET_OUTPUT_COMPONENT),
-        		IBMS220SparkBatchParquetNodeModuleGroup.getModuleGroups());
+        		IBMS210SparkBatchParquetNodeModuleGroup.getModuleGroups());
         nodeModuleGroups.put(new NodeComponentTypeBean(ComponentType.SPARKBATCH, SparkBatchConstant.S3_CONFIGURATION_COMPONENT),
-        		IBMS220SparkBatchS3NodeModuleGroup.getModuleGroups());
+        		IBMS210SparkBatchS3NodeModuleGroup.getModuleGroups());
         nodeModuleGroups.put(new NodeComponentTypeBean(ComponentType.SPARKSTREAMING,
-                SparkStreamingConstant.PARQUET_INPUT_COMPONENT), IBMS220SparkStreamingParquetNodeModuleGroup.getModuleGroups());
+                SparkStreamingConstant.PARQUET_INPUT_COMPONENT), IBMS210SparkStreamingParquetNodeModuleGroup.getModuleGroups());
         nodeModuleGroups.put(new NodeComponentTypeBean(ComponentType.SPARKSTREAMING,
-                SparkStreamingConstant.PARQUET_OUTPUT_COMPONENT), IBMS220SparkStreamingParquetNodeModuleGroup.getModuleGroups());
+                SparkStreamingConstant.PARQUET_OUTPUT_COMPONENT), IBMS210SparkStreamingParquetNodeModuleGroup.getModuleGroups());
         nodeModuleGroups.put(new NodeComponentTypeBean(ComponentType.SPARKSTREAMING,
-                SparkStreamingConstant.PARQUET_STREAM_INPUT_COMPONENT), IBMS220SparkStreamingParquetNodeModuleGroup
+                SparkStreamingConstant.PARQUET_STREAM_INPUT_COMPONENT), IBMS210SparkStreamingParquetNodeModuleGroup
                 .getModuleGroups());
         nodeModuleGroups.put(new NodeComponentTypeBean(ComponentType.SPARKSTREAMING,
-                SparkStreamingConstant.S3_CONFIGURATION_COMPONENT), IBMS220SparkStreamingS3NodeModuleGroup.getModuleGroups());
+                SparkStreamingConstant.S3_CONFIGURATION_COMPONENT), IBMS210SparkStreamingS3NodeModuleGroup.getModuleGroups());
 
-        Set<DistributionModuleGroup> kinesisNodeModuleGroups = IBMS220SparkStreamingKinesisNodeModuleGroup.getModuleGroups();
+        Set<DistributionModuleGroup> kinesisNodeModuleGroups = IBMS210SparkStreamingKinesisNodeModuleGroup.getModuleGroups();
         nodeModuleGroups.put(new NodeComponentTypeBean(ComponentType.SPARKSTREAMING,
                 SparkStreamingConstant.KINESIS_INPUT_COMPONENT), kinesisNodeModuleGroups);
         nodeModuleGroups.put(new NodeComponentTypeBean(ComponentType.SPARKSTREAMING,
@@ -100,22 +100,22 @@ public class IBMS220Distribution extends AbstractDistribution implements HDFSCom
         nodeModuleGroups.put(new NodeComponentTypeBean(ComponentType.SPARKSTREAMING,
                 SparkStreamingConstant.KINESIS_OUTPUT_COMPONENT), kinesisNodeModuleGroups);
 
-        Set<DistributionModuleGroup> flumeNodeModuleGroups = IBMS220SparkStreamingFlumeNodeModuleGroup.getModuleGroups();
+        Set<DistributionModuleGroup> flumeNodeModuleGroups = IBMS210SparkStreamingFlumeNodeModuleGroup.getModuleGroups();
         nodeModuleGroups.put(
                 new NodeComponentTypeBean(ComponentType.SPARKSTREAMING, SparkStreamingConstant.FLUME_INPUT_COMPONENT),
                 flumeNodeModuleGroups);
         nodeModuleGroups.put(new NodeComponentTypeBean(ComponentType.SPARKSTREAMING,
                 SparkStreamingConstant.FLUME_OUTPUT_COMPONENT), flumeNodeModuleGroups);
 
-        Set<DistributionModuleGroup> kafkaAssemblyModuleGroups = IBMS220SparkStreamingKafkaAssemblyModuleGroup.getModuleGroups();
-        Set<DistributionModuleGroup> kafkaAvroModuleGroups = IBMS220SparkStreamingKafkaAvroModuleGroup.getModuleGroups();
+        Set<DistributionModuleGroup> kafkaAssemblyModuleGroups = IBMS210SparkStreamingKafkaAssemblyModuleGroup.getModuleGroups();
+        Set<DistributionModuleGroup> kafkaAvroModuleGroups = IBMS210SparkStreamingKafkaAvroModuleGroup.getModuleGroups();
         nodeModuleGroups.put(
                 new NodeComponentTypeBean(ComponentType.SPARKSTREAMING, SparkStreamingConstant.KAFKA_INPUT_COMPONENT),
                 kafkaAssemblyModuleGroups);
         nodeModuleGroups.put(new NodeComponentTypeBean(ComponentType.SPARKSTREAMING,
                 SparkStreamingConstant.KAFKA_AVRO_INPUT_COMPONENT), kafkaAvroModuleGroups);
         nodeModuleGroups.put(new NodeComponentTypeBean(ComponentType.SPARKSTREAMING,
-                SparkStreamingConstant.KAFKA_OUTPUT_COMPONENT), IBMS220SparkStreamingKafkaClientModuleGroup.getModuleGroups());
+                SparkStreamingConstant.KAFKA_OUTPUT_COMPONENT), IBMS210SparkStreamingKafkaClientModuleGroup.getModuleGroups());
 
         // Used to hide the distribution according to other parameters in the component.
         displayConditions = new HashMap<>();

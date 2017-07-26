@@ -7,6 +7,6 @@
     <version>6.2.3-SNAPSHOT</version>
     <relativePath>../../../</relativePath>
   </parent>
-  <artifactId>org.talend.hadoop.distribution.ibms220</artifactId>
+  <artifactId>org.talend.hadoop.distribution.ibms210</artifactId>
   <packaging>eclipse-plugin</packaging>
 </project>
