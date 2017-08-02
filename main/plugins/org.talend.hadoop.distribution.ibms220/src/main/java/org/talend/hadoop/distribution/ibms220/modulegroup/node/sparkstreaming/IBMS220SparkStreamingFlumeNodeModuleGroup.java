@@ -21,13 +21,20 @@ import org.talend.hadoop.distribution.constants.SparkStreamingConstant;
 
 public class IBMS220SparkStreamingFlumeNodeModuleGroup {
 
-    public final static String MODULE_GROUP_NAME = "SPARK-FLUME-LIB-MRREQUIRED-IBMS_2_2_0"; //$NON-NLS-1$
+	public final static String MODULE_GROUP_NAME = "SPARK-FLUME-LIB-MRREQUIRED-IBMS_2_2_0"; //$NON-NLS-1$
 
-    public static Set<DistributionModuleGroup> getModuleGroups(String distribution, String version) {
-        Set<DistributionModuleGroup> hs = new HashSet<>();
-        DistributionModuleGroup dmg = new DistributionModuleGroup(MODULE_GROUP_NAME, true, new SparkStreamingLinkedNodeCondition(
-                distribution, version, SparkStreamingConstant.FLUME_SPARKCONFIGURATION_LINKEDPARAMETER).getCondition());
-        hs.add(dmg);
-        return hs;
-    }
+	public static Set<DistributionModuleGroup> getModuleGroups(
+			String distribution, String version) {
+		Set<DistributionModuleGroup> hs = new HashSet<>();
+		DistributionModuleGroup dmg = new DistributionModuleGroup(
+				MODULE_GROUP_NAME,
+				true,
+				new SparkStreamingLinkedNodeCondition(
+						distribution,
+						version,
+						SparkStreamingConstant.FLUME_SPARKCONFIGURATION_LINKEDPARAMETER)
+						.getCondition());
+		hs.add(dmg);
+		return hs;
+	}
 }

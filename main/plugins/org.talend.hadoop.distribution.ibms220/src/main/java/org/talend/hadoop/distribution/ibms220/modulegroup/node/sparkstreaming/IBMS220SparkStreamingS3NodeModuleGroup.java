@@ -20,14 +20,20 @@ import org.talend.hadoop.distribution.condition.common.SparkStreamingLinkedNodeC
 import org.talend.hadoop.distribution.constants.SparkStreamingConstant;
 
 public class IBMS220SparkStreamingS3NodeModuleGroup {
-    public static final String S3_GROUP_NAME = "SPARK-S3-LIB-MRREQUIRED-IBMS_2_2_0"; //$NON-NLS-1$
+	public static final String S3_GROUP_NAME = "SPARK-S3-LIB-MRREQUIRED-IBMS_2_2_0"; //$NON-NLS-1$
 
-    public static Set<DistributionModuleGroup> getModuleGroups(String distribution, String version) {
-        Set<DistributionModuleGroup> hs = new HashSet<>();
-        DistributionModuleGroup dmg = new DistributionModuleGroup(S3_GROUP_NAME, true,
-                new SparkStreamingLinkedNodeCondition(distribution, version,
-                        SparkStreamingConstant.S3_SPARKCONFIGURATION_LINKEDPARAMETER).getCondition());
-        hs.add(dmg);
-        return hs;
-    }
+	public static Set<DistributionModuleGroup> getModuleGroups(
+			String distribution, String version) {
+		Set<DistributionModuleGroup> hs = new HashSet<>();
+		DistributionModuleGroup dmg = new DistributionModuleGroup(
+				S3_GROUP_NAME,
+				true,
+				new SparkStreamingLinkedNodeCondition(
+						distribution,
+						version,
+						SparkStreamingConstant.S3_SPARKCONFIGURATION_LINKEDPARAMETER)
+						.getCondition());
+		hs.add(dmg);
+		return hs;
+	}
 }

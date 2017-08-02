@@ -21,12 +21,14 @@ import org.talend.hadoop.distribution.ibms220.modulegroup.node.sparkbatch.IBMS22
 
 public class IBMS220SparkStreamingParquetNodeModuleGroup {
 
-    public static Set<DistributionModuleGroup> getModuleGroups(String distribution, String version) {
-        Set<DistributionModuleGroup> hs = new HashSet<>();
-        DistributionModuleGroup dmg = new DistributionModuleGroup(
-                IBMS220SparkBatchParquetNodeModuleGroup.SPARK_PARQUET_GROUP_NAME, true, new SparkStreamingLinkedNodeCondition(
-                        distribution, version).getCondition());
-        hs.add(dmg);
-        return hs;
-    }
+	public static Set<DistributionModuleGroup> getModuleGroups(
+			String distribution, String version) {
+		Set<DistributionModuleGroup> hs = new HashSet<>();
+		DistributionModuleGroup dmg = new DistributionModuleGroup(
+				IBMS220SparkBatchParquetNodeModuleGroup.SPARK_PARQUET_GROUP_NAME,
+				true, new SparkStreamingLinkedNodeCondition(distribution,
+						version).getCondition());
+		hs.add(dmg);
+		return hs;
+	}
 }

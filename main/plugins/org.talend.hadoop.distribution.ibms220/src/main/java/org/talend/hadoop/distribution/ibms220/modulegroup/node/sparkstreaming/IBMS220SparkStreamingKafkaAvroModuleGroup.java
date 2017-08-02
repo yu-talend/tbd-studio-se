@@ -21,16 +21,23 @@ import org.talend.hadoop.distribution.constants.SparkStreamingConstant;
 
 public class IBMS220SparkStreamingKafkaAvroModuleGroup {
 
-    public static final String KAFKA_AVRO_GROUP_NAME = "SPARK-KAFKA-AVRO-LIB-MRREQUIRED-IBMS_2_2_0"; //$NON-NLS-1$
+	public static final String KAFKA_AVRO_GROUP_NAME = "SPARK-KAFKA-AVRO-LIB-MRREQUIRED-IBMS_2_2_0"; //$NON-NLS-1$
 
-    public static Set<DistributionModuleGroup> getModuleGroups(String distribution, String version) {
-        Set<DistributionModuleGroup> hs = new HashSet<>();
-        DistributionModuleGroup dmg = new DistributionModuleGroup(KAFKA_AVRO_GROUP_NAME, true,
-                new SparkStreamingLinkedNodeCondition(distribution, version,
-                        SparkStreamingConstant.KAFKA_SPARKCONFIGURATION_LINKEDPARAMETER).getCondition());
-        hs.add(dmg);
-        // Add Spark Streaming Kafka dependencies as well
-        hs.addAll(IBMS220SparkStreamingKafkaAssemblyModuleGroup.getModuleGroups(distribution, version));
-        return hs;
-    }
+	public static Set<DistributionModuleGroup> getModuleGroups(
+			String distribution, String version) {
+		Set<DistributionModuleGroup> hs = new HashSet<>();
+		DistributionModuleGroup dmg = new DistributionModuleGroup(
+				KAFKA_AVRO_GROUP_NAME,
+				true,
+				new SparkStreamingLinkedNodeCondition(
+						distribution,
+						version,
+						SparkStreamingConstant.KAFKA_SPARKCONFIGURATION_LINKEDPARAMETER)
+						.getCondition());
+		hs.add(dmg);
+		// Add Spark Streaming Kafka dependencies as well
+		hs.addAll(IBMS220SparkStreamingKafkaAssemblyModuleGroup
+				.getModuleGroups(distribution, version));
+		return hs;
+	}
 }

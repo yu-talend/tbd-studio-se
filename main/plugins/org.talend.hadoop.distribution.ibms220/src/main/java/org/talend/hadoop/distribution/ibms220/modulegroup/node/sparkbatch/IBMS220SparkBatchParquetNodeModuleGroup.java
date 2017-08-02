@@ -20,13 +20,16 @@ import org.talend.hadoop.distribution.condition.common.SparkBatchLinkedNodeCondi
 
 public class IBMS220SparkBatchParquetNodeModuleGroup {
 
-    public static final String SPARK_PARQUET_GROUP_NAME = "SPARK-PARQUET-LIB-MRREQUIRED-IBMS_2_2_0"; //$NON-NLS-1$
+	public static final String SPARK_PARQUET_GROUP_NAME = "SPARK-PARQUET-LIB-MRREQUIRED-IBMS_2_2_0"; //$NON-NLS-1$
 
-    public static Set<DistributionModuleGroup> getModuleGroups(String distribution, String version) {
-        Set<DistributionModuleGroup> hs = new HashSet<>();
-        DistributionModuleGroup dmg = new DistributionModuleGroup(SPARK_PARQUET_GROUP_NAME, true,
-                new SparkBatchLinkedNodeCondition(distribution, version).getCondition());
-        hs.add(dmg);
-        return hs;
-    }
+	public static Set<DistributionModuleGroup> getModuleGroups(
+			String distribution, String version) {
+		Set<DistributionModuleGroup> hs = new HashSet<>();
+		DistributionModuleGroup dmg = new DistributionModuleGroup(
+				SPARK_PARQUET_GROUP_NAME, true,
+				new SparkBatchLinkedNodeCondition(distribution, version)
+						.getCondition());
+		hs.add(dmg);
+		return hs;
+	}
 }

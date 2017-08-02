@@ -20,13 +20,16 @@ import org.talend.hadoop.distribution.condition.common.SparkStreamingLinkedNodeC
 
 public class IBMS220SparkStreamingKinesisNodeModuleGroup {
 
-    public static final String KINESIS_ASSEMBLY_GROUP_NAME = "SPARK-KINESIS-LIB-MRREQUIRED-IBMS_2_2_0"; //$NON-NLS-1$
+	public static final String KINESIS_ASSEMBLY_GROUP_NAME = "SPARK-KINESIS-LIB-MRREQUIRED-IBMS_2_2_0"; //$NON-NLS-1$
 
-    public static Set<DistributionModuleGroup> getModuleGroups(String distribution, String version) {
-        Set<DistributionModuleGroup> hs = new HashSet<>();
-        DistributionModuleGroup dmg = new DistributionModuleGroup(KINESIS_ASSEMBLY_GROUP_NAME, true,
-                new SparkStreamingLinkedNodeCondition(distribution, version).getCondition());
-        hs.add(dmg);
-        return hs;
-    }
+	public static Set<DistributionModuleGroup> getModuleGroups(
+			String distribution, String version) {
+		Set<DistributionModuleGroup> hs = new HashSet<>();
+		DistributionModuleGroup dmg = new DistributionModuleGroup(
+				KINESIS_ASSEMBLY_GROUP_NAME, true,
+				new SparkStreamingLinkedNodeCondition(distribution, version)
+						.getCondition());
+		hs.add(dmg);
+		return hs;
+	}
 }

@@ -20,14 +20,20 @@ import org.talend.hadoop.distribution.condition.common.SparkBatchLinkedNodeCondi
 import org.talend.hadoop.distribution.constants.SparkBatchConstant;
 
 public class IBMS220SparkBatchS3NodeModuleGroup {
-    public static final String S3_GROUP_NAME = "SPARK-S3-LIB-MRREQUIRED-IBMS_2_2_0"; //$NON-NLS-1$
+	public static final String S3_GROUP_NAME = "SPARK-S3-LIB-MRREQUIRED-IBMS_2_2_0"; //$NON-NLS-1$
 
-    public static Set<DistributionModuleGroup> getModuleGroups(String distribution, String version) {
-        Set<DistributionModuleGroup> hs = new HashSet<>();
-        DistributionModuleGroup dmg = new DistributionModuleGroup(S3_GROUP_NAME, true,
-                new SparkBatchLinkedNodeCondition(distribution, version,
-                        SparkBatchConstant.SPARK_BATCH_S3_SPARKCONFIGURATION_LINKEDPARAMETER).getCondition());
-        hs.add(dmg);
-        return hs;
-    }
+	public static Set<DistributionModuleGroup> getModuleGroups(
+			String distribution, String version) {
+		Set<DistributionModuleGroup> hs = new HashSet<>();
+		DistributionModuleGroup dmg = new DistributionModuleGroup(
+				S3_GROUP_NAME,
+				true,
+				new SparkBatchLinkedNodeCondition(
+						distribution,
+						version,
+						SparkBatchConstant.SPARK_BATCH_S3_SPARKCONFIGURATION_LINKEDPARAMETER)
+						.getCondition());
+		hs.add(dmg);
+		return hs;
+	}
 }
