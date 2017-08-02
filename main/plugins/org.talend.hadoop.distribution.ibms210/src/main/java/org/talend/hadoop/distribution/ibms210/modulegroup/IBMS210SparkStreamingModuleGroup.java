@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2017 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // %InstallDIR%\features\org.talend.rcp.branding.%PRODUCTNAME%\%PRODUCTNAME%license.txt
@@ -25,15 +25,18 @@ import org.talend.hadoop.distribution.constants.SparkStreamingConstant;
 
 public class IBMS210SparkStreamingModuleGroup {
 
-    private final static ComponentCondition condition = new SimpleComponentCondition(new BasicExpression(
-            SparkStreamingConstant.SPARKCONFIGURATION_IS_LOCAL_MODE_PARAMETER, EqualityOperator.EQ, "false")); //$NON-NLS-1$
+	private final static ComponentCondition condition = new SimpleComponentCondition(
+			new BasicExpression(
+					SparkStreamingConstant.SPARKCONFIGURATION_IS_LOCAL_MODE_PARAMETER,
+					EqualityOperator.EQ, "false")); //$NON-NLS-1$
 
-    public static Set<DistributionModuleGroup> getModuleGroups() {
-        Set<DistributionModuleGroup> hs = new HashSet<>();
-        hs.add(new DistributionModuleGroup(IBMS210Constant.SPARK_MODULE_GROUP.getModuleName(), false, condition));
-        hs.add(new DistributionModuleGroup(IBMS210Constant.HDFS_MODULE_GROUP.getModuleName(), false, condition));
-//        hs.add(new DistributionModuleGroup(IBMS210Constant.MAPREDUCE_MODULE_GROUP.getModuleName(), false, condition));
-        return hs;
-    }
+	public static Set<DistributionModuleGroup> getModuleGroups() {
+		Set<DistributionModuleGroup> hs = new HashSet<>();
+		hs.add(new DistributionModuleGroup(IBMS210Constant.SPARK_MODULE_GROUP
+				.getModuleName(), false, condition));
+		hs.add(new DistributionModuleGroup(IBMS210Constant.HDFS_MODULE_GROUP
+				.getModuleName(), false, condition));
+		return hs;
+	}
 
 }

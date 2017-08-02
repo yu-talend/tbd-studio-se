@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2017 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // %InstallDIR%\features\org.talend.rcp.branding.%PRODUCTNAME%\%PRODUCTNAME%license.txt
@@ -24,16 +24,18 @@ import org.talend.hadoop.distribution.constants.SparkBatchConstant;
 
 public class IBMS220SparkBatchModuleGroup {
 
-    public static final String MODULE_GROUP_NAME = "SPARK2-LIB-IBMS_2_2_0"; //$NON-NLS-1$
+	public static final String MODULE_GROUP_NAME = "SPARK2-LIB-IBMS_2_2_0"; //$NON-NLS-1$
 
-    private final static ComponentCondition condition = new SimpleComponentCondition(new BasicExpression(
-            SparkBatchConstant.SPARK_LOCAL_MODE_PARAMETER, EqualityOperator.EQ, "false")); //$NON-NLS-1$
+	private final static ComponentCondition condition = new SimpleComponentCondition(
+			new BasicExpression(SparkBatchConstant.SPARK_LOCAL_MODE_PARAMETER,
+					EqualityOperator.EQ, "false")); //$NON-NLS-1$
 
-    public static Set<DistributionModuleGroup> getModuleGroups() {
-        Set<DistributionModuleGroup> hs = new HashSet<>();
-        DistributionModuleGroup dmg = new DistributionModuleGroup(MODULE_GROUP_NAME, false, condition);
-        hs.add(dmg);
-        return hs;
-    }
+	public static Set<DistributionModuleGroup> getModuleGroups() {
+		Set<DistributionModuleGroup> hs = new HashSet<>();
+		DistributionModuleGroup dmg = new DistributionModuleGroup(
+				MODULE_GROUP_NAME, false, condition);
+		hs.add(dmg);
+		return hs;
+	}
 
 }

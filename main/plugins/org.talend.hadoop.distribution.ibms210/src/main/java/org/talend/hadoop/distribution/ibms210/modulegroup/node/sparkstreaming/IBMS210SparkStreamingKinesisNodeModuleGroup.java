@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2017 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // %InstallDIR%\features\org.talend.rcp.branding.%PRODUCTNAME%\%PRODUCTNAME%license.txt
@@ -22,13 +22,15 @@ import org.talend.hadoop.distribution.ibms210.IBMS210Distribution;
 
 public class IBMS210SparkStreamingKinesisNodeModuleGroup {
 
-    public static Set<DistributionModuleGroup> getModuleGroups() {
-        Set<DistributionModuleGroup> hs = new HashSet<>();
-        DistributionModuleGroup dmg = new DistributionModuleGroup(
-                IBMS210Constant.SPARK_KINESIS_MRREQUIRED_MODULE_GROUP.getModuleName(), true,
-                new SparkStreamingLinkedNodeCondition(IBMS210Distribution.DISTRIBUTION_NAME, IBMS210Distribution.VERSION)
-                        .getCondition());
-        hs.add(dmg);
-        return hs;
-    }
+	public static Set<DistributionModuleGroup> getModuleGroups() {
+		Set<DistributionModuleGroup> hs = new HashSet<>();
+		DistributionModuleGroup dmg = new DistributionModuleGroup(
+				IBMS210Constant.SPARK_KINESIS_MRREQUIRED_MODULE_GROUP
+						.getModuleName(),
+				true, new SparkStreamingLinkedNodeCondition(
+						IBMS210Distribution.DISTRIBUTION_NAME,
+						IBMS210Distribution.VERSION).getCondition());
+		hs.add(dmg);
+		return hs;
+	}
 }

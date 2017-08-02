@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2017 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // %InstallDIR%\features\org.talend.rcp.branding.%PRODUCTNAME%\%PRODUCTNAME%license.txt
@@ -20,11 +20,12 @@ import org.talend.hadoop.distribution.ibms210.IBMS210Constant;
 
 public class IBMS210HDFSModuleGroup {
 
-    public static Set<DistributionModuleGroup> getModuleGroups() {
-        Set<DistributionModuleGroup> hs = new HashSet<>();
-        DistributionModuleGroup dmg = new DistributionModuleGroup(IBMS210Constant.HDFS_MODULE_GROUP.getModuleName());
-        hs.add(dmg);
-        return hs;
-    }
+	public static Set<DistributionModuleGroup> getModuleGroups() {
+		Set<DistributionModuleGroup> hs = new HashSet<>();
+		DistributionModuleGroup dmg = new DistributionModuleGroup(
+				IBMS210Constant.HDFS_MODULE_GROUP.getModuleName());
+		hs.add(dmg);
+		return hs;
+	}
 
 }

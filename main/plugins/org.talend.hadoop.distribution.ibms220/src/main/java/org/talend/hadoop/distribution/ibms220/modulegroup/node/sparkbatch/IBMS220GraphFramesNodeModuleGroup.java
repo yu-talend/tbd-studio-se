@@ -9,13 +9,16 @@ import org.talend.hadoop.distribution.condition.common.SparkBatchLinkedNodeCondi
 
 public class IBMS220GraphFramesNodeModuleGroup {
 
-    public static final String GRAPHFRAMES_GROUP_NAME = "SPARK-GRAPHFRAMES-LIB-MRREQUIRED-IBMS_2_2_0"; //$NON-NLS-1$
-    
-    public static Set<DistributionModuleGroup> getModuleGroups(String distribution, String version) {
-        Set<DistributionModuleGroup> hs = new HashSet<>();
-        DistributionModuleGroup dmg = new DistributionModuleGroup(GRAPHFRAMES_GROUP_NAME, true,
-                new SparkBatchLinkedNodeCondition(distribution, version).getCondition());
-        hs.add(dmg);
-        return hs;
-    }
+	public static final String GRAPHFRAMES_GROUP_NAME = "SPARK-GRAPHFRAMES-LIB-MRREQUIRED-IBMS_2_2_0"; //$NON-NLS-1$
+
+	public static Set<DistributionModuleGroup> getModuleGroups(
+			String distribution, String version) {
+		Set<DistributionModuleGroup> hs = new HashSet<>();
+		DistributionModuleGroup dmg = new DistributionModuleGroup(
+				GRAPHFRAMES_GROUP_NAME, true,
+				new SparkBatchLinkedNodeCondition(distribution, version)
+						.getCondition());
+		hs.add(dmg);
+		return hs;
+	}
 }
