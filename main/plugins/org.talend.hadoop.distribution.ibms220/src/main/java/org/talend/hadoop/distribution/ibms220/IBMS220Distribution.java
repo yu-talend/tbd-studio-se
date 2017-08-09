@@ -53,7 +53,7 @@ public class IBMS220Distribution extends AbstractDistribution implements
 
 	public static final String DISTRIBUTION_DISPLAY_NAME = "IBM Spectrum";
 
-	public final static String VERSION = "IBMS_2_2";
+	public final static String VERSION = "IBMS_2_2_0";
 
 	public static final String VERSION_DISPLAY = "IBM Spectrum 2.2 (Spark 2.1 only)";
 
@@ -198,7 +198,7 @@ public class IBMS220Distribution extends AbstractDistribution implements
 
 	@Override
 	public boolean doSupportKerberos() {
-		return false;
+		return true;
 	}
 
 	@Override
@@ -215,12 +215,12 @@ public class IBMS220Distribution extends AbstractDistribution implements
 	}
 
 	@Override
-	public boolean doSupportUseDatanodeHostname() {
+	public boolean doSupportCrossPlatformSubmission() {
 		return true;
 	}
 
 	@Override
-	public boolean doSupportCrossPlatformSubmission() {
+	public boolean doSupportUseDatanodeHostname() {
 		return true;
 	}
 
@@ -252,6 +252,7 @@ public class IBMS220Distribution extends AbstractDistribution implements
 
 	@Override
 	public ESparkVersion getSparkVersion() {
+		// TODO move spark versoin to 2.1
 		return ESparkVersion.SPARK_2_0;
 	}
 
@@ -286,13 +287,13 @@ public class IBMS220Distribution extends AbstractDistribution implements
 	}
 
 	@Override
-	public boolean doSupportBackpressure() {
-		return true;
+	public boolean doSupportOldImportMode() {
+		return false;
 	}
 
 	@Override
-	public boolean doSupportOldImportMode() {
-		return false;
+	public boolean doSupportBackpressure() {
+		return true;
 	}
 
 	@Override
