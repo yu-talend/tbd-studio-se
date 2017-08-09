@@ -277,12 +277,12 @@ public class IBMS220Distribution extends AbstractDistribution implements
 
 	@Override
 	public boolean doSupportSparkStandaloneMode() {
-		return false;
+		return true;
 	}
 
 	@Override
 	public boolean doSupportSparkYarnClientMode() {
-		return true;
+		return false;
 	}
 
 	@Override

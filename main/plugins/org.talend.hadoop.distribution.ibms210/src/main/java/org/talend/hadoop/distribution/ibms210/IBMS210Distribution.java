@@ -257,7 +257,7 @@ public class IBMS210Distribution extends AbstractDistribution implements
 
 	@Override
 	public boolean doSupportSparkYarnClientMode() {
-		return true;
+		return false;
 	}
 
 	@Override
