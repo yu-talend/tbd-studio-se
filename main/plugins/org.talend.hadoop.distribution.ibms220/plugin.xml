@@ -1065,9 +1065,9 @@
         </libraryNeeded>
         <libraryNeeded
             context="plugin:org.talend.hadoop.distribution.ibms220"
-            id="spark-core_2.11-2.1.1.jar"
-            name="spark-core_2.11-2.1.1.jar"
-            mvn_uri="mvn:org.talend.libraries/spark-core_2.11-2.1.1/6.0.0">
+            id="spark-core_2.11-2.1.1-spectrum22-ego.jar"
+            name="spark-core_2.11-2.1.1-spectrum22-ego.jar"
+            mvn_uri="mvn:org.talend.libraries/spark-core_2.11-2.1.1-spectrum22-ego/6.0.0">
         </libraryNeeded>
         <libraryNeeded
             context="plugin:org.talend.hadoop.distribution.ibms220"
@@ -1089,9 +1089,9 @@
         </libraryNeeded>
         <libraryNeeded
             context="plugin:org.talend.hadoop.distribution.ibms220"
-            id="spark-launcher_2.11-2.1.1.jar"
-            name="spark-launcher_2.11-2.1.1.jar"
-            mvn_uri="mvn:org.talend.libraries/spark-launcher_2.11-2.1.1/6.0.0">
+            id="spark-launcher_2.11-2.1.1-spectrum22-ego.jar"
+            name="spark-launcher_2.11-2.1.1-spectrum22-ego.jar"
+            mvn_uri="mvn:org.talend.libraries/spark-launcher_2.11-2.1.1-spectrum22-ego/6.0.0">
         </libraryNeeded>
         <libraryNeeded
             context="plugin:org.talend.hadoop.distribution.ibms220"
@@ -1113,9 +1113,9 @@
         </libraryNeeded>
         <libraryNeeded
             context="plugin:org.talend.hadoop.distribution.ibms220"
-            id="spark-network-shuffle_2.11-2.1.1.jar"
-            name="spark-network-shuffle_2.11-2.1.1.jar"
-            mvn_uri="mvn:org.talend.libraries/spark-network-shuffle_2.11-2.1.1/6.0.0">
+            id="spark-network-shuffle_2.11-2.1.1-spectrum22-ego.jar"
+            name="spark-network-shuffle_2.11-2.1.1-spectrum22-ego.jar"
+            mvn_uri="mvn:org.talend.libraries/spark-network-shuffle_2.11-2.1.1-spectrum22-ego/6.0.0">
         </libraryNeeded>
         <libraryNeeded
             context="plugin:org.talend.hadoop.distribution.ibms220"
@@ -1560,15 +1560,15 @@
 	        <library id="snappy-0.2.jar" />
 	        <library id="snappy-java-1.1.2.6.jar" />
 	        <library id="spark-catalyst_2.11-2.1.1.jar" />
-	        <library id="spark-core_2.11-2.1.1.jar" />
+	        <library id="spark-core_2.11-2.1.1-spectrum22-ego.jar" />
 	        <library id="spark-graphx_2.11-2.1.1.jar" />
 	        <library id="spark-hive_2.11-2.1.1.jar" />
 	        <library id="spark-hive-thriftserver_2.11-2.1.1.jar" />
-	        <library id="spark-launcher_2.11-2.1.1.jar" />
+	        <library id="spark-launcher_2.11-2.1.1-spectrum22-ego.jar" />
 	        <library id="spark-mllib_2.11-2.1.1.jar" />
 	        <library id="spark-mllib-local_2.11-2.1.1.jar" />
 	        <library id="spark-network-common_2.11-2.1.1.jar" />
-	        <library id="spark-network-shuffle_2.11-2.1.1.jar" />
+	        <library id="spark-network-shuffle_2.11-2.1.1-spectrum22-ego.jar" />
 	        <library id="spark-repl_2.11-2.1.1.jar" />
 	        <library id="spark-sketch_2.11-2.1.1.jar" />
 	        <library id="spark-sql_2.11-2.1.1.jar" />

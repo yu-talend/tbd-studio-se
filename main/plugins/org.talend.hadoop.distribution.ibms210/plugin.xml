@@ -37,9 +37,9 @@
         
         <libraryNeeded
             context="plugin:org.talend.hadoop.distribution.ibms210"
-            id="spark-launcher-ibms2.1.0"
-            name="spark-launcher_2.10-1.6.1.jar"
-            mvn_uri="mvn:org.talend.libraries/spark-launcher_2.10-1.6.1/6.0.0">
+            id="spark-launcher-ibms2.1.0-spectrum21-ego"
+            name="spark-launcher_2.10-1.6.1-spectrum21-ego.jar"
+            mvn_uri="mvn:org.talend.libraries/spark-launcher_2.10-1.6.1-spectrum21-ego/6.0.0">
         </libraryNeeded>
 
         <!-- Third parties libraries -->
@@ -391,7 +391,7 @@
                 id="SPARK-LIB-IBMS_2_1"
                 name="SPARK-LIB-IBMS_2_1">
              <library id="spark-assembly-ibms2.1.0" />
-             <library id="spark-launcher-ibms2.1.0" />
+             <library id="spark-launcher-ibms2.1.0-spectrum21-ego" />
              <library id="datanucleus-rdbms" />
              <library id="datanucleus-core" />
              <library id="datanucleus-api-jdo" />
