@@ -26,7 +26,6 @@
             mvn_uri="mvn:org.talend.libraries/hadoop-hdfs-2.7.3/6.0.0">
         </libraryNeeded>
         
-        
         <!-- Spark libraries -->
         <libraryNeeded
             context="plugin:org.talend.hadoop.distribution.ibms210"
@@ -34,7 +33,7 @@
             name="spark-assembly-1.6.1-hadoop2.6.0.jar"
             mvn_uri="mvn:org.talend.libraries/spark-assembly-1.6.1-hadoop2.6.0/6.0.0">
         </libraryNeeded>
-        
+
         <libraryNeeded
             context="plugin:org.talend.hadoop.distribution.ibms210"
             id="spark-launcher-ibms2.1.0-spectrum21-ego"
@@ -42,26 +41,47 @@
             mvn_uri="mvn:org.talend.libraries/spark-launcher_2.10-1.6.1-spectrum21-ego/6.0.0">
         </libraryNeeded>
 
+        <libraryNeeded
+            context="plugin:org.talend.hadoop.distribution.ibms210"
+            id="spark-core_2.10-1.6.1-spectrum21-ego"
+            name="spark-core_2.10-1.6.1-spectrum21-ego.jar"
+            mvn_uri="mvn:org.talend.libraries/spark-core_2.10-1.6.1-spectrum21-ego/6.0.0">
+        </libraryNeeded>
+
+        <libraryNeeded
+            context="plugin:org.talend.hadoop.distribution.ibms210"
+            id="spark-network-suffle_2.10-1.6.1-spectrum21-ego"
+            name="spark-network-suffle_2.10-1.6.1-spectrum21-ego.jar"
+            mvn_uri="mvn:org.talend.libraries/spark-network-suffle_2.10-1.6.1-spectrum21-ego/6.0.0">
+        </libraryNeeded>
+
+        <libraryNeeded
+            context="plugin:org.talend.hadoop.distribution.ibms210"
+            id="spark-1.6.1-yarn-suffle-spectrum21-ego"
+            name="spark-1.6.1-yarn-suffle-spectrum21-ego.jar"
+            mvn_uri="mvn:org.talend.libraries/spark-1.6.1-yarn-suffle-spectrum21-ego/6.0.0">
+        </libraryNeeded>
+
         <!-- Third parties libraries -->
         <libraryNeeded
             context="plugin:org.talend.hadoop.distribution.ibms210"
-            id="datanucleus-rdbms"
-            name="datanucleus-rdbms-3.2.9.jar"
-            mvn_uri="mvn:org.talend.libraries/datanucleus-rdbms-3.2.9/6.0.0">
+            id="datanucleus-rdbms-spectrum21"
+            name="datanucleus-rdbms-3.2.9-spectrum21.jar"
+            mvn_uri="mvn:org.talend.libraries/datanucleus-rdbms-3.2.9-spectrum21/6.0.0">
         </libraryNeeded>        
 
         <libraryNeeded
             context="plugin:org.talend.hadoop.distribution.ibms210"
-            id="datanucleus-core"
-            name="datanucleus-core-3.2.10.jar"
-            mvn_uri="mvn:org.talend.libraries/datanucleus-core-3.2.10/6.0.0">
+            id="datanucleus-core-spectrum21"
+            name="datanucleus-core-3.2.10-spectrum21.jar"
+            mvn_uri="mvn:org.talend.libraries/datanucleus-core-3.2.10-spectrum21/6.0.0">
         </libraryNeeded>        
                         
         <libraryNeeded
             context="plugin:org.talend.hadoop.distribution.ibms210"
-            id="datanucleus-api-jdo"
-            name="datanucleus-api-jdo-3.2.6.jar"
-            mvn_uri="mvn:org.talend.libraries/datanucleus-api-jdo-3.2.6/6.0.0">
+            id="datanucleus-api-jdo-spectrum21"
+            name="datanucleus-api-jdo-3.2.6-spectrum21.jar"
+            mvn_uri="mvn:org.talend.libraries/datanucleus-api-jdo-3.2.6-spectrum21/6.0.0">
         </libraryNeeded>        
 
         <libraryNeeded
@@ -392,9 +412,12 @@
                 name="SPARK-LIB-IBMS_2_1">
              <library id="spark-assembly-ibms2.1.0" />
              <library id="spark-launcher-ibms2.1.0-spectrum21-ego" />
-             <library id="datanucleus-rdbms" />
-             <library id="datanucleus-core" />
-             <library id="datanucleus-api-jdo" />
+             <library id="datanucleus-rdbms-spectrum21" />
+             <library id="datanucleus-core-spectrum21" />
+             <library id="datanucleus-api-jdo-spectrum21" />
+             <library id="spark-core_2.10-1.6.1-spectrum21-ego" />
+             <library id="spark-network-suffle_2.10-1.6.1-spectrum21-ego" />
+             <library id="spark-1.6.1-yarn-suffle-spectrum21-ego" />
         </libraryNeededGroup>
         <!-- Spark group MRREQUIRED -->
         <libraryNeededGroup
