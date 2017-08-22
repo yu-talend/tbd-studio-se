@@ -50,16 +50,16 @@
 
         <libraryNeeded
             context="plugin:org.talend.hadoop.distribution.ibms210"
-            id="spark-network-suffle_2.10-1.6.1-spectrum21-ego"
-            name="spark-network-suffle_2.10-1.6.1-spectrum21-ego.jar"
-            mvn_uri="mvn:org.talend.libraries/spark-network-suffle_2.10-1.6.1-spectrum21-ego/6.0.0">
+            id="spark-network-shuffle_2.10-1.6.1-spectrum21-ego"
+            name="spark-network-shuffle_2.10-1.6.1-spectrum21-ego.jar"
+            mvn_uri="mvn:org.talend.libraries/spark-network-shuffle_2.10-1.6.1-spectrum21-ego/6.0.0">
         </libraryNeeded>
 
         <libraryNeeded
             context="plugin:org.talend.hadoop.distribution.ibms210"
-            id="spark-1.6.1-yarn-suffle-spectrum21-ego"
-            name="spark-1.6.1-yarn-suffle-spectrum21-ego.jar"
-            mvn_uri="mvn:org.talend.libraries/spark-1.6.1-yarn-suffle-spectrum21-ego/6.0.0">
+            id="spark-1.6.1-yarn-shuffle-spectrum21-ego"
+            name="spark-1.6.1-yarn-shuffle-spectrum21-ego.jar"
+            mvn_uri="mvn:org.talend.libraries/spark-1.6.1-yarn-shuffle-spectrum21-ego/6.0.0">
         </libraryNeeded>
 
         <!-- Third parties libraries -->
@@ -416,8 +416,8 @@
              <library id="datanucleus-core-spectrum21" />
              <library id="datanucleus-api-jdo-spectrum21" />
              <library id="spark-core_2.10-1.6.1-spectrum21-ego" />
-             <library id="spark-network-suffle_2.10-1.6.1-spectrum21-ego" />
-             <library id="spark-1.6.1-yarn-suffle-spectrum21-ego" />
+             <library id="spark-network-shuffle_2.10-1.6.1-spectrum21-ego" />
+             <library id="spark-1.6.1-yarn-shuffle-spectrum21-ego" />
         </libraryNeededGroup>
         <!-- Spark group MRREQUIRED -->
         <libraryNeededGroup
