@@ -14,6 +14,7 @@
 package org.talend.hadoop.distribution.ibms220;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -251,9 +252,10 @@ public class IBMS220Distribution extends AbstractDistribution implements
 	}
 
 	@Override
-	public ESparkVersion getSparkVersion() {
-		// TODO move spark versoin to 2.1
-		return ESparkVersion.SPARK_2_0;
+    public Set<ESparkVersion> getSparkVersions() {
+        Set<ESparkVersion> version = new HashSet<>();
+        version.add(ESparkVersion.SPARK_2_1);
+        return version;
 	}
 
 	@Override
@@ -317,7 +319,8 @@ public class IBMS220Distribution extends AbstractDistribution implements
 	}
 
 	@Override
-	public SparkStreamingKafkaVersion getSparkStreamingKafkaVersion() {
+    public SparkStreamingKafkaVersion getSparkStreamingKafkaVersion(ESparkVersion sparkVersion) {
 		return SparkStreamingKafkaVersion.KAFKA_0_10;
 	}
+
 }

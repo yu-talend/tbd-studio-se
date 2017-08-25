@@ -14,6 +14,7 @@
 package org.talend.hadoop.distribution.ibms210;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -42,7 +43,6 @@ import org.talend.hadoop.distribution.ibms210.modulegroup.node.sparkstreaming.IB
 import org.talend.hadoop.distribution.ibms210.modulegroup.node.sparkstreaming.IBMS210SparkStreamingParquetNodeModuleGroup;
 import org.talend.hadoop.distribution.ibms210.modulegroup.node.sparkstreaming.IBMS210SparkStreamingS3NodeModuleGroup;
 
-@SuppressWarnings("nls")
 public class IBMS210Distribution extends AbstractDistribution implements
 		HDFSComponent, SparkBatchComponent, SparkStreamingComponent {
 
@@ -61,10 +61,6 @@ public class IBMS210Distribution extends AbstractDistribution implements
 	private static Map<ComponentType, ComponentCondition> displayConditions;
 
 	public IBMS210Distribution() {
-
-		String distribution = getDistribution();
-		String version = getVersion();
-
 		// Used to add a module group import for the components that have a
 		// HADOOP_DISTRIBUTION parameter, aka. the
 		// components that have the distribution list.
@@ -227,12 +223,14 @@ public class IBMS210Distribution extends AbstractDistribution implements
 
 	@Override
 	public boolean doSupportStandaloneMode() {
-		return super.doSupportStandaloneMode();
+		return true;
 	}
 
 	@Override
-	public ESparkVersion getSparkVersion() {
-		return ESparkVersion.SPARK_1_6;
+    public Set<ESparkVersion> getSparkVersions() {
+        Set<ESparkVersion> version = new HashSet<>();
+        version.add(ESparkVersion.SPARK_1_6);
+        return version;
 	}
 
 	@Override
