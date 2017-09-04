@@ -133,6 +133,8 @@ public class CDH5100Distribution extends AbstractDistribution implements ICloude
         nodeModuleGroups.put(
                 new NodeComponentTypeBean(ComponentType.SPARKBATCH, SparkBatchConstant.AZURE_CONFIGURATION_COMPONENT),
                 CDH5100SparkBatchAzureNodeModuleGroup.getModuleGroups(distribution, version));
+        nodeModuleGroups.put(new NodeComponentTypeBean(ComponentType.SPARKSTREAMING, SparkStreamingConstant.AZURE_CONFIGURATION_COMPONENT), 
+                CDH5100SparkBatchAzureNodeModuleGroup.getModuleGroups(distribution, version));
 
         // Kudu
         Set<DistributionModuleGroup> kuduNodeModuleGroups = CDH5100SparkBatchKuduNodeModuleGroup.getModuleGroups(distribution,

@@ -114,7 +114,9 @@ public class CDH580Distribution extends AbstractDistribution implements IClouder
         nodeModuleGroups.put(
                 new NodeComponentTypeBean(ComponentType.SPARKBATCH, SparkBatchConstant.AZURE_CONFIGURATION_COMPONENT),
                 CDH580SparkBatchAzureNodeModuleGroup.getModuleGroups(distribution, version));
-
+        nodeModuleGroups.put(new NodeComponentTypeBean(ComponentType.SPARKSTREAMING, SparkStreamingConstant.AZURE_CONFIGURATION_COMPONENT), 
+                CDH580SparkBatchAzureNodeModuleGroup.getModuleGroups(distribution, version));
+        
         nodeModuleGroups.put(new NodeComponentTypeBean(ComponentType.MAPREDUCE, MRConstant.S3_INPUT_COMPONENT),
                 CDH580MRS3NodeModuleGroup.getModuleGroups(distribution, version));
         nodeModuleGroups.put(new NodeComponentTypeBean(ComponentType.MAPREDUCE, MRConstant.S3_OUTPUT_COMPONENT),
@@ -409,5 +411,13 @@ public class CDH580Distribution extends AbstractDistribution implements IClouder
         return true;
     }
 
+    @Override
+    public boolean doSupportAzureBlobStorage() {
+        return true;
+    }
 
+    @Override
+    public boolean doSupportAzureDataLakeStorage() {
+        return false;
+    }
 }
