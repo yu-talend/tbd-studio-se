@@ -141,6 +141,8 @@ public class HDP260Distribution extends AbstractDistribution implements HDFSComp
         nodeModuleGroups.put(
                 new NodeComponentTypeBean(ComponentType.SPARKBATCH, SparkBatchConstant.AZURE_CONFIGURATION_COMPONENT),
                 HDP260SparkBatchAzureNodeModuleGroup.getModuleGroups());
+        nodeModuleGroups.put(new NodeComponentTypeBean(ComponentType.SPARKSTREAMING,
+                SparkStreamingConstant.AZURE_CONFIGURATION_COMPONENT), HDP260SparkBatchAzureNodeModuleGroup.getModuleGroups());
 
         // Kinesis
         Set<DistributionModuleGroup> kinesisNodeModuleGroups = HDP260SparkStreamingKinesisNodeModuleGroup.getModuleGroups(
@@ -483,6 +485,16 @@ public class HDP260Distribution extends AbstractDistribution implements HDFSComp
 
     @Override
     public boolean doImportDynamoDBDependencies() {
+        return true;
+    }
+
+    @Override
+    public boolean doSupportAzureBlobStorage() {
+        return true;
+    }
+
+    @Override
+    public boolean doSupportAzureDataLakeStorage() {
         return true;
     }
 }
