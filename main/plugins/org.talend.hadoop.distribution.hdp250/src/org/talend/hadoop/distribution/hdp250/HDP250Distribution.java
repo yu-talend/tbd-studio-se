@@ -431,4 +431,14 @@ public class HDP250Distribution extends AbstractDistribution implements HDFSComp
     public boolean isHortonworksDistribution() {
         return true;
     }
+
+    @Override
+    public boolean doSupportAzureBlobStorage() {
+        return true;
+    }
+
+    @Override
+    public boolean doSupportAzureDataLakeStorage() {
+        return false;
+    }
 }
