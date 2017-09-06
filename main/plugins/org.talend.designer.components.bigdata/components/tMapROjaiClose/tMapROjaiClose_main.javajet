@@ -1,0 +1,61 @@
+<%@ jet 
+imports="
+    org.talend.core.model.process.INode 
+    org.talend.core.model.process.ElementParameterParser 
+    org.talend.designer.codegen.config.CodeGeneratorArgument
+    java.util.List
+" 
+%>
+<%
+	CodeGeneratorArgument codeGenArgument = (CodeGeneratorArgument) argument;
+	INode node = (INode)codeGenArgument.getArgument();
+  	String cid = node.getUniqueName();
+	boolean destroyKRB = "true".equalsIgnoreCase(ElementParameterParser.getValue(node, "__DESTROY_KRB__"));
+	%>
+     class ExeCMd_<%=cid%>{
+       		
+		        String message;
+		    
+		    public boolean exec(String[] arg0) throws Exception{
+		        boolean result = true;
+		    
+		        Process process = Runtime.getRuntime().exec(arg0);
+		        java.io.BufferedReader bufferedReader = new java.io.BufferedReader(new java.io.InputStreamReader(process.getErrorStream()));
+		        while ((message = bufferedReader.readLine()) != null) {
+			        System.out.println(message);
+		        }
+		        java.io.BufferedReader bufferedReader2 = new java.io.BufferedReader(new java.io.InputStreamReader(process.getErrorStream()));
+		        while ((message = bufferedReader2.readLine()) != null) {
+			        System.err.println(message);
+			        result = false;
+		        }
+		        process.waitFor();
+		        return result;
+		    }
+		}
+		    ExeCMd_<%=cid%> exeCMd_<%=cid%> = new ExeCMd_<%=cid%>();
+		
+		    java.util.ArrayList<String> cmd_<%=cid%> = new java.util.ArrayList<String>();
+		
+		    String os_<%=cid%> = System.getProperty("os.name");  
+            if(os_<%=cid%>.toLowerCase().startsWith("win")){  
+                cmd_<%=cid%>.add("maprlogin.bat");
+            }else{
+                cmd_<%=cid%>.add("maprlogin");
+            }
+		    cmd_<%=cid%>.add("logout");
+		    
+		    if(!exeCMd_<%=cid%>.exec(cmd_<%=cid%>.toArray(new String[0]))){
+		        throw new RuntimeException("MapR Logout Failed. Please see the error log at MAPR_HOME/log for more details");
+		    }  
+		    
+		    <%if(destroyKRB){%>
+		    ExeCMd_<%=cid%> exeCMd2_<%=cid%> = new ExeCMd_<%=cid%>();
+		    java.util.ArrayList<String> cmd2_<%=cid%> = new java.util.ArrayList<String>();
+		    cmd2_<%=cid%>.add("kdestroy");
+		    if(!exeCMd2_<%=cid%>.exec(cmd2_<%=cid%>.toArray(new String[0]))){
+		        throw new RuntimeException("Destroy Kerberos Ticket Failed.");
+		    } 
+		    <%}%>
+		    
+
