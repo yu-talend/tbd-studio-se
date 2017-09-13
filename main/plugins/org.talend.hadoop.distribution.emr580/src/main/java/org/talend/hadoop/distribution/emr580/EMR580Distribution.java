@@ -280,13 +280,6 @@ public class EMR580Distribution extends AbstractDistribution implements
 	}
 
 	@Override
-	public Set<ESparkVersion> getSparkVersions() {
-		Set<ESparkVersion> version = new HashSet<>();
-		version.add(ESparkVersion.SPARK_2_2);
-		return version;
-	}
-
-	@Override
 	public ComponentCondition getDisplayCondition(ComponentType componentType) {
 		return displayConditions.get(componentType);
 	}
