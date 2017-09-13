@@ -358,43 +358,43 @@
             mvn_uri="mvn:org.talend.libraries/zookeeper-3.4.10/6.0.0"
             uripath="platform:/plugin/org.talend.libraries.zookeeper/lib/zookeeper-3.4.10.jar"/>
             
-		<libraryNeeded
+        <libraryNeeded
             context="plugin:org.talend.hadoop.distribution.emr580"
             id="joda-time-2.9.3.jar"
             name="joda-time-2.9.3.jar"
             mvn_uri="mvn:org.talend.libraries/joda-time-2.9.3/6.0.0"/>
 			
-		<libraryNeeded
+        <libraryNeeded
             context="plugin:org.talend.hadoop.distribution.emr580"
             id="parquet-common-1.4.1.jar"
             name="parquet-common-1.4.1.jar"
             mvn_uri="mvn:org.talend.libraries/parquet-common-1.4.1/6.0.0"/>
             
-		<libraryNeeded
+        <libraryNeeded
             context="plugin:org.talend.hadoop.distribution.emr580"
             id="parquet-column-1.4.1.jar"
             name="parquet-column-1.4.1.jar"
             mvn_uri="mvn:org.talend.libraries/parquet-column-1.4.1/6.0.0"/>
             
-		<libraryNeeded
+        <libraryNeeded
             context="plugin:org.talend.hadoop.distribution.emr580"
             id="parquet-format-2.0.0.jar"
             name="parquet-format-2.0.0.jar"
             mvn_uri="mvn:org.talend.libraries/parquet-format-2.0.0/6.0.0"/>
             
-		<libraryNeeded
+        <libraryNeeded
             context="plugin:org.talend.hadoop.distribution.emr580"
             id="parquet-encoding-1.4.1.jar"
             name="parquet-encoding-1.4.1.jar"
             mvn_uri="mvn:org.talend.libraries/parquet-encoding-1.4.1/6.0.0"/>
             
-		<libraryNeeded
+        <libraryNeeded
             context="plugin:org.talend.hadoop.distribution.emr580"
             id="parquet-hadoop-1.4.1.jar"
             name="parquet-hadoop-1.4.1.jar"
             mvn_uri="mvn:org.talend.libraries/parquet-hadoop-1.4.1/6.0.0"/>
             
-		<libraryNeeded
+        <libraryNeeded
             context="plugin:org.talend.hadoop.distribution.emr580"
             id="parquet-hadoop-bundle-1.8.1.jar"
             name="parquet-hadoop-bundle-1.8.1.jar"
