@@ -34,6 +34,12 @@
         	name="libthrift-0.9.3.jar"
         	mvn_uri="mvn:org.talend.libraries/libthrift-0.9.3/6.3.0"/>
 
+		<libraryNeeded
+            context="plugin:org.talend.hadoop.distribution.emr580"
+            id="httpclient-4.5.3.jar"
+            name="httpclient-4.5.3.jar"
+            mvn_uri="mvn:org.talend.libraries/httpclient-4.5.3/6.0.0"/>
+
         <!-- Map/Reduce libraries -->
          <libraryNeeded
             context="plugin:org.talend.hadoop.distribution.emr580"
@@ -116,18 +122,6 @@
             mvn_uri="mvn:org.talend.libraries/hive-exec-2.3.0-amzn-0/6.0.0"/>
 
         <libraryNeeded
-            context="plugin:org.talend.hadoop.distribution.emr500"
-            id="hive-exec-2.3.0-amzn-0.jar"
-            name="hive-exec-2.3.0-amzn-0-talend-nolang3.jar"
-            mvn_uri="mvn:org.talend.libraries/hive-exec-2.3.0-amzn-0/6.0.0"/>
-
-
-			<!-- Check if nolang3 issue <libraryNeeded
-            context="plugin:org.talend.hadoop.distribution.emr500"
-            id="hive-exec-2.1.1-amzn-0-talend-nolang3"
-            name="hive-exec-2.1.1-amzn-0-talend-nolang3.jar"
-            mvn_uri="mvn:org.talend.libraries/hive-exec-2.1.1-amzn-0-talend-nolang3/6.0.0"/>-->
-        <libraryNeeded
             context="plugin:org.talend.hadoop.distribution.emr580"
             id="hive-common-2.3.0-amzn-0.jar"
             name="hive-common-2.3.0-amzn-0.jar"
@@ -171,9 +165,9 @@
 
         <libraryNeeded
             context="plugin:org.talend.hadoop.distribution.emr580"
-            id="hive-hcatalog-pig-adapter-2.3.0-amzn-0.jar"
-            name="hive-hcatalog-pig-adapter-2.3.0-amzn-0.jar"
-            mvn_uri="mvn:org.talend.libraries/hive-hcatalog-pig-adapter-2.3.0-amzn-0/6.0.0"/>
+            id="hive-hcatalog-pig-adapter-2.1.1-amzn-0.jar"
+            name="hive-hcatalog-pig-adapter-2.1.1-amzn-0.jar"
+            mvn_uri="mvn:org.talend.libraries/hive-hcatalog-pig-adapter-2.1.1-amzn-0/6.0.0"/>
 
         <libraryNeeded
             context="plugin:org.talend.hadoop.distribution.emr580"
@@ -200,21 +194,14 @@
             name="pig-0.16.0-amzn-1-core-h2.jar"
             mvn_uri="mvn:org.talend.libraries/pig-0.16.0-amzn-1-core-h2/6.0.0"/>
 
-        <!--<libraryNeeded
-            context="plugin:org.talend.libraries.hadoop"
-            id="parquet-pig-bundle-1.6.0.jar"
-            name="parquet-pig-bundle-1.6.0.jar"
-            mvn_uri="mvn:org.talend.libraries/parquet-pig-bundle-1.6.0/6.0.0"
-            uripath="platform:/plugin/org.talend.libraries.hadoop/lib/parquet-pig-bundle-1.6.0.jar"/>-->
+        <libraryNeeded
+            context="plugin:org.talend.hadoop.distribution.emr550"
+            id="piggybank-emr550.jar"
+            name="piggybank-emr550.jar"
+            mvn_uri="mvn:org.talend.libraries/piggybank-emr550/6.0.0"/>
 
         <libraryNeeded
-            context="plugin:org.talend.hadoop.distribution.emr580"
-            id="piggybank.jar"
-            name="piggybank.jar"
-            mvn_uri="mvn:org.talend.libraries/piggybank/6.0.0"/>
-
-        <libraryNeeded
-            context="plugin:org.talend.libraries.pig"
+			context="plugin:org.talend.libraries.pig"
             id="elephant-bird-core-4.9.jar"
             name="elephant-bird-core-4.9.jar"
             mvn_uri="mvn:org.talend.libraries/elephant-bird-core-4.9/6.0.0"
@@ -234,35 +221,27 @@
             mvn_uri="mvn:org.talend.libraries/elephant-bird-rcfile-4.9-patched-hive-1.x/6.0.0"
             uripath="platform:/plugin/org.talend.libraries.pig/lib/elephant-bird-rcfile-4.9-patched-hive-1.x.jar"/>
 
-        <libraryNeeded
-        	context="plugin:org.talend.hadoop.distribution.emr580"
-        	id="javax.ws.rs-api-2.0.1.jar"
-        	name="javax.ws.rs-api-2.0.1.jar"
-        	mvn_uri="mvn:org.talend.libraries/javax.ws.rs-api-2.0.1/6.1.0"/>
-
-        <libraryNeeded
-            context="plugin:org.talend.libraries.pig"
+		<libraryNeeded
+			context="plugin:org.talend.libraries.pig"
             id="elephant-bird-pig-4.9.jar"
             name="elephant-bird-pig-4.9.jar"
             mvn_uri="mvn:org.talend.libraries/elephant-bird-pig-4.9/6.0.0"
-            uripath="platform:/plugin/org.talend.libraries.pig/lib/elephant-bird-pig-4.9.jar">
-        </libraryNeeded>
+            uripath="platform:/plugin/org.talend.libraries.pig/lib/elephant-bird-pig-4.9.jar"/>
 
-        <libraryNeeded
-            context="plugin:org.talend.libraries.pig"
-            id="pigutil.jar"
-            name="pigutil.jar"
-            mvn_uri="mvn:org.talend.libraries/pigutil/6.0.0"
-            uripath="platform:/plugin/org.talend.libraries.pig/lib/pigutil.jar">
-        </libraryNeeded>
+		<libraryNeeded
+			context="plugin:org.talend.libraries.pig"
+			id="pigutil.jar"
+			name="pigutil.jar"
+			mvn_uri="mvn:org.talend.libraries/pigutil/6.0.0"
+			uripath="platform:/plugin/org.talend.libraries.pig/lib/pigutil.jar"/>
 
         <!-- S3 libraries -->
 
          <libraryNeeded
             context="plugin:org.talend.hadoop.distribution.emr580"
-            id="hadoop-aws-2.7.3-amzn-2.jar"
-            name="hadoop-aws-2.7.3-amzn-2.jar"
-            mvn_uri="mvn:org.talend.libraries/hadoop-aws-2.7.3-amzn-2/6.0.0"/>
+            id="hadoop-aws-2.7.3-amzn-3.jar"
+            name="hadoop-aws-2.7.3-amzn-3.jar"
+            mvn_uri="mvn:org.talend.libraries/hadoop-aws-2.7.3-amzn-3/6.0.0"/>
 
         <libraryNeeded
             context="plugin:org.talend.libraries.s3"
@@ -506,7 +485,7 @@
                 name="PIG-HCATALOG-LIB-EMR_5_8_0_LATEST">
             <library id="hive-exec-2.3.0-amzn-0.jar"/>
             <library id="hive-hcatalog-core-2.3.0-amzn-0.jar"/>
-            <library id="hive-hcatalog-pig-adapter-2.3.0-amzn-0.jar"/>
+            <library id="hive-hcatalog-pig-adapter-2.1.1-amzn-0.jar"/>
             <library id="hive-hcatalog-server-extensions-2.3.0-amzn-0.jar"/>
             <library id="hive-metastore-2.3.0-amzn-0.jar"/>
             <library id="jdo-api-3.0.1.jar"/>
@@ -522,6 +501,9 @@
             <library id="hive-common-2.3.0-amzn-0.jar"/>
             <library id="hive-serde-2.3.0-amzn-0.jar"/>
             <library id="hive-exec-2.3.0-amzn-0.jar"/>
+            <library id="elephant-bird-core-4.9.jar"/>
+            <library id="elephant-bird-hadoop-compat-4.9.jar"/>
+            <library id="elephant-bird-rcfile-4.9-patched-hive-1.x.jar"/>
         </libraryNeededGroup>
 
         <!-- Pig Avro group -->
@@ -529,7 +511,7 @@
                 description="The latest pig avro storage libraries for EMR 5.8.0"
                 id="PIG-AVRO-LIB-EMR_5_8_0_LATEST"
                 name="PIG-AVRO-LIB-EMR_5_8_0_LATEST">
-             <library id="piggybank.jar"/>
+             <library id="piggybank-emr550.jar"/>
              <library id="commons-io-2.4.jar"/>
         </libraryNeededGroup>
 
@@ -573,7 +555,7 @@
              <library id="guava-14.0.1.jar" />
              <library id="jackson-mapper-asl-1.9.13.jar" />
              <library id="jackson-core-asl-1.9.13.jar" />
-             <library id="netty-all-4.0.42.Final.jar" />
+             <library id="netty-all-4.0.23.Final.jar" />
              <library id="protobuf-java-2.5.0.jar" />
              <library id="log4j-1.2.17.jar" />
              <library id="slf4j-api-1.7.10.jar"/>
@@ -586,8 +568,8 @@
                 description="The latest Hive libraries for EMR 5.8.0"
                 id="HIVE-LIB-EMR_5_8_0_LATEST"
                 name="HIVE-LIB-EMR_5_8_0_LATEST">
-
-             <library id="hive-exec-2.3.0-amzn-0"/>
+             <library id="hive-common-2.3.0-amzn-0.jar"/>
+             <library id="hive-exec-2.3.0-amzn-0.jar"/>
              <library id="hive-metastore-2.3.0-amzn-0.jar"/>
            	 <library id="hive-jdbc-2.3.0-amzn-0.jar"/>
 		     <library id="hive-service-2.3.0-amzn-0.jar"/>
@@ -619,7 +601,7 @@
             <library id="hbase-hadoop-compat-1.3.1.jar" />
             <library id="high-scale-lib-1.1.1.jar"/>
             <library id="hive-hbase-handler-2.3.0-amzn-0.jar"/>
-            <library id="netty-all-4.0.42.Final.jar"/>
+            <library id="netty-all-4.0.23.Final.jar"/>
         </libraryNeededGroup>
 
         <!-- Sqoop group -->
@@ -648,7 +630,7 @@
 
     </extension>
 
-    <extension
+	<extension
           point="org.talend.core.runtime.classloader_provider">
       <!-- EMR 5.8.0 ClassLoaders -->
       <classloader
