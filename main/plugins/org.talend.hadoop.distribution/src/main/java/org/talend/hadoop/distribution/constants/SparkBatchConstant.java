@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2017 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // %InstallDIR%\features\org.talend.rcp.branding.%PRODUCTNAME%\%PRODUCTNAME%license.txt
@@ -30,6 +30,8 @@ public final class SparkBatchConstant {
 
     public static final String SPARK_BATCH_S3_SPARKCONFIGURATION_LINKEDPARAMETER = "STORAGE_CONFIGURATION";//$NON-NLS-1$
 
+    public static final String SPARK_BATCH_AZURE_SPARKCONFIGURATION_LINKEDPARAMETER = "STORAGE_CONFIGURATION";//$NON-NLS-1$
+
     public static final String SPARKCONFIGURATION_IS_LOCAL_MODE_PARAMETER = "SPARK_LOCAL_MODE"; //$NON-NLS-1$
 
     public static final String PARQUET_INPUT_COMPONENT = "tFileInputParquet"; //$NON-NLS-1$
@@ -37,6 +39,8 @@ public final class SparkBatchConstant {
     public static final String PARQUET_OUTPUT_COMPONENT = "tFileOutputParquet"; //$NON-NLS-1$
 
     public static final String S3_CONFIGURATION_COMPONENT = "tS3Configuration"; //$NON-NLS-1$
+
+    public static final String AZURE_CONFIGURATION_COMPONENT = "tAzureFSConfiguration"; //$NON-NLS-1$
 
     public static final String DYNAMODB_CONFIGURATION_COMPONENT = "tDynamoDBConfiguration"; //$NON-NLS-1$
 

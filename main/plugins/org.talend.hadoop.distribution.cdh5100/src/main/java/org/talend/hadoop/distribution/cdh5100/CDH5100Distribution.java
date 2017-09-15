@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2017 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // %InstallDIR%\features\org.talend.rcp.branding.%PRODUCTNAME%\%PRODUCTNAME%license.txt
@@ -41,6 +41,7 @@ import org.talend.hadoop.distribution.cdh5100.modulegroup.node.mr.CDH5100MRS3Nod
 import org.talend.hadoop.distribution.cdh5100.modulegroup.node.pigoutput.CDH5100PigOutputNodeModuleGroup;
 import org.talend.hadoop.distribution.cdh5100.modulegroup.node.spark.CDH5100SparkDynamoDBNodeModuleGroup;
 import org.talend.hadoop.distribution.cdh5100.modulegroup.node.sparkbatch.CDH5100GraphFramesNodeModuleGroup;
+import org.talend.hadoop.distribution.cdh5100.modulegroup.node.sparkbatch.CDH5100SparkBatchAzureNodeModuleGroup;
 import org.talend.hadoop.distribution.cdh5100.modulegroup.node.sparkbatch.CDH5100SparkBatchKuduNodeModuleGroup;
 import org.talend.hadoop.distribution.cdh5100.modulegroup.node.sparkbatch.CDH5100SparkBatchParquetNodeModuleGroup;
 import org.talend.hadoop.distribution.cdh5100.modulegroup.node.sparkbatch.CDH5100SparkBatchS3NodeModuleGroup;
@@ -127,6 +128,13 @@ public class CDH5100Distribution extends AbstractDistribution implements ICloude
                 CDH5100SparkBatchS3NodeModuleGroup.getModuleGroups(distribution, version));
         nodeModuleGroups.put(new NodeComponentTypeBean(ComponentType.SPARKBATCH, SparkBatchConstant.MATCH_PREDICT_COMPONENT),
                 CDH5100GraphFramesNodeModuleGroup.getModuleGroups(distribution, version));
+
+        // Azure
+        nodeModuleGroups.put(
+                new NodeComponentTypeBean(ComponentType.SPARKBATCH, SparkBatchConstant.AZURE_CONFIGURATION_COMPONENT),
+                CDH5100SparkBatchAzureNodeModuleGroup.getModuleGroups(distribution, version));
+        nodeModuleGroups.put(new NodeComponentTypeBean(ComponentType.SPARKSTREAMING, SparkStreamingConstant.AZURE_CONFIGURATION_COMPONENT), 
+                CDH5100SparkBatchAzureNodeModuleGroup.getModuleGroups(distribution, version));
 
         // Kudu
         Set<DistributionModuleGroup> kuduNodeModuleGroups = CDH5100SparkBatchKuduNodeModuleGroup.getModuleGroups(distribution,
@@ -475,5 +483,15 @@ public class CDH5100Distribution extends AbstractDistribution implements ICloude
     @Override
     public boolean doImportDynamoDBDependencies() {
         return true;
+    }
+    
+    @Override
+    public boolean doSupportAzureBlobStorage() {
+        return true;
+    }
+
+    @Override
+    public boolean doSupportAzureDataLakeStorage() {
+        return false;
     }
 }
