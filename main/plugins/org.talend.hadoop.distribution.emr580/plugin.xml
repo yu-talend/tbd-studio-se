@@ -343,18 +343,42 @@
             id="joda-time-2.9.3.jar"
             name="joda-time-2.9.3.jar"
             mvn_uri="mvn:org.talend.libraries/joda-time-2.9.3/6.0.0"/>
+			
+        <libraryNeeded
+            context="plugin:org.talend.hadoop.distribution.emr580"
+            id="parquet-common-1.4.1.jar"
+            name="parquet-common-1.4.1.jar"
+            mvn_uri="mvn:org.talend.libraries/parquet-common-1.4.1/6.0.0"/>
+            
+        <libraryNeeded
+            context="plugin:org.talend.hadoop.distribution.emr580"
+            id="parquet-column-1.4.1.jar"
+            name="parquet-column-1.4.1.jar"
+            mvn_uri="mvn:org.talend.libraries/parquet-column-1.4.1/6.0.0"/>
+            
+        <libraryNeeded
+            context="plugin:org.talend.hadoop.distribution.emr580"
+            id="parquet-format-2.0.0.jar"
+            name="parquet-format-2.0.0.jar"
+            mvn_uri="mvn:org.talend.libraries/parquet-format-2.0.0/6.0.0"/>
+            
+        <libraryNeeded
+            context="plugin:org.talend.hadoop.distribution.emr580"
+            id="parquet-encoding-1.4.1.jar"
+            name="parquet-encoding-1.4.1.jar"
+            mvn_uri="mvn:org.talend.libraries/parquet-encoding-1.4.1/6.0.0"/>
+            
+        <libraryNeeded
+            context="plugin:org.talend.hadoop.distribution.emr580"
+            id="parquet-hadoop-1.4.1.jar"
+            name="parquet-hadoop-1.4.1.jar"
+            mvn_uri="mvn:org.talend.libraries/parquet-hadoop-1.4.1/6.0.0"/>
             
         <libraryNeeded
             context="plugin:org.talend.hadoop.distribution.emr580"
             id="parquet-hadoop-bundle-1.8.1.jar"
             name="parquet-hadoop-bundle-1.8.1.jar"
             mvn_uri="mvn:org.talend.libraries/parquet-hadoop-bundle-1.8.1/6.0.0"/>
-            
-        <libraryNeeded
-            context="plugin:org.talend.hadoop.distribution.emr550"
-            id="parquet-hadoop-bundle-1.6.0.jar"
-            name="parquet-hadoop-bundle-1.6.0.jar"
-            mvn_uri="mvn:org.talend.libraries/parquet-hadoop-bundle-1.6.0/6.0.0"/>
 
         <!-- Groups -->
 
@@ -425,7 +449,12 @@
                 description="Map/Reduce parquet libraries for EMR 5.8.0 that are MRREQUIRED"
                 id="MAPREDUCE-PARQUET-LIB-MRREQUIRED-EMR_5_8_0"
                 name="MAPREDUCE-PARQUET-LIB-MRREQUIRED-EMR_5_8_0">
-             <library id="parquet-hadoop-bundle-1.6.0.jar" />
+             <library id="parquet-hadoop-bundle-1.8.1.jar" />
+             <library id="parquet-hadoop-1.4.1.jar" />
+             <library id="parquet-common-1.4.1.jar" />
+             <library id="parquet-column-1.4.1.jar" />
+             <library id="parquet-encoding-1.4.1.jar" />
+             <library id="parquet-format-2.0.0.jar" />
              <library id="snappy-java-1.1.2.6.jar" />
              <library id="jodd-core-3.5.2.jar" />
         </libraryNeededGroup>
