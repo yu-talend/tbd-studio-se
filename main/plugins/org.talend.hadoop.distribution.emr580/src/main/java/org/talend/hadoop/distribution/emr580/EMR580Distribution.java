@@ -37,7 +37,9 @@ import org.talend.hadoop.distribution.component.SqoopComponent;
 import org.talend.hadoop.distribution.condition.ComponentCondition;
 import org.talend.hadoop.distribution.constants.MRConstant;
 import org.talend.hadoop.distribution.constants.PigOutputConstant;
+import org.talend.hadoop.distribution.constants.SparkBatchConstant;
 import org.talend.hadoop.distribution.constants.emr.IAmazonEMRDistribution;
+import org.talend.hadoop.distribution.emr580.modulegroup.node.sparkbatch.EMR580SparkBatchParquetNodeModuleGroup;
 import org.talend.hadoop.distribution.emr580.modulegroup.EMR580HBaseModuleGroup;
 import org.talend.hadoop.distribution.emr580.modulegroup.EMR580HCatalogModuleGroup;
 import org.talend.hadoop.distribution.emr580.modulegroup.EMR580HDFSModuleGroup;
@@ -45,14 +47,17 @@ import org.talend.hadoop.distribution.emr580.modulegroup.EMR580HiveModuleGroup;
 import org.talend.hadoop.distribution.emr580.modulegroup.EMR580MapReduceModuleGroup;
 import org.talend.hadoop.distribution.emr580.modulegroup.EMR580PigModuleGroup;
 import org.talend.hadoop.distribution.emr580.modulegroup.EMR580PigOutputModuleGroup;
+import org.talend.hadoop.distribution.emr580.modulegroup.EMR580SparkBatchModuleGroup;
+import org.talend.hadoop.distribution.emr580.modulegroup.EMR580SparkStreamingModuleGroup;
 import org.talend.hadoop.distribution.emr580.modulegroup.EMR580SqoopModuleGroup;
 import org.talend.hadoop.distribution.emr580.modulegroup.node.mr.EMR580MRS3NodeModuleGroup;
 import org.talend.hadoop.distribution.emr580.modulegroup.node.pigoutput.EMR580PigOutputNodeModuleGroup;
+import org.talend.hadoop.distribution.spark.SparkClassPathUtils;
 
 @SuppressWarnings("nls")
 public class EMR580Distribution extends AbstractDistribution implements
 		HBaseComponent, HDFSComponent, MRComponent, PigComponent,
-		HCatalogComponent, HiveComponent, SqoopComponent,
+		HCatalogComponent, HiveComponent, SqoopComponent, SparkBatchComponent, SparkStreamingComponent,
 		IAmazonEMRDistribution {
 
 	public static final String VERSION = "EMR_5_8_0"; //$NON-NLS-1$
@@ -112,6 +117,8 @@ public class EMR580Distribution extends AbstractDistribution implements
 				EMR580SqoopModuleGroup.getModuleGroups());
 		result.put(ComponentType.HBASE,
 				EMR580HBaseModuleGroup.getModuleGroups());
+		result.put(ComponentType.SPARKBATCH, EMR580SparkBatchModuleGroup.getModuleGroups());
+        result.put(ComponentType.SPARKSTREAMING, EMR580SparkStreamingModuleGroup.getModuleGroups());
 
 		return result;
 	}
@@ -131,6 +138,12 @@ public class EMR580Distribution extends AbstractDistribution implements
 				PigOutputConstant.PIGSTORE_COMPONENT),
 				EMR580PigOutputNodeModuleGroup.getModuleGroups(distribution,
 						version));
+		
+		// Spark Batch Parquet nodes
+        result.put(new NodeComponentTypeBean(ComponentType.SPARKBATCH, SparkBatchConstant.PARQUET_INPUT_COMPONENT),
+                EMR580SparkBatchParquetNodeModuleGroup.getModuleGroups(distribution, version));
+        result.put(new NodeComponentTypeBean(ComponentType.SPARKBATCH, SparkBatchConstant.PARQUET_OUTPUT_COMPONENT),
+                EMR580SparkBatchParquetNodeModuleGroup.getModuleGroups(distribution, version));
 
 		return result;
 	}
@@ -198,6 +211,11 @@ public class EMR580Distribution extends AbstractDistribution implements
 	public String getYarnApplicationClasspath() {
 		return YARN_APPLICATION_CLASSPATH;
 	}
+	
+	@Override
+	public String generateSparkJarsPaths(List<String> commandLineJarsPaths) {
+        return SparkClassPathUtils.generateSparkJarsPaths(commandLineJarsPaths, SPARK_MODULE_GROUP_NAME);
+    }
 
 	@Override
 	public boolean doSupportHCatalog() {
@@ -278,6 +296,13 @@ public class EMR580Distribution extends AbstractDistribution implements
 	public boolean doSupportStoreAsParquet() {
 		return true;
 	}
+	
+	@Override
+    public Set<ESparkVersion> getSparkVersions() {
+        Set<ESparkVersion> version = new HashSet<>();
+        version.add(ESparkVersion.SPARK_2_2);
+        return version;
+    }
 
 	@Override
 	public ComponentCondition getDisplayCondition(ComponentType componentType) {
@@ -318,4 +343,29 @@ public class EMR580Distribution extends AbstractDistribution implements
 	public boolean doSupportParquetOutput() {
 		return true;
 	}
+
+    @Override
+    public boolean doSupportSparkStandaloneMode() {
+        return false;
+    }
+
+    @Override
+    public boolean doSupportSparkYarnClientMode() {
+        return true;
+    }
+
+    @Override
+    public boolean doSupportDynamicMemoryAllocation() {
+        return false;
+    }
+
+    @Override
+    public boolean doSupportCheckpointing() {
+        return false;
+    }
+
+    @Override
+    public boolean doSupportBackpressure() {
+        return false;
+    }
 }
