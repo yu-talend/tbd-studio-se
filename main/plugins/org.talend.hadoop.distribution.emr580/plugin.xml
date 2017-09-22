@@ -114,6 +114,12 @@
             name="netty-all-4.0.23.Final.jar"
             mvn_uri="mvn:org.talend.libraries/netty-all-4.0.23.Final/6.0.0"/>
 
+		<libraryNeeded
+            context="plugin:org.talend.hadoop.distribution.emr580"
+            id="netty-all-4.0.43.Final.jar"
+            name="netty-all-4.0.43.Final.jar"
+            mvn_uri="mvn:org.talend.libraries/netty-all-4.0.43.Final/6.0.0"/>
+
         <!-- Hive libraries -->
         <libraryNeeded
             context="plugin:org.talend.hadoop.distribution.emr580"
@@ -332,6 +338,13 @@
         </libraryNeeded>
 
         <libraryNeeded
+            context="plugin:org.talend.hadoop.distribution.emr580"
+            id="parquet-avro-1.8.2-shaded.jar"
+            name="parquet-avro-1.8.2-shaded.jar"
+            mvn_uri="mvn:org.talend.libraries/parquet-avro-1.8.2-shaded/6.0.0">
+        </libraryNeeded>
+
+        <libraryNeeded
             context="plugin:org.talend.libraries.zookeeper"
             id="zookeeper-3.4.10.jar"
             name="zookeeper-3.4.10.jar"
@@ -357,6 +370,7 @@
             mvn_uri="mvn:org.talend.libraries/parquet-hadoop-bundle-1.6.0/6.0.0"/>
             
         <!-- Spark2 libraries -->
+
         <libraryNeeded
             context="plugin:org.talend.hadoop.distribution.emr580"
             id="metrics-graphite-3.1.2.jar"
@@ -555,12 +569,6 @@
 
         <libraryNeeded
             context="plugin:org.talend.hadoop.distribution.emr580"
-            id="netty-all-4.0.42.Final.jar"
-            name="netty-all-4.0.42.Final.jar"
-            mvn_uri="mvn:org.talend.libraries/netty-all-4.0.42.Final/6.0.0"/>
-
-        <libraryNeeded
-            context="plugin:org.talend.hadoop.distribution.emr580"
             id="hadoop-yarn-server-common-2.7.3-amzn-3.jar"
             name="hadoop-yarn-server-common-2.7.3-amzn-3.jar"
             mvn_uri="mvn:org.talend.libraries/hadoop-yarn-server-common-2.7.3-amzn-3/6.0.0"/>
@@ -573,9 +581,9 @@
 
         <libraryNeeded
             context="plugin:org.talend.hadoop.distribution.emr580"
-            id="netty-3.8.0.Final.jar"
-            name="netty-3.8.0.Final.jar"
-            mvn_uri="mvn:org.talend.libraries/netty-3.8.0.Final/6.0.0"/>
+            id="netty-3.9.9.Final.jar"
+            name="netty-3.9.9.Final.jar"
+            mvn_uri="mvn:org.talend.libraries/netty-3.9.9.Final/6.0.0"/>
 
         <libraryNeeded
             context="plugin:org.talend.hadoop.distribution.emr580"
@@ -1479,9 +1487,9 @@
 
         <libraryNeeded
             context="plugin:org.talend.hadoop.distribution.emr580"
-            id="parquet-jackson-1.8.1.jar"
-            name="parquet-jackson-1.8.1.jar"
-            mvn_uri="mvn:org.talend.libraries/parquet-jackson-1.8.1/6.0.0"/>
+            id="parquet-jackson-1.8.2.jar"
+            name="parquet-jackson-1.8.2.jar"
+            mvn_uri="mvn:org.talend.libraries/parquet-jackson-1.8.2/6.0.0"/>
             
         <libraryNeeded
             context="plugin:org.talend.hadoop.distribution.emr580"
@@ -1512,12 +1520,6 @@
             id="parquet-hadoop-1.8.2.jar"
             name="parquet-hadoop-1.8.2.jar"
             mvn_uri="mvn:org.talend.libraries/parquet-hadoop-1.8.2/6.0.0"/>
-            
-        <libraryNeeded
-            context="plugin:org.talend.hadoop.distribution.emr580"
-            id="parquet-jackson-1.8.2.jar"
-            name="parquet-jackson-1.8.2.jar"
-            mvn_uri="mvn:org.talend.libraries/parquet-jackson-1.8.2/6.0.0"/>
 
         <!-- Groups -->
 
@@ -1710,6 +1712,11 @@
 		     <library id="hive-service-2.3.0-amzn-0.jar"/>
 		     <library id="hive-service-rpc-2.3.0-amzn-0.jar"/>
 		     <library id="hive-serde-2.3.0-amzn-0.jar"/>
+		     <library id="hive-beeline-2.3.0-amzn-0.jar"/>
+             <library id="hive-cli-2.3.0-amzn-0.jar"/>
+             <library id="hive-exec-2.3.0-amzn-0.jar"/>
+             <library id="hive-jdbc-2.3.0-amzn-0.jar"/>
+             <library id="hive-metastore-2.3.0-amzn-0.jar"/>
 		     <library id="jdo-api-3.0.1.jar"/>
              <library id="libthrift-0.9.3.jar"/>
              <library id="libfb303-0.9.3.jar"/>
@@ -1768,17 +1775,12 @@
                 description="Spark libraries for EMR 5.8.0 that are MRREQUIRED"
                 id="SPARK-PARQUET-LIB-MRREQUIRED-EMR_5_8_0_LATEST"
                 name="SPARK-PARQUET-LIB-MRREQUIRED-EMR_5_8_0_LATEST">
-             <library id="parquet-avro-1.4.1.jar"/>
-             <library id="parquet-column-1.8.2.jar"/>
-			 <library id="parquet-common-1.8.2.jar"/>
-			 <library id="parquet-encoding-1.8.2.jar"/>
-			 <library id="parquet-format-2.3.1.jar"/>
-			 <library id="parquet-hadoop-1.8.2.jar"/>
-             <!--<library id="parquet-hadoop-bundle-1.6.0.jar" />-->
-             <library id="parquet-jackson-1.8.2.jar"/>
+             <library id="parquet-avro-1.8.2-shaded.jar"/>
+             <library id="parquet-hadoop-bundle-1.6.0.jar" />
              <library id="jodd-core-3.5.2.jar" />
         </libraryNeededGroup>
         
+
         <!-- Spark2 group -->
         <!-- All ids in this module group should imperatively equal to jar file names-->
         <!-- No latest or shortcuts as the jars will be looked up at runtime to construct the real job classpath-->
@@ -1839,7 +1841,7 @@
 			<library id="datanucleus-api-jdo-3.2.6.jar"/>
 			<library id="datanucleus-core-3.2.10.jar"/>
 			<library id="datanucleus-rdbms-3.2.9.jar"/>
-			<library id="derby-10.11.1.1.jar"/>
+			<library id="derby-10.12.1.1.jar"/>
 			<library id="eigenbase-properties-1.1.5.jar"/>
 			<library id="gson-2.2.4.jar"/>
 			<library id="guava-14.0.1.jar"/>
@@ -1860,17 +1862,12 @@
             <library id="hadoop-yarn-common-2.7.3-amzn-3.jar"/>
             <library id="hadoop-yarn-server-common-2.7.3-amzn-3.jar"/>
             <library id="hadoop-yarn-server-web-proxy-2.7.3-amzn-3.jar"/>
-            <library id="hive-beeline-2.3.0-amzn-0.jar"/>
-            <library id="hive-cli-2.3.0-amzn-0.jar"/>
-            <library id="hive-exec-2.3.0-amzn-0.jar"/>
-            <library id="hive-jdbc-2.3.0-amzn-0.jar"/>
-            <library id="hive-metastore-2.3.0-amzn-0.jar"/>
             <library id="hk2-api-2.4.0-b34.jar"/>
 			<library id="hk2-locator-2.4.0-b34.jar"/>
 			<library id="hk2-utils-2.4.0-b34.jar"/>
 			<library id="htrace-core-3.1.0-incubating.jar"/>
-            <library id="httpcore-4.3.2.jar"/>
-            <library id="httpclient-4.3.4.jar"/>
+            <library id="httpcore-4.4.4.jar"/>
+            <library id="httpclient-4.5.3.jar"/>
 			<library id="ivy-2.4.0.jar"/>
 			<library id="jackson-annotations-2.6.6.jar"/>
 			<library id="jackson-core-2.6.6.jar"/>
@@ -1929,14 +1926,19 @@
 			<library id="metrics-jvm-3.1.2.jar"/>
 			<library id="minlog-1.3.0.jar"/>
 			<library id="mx4j-3.0.2.jar"/>
-			<library id="netty-3.8.0.Final.jar"/>
-			<library id="netty-all-4.0.42.Final.jar"/>
+			<library id="netty-3.9.9.Final.jar"/>
+			<library id="netty-all-4.0.43.Final.jar"/>
 			<library id="objenesis-2.1.jar"/>
 			<library id="opencsv-2.3.jar"/>
 			<library id="oro-2.0.8.jar"/>
 			<library id="osgi-resource-locator-1.0.1.jar"/>
 			<library id="paranamer-2.6.jar"/>
-			<!--<library id="parquet-hadoop-bundle-1.6.0.jar"/>-->
+			<library id="parquet-column-1.8.2.jar"/>
+			<library id="parquet-common-1.8.2.jar"/>
+			<library id="parquet-encoding-1.8.2.jar"/>
+			<library id="parquet-format-2.3.1.jar"/>
+			<library id="parquet-hadoop-1.8.2.jar"/>
+			<library id="parquet-hadoop-bundle-1.6.0.jar"/>
 			<library id="parquet-jackson-1.8.2.jar"/>
 			<library id="pmml-model-1.2.15.jar"/>
 			<library id="pmml-schema-1.2.15.jar"/>
@@ -2009,7 +2011,7 @@
       </classloader>
       <classloader
             index="HBASE:AMAZON_EMR:EMR_5_8_0"
-            libraries="hbase-common-1.3.1.jar;hbase-client-1.3.1.jar;hbase-protocol-1.3.1.jar;hadoop-common-2.7.3-amzn-3.jar;hadoop-auth-2.7.3-amzn-3.jar;commons-logging-1.2.jar;commons-codec-1.9.jar;commons-configuration-1.6.jar;commons-lang-2.6.jar;commons-collections-1.6.jar;zookeeper-3.4.10.jar;htrace-core-3.1.0-incubating.jar;guava-14.0.1.jar;jackson-mapper-asl-1.9.13.jar;jackson-core-asl-1.9.13.jar;netty-all-4.0.42.Final.jar;protobuf-java-2.5.0.jar;log4j-1.2.17.jar;slf4j-api-1.7.10.jar;slf4j-log4j12-1.7.10.jar;hbase-server-1.3.1.jar;metrics-core-2.2.0.jar;netty-all-4.0.23.Final.jar">
+            libraries="hbase-common-1.3.1.jar;hbase-client-1.3.1.jar;hbase-protocol-1.3.1.jar;hadoop-common-2.7.3-amzn-3.jar;hadoop-auth-2.7.3-amzn-3.jar;commons-logging-1.2.jar;commons-codec-1.9.jar;commons-configuration-1.6.jar;commons-lang-2.6.jar;commons-collections-1.6.jar;zookeeper-3.4.10.jar;htrace-core-3.1.0-incubating.jar;guava-14.0.1.jar;jackson-mapper-asl-1.9.13.jar;jackson-core-asl-1.9.13.jar;netty-all-4.0.43.Final.jar;protobuf-java-2.5.0.jar;log4j-1.2.17.jar;slf4j-api-1.7.10.jar;slf4j-log4j12-1.7.10.jar;hbase-server-1.3.1.jar;metrics-core-2.2.0.jar;netty-all-4.0.23.Final.jar">
       </classloader>
     </extension>
 </plugin>
