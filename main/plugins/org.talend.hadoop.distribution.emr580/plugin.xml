@@ -114,6 +114,12 @@
             name="netty-all-4.0.43.Final.jar"
             mvn_uri="mvn:org.talend.libraries/netty-all-4.0.43.Final/6.0.0"/>
 
+		<libraryNeeded
+            context="plugin:org.talend.hadoop.distribution.emr580"
+            id="netty-all-4.0.43.Final.jar"
+            name="netty-all-4.0.43.Final.jar"
+            mvn_uri="mvn:org.talend.libraries/netty-all-4.0.43.Final/6.0.0"/>
+
         <!-- Hive libraries -->
         <libraryNeeded
             context="plugin:org.talend.hadoop.distribution.emr580"
@@ -357,6 +363,13 @@
         </libraryNeeded>
 
         <libraryNeeded
+            context="plugin:org.talend.hadoop.distribution.emr580"
+            id="parquet-avro-1.8.2-shaded.jar"
+            name="parquet-avro-1.8.2-shaded.jar"
+            mvn_uri="mvn:org.talend.libraries/parquet-avro-1.8.2-shaded/6.0.0">
+        </libraryNeeded>
+
+        <libraryNeeded
             context="plugin:org.talend.libraries.zookeeper"
             id="zookeeper-3.4.10.jar"
             name="zookeeper-3.4.10.jar"
@@ -382,6 +395,7 @@
             mvn_uri="mvn:org.talend.libraries/parquet-hadoop-bundle-1.6.0/6.0.0"/>
             
         <!-- Spark2 libraries -->
+
         <libraryNeeded
             context="plugin:org.talend.hadoop.distribution.emr580"
             id="metrics-graphite-3.1.2.jar"
@@ -1561,7 +1575,7 @@
             id="parquet-hadoop-1.8.2.jar"
             name="parquet-hadoop-1.8.2.jar"
             mvn_uri="mvn:org.talend.libraries/parquet-hadoop-1.8.2/6.0.0"/>
-            
+                        
         <libraryNeeded
             context="plugin:org.talend.hadoop.distribution.emr580"
             id="derby-10.12.1.1.jar"
@@ -1783,10 +1797,10 @@
 		     <library id="hive-service-rpc-2.3.0-amzn-0.jar"/>
 		     <library id="hive-serde-2.3.0-amzn-0.jar"/>
 		     <library id="hive-beeline-2.3.0-amzn-0.jar"/>
-		     <library id="hive-cli-2.3.0-amzn-0.jar"/>
-		     <library id="hive-exec-2.3.0-amzn-0.jar"/>
-		     <library id="hive-jdbc-2.3.0-amzn-0.jar"/>
-		     <library id="hive-metastore-2.3.0-amzn-0.jar"/>
+             <library id="hive-cli-2.3.0-amzn-0.jar"/>
+             <library id="hive-exec-2.3.0-amzn-0.jar"/>
+             <library id="hive-jdbc-2.3.0-amzn-0.jar"/>
+             <library id="hive-metastore-2.3.0-amzn-0.jar"/>
 		     <library id="jdo-api-3.0.1.jar"/>
              <library id="libthrift-0.9.3.jar"/>
              <library id="libfb303-0.9.3.jar"/>
@@ -1850,6 +1864,7 @@
              <library id="jodd-core-3.5.2.jar" />
         </libraryNeededGroup>
         
+
         <!-- Spark2 group -->
         <!-- All ids in this module group should imperatively equal to jar file names-->
         <!-- No latest or shortcuts as the jars will be looked up at runtime to construct the real job classpath-->
