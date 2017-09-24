@@ -29,6 +29,7 @@ import org.talend.hadoop.distribution.component.HBaseComponent;
 import org.talend.hadoop.distribution.component.HCatalogComponent;
 import org.talend.hadoop.distribution.component.HDFSComponent;
 import org.talend.hadoop.distribution.component.HiveComponent;
+import org.talend.hadoop.distribution.component.HiveOnSparkComponent;
 import org.talend.hadoop.distribution.component.MRComponent;
 import org.talend.hadoop.distribution.component.PigComponent;
 import org.talend.hadoop.distribution.component.SparkBatchComponent;
@@ -39,11 +40,13 @@ import org.talend.hadoop.distribution.constants.MRConstant;
 import org.talend.hadoop.distribution.constants.PigOutputConstant;
 import org.talend.hadoop.distribution.constants.SparkBatchConstant;
 import org.talend.hadoop.distribution.constants.emr.IAmazonEMRDistribution;
+import org.talend.hadoop.distribution.emr580.modulegroup.node.spark.EMR580SparkDynamoDBNodeModuleGroup;
 import org.talend.hadoop.distribution.emr580.modulegroup.node.sparkbatch.EMR580SparkBatchParquetNodeModuleGroup;
 import org.talend.hadoop.distribution.emr580.modulegroup.EMR580HBaseModuleGroup;
 import org.talend.hadoop.distribution.emr580.modulegroup.EMR580HCatalogModuleGroup;
 import org.talend.hadoop.distribution.emr580.modulegroup.EMR580HDFSModuleGroup;
 import org.talend.hadoop.distribution.emr580.modulegroup.EMR580HiveModuleGroup;
+import org.talend.hadoop.distribution.emr580.modulegroup.EMR580HiveOnSparkModuleGroup;
 import org.talend.hadoop.distribution.emr580.modulegroup.EMR580MapReduceModuleGroup;
 import org.talend.hadoop.distribution.emr580.modulegroup.EMR580PigModuleGroup;
 import org.talend.hadoop.distribution.emr580.modulegroup.EMR580PigOutputModuleGroup;
@@ -57,7 +60,7 @@ import org.talend.hadoop.distribution.spark.SparkClassPathUtils;
 @SuppressWarnings("nls")
 public class EMR580Distribution extends AbstractDistribution implements
 		HBaseComponent, HDFSComponent, MRComponent, PigComponent,
-		HCatalogComponent, HiveComponent, SqoopComponent, SparkBatchComponent, SparkStreamingComponent,
+		HCatalogComponent, HiveComponent, HiveOnSparkComponent, SqoopComponent, SparkBatchComponent, SparkStreamingComponent,
 		IAmazonEMRDistribution {
 
 	public static final String VERSION = "EMR_5_8_0"; //$NON-NLS-1$
@@ -108,6 +111,7 @@ public class EMR580Distribution extends AbstractDistribution implements
 				EMR580HCatalogModuleGroup.getModuleGroups());
 		result.put(ComponentType.HDFS, EMR580HDFSModuleGroup.getModuleGroups());
 		result.put(ComponentType.HIVE, EMR580HiveModuleGroup.getModuleGroups());
+		result.put(ComponentType.HIVEONSPARK, EMR580HiveOnSparkModuleGroup.getModuleGroups());
 		result.put(ComponentType.MAPREDUCE,
 				EMR580MapReduceModuleGroup.getModuleGroups());
 		result.put(ComponentType.PIG, EMR580PigModuleGroup.getModuleGroups());
@@ -144,6 +148,19 @@ public class EMR580Distribution extends AbstractDistribution implements
                 EMR580SparkBatchParquetNodeModuleGroup.getModuleGroups(distribution, version));
         result.put(new NodeComponentTypeBean(ComponentType.SPARKBATCH, SparkBatchConstant.PARQUET_OUTPUT_COMPONENT),
                 EMR580SparkBatchParquetNodeModuleGroup.getModuleGroups(distribution, version));
+        
+        // DynamoDB nodes ...
+        Set<DistributionModuleGroup> dynamoDBNodeModuleGroups = EMR580SparkDynamoDBNodeModuleGroup.getModuleGroups(distribution,
+                version, "USE_EXISTING_CONNECTION == 'false'");
+        Set<DistributionModuleGroup> dynamoDBConfigurationModuleGroups = EMR580SparkDynamoDBNodeModuleGroup.getModuleGroups(
+                distribution, version, null);
+        // ... in Spark batch
+        result.put(new NodeComponentTypeBean(ComponentType.SPARKBATCH, SparkBatchConstant.DYNAMODB_INPUT_COMPONENT),
+                dynamoDBNodeModuleGroups);
+        result.put(new NodeComponentTypeBean(ComponentType.SPARKBATCH, SparkBatchConstant.DYNAMODB_OUTPUT_COMPONENT),
+                dynamoDBNodeModuleGroups);
+        result.put(new NodeComponentTypeBean(ComponentType.SPARKBATCH, SparkBatchConstant.DYNAMODB_CONFIGURATION_COMPONENT),
+                dynamoDBConfigurationModuleGroups);
 
 		return result;
 	}
@@ -367,5 +384,10 @@ public class EMR580Distribution extends AbstractDistribution implements
     @Override
     public boolean doSupportBackpressure() {
         return false;
+    }
+    
+    @Override
+    public boolean doImportDynamoDBDependencies() {
+        return true;
     }
 }
