@@ -1636,6 +1636,30 @@
             mvn_uri="mvn:org.talend.libraries/commons-pool2-2.2/6.0.0">
         </libraryNeeded>
         
+		<!-- Kafka libraries -->
+        <libraryNeeded
+            context="plugin:org.talend.hadoop.distribution.emr580"
+            id="spark-streaming-kafka-0-10-assembly_2.11-2.2.0.jar"
+            name="spark-streaming-kafka-0-10-assembly_2.11-2.2.0.jar"
+            mvn_uri="mvn:org.talend.libraries/spark-streaming-kafka-0-10-assembly_2.11-2.2.0/6.0.0">
+        </libraryNeeded>
+
+		<!-- Kinesis libraries -->
+
+        <libraryNeeded
+            context="plugin:org.talend.hadoop.distribution.emr580"
+            id="spark-streaming-kinesis-asl_2.11-2.2.0.jar"
+            name="spark-streaming-kinesis-asl_2.11-2.2.0.jar"
+            mvn_uri="mvn:org.talend.libraries/spark-streaming-kinesis-asl_2.11-2.2.0/6.0.0"/>
+
+		<!-- Flume libraries -->
+        <libraryNeeded
+            context="plugin:org.talend.hadoop.distribution.emr580"
+            id="spark-streaming-flume-assembly_2.11-2.2.0.jar"
+            name="spark-streaming-flume-assembly_2.11-2.2.0.jar"
+            mvn_uri="mvn:org.talend.libraries/spark-streaming-flume-assembly_2.11-2.2.0/6.0.0">
+        </libraryNeeded>
+
         <!-- Groups -->
 
         <!-- HDFS group -->
@@ -1892,7 +1916,40 @@
              <library id="jodd-core-3.5.2.jar" />
         </libraryNeededGroup>
         
+        <!-- Spark Kafka group MRREQUIRED -->
+        <libraryNeededGroup
+                description="Spark Kafka assembly libraries for EMR 5.8.0 that are MRREQUIRED"
+                id="SPARK-KAFKA-ASSEMBLY-LIB-MRREQUIRED-EMR_5_8_0_LATEST"
+                name="SPARK-KAFKA-ASSEMBLY-LIB-MRREQUIRED-EMR_5_8_0_LATEST">
+            <library id="spark-streaming-kafka-0-10-assembly_2.11-2.2.0.jar"/>
+        </libraryNeededGroup>
+        
+        <!-- Spark Kafka Avro group MRREQUIRED -->
+        <libraryNeededGroup
+                description="Spark Kafka Avro libraries for EMR 5.8.0 that are MRREQUIRED"
+                id="SPARK-KAFKA-AVRO-LIB-MRREQUIRED-EMR_5_8_0_LATEST"
+                name="SPARK-KAFKA-AVRO-LIB-MRREQUIRED-EMR_5_8_0_LATEST">
+            <library id="avro-1.7.7.jar"/>
+            <library id="jackson-mapper-asl-1.9.13.jar" />
+            <library id="jackson-core-asl-1.9.13.jar" />
+        </libraryNeededGroup>
 
+        <!-- Spark Kafka Client group MRREQUIRED -->
+        <libraryNeededGroup
+                description="Spark Kafka client libraries for EMR 5.8.0 that are MRREQUIRED"
+                id="SPARK-KAFKA-CLIENT-LIB-MRREQUIRED-EMR_5_8_0_LATEST"
+                name="SPARK-KAFKA-CLIENT-LIB-MRREQUIRED-EMR_5_8_0_LATEST">
+            <library id="kafka-clients-0.10.0.1.jar"/>
+        </libraryNeededGroup>
+
+        <!-- Spark Flume group MRREQUIRED -->
+        <libraryNeededGroup
+                description="Spark Flume libraries for EMR 5.8.0  that are MRREQUIRED"
+                id="SPARK-FLUME-LIB-MRREQUIRED-EMR_5_8_0_LATEST"
+                name="SPARK-FLUME-LIB-MRREQUIRED-EMR_5_8_0_LATEST">
+            <library id="spark-streaming-flume-assembly_2.11-2.2.0.jar"/>
+        </libraryNeededGroup>
+        
         <!-- Spark2 group -->
         <!-- All ids in this module group should imperatively equal to jar file names-->
         <!-- No latest or shortcuts as the jars will be looked up at runtime to construct the real job classpath-->
