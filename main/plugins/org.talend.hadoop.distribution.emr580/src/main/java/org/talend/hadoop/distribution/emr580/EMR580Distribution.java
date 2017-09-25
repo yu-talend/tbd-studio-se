@@ -42,6 +42,7 @@ import org.talend.hadoop.distribution.constants.SparkBatchConstant;
 import org.talend.hadoop.distribution.constants.emr.IAmazonEMRDistribution;
 import org.talend.hadoop.distribution.emr580.modulegroup.node.spark.EMR580SparkDynamoDBNodeModuleGroup;
 import org.talend.hadoop.distribution.emr580.modulegroup.node.sparkbatch.EMR580SparkBatchParquetNodeModuleGroup;
+import org.talend.hadoop.distribution.emr580.modulegroup.node.sparkbatch.EMR580SparkBatchS3NodeModuleGroup;
 import org.talend.hadoop.distribution.emr580.modulegroup.EMR580HBaseModuleGroup;
 import org.talend.hadoop.distribution.emr580.modulegroup.EMR580HCatalogModuleGroup;
 import org.talend.hadoop.distribution.emr580.modulegroup.EMR580HDFSModuleGroup;
@@ -148,6 +149,10 @@ public class EMR580Distribution extends AbstractDistribution implements
                 EMR580SparkBatchParquetNodeModuleGroup.getModuleGroups(distribution, version));
         result.put(new NodeComponentTypeBean(ComponentType.SPARKBATCH, SparkBatchConstant.PARQUET_OUTPUT_COMPONENT),
                 EMR580SparkBatchParquetNodeModuleGroup.getModuleGroups(distribution, version));
+        
+        // Spark Batch S3 nodes
+        result.put(new NodeComponentTypeBean(ComponentType.SPARKBATCH, SparkBatchConstant.S3_CONFIGURATION_COMPONENT),
+                EMR580SparkBatchS3NodeModuleGroup.getModuleGroups(distribution, version));
         
         // DynamoDB nodes ...
         Set<DistributionModuleGroup> dynamoDBNodeModuleGroups = EMR580SparkDynamoDBNodeModuleGroup.getModuleGroups(distribution,
