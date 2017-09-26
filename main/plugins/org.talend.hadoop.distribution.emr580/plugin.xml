@@ -286,11 +286,23 @@
             name="aws-java-sdk-s3-1.11.160.jar"
             mvn_uri="mvn:org.talend.libraries/aws-java-sdk-s3-1.11.160/6.0.0"/>
 
+		<libraryNeeded
+            context="plugin:org.talend.libraries.s3"
+            id="amazon-kinesis-client-1.8.1.jar"
+            name="amazon-kinesis-client-1.8.1.jar"
+            mvn_uri="mvn:org.talend.libraries/amazon-kinesis-client-1.8.1/6.0.0"/>
+
         <libraryNeeded
             context="plugin:org.talend.libraries.s3"
             id="aws-java-sdk-core-1.11.160.jar"
             name="aws-java-sdk-core-1.11.160.jar"
             mvn_uri="mvn:org.talend.libraries/aws-java-sdk-core-1.11.160/6.0.0"/>
+
+        <libraryNeeded
+            context="plugin:org.talend.libraries.s3"
+            id="aws-java-sdk-kinesis-1.11.160.jar"
+            name="aws-java-sdk-kinesis-1.11.160.jar"
+            mvn_uri="mvn:org.talend.libraries/aws-java-sdk-kinesis-1.11.160/6.0.0"/>
             
         <libraryNeeded
             context="plugin:org.talend.libraries.s3"
@@ -1241,6 +1253,12 @@
 
         <libraryNeeded
             context="plugin:org.talend.hadoop.distribution.emr580"
+            id="snappy-0.2.jar"
+            name="snappy-0.2.jar"
+            mvn_uri="mvn:org.talend.libraries/snappy-0.2/6.0.0"/>
+
+        <libraryNeeded
+            context="plugin:org.talend.hadoop.distribution.emr580"
             id="snappy-java-1.1.2.6.jar"
             name="snappy-java-1.1.2.6.jar"
             mvn_uri="mvn:org.talend.libraries/snappy-java-1.1.2.6/6.0.0"/>
@@ -1636,6 +1654,12 @@
             mvn_uri="mvn:org.talend.libraries/commons-pool2-2.2/6.0.0">
         </libraryNeeded>
         
+        <libraryNeeded
+            context="plugin:org.talend.hadoop.distribution.emr580"
+            id="spark-streaming-kinesis-asl_2.11-2.2.0.jar"
+            name="spark-streaming-kinesis-asl_2.11-2.2.0.jar"
+            mvn_uri="mvn:org.talend.libraries/spark-streaming-kinesis-asl_2.11-2.2.0/6.0.0"/>
+
 		<!-- Kafka libraries -->
         <libraryNeeded
             context="plugin:org.talend.hadoop.distribution.emr580"
@@ -1643,14 +1667,6 @@
             name="spark-streaming-kafka-0-10-assembly_2.11-2.2.0.jar"
             mvn_uri="mvn:org.talend.libraries/spark-streaming-kafka-0-10-assembly_2.11-2.2.0/6.0.0">
         </libraryNeeded>
-
-		<!-- Kinesis libraries -->
-
-        <libraryNeeded
-            context="plugin:org.talend.hadoop.distribution.emr580"
-            id="spark-streaming-kinesis-asl_2.11-2.2.0.jar"
-            name="spark-streaming-kinesis-asl_2.11-2.2.0.jar"
-            mvn_uri="mvn:org.talend.libraries/spark-streaming-kinesis-asl_2.11-2.2.0/6.0.0"/>
 
 		<!-- Flume libraries -->
         <libraryNeeded
@@ -2123,6 +2139,7 @@
 			<library id="scalap-2.11.8.jar"/>
 			<library id="slf4j-api-1.7.16.jar"/>
 			<library id="slf4j-log4j12-1.7.16.jar"/>
+			<library id="snappy-0.2.jar"/>
 			<library id="snappy-java-1.1.2.6.jar"/>
 			<library id="spark-catalyst_2.11-2.2.0.jar"/>
 			<library id="spark-core_2.11-2.2.0.jar"/>
@@ -2172,6 +2189,18 @@
              <library id="commons-pool2-2.2.jar"/>
         </libraryNeededGroup>
         
+        <!-- Spark Kinesis group MRREQUIRED -->
+        <libraryNeededGroup
+                description="Spark DynamoDB libraries for EMR 5.8.0 that are MRREQUIRED"
+                id="SPARK-KINESIS-LIB-MRREQUIRED-EMR_5_8_0_LATEST"
+                name="SPARK-KINESIS-LIB-MRREQUIRED-EMR_5_8_0_LATEST">
+             <library id="spark-streaming-kinesis-asl_2.11-2.2.0.jar"/>
+            <library id="amazon-kinesis-client-1.8.1.jar"/>
+            <library id="aws-java-sdk-kinesis-1.11.160.jar"/>
+            <library id="aws-java-sdk-core-1.11.160.jar"/>
+            <library id="joda-time-2.9.3.jar"/>
+        </libraryNeededGroup>
+
         <!-- Spark Hive group -->
         <libraryNeededGroup
                 description="Spark Hive libraries for EMR 5.8.0"
