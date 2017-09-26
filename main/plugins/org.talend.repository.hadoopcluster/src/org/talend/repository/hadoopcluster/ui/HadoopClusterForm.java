@@ -14,7 +14,9 @@ package org.talend.repository.hadoopcluster.ui;
 
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.window.Window;
+import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -25,6 +27,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
+import org.eclipse.ui.PlatformUI;
 import org.talend.commons.ui.runtime.image.EImage;
 import org.talend.commons.ui.runtime.image.ImageProvider;
 import org.talend.commons.ui.swt.formtools.Form;
@@ -37,6 +40,7 @@ import org.talend.hadoop.distribution.model.DistributionVersion;
 import org.talend.repository.hadoopcluster.i18n.Messages;
 import org.talend.repository.hadoopcluster.ui.common.AbstractHadoopForm;
 import org.talend.repository.hadoopcluster.ui.common.IHadoopClusterInfoForm;
+import org.talend.repository.hadoopcluster.ui.dynamic.DynamicBuildConfigurationWizard;
 import org.talend.repository.hadoopcluster.util.HCVersionUtil;
 import org.talend.repository.model.hadoopcluster.HadoopClusterConnection;
 
@@ -54,6 +58,8 @@ public class HadoopClusterForm extends AbstractHadoopForm<HadoopClusterConnectio
     private LabelledCombo distributionCombo;
 
     private LabelledCombo versionCombo;
+
+    private Button buildConfiguration;
 
     private Button customButton;
 
@@ -129,6 +135,9 @@ public class HadoopClusterForm extends AbstractHadoopForm<HadoopClusterConnectio
         versionCombo = new LabelledCombo(distributionGroup, Messages.getString("HadoopClusterForm.version"), //$NON-NLS-1$
                 Messages.getString("HadoopClusterForm.version.tooltip"), new String[0], 1, true); //$NON-NLS-1$
         versionCombo.setVisibleItemCount(VISIBLE_VERSION_COUNT);
+        buildConfiguration = new Button(distributionGroup, SWT.PUSH);
+        buildConfiguration.setText(Messages.getString("HadoopClusterForm.button.buildConfiguration")); //$NON-NLS-1$
+        buildConfiguration.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, true, false, 2, 1));
         customButton = new Button(distributionGroup, SWT.NULL);
         customButton.setImage(ImageProvider.getImage(EImage.THREE_DOTS_ICON));
         customButton.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, true, false, 2, 1));
@@ -207,6 +216,18 @@ public class HadoopClusterForm extends AbstractHadoopForm<HadoopClusterConnectio
             }
         });
 
+        buildConfiguration.addSelectionListener(new SelectionAdapter() {
+
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                DynamicBuildConfigurationWizard wizard = new DynamicBuildConfigurationWizard(null, null, DEFAULT_LABEL, creation);
+                WizardDialog wizardDialog = new WizardDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
+                        wizard);
+                wizardDialog.create();
+                if (wizardDialog.open() == IDialogConstants.OK_ID) {
+                }
+            }
+        });
     }
 
     @Override
@@ -253,10 +274,12 @@ public class HadoopClusterForm extends AbstractHadoopForm<HadoopClusterConnectio
         }
         if (distribution.useCustom()) {
             versionCombo.setHideWidgets(true);
+            hideControl(buildConfiguration, true);
             hideControl(useYarnButton, false);
             hideControl(customButton, false);
         } else {
             versionCombo.setHideWidgets(false);
+            hideControl(buildConfiguration, false);
             hideControl(useYarnButton, true);
             hideControl(customButton, true);
         }
