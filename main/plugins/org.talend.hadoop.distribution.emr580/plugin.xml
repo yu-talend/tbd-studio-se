@@ -233,9 +233,9 @@
 
         <libraryNeeded
             context="plugin:org.talend.hadoop.distribution.emr580"
-            id="piggybank-emr580.jar"
-            name="piggybank-emr580.jar"
-            mvn_uri="mvn:org.talend.libraries/piggybank-emr580/6.0.0"/>
+            id="piggybank-emr550.jar"
+            name="piggybank-emr550.jar"
+            mvn_uri="mvn:org.talend.libraries/piggybank-emr550/6.0.0"/>
 
         <libraryNeeded
 			context="plugin:org.talend.libraries.pig"
@@ -1803,7 +1803,7 @@
                 description="The latest pig avro storage libraries for EMR 5.8.0"
                 id="PIG-AVRO-LIB-EMR_5_8_0_LATEST"
                 name="PIG-AVRO-LIB-EMR_5_8_0_LATEST">
-             <library id="piggybank-emr580.jar"/>
+             <library id="piggybank-emr550.jar"/>
              <library id="commons-io-2.4.jar"/>
         </libraryNeededGroup>
 
