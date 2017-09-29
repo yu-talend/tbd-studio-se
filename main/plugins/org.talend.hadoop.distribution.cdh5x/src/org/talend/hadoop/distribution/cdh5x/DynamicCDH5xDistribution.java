@@ -23,6 +23,7 @@ import org.talend.core.runtime.dynamic.DynamicFactory;
 import org.talend.core.runtime.dynamic.DynamicServiceUtil;
 import org.talend.core.runtime.dynamic.IDynamicPlugin;
 import org.talend.core.runtime.dynamic.IDynamicPluginConfiguration;
+import org.talend.designer.maven.aether.IDynamicMonitor;
 import org.talend.hadoop.distribution.component.HBaseComponent;
 import org.talend.hadoop.distribution.component.HCatalogComponent;
 import org.talend.hadoop.distribution.component.HDFSComponent;
@@ -35,12 +36,18 @@ import org.talend.hadoop.distribution.component.PigComponent;
 import org.talend.hadoop.distribution.component.SparkBatchComponent;
 import org.talend.hadoop.distribution.component.SparkStreamingComponent;
 import org.talend.hadoop.distribution.component.SqoopComponent;
-import org.talend.hadoop.distribution.dynamic.IDynamicDistribution;
+import org.talend.hadoop.distribution.dynamic.AbstractDynamicDistribution;
+import org.talend.hadoop.distribution.dynamic.DynamicConfiguration;
+import org.talend.hadoop.distribution.dynamic.cdh.IDynamicCDHDistribution;
 
 /**
  * DOC cmeng  class global comment. Detailled comment
  */
-public class DynamicCDHDistribution implements IDynamicDistribution {
+public class DynamicCDH5xDistribution extends AbstractDynamicDistribution implements IDynamicCDHDistribution {
+
+    public static final String TEMPLATE_FOLDER_PATH = "resources/template/"; //$NON-NLS-1$
+
+    public static final String BUILD_IN_FOLDER_PATH = "resources/buildin/"; //$NON-NLS-1$
 
     private CDH5xDistributionTemplate cdhService;
 
@@ -49,7 +56,7 @@ public class DynamicCDHDistribution implements IDynamicDistribution {
     private ServiceRegistration osgiService;
 
     @Override
-    public void regist() throws Exception {
+    public void regist(IDynamicMonitor monitor) throws Exception {
         if (true) {
             return;
         }
@@ -87,9 +94,35 @@ public class DynamicCDHDistribution implements IDynamicDistribution {
     }
 
     @Override
-    public void unregist() throws Exception {
+    public void unregist(IDynamicMonitor monitor) throws Exception {
         DynamicServiceUtil.unregistOSGiService(osgiService);
         DynamicServiceUtil.removeContribution(runtimePlugin);
+    }
+
+    @Override
+    public IDynamicPlugin buildDynamicPlugin(IDynamicMonitor monitor, DynamicConfiguration configuration) throws Exception {
+        return null;
+    }
+
+    @Override
+    protected String getTemplateFolderPath() {
+        return TEMPLATE_FOLDER_PATH;
+    }
+
+    @Override
+    protected Bundle getBundle() {
+        CDH5xPlugin cdh5xPlugin = CDH5xPlugin.getInstance();
+        return cdh5xPlugin.getBundle();
+    }
+
+    @Override
+    protected String getBuildinFolderPath() {
+        return BUILD_IN_FOLDER_PATH;
+    }
+
+    @Override
+    public String getDistributionName() {
+        return IDynamicCDHDistribution.DISTRIBUTION;
     }
 
 }

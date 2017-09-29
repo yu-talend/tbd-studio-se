@@ -60,7 +60,7 @@ public final class DistributionsManager implements IDistributionsManager {
                 for (ServiceReference<IDynamicDistribution> sr : serviceReferences) {
                     IDynamicDistribution service = bc.getService(sr);
                     try {
-                        service.regist();
+                        service.regist(null);
                     } catch (Exception e) {
                         ExceptionHandler.process(e);
                     }

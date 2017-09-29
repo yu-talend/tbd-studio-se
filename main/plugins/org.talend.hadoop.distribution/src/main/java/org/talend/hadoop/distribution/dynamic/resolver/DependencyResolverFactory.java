@@ -13,6 +13,8 @@
 package org.talend.hadoop.distribution.dynamic.resolver;
 
 import org.talend.hadoop.distribution.dynamic.DynamicConfiguration;
+import org.talend.hadoop.distribution.dynamic.resolver.cdh.ClouderaDependencyResolver;
+import org.talend.hadoop.distribution.dynamic.resolver.cdh.IClouderaDependencyResolver;
 
 /**
  * DOC cmeng  class global comment. Detailled comment

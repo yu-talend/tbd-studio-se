@@ -16,7 +16,7 @@ public class DynamicChoicePage extends AbstractDynamicConfigurationPage {
     @Override
     public void createControl(Composite parent) {
 
-        AbstractDynamicDistributionForm setupForm = new DynamicBuildConfigurationFrom(parent, SWT.NONE);
+        AbstractDynamicDistributionForm setupForm = new DynamicBuildConfigurationForm(parent, SWT.NONE);
 
         setControl(setupForm);
         

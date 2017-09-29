@@ -97,6 +97,7 @@ public class DynamicTemplateAdapter extends AbstractDynamicAdapter {
         String name = (String) DynamicDistributionUtils.calculate(templateBean, templateBean.getName());
         String description = (String) DynamicDistributionUtils.calculate(templateBean, templateBean.getDescription());
         String distribution = (String) DynamicDistributionUtils.calculate(templateBean, templateBean.getDistribution());
+        String templateId = (String) DynamicDistributionUtils.calculate(templateBean, templateBean.getTemplateId());
         String repository = (String) DynamicDistributionUtils.calculate(templateBean, templateBean.getRepository());
         String baseVersion = (String) DynamicDistributionUtils.calculate(templateBean, templateBean.getBaseVersion());
         String topVersion = (String) DynamicDistributionUtils.calculate(templateBean, templateBean.getTopVersion());
@@ -106,6 +107,7 @@ public class DynamicTemplateAdapter extends AbstractDynamicAdapter {
         templateBean.setName(name);
         templateBean.setDescription(description);
         templateBean.setDistribution(distribution);
+        templateBean.setTemplateId(templateId);
         templateBean.setRepository(repository);
         templateBean.setBaseVersion(baseVersion);
         templateBean.setTopVersion(topVersion);

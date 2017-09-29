@@ -26,6 +26,8 @@ public class TemplateBean implements IVariable {
 
     public static final String ATTR_DISTRIBUTION = "distribution"; //$NON-NLS-1$
 
+    public static final String ATTR_TEMPLATE_ID = "templateId"; //$NON-NLS-1$
+
     public static final String ATTR_DESCRIPTION = "description"; //$NON-NLS-1$
 
     public static final String ATTR_REPOSITORY = "repository"; //$NON-NLS-1$
@@ -59,6 +61,8 @@ public class TemplateBean implements IVariable {
     private String name;
 
     private String distribution;
+
+    private String templateId;
 
     private String dynamicVersion;
 
@@ -110,6 +114,14 @@ public class TemplateBean implements IVariable {
 
     public void setDistribution(String distribution) {
         this.distribution = distribution;
+    }
+
+    public String getTemplateId() {
+        return this.templateId;
+    }
+
+    public void setTemplateId(String templateId) {
+        this.templateId = templateId;
     }
 
     public String getDescription() {
@@ -272,6 +284,9 @@ public class TemplateBean implements IVariable {
             break;
         case ATTR_SERVICES:
             value = getServices();
+            break;
+        case ATTR_TEMPLATE_ID:
+            value = getTemplateId();
             break;
         case ATTR_TOP_VERSION:
             value = getTopVersion();

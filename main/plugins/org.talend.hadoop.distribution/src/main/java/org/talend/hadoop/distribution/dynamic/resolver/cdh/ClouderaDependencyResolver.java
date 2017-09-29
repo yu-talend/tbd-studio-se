@@ -10,7 +10,7 @@
 // 9 rue Pages 92150 Suresnes, France
 //
 // ============================================================================
-package org.talend.hadoop.distribution.dynamic.resolver;
+package org.talend.hadoop.distribution.dynamic.resolver.cdh;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +21,7 @@ import org.talend.commons.exception.ExceptionHandler;
 import org.talend.designer.maven.aether.IDynamicMonitor;
 import org.talend.designer.maven.aether.util.DynamicDistributionAetherUtils;
 import org.talend.hadoop.distribution.dynamic.DynamicConfiguration;
+import org.talend.hadoop.distribution.dynamic.resolver.AbstractDependencyResolver;
 
 /**
  * DOC cmeng  class global comment. Detailled comment
@@ -67,7 +68,7 @@ public class ClouderaDependencyResolver extends AbstractDependencyResolver imple
                 continue;
             }
             String cleanVersion = matcher.group();
-            cleanVersions.add(cleanVersion);
+            cleanVersions.add(cleanVersion.substring(3));
         }
         return cleanVersions;
     }

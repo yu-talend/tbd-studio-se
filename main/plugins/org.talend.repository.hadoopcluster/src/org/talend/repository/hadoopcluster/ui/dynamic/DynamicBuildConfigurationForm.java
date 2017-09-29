@@ -28,7 +28,7 @@ import org.talend.repository.hadoopcluster.i18n.Messages;
 /**
  * DOC cmeng  class global comment. Detailled comment
  */
-public class DynamicBuildConfigurationFrom extends AbstractDynamicDistributionForm {
+public class DynamicBuildConfigurationForm extends AbstractDynamicDistributionForm {
 
     private Button fetchVersionBtn;
 
@@ -44,7 +44,7 @@ public class DynamicBuildConfigurationFrom extends AbstractDynamicDistributionFo
 
     private Composite fetchGroup;
 
-    public DynamicBuildConfigurationFrom(Composite parent, int style) {
+    public DynamicBuildConfigurationForm(Composite parent, int style) {
         super(parent, style);
         this.setLayout(new FillLayout());
         createControl();

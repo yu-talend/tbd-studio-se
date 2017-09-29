@@ -39,6 +39,7 @@ public class DynamicDistriConfigAdapter extends AbstractDynamicAdapter {
         String description = templateBean.getDescription();
         String distribution = templateBean.getDistribution();
         String repository = templateBean.getRepository();
+        String templateId = templateBean.getTemplateId();
 
         if (!StringUtils.equals(distribution, configuration.getDistribution())) {
             throw new Exception("Different distribution: " + distribution + "<>" + configuration.getDistribution());
@@ -49,6 +50,7 @@ public class DynamicDistriConfigAdapter extends AbstractDynamicAdapter {
         pluginConfiguration.setVersion(configuration.getVersion());
         pluginConfiguration.setDescription(description);
         pluginConfiguration.setDistribution(distribution);
+        pluginConfiguration.setTemplateId(templateId);
         pluginConfiguration.setRepository(repository);
 
         return pluginConfiguration;
