@@ -15,9 +15,14 @@ package org.talend.hadoop.distribution.dynamic;
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
@@ -29,6 +34,7 @@ import org.talend.core.runtime.dynamic.DynamicServiceUtil;
 import org.talend.core.runtime.dynamic.IDynamicPlugin;
 import org.talend.designer.maven.aether.IDynamicMonitor;
 import org.talend.designer.maven.aether.util.DynamicDistributionAetherUtils;
+import org.talend.hadoop.distribution.dynamic.adapter.DynamicTemplateAdapter;
 import org.talend.hadoop.distribution.dynamic.bean.TemplateBean;
 import org.talend.hadoop.distribution.dynamic.resolver.DependencyResolverFactory;
 import org.talend.hadoop.distribution.dynamic.resolver.IDependencyResolver;
@@ -44,6 +50,8 @@ public abstract class AbstractDynamicDistribution implements IDynamicDistributio
     private List<IDynamicPlugin> buildinPluginsCache;
 
     private List<TemplateBean> templateBeansCache;
+
+    private Map<TemplateBean, List<String>> templateBeanVersionMap;
 
     abstract protected Bundle getBundle();
 
@@ -122,6 +130,7 @@ public abstract class AbstractDynamicDistribution implements IDynamicDistributio
         Set<String> allCompatibleVersion = new HashSet<>();
         List<TemplateBean> templates = getTemplates(monitor);
         if (templates != null) {
+            templateBeanVersionMap = new HashMap<>();
             DynamicConfiguration dynamicConfiguration = new DynamicConfiguration();
             dynamicConfiguration.setDistribution(getDistributionName());
             IDependencyResolver dependencyResolver = DependencyResolverFactory.getInstance()
@@ -146,13 +155,44 @@ public abstract class AbstractDynamicDistribution implements IDynamicDistributio
                             versionRange);
                     if (filteredVersions != null && !filteredVersions.isEmpty()) {
                         allCompatibleVersion.addAll(filteredVersions);
+                        templateBeanVersionMap.put(templateBean, filteredVersions);
                     }
                 }
             }
         }
-        List<String> compatibleVersionList = new ArrayList<>(allCompatibleVersion);
-        compatibleVersionList.sort(null);
+        List<String> compatibleVersionList = new LinkedList<>(allCompatibleVersion);
+        Collections.reverse(compatibleVersionList);
         return compatibleVersionList;
+    }
+
+    @Override
+    public IDynamicPlugin buildDynamicPlugin(IDynamicMonitor monitor, DynamicConfiguration configuration) throws Exception {
+        String distribution = configuration.getDistribution();
+        if (!StringUtils.equals(getDistributionName(), distribution)) {
+            throw new Exception(
+                    "only support to build dynamic plugin of " + getDistributionName() + " instead of " + distribution);
+        }
+        String version = configuration.getVersion();
+        Set<Entry<TemplateBean, List<String>>> entrySet = templateBeanVersionMap.entrySet();
+        TemplateBean bestTemplateBean = null;
+        int distance = -1;
+        for (Entry<TemplateBean, List<String>> entry : entrySet) {
+            List<String> list = entry.getValue();
+            Collections.reverse(list);
+            int size = list.size();
+            int index = list.indexOf(version);
+            int curDistance = size - index;
+            if (distance < curDistance) {
+                curDistance = distance;
+                bestTemplateBean = entry.getKey();
+            }
+        }
+
+        DynamicTemplateAdapter templateAdapter = new DynamicTemplateAdapter(bestTemplateBean, configuration);
+        templateAdapter.adapt(monitor);
+        IDynamicPlugin dynamicPlugin = templateAdapter.getDynamicPlugin();
+
+        return dynamicPlugin;
     }
 
     public List<IDynamicPlugin> getBuildinPluginsCache() {

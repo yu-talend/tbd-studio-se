@@ -23,6 +23,9 @@ import org.talend.hadoop.distribution.dynamic.bean.TemplateBean;
  */
 public interface IDynamicDistribution {
 
+    /**
+     * must return a sorted list
+     */
     public List<String> getCompatibleVersions(IDynamicMonitor monitor) throws Exception;
 
     public List<TemplateBean> getTemplates(IDynamicMonitor monitor) throws Exception;

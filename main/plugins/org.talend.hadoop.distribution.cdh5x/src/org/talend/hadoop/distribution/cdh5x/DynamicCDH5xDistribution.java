@@ -37,7 +37,6 @@ import org.talend.hadoop.distribution.component.SparkBatchComponent;
 import org.talend.hadoop.distribution.component.SparkStreamingComponent;
 import org.talend.hadoop.distribution.component.SqoopComponent;
 import org.talend.hadoop.distribution.dynamic.AbstractDynamicDistribution;
-import org.talend.hadoop.distribution.dynamic.DynamicConfiguration;
 import org.talend.hadoop.distribution.dynamic.cdh.IDynamicCDHDistribution;
 
 /**
@@ -97,11 +96,6 @@ public class DynamicCDH5xDistribution extends AbstractDynamicDistribution implem
     public void unregist(IDynamicMonitor monitor) throws Exception {
         DynamicServiceUtil.unregistOSGiService(osgiService);
         DynamicServiceUtil.removeContribution(runtimePlugin);
-    }
-
-    @Override
-    public IDynamicPlugin buildDynamicPlugin(IDynamicMonitor monitor, DynamicConfiguration configuration) throws Exception {
-        return null;
     }
 
     @Override

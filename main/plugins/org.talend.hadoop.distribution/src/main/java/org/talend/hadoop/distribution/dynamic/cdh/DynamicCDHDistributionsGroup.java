@@ -27,29 +27,39 @@ import org.talend.hadoop.distribution.dynamic.bean.TemplateBean;
  */
 public class DynamicCDHDistributionsGroup extends AbstractDynamicDistributionsGroup {
 
+    @Override
     public List<String> getCompatibleVersions(IDynamicMonitor monitor) throws Exception {
         return null;
     }
 
+    @Override
     public List<TemplateBean> getAllTemplates(IDynamicMonitor monitor) throws Exception {
         return null;
     }
 
+    @Override
     public IDynamicPlugin buildDynamicPlugin(IDynamicMonitor monitor, DynamicConfiguration configuration) throws Exception {
         return null;
     }
 
+    @Override
     public List<IDynamicPlugin> getAllUsersDynamicPlugins(IDynamicMonitor monitor) throws Exception {
         return null;
     }
 
+    @Override
     public List<IDynamicPlugin> getAllBuildinDynamicPlugins(IDynamicMonitor monitor) throws Exception {
         return null;
     }
 
     @Override
-    protected String getDistribution() {
+    public String getDistribution() {
         return IClouderaDistribution.DISTRIBUTION_NAME;
+    }
+
+    @Override
+    public String getDistributionDisplay() {
+        return IClouderaDistribution.DISTRIBUTION_DISPLAY_NAME;
     }
 
     @Override

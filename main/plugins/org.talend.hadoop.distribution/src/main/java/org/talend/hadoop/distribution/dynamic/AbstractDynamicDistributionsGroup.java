@@ -14,15 +14,19 @@ package org.talend.hadoop.distribution.dynamic;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceReference;
+import org.talend.commons.exception.ExceptionHandler;
 import org.talend.core.runtime.dynamic.IDynamicPlugin;
 import org.talend.designer.maven.aether.IDynamicMonitor;
 import org.talend.hadoop.distribution.dynamic.bean.TemplateBean;
@@ -36,7 +40,9 @@ public abstract class AbstractDynamicDistributionsGroup {
 
     private Map<IDynamicDistribution, List<String>> compatibleDistribuionVersionMap;
 
-    abstract protected String getDistribution();
+    abstract public String getDistribution();
+
+    abstract public String getDistributionDisplay();
 
     abstract protected Class<? extends IDynamicDistribution> getDynamicDistributionClass();
 
@@ -46,15 +52,19 @@ public abstract class AbstractDynamicDistributionsGroup {
         List<IDynamicDistribution> allRegistedDynamicDistributions = getAllRegistedDynamicDistributions(monitor);
         if (allRegistedDynamicDistributions != null) {
             for (IDynamicDistribution dynamicDistribution : allRegistedDynamicDistributions) {
-                List<String> curCompatibleVersions = dynamicDistribution.getCompatibleVersions(monitor);
-                if (curCompatibleVersions != null && !curCompatibleVersions.isEmpty()) {
-                    compatibleDistribuionVersionMap.put(dynamicDistribution, curCompatibleVersions);
-                    compatibleVersions.addAll(curCompatibleVersions);
+                try {
+                    List<String> curCompatibleVersions = dynamicDistribution.getCompatibleVersions(monitor);
+                    if (curCompatibleVersions != null && !curCompatibleVersions.isEmpty()) {
+                        compatibleDistribuionVersionMap.put(dynamicDistribution, curCompatibleVersions);
+                        compatibleVersions.addAll(curCompatibleVersions);
+                    }
+                } catch (Exception e) {
+                    ExceptionHandler.process(e);
                 }
             }
         }
         List<String> compatibleVersionList = new ArrayList<>(compatibleVersions);
-        compatibleVersionList.sort(null);
+        Collections.reverse(compatibleVersionList);
         return compatibleVersionList;
     }
 
@@ -63,15 +73,38 @@ public abstract class AbstractDynamicDistributionsGroup {
         List<IDynamicDistribution> allRegistedDynamicDistributions = getAllRegistedDynamicDistributions(monitor);
         if (allRegistedDynamicDistributions != null) {
             for (IDynamicDistribution dynamicDistribution : allRegistedDynamicDistributions) {
-                List<TemplateBean> templates = dynamicDistribution.getTemplates(monitor);
-                templateBeans.addAll(templates);
+                try {
+                    List<TemplateBean> templates = dynamicDistribution.getTemplates(monitor);
+                    templateBeans.addAll(templates);
+                } catch (Exception e) {
+                    ExceptionHandler.process(e);
+                }
             }
         }
         return templateBeans;
     }
 
     public IDynamicPlugin buildDynamicPlugin(IDynamicMonitor monitor, DynamicConfiguration configuration) throws Exception {
-        return null;
+        String distribution = configuration.getDistribution();
+        if (!StringUtils.equals(getDistribution(), distribution)) {
+            throw new Exception("only support to build dynamic plugin of " + getDistribution() + " instead of " + distribution);
+        }
+        String version = configuration.getVersion();
+        Set<Entry<IDynamicDistribution, List<String>>> entrySet = compatibleDistribuionVersionMap.entrySet();
+        IDynamicDistribution bestDistribution = null;
+        int distance = -1;
+        for (Entry<IDynamicDistribution, List<String>> entry : entrySet) {
+            List<String> list = entry.getValue();
+            Collections.reverse(list);
+            int size = list.size();
+            int index = list.indexOf(version);
+            int curDistance = size - index;
+            if (distance < curDistance) {
+                curDistance = distance;
+                bestDistribution = entry.getKey();
+            }
+        }
+        return bestDistribution.buildDynamicPlugin(monitor, configuration);
     }
 
     public List<IDynamicPlugin> getAllUsersDynamicPlugins(IDynamicMonitor monitor) throws Exception {
@@ -79,14 +112,30 @@ public abstract class AbstractDynamicDistributionsGroup {
     }
 
     public List<IDynamicPlugin> getAllBuildinDynamicPlugins(IDynamicMonitor monitor) throws Exception {
-        return null;
+        List<IDynamicPlugin> dynamicPlugins = new ArrayList<>();
+        List<IDynamicDistribution> allRegistedDynamicDistributions = getAllRegistedDynamicDistributions(monitor);
+        if (allRegistedDynamicDistributions != null) {
+            for (IDynamicDistribution dynamicDistribution : allRegistedDynamicDistributions) {
+                try {
+                    List<IDynamicPlugin> allBuildinDynamicPlugins = dynamicDistribution.getAllBuildinDynamicPlugins(monitor);
+                    if (allBuildinDynamicPlugins != null) {
+                        dynamicPlugins.addAll(allBuildinDynamicPlugins);
+                    }
+                } catch (Exception e) {
+                    ExceptionHandler.process(e);
+                }
+            }
+        }
+        return dynamicPlugins;
     }
 
     public List<String> getAllVersions(IDynamicMonitor monitor) throws Exception {
         DynamicConfiguration configuration = new DynamicConfiguration();
         configuration.setDistribution(getDistribution());
         IDependencyResolver resolver = DependencyResolverFactory.getInstance().getDependencyResolver(configuration);
-        return resolver.listHadoopVersions(null, null, monitor);
+        List<String> allVersions = resolver.listHadoopVersions(null, null, monitor);
+        Collections.reverse(allVersions);
+        return allVersions;
     }
 
     public List<IDynamicDistribution> getAllRegistedDynamicDistributions(IDynamicMonitor monitor) throws Exception {
