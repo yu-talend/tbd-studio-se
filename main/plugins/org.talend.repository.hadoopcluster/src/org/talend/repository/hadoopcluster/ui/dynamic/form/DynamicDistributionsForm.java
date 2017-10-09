@@ -14,6 +14,7 @@ package org.talend.repository.hadoopcluster.ui.dynamic.form;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -23,6 +24,7 @@ import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -36,6 +38,9 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.PlatformUI;
 import org.talend.commons.exception.ExceptionHandler;
+import org.talend.core.runtime.dynamic.IDynamicPlugin;
+import org.talend.core.runtime.dynamic.IDynamicPluginConfiguration;
+import org.talend.designer.maven.aether.IDynamicMonitor;
 import org.talend.hadoop.distribution.dynamic.AbstractDynamicDistributionsGroup;
 import org.talend.hadoop.distribution.dynamic.DynamicDistributionManager;
 import org.talend.repository.hadoopcluster.i18n.Messages;
@@ -54,10 +59,10 @@ public class DynamicDistributionsForm extends AbstractDynamicDistributionForm {
 
     private Map<String, AbstractDynamicDistributionsGroup> dynDistriGroupMap = new HashMap<>();
 
-    public DynamicDistributionsForm(Composite parent, int style) {
+    public DynamicDistributionsForm(Composite parent, int style, IDynamicMonitor monitor) {
         super(parent, style);
         createControl();
-        loadData();
+        loadData(monitor);
         addListeners();
     }
 
@@ -142,7 +147,7 @@ public class DynamicDistributionsForm extends AbstractDynamicDistributionForm {
         });
     }
 
-    private void loadData() {
+    private void loadData(IDynamicMonitor monitor) {
         try {
             dynDistriGroupMap.clear();
             DynamicDistributionManager dynDistriManager = DynamicDistributionManager.getInstance();
@@ -155,13 +160,17 @@ public class DynamicDistributionsForm extends AbstractDynamicDistributionForm {
                 List<String> distributionDisplayNames = new LinkedList<>(dynDistriGroupMap.keySet());
                 Collections.sort(distributionDisplayNames);
                 distributionCombo.setInput(distributionDisplayNames);
+                if (0 < distributionDisplayNames.size()) {
+                    distributionCombo.setSelection(new StructuredSelection(distributionDisplayNames.get(0)));
+                    refreshVersionList(monitor);
+                }
             }
         } catch (Exception e) {
             ExceptionHandler.process(e);
         }
     }
 
-    private void refreshVersionList() {
+    private void refreshVersionList(IDynamicMonitor monitor) {
         try {
             IStructuredSelection selection = (IStructuredSelection) distributionCombo.getSelection();
             if (selection != null) {
@@ -171,6 +180,32 @@ public class DynamicDistributionsForm extends AbstractDynamicDistributionForm {
                     if (dynDistriGroup == null) {
                         throw new Exception(Messages.getString("DynamicDistributionsForm.exception.noDistributionGroupFound", //$NON-NLS-1$
                                 dynDistriGroup));
+                    }
+                    List<IDynamicPlugin> dynamicPlugins = new LinkedList<>();
+                    List<IDynamicPlugin> allBuildinDynamicPlugins = dynDistriGroup.getAllBuildinDynamicPlugins(monitor);
+                    if (allBuildinDynamicPlugins != null && !allBuildinDynamicPlugins.isEmpty()) {
+                        dynamicPlugins.addAll(allBuildinDynamicPlugins);
+                    }
+                    List<IDynamicPlugin> allUsersDynamicPlugins = dynDistriGroup.getAllUsersDynamicPlugins(monitor);
+                    if (allUsersDynamicPlugins != null && !allUsersDynamicPlugins.isEmpty()) {
+                        dynamicPlugins.addAll(allUsersDynamicPlugins);
+                    }
+                    List<String> versions = new LinkedList<>();
+                    Iterator<IDynamicPlugin> iter = dynamicPlugins.iterator();
+                    while (iter.hasNext()) {
+                        try {
+                            IDynamicPlugin plugin = iter.next();
+                            IDynamicPluginConfiguration pluginConfiguration = plugin.getPluginConfiguration();
+                            String name = pluginConfiguration.getName();
+                            versions.add(name);
+                        } catch (Exception e) {
+                            ExceptionHandler.process(e);
+                        }
+                    }
+                    Collections.reverse(versions);
+                    versionCombo.setInput(versions);
+                    if (0 < versions.size()) {
+                        versionCombo.setSelection(new StructuredSelection(versions.get(0)));
                     }
                 }
             }

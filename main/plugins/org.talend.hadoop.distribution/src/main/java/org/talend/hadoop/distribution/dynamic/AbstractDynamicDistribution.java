@@ -38,6 +38,7 @@ import org.talend.hadoop.distribution.dynamic.adapter.DynamicTemplateAdapter;
 import org.talend.hadoop.distribution.dynamic.bean.TemplateBean;
 import org.talend.hadoop.distribution.dynamic.resolver.DependencyResolverFactory;
 import org.talend.hadoop.distribution.dynamic.resolver.IDependencyResolver;
+import org.talend.hadoop.distribution.helper.HadoopDistributionsHelper;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -48,6 +49,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public abstract class AbstractDynamicDistribution implements IDynamicDistribution {
 
     private List<IDynamicPlugin> buildinPluginsCache;
+
+    private List<IDynamicPlugin> usersPluginsCache;
+
+    private String usersPluginsCacheVersion = ""; //$NON-NLS-1$
 
     private List<TemplateBean> templateBeansCache;
 
@@ -123,6 +128,40 @@ public abstract class AbstractDynamicDistribution implements IDynamicDistributio
         buildinPluginsCache = dynamicPlugins;
 
         return buildinPluginsCache;
+    }
+
+    @Override
+    public List<IDynamicPlugin> getAllUsersDynamicPlugins(IDynamicMonitor monitor) throws Exception {
+        if (usersPluginsCache != null) {
+            String systemCacheVersion = HadoopDistributionsHelper.getCacheVersion();
+            if (StringUtils.equals(systemCacheVersion, usersPluginsCacheVersion)) {
+                return usersPluginsCache;
+            }
+        }
+        usersPluginsCacheVersion = HadoopDistributionsHelper.getCacheVersion();
+
+        List<IDynamicPlugin> dynamicPlugins = new ArrayList<>();
+
+        Bundle bundle = getBundle();
+
+        Enumeration<URL> entries = bundle.findEntries(getBuildinFolderPath(), null, true);
+
+        if (entries != null) {
+            while (entries.hasMoreElements()) {
+                try {
+                    URL curUrl = entries.nextElement();
+                    if (curUrl != null) {
+                        String buildinDistributionPath = FileLocator.toFileURL(curUrl).getPath();
+                        String jsonContent = DynamicServiceUtil.readFile(new File(buildinDistributionPath));
+                        IDynamicPlugin dynamicPlugin = DynamicFactory.getInstance().createPluginFromJson(jsonContent);
+                        dynamicPlugins.add(dynamicPlugin);
+                    }
+                } catch (Exception e) {
+                    ExceptionHandler.process(e);
+                }
+            }
+        }
+        return usersPluginsCache;
     }
 
     @Override

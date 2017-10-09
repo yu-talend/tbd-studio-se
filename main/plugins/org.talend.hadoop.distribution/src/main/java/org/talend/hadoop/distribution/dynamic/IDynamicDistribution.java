@@ -34,9 +34,7 @@ public interface IDynamicDistribution {
 
     public List<IDynamicPlugin> getAllBuildinDynamicPlugins(IDynamicMonitor monitor) throws Exception;
 
-    public void regist(IDynamicMonitor monitor) throws Exception;
-
-    public void unregist(IDynamicMonitor monitor) throws Exception;
+    public List<IDynamicPlugin> getAllUsersDynamicPlugins(IDynamicMonitor monitor) throws Exception;
 
     public String getDistributionName();
 

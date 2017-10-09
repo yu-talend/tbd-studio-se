@@ -54,7 +54,6 @@ public class DynamicCDH5xDistribution extends AbstractDynamicDistribution implem
 
     private ServiceRegistration osgiService;
 
-    @Override
     public void regist(IDynamicMonitor monitor) throws Exception {
         if (true) {
             return;
@@ -92,7 +91,6 @@ public class DynamicCDH5xDistribution extends AbstractDynamicDistribution implem
 
     }
 
-    @Override
     public void unregist(IDynamicMonitor monitor) throws Exception {
         DynamicServiceUtil.unregistOSGiService(osgiService);
         DynamicServiceUtil.removeContribution(runtimePlugin);

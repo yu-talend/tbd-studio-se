@@ -35,7 +35,6 @@ import org.talend.hadoop.distribution.ComponentType;
 import org.talend.hadoop.distribution.DistributionFactory;
 import org.talend.hadoop.distribution.component.HadoopComponent;
 import org.talend.hadoop.distribution.constants.Constant;
-import org.talend.hadoop.distribution.dynamic.IDynamicDistribution;
 import org.talend.hadoop.distribution.model.DistributionBean;
 import org.talend.hadoop.distribution.model.DistributionVersion;
 
@@ -51,25 +50,25 @@ public final class DistributionsManager implements IDistributionsManager {
 
     private ServiceListener serviceListener;
 
-    static {
-        try {
-            BundleContext bc = getBundleContext();
-            Collection<ServiceReference<IDynamicDistribution>> serviceReferences = bc
-                    .getServiceReferences(IDynamicDistribution.class, null);
-            if (serviceReferences != null && !serviceReferences.isEmpty()) {
-                for (ServiceReference<IDynamicDistribution> sr : serviceReferences) {
-                    IDynamicDistribution service = bc.getService(sr);
-                    try {
-                        service.regist(null);
-                    } catch (Exception e) {
-                        ExceptionHandler.process(e);
-                    }
-                }
-            }
-        } catch (Exception e) {
-            ExceptionHandler.process(e);
-        }
-    }
+    // static {
+    // try {
+    // BundleContext bc = getBundleContext();
+    // Collection<ServiceReference<IDynamicDistribution>> serviceReferences = bc
+    // .getServiceReferences(IDynamicDistribution.class, null);
+    // if (serviceReferences != null && !serviceReferences.isEmpty()) {
+    // for (ServiceReference<IDynamicDistribution> sr : serviceReferences) {
+    // IDynamicDistribution service = bc.getService(sr);
+    // try {
+    // service.regist(null);
+    // } catch (Exception e) {
+    // ExceptionHandler.process(e);
+    // }
+    // }
+    // }
+    // } catch (Exception e) {
+    // ExceptionHandler.process(e);
+    // }
+    // }
 
     /**
      * Service can't be null. if the service is HadoopComponent directly, the componentType will be null.
