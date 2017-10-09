@@ -10,31 +10,30 @@
 // 9 rue Pages 92150 Suresnes, France
 //
 // ============================================================================
-package org.talend.repository.hadoopcluster.ui.dynamic;
+package org.talend.repository.hadoopcluster.ui.dynamic.page;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.talend.repository.hadoopcluster.ui.dynamic.form.DynamicDistributionsForm;
+import org.talend.repository.preference.ProjectSettingPage;
 
 
 /**
  * DOC cmeng  class global comment. Detailled comment
  */
-public class AbstractDynamicDistributionForm extends Composite {
+public class DynamicDistributionSettingPage extends ProjectSettingPage {
 
-    public AbstractDynamicDistributionForm(Composite parent, int style) {
-        super(parent, style);
+    @Override
+    public void refresh() {
+        // TODO Auto-generated method stub
+
     }
 
-    public static Point getNewButtonSize(Button btn) {
-        return getNewButtonSize(btn, 6);
-    }
-
-    public static Point getNewButtonSize(Button btn, int hPadding) {
-        Point btnSize = btn.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-        btnSize.x += hPadding * 2;
-        return btnSize;
+    @Override
+    protected Control createContents(Composite parent) {
+        DynamicDistributionsForm existingConfigForm = new DynamicDistributionsForm(parent, SWT.NONE);
+        return existingConfigForm;
     }
 
 }

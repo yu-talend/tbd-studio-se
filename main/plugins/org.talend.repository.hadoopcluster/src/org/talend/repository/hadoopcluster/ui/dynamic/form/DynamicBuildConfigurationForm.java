@@ -10,13 +10,14 @@
 // 9 rue Pages 92150 Suresnes, France
 //
 // ============================================================================
-package org.talend.repository.hadoopcluster.ui.dynamic;
+package org.talend.repository.hadoopcluster.ui.dynamic.form;
 
+import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
+import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
@@ -46,7 +47,6 @@ public class DynamicBuildConfigurationForm extends AbstractDynamicDistributionFo
 
     public DynamicBuildConfigurationForm(Composite parent, int style) {
         super(parent, style);
-        this.setLayout(new FillLayout());
         createControl();
     }
 
@@ -54,17 +54,11 @@ public class DynamicBuildConfigurationForm extends AbstractDynamicDistributionFo
 
         Composite parent = this;
 
-        Composite container = new Composite(parent, SWT.NONE);
-        FormLayout formLayout = new FormLayout();
-        formLayout.marginTop = 10;
-        formLayout.marginBottom = 10;
-        formLayout.marginLeft = 10;
-        formLayout.marginRight = 10;
-        container.setLayout(formLayout);
+        Composite container = createFormContainer(parent);
 
-        int ALIGN_VERTICAL = 12;
-        int ALIGN_GROUP_VERTICAL = 7;
-        int ALIGN_HORIZON = 10;
+        int ALIGN_VERTICAL = getAlignVertical();
+        int ALIGN_VERTICAL_INNER = getAlignVerticalInner();
+        int ALIGN_HORIZON = getAlignHorizon();
 
         fetchVersionBtn = new Button(container, SWT.PUSH);
         fetchVersionBtn.setText(Messages.getString("DynamicBuildConfigurationForm.fetchBtn")); //$NON-NLS-1$
@@ -95,6 +89,8 @@ public class DynamicBuildConfigurationForm extends AbstractDynamicDistributionFo
 
         Label hadoopLabel = new Label(fetchGroup, SWT.NONE);
         hadoopVersionCombo = new ComboViewer(fetchGroup, SWT.READ_ONLY);
+        hadoopVersionCombo.setContentProvider(ArrayContentProvider.getInstance());
+        hadoopVersionCombo.setLabelProvider(new LabelProvider());
 
         hadoopLabel.setText(Messages.getString("DynamicBuildConfigurationForm.label.hadoop")); //$NON-NLS-1$
         formData = new FormData();
@@ -111,7 +107,7 @@ public class DynamicBuildConfigurationForm extends AbstractDynamicDistributionFo
         showOnlyCompatibleVersionBtn = new Button(fetchGroup, SWT.CHECK);
         showOnlyCompatibleVersionBtn.setText(Messages.getString("DynamicBuildConfigurationForm.showOnlyCompatibleVersionBtn")); //$NON-NLS-1$
         formData = new FormData();
-        formData.top = new FormAttachment(hadoopVersionCombo.getCombo(), ALIGN_GROUP_VERTICAL, SWT.BOTTOM);
+        formData.top = new FormAttachment(hadoopVersionCombo.getCombo(), ALIGN_VERTICAL_INNER, SWT.BOTTOM);
         formData.right = new FormAttachment(hadoopVersionCombo.getCombo(), 0, SWT.RIGHT);
         showOnlyCompatibleVersionBtn.setLayoutData(formData);
 
@@ -122,6 +118,8 @@ public class DynamicBuildConfigurationForm extends AbstractDynamicDistributionFo
         retrieveBaseJarsBtn.setLayoutData(formData);
 
         baseJarsTable = new TableViewer(container, SWT.BORDER);
+        baseJarsTable.setContentProvider(ArrayContentProvider.getInstance());
+        baseJarsTable.setLabelProvider(new LabelProvider());
         exportConfigBtn = new Button(container, SWT.PUSH);
 
         formData = new FormData();

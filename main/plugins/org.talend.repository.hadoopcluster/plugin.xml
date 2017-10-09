@@ -310,4 +310,14 @@
              version="6.4.0">
        </projecttask>
     </extension>
+    <extension
+         point="org.talend.repository.projectsetting_page">
+      <page
+            category="general"
+            class="org.talend.repository.hadoopcluster.ui.dynamic.page.DynamicDistributionSettingPage"
+            id="org.talend.repository.hadoopcluster.ui.dynamic.DynamicDistributionSettingPage"
+            order="0"
+            title="%projectsetting.dynamicDistributionSetting">
+      </page>
+   </extension>
 </plugin>

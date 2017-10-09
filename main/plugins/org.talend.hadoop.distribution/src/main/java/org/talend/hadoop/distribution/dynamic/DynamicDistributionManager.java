@@ -22,6 +22,19 @@ import org.talend.hadoop.distribution.dynamic.cdh.DynamicCDHDistributionsGroup;
  */
 public class DynamicDistributionManager {
 
+    private static DynamicDistributionManager instance;
+
+    private DynamicDistributionManager() {
+        // nothing to do
+    }
+
+    public static DynamicDistributionManager getInstance() {
+        if (instance == null) {
+            instance = new DynamicDistributionManager();
+        }
+        return instance;
+    }
+
     private List<AbstractDynamicDistributionsGroup> dynamicDistributionsGroups;
 
     public List<AbstractDynamicDistributionsGroup> getDynamicDistributionsGroups() throws Exception {
