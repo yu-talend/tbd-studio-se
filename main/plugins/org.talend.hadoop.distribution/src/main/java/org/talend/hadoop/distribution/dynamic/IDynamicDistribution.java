@@ -28,6 +28,8 @@ public interface IDynamicDistribution {
      */
     public List<String> getCompatibleVersions(IDynamicMonitor monitor) throws Exception;
 
+    public List<String> getSupportedTemplateIds(IDynamicMonitor monitor) throws Exception;
+
     public List<TemplateBean> getTemplates(IDynamicMonitor monitor) throws Exception;
 
     public IDynamicPlugin buildDynamicPlugin(IDynamicMonitor monitor, DynamicConfiguration configuration) throws Exception;
@@ -39,5 +41,9 @@ public interface IDynamicDistribution {
     public void regist(IDynamicPlugin dynamicPlugin, IDynamicMonitor monitor) throws Exception;
 
     public void unregist(IDynamicPlugin dynamicPlugin, IDynamicMonitor monitor) throws Exception;
+
+    public void registAllBuildin(IDynamicMonitor monitor) throws Exception;
+
+    public void unregistAllBuildin(IDynamicMonitor monitor) throws Exception;
 
 }

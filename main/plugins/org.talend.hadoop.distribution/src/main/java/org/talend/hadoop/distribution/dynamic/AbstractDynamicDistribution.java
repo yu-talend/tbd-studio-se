@@ -259,6 +259,38 @@ public abstract class AbstractDynamicDistribution implements IDynamicDistributio
         }
     }
 
+    @Override
+    public void registAllBuildin(IDynamicMonitor monitor) throws Exception {
+        List<IDynamicPlugin> allBuildinDynamicPlugins = getAllBuildinDynamicPlugins(monitor);
+        if (allBuildinDynamicPlugins == null || allBuildinDynamicPlugins.isEmpty()) {
+            ExceptionHandler.log(this.getClass().getSimpleName() + ": no build dynamic plugins found when registing");
+            return;
+        }
+        for (IDynamicPlugin dynamicPlugin : allBuildinDynamicPlugins) {
+            try {
+                regist(dynamicPlugin, monitor);
+            } catch (Throwable e) {
+                ExceptionHandler.process(e);
+            }
+        }
+    }
+
+    @Override
+    public void unregistAllBuildin(IDynamicMonitor monitor) throws Exception {
+        List<IDynamicPlugin> allBuildinDynamicPlugins = getAllBuildinDynamicPlugins(monitor);
+        if (allBuildinDynamicPlugins == null || allBuildinDynamicPlugins.isEmpty()) {
+            ExceptionHandler.log(this.getClass().getSimpleName() + ": no build dynamic plugins found when unregisting");
+            return;
+        }
+        for (IDynamicPlugin dynamicPlugin : allBuildinDynamicPlugins) {
+            try {
+                unregist(dynamicPlugin, monitor);
+            } catch (Throwable e) {
+                ExceptionHandler.process(e);
+            }
+        }
+    }
+
     abstract protected IDynamicDistributionTemplate initTemplate(DynamicPluginAdapter pluginAdapter, IDynamicMonitor monitor)
             throws Exception;
 

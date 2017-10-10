@@ -14,6 +14,8 @@ package org.talend.hadoop.distribution.cdh5x;
 
 import java.io.File;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.osgi.framework.Bundle;
@@ -112,6 +114,15 @@ public class DynamicCDH5xDistribution extends AbstractDynamicDistribution implem
             throw new Exception("Unknown templateId: " + templateId);
         }
         return dynamicDistributionTemplate;
+    }
+
+    @Override
+    public List<String> getSupportedTemplateIds(IDynamicMonitor monitor) throws Exception {
+        List<String> templateIds = new ArrayList<>();
+
+        templateIds.add(CDH5xDistributionTemplate.TEMPLATE_ID);
+
+        return templateIds;
     }
 
     @Override

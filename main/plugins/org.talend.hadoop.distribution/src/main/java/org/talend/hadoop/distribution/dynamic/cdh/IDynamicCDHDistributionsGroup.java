@@ -12,7 +12,6 @@
 // ============================================================================
 package org.talend.hadoop.distribution.dynamic.cdh;
 
-import org.talend.hadoop.distribution.constants.cdh.IClouderaDistribution;
 import org.talend.hadoop.distribution.dynamic.IDynamicDistributionsGroup;
 
 
@@ -21,6 +20,5 @@ import org.talend.hadoop.distribution.dynamic.IDynamicDistributionsGroup;
  */
 public interface IDynamicCDHDistributionsGroup extends IDynamicDistributionsGroup {
 
-    public static final String USERS_DYNAMIC_DISTRIBUTION_SUB_FOLDER = IClouderaDistribution.DISTRIBUTION_NAME;
 
 }

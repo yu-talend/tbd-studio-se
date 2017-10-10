@@ -203,9 +203,14 @@ public class DynamicDistributionsForm extends AbstractDynamicDistributionForm {
                     if (allBuildinDynamicPlugins != null && !allBuildinDynamicPlugins.isEmpty()) {
                         dynamicPlugins.addAll(allBuildinDynamicPlugins);
                     }
-                    List<IDynamicPlugin> allUsersDynamicPlugins = dynDistriGroup.getAllUsersDynamicPlugins(monitor);
+                    List<IDynamicPlugin> allUsersDynamicPlugins = DynamicDistributionManager.getInstance()
+                            .getAllUsersDynamicPlugins(monitor);
                     if (allUsersDynamicPlugins != null && !allUsersDynamicPlugins.isEmpty()) {
-                        dynamicPlugins.addAll(allUsersDynamicPlugins);
+                        List<IDynamicPlugin> tempDynamicPlugins = dynDistriGroup.filterDynamicPlugins(allUsersDynamicPlugins,
+                                monitor);
+                        if (tempDynamicPlugins != null && !tempDynamicPlugins.isEmpty()) {
+                            dynamicPlugins.addAll(tempDynamicPlugins);
+                        }
                     }
                     List<String> versions = new LinkedList<>();
                     Iterator<IDynamicPlugin> iter = dynamicPlugins.iterator();

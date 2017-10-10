@@ -12,6 +12,11 @@
 // ============================================================================
 package org.talend.hadoop.distribution.dynamic.cdh;
 
+import java.util.LinkedList;
+import java.util.List;
+
+import org.talend.core.runtime.dynamic.IDynamicPlugin;
+import org.talend.designer.maven.aether.IDynamicMonitor;
 import org.talend.hadoop.distribution.constants.cdh.IClouderaDistribution;
 import org.talend.hadoop.distribution.dynamic.AbstractDynamicDistributionsGroup;
 import org.talend.hadoop.distribution.dynamic.IDynamicDistribution;
@@ -20,8 +25,6 @@ import org.talend.hadoop.distribution.dynamic.IDynamicDistribution;
  * DOC cmeng  class global comment. Detailled comment
  */
 public class DynamicCDHDistributionsGroup extends AbstractDynamicDistributionsGroup implements IDynamicCDHDistributionsGroup {
-
-    public static final String USERS_FOLDER_PATH = USERS_DISTRIBUTIONS_ROOT_FOLDER + "/" + USERS_DYNAMIC_DISTRIBUTION_SUB_FOLDER; //$NON-NLS-1$
 
     @Override
     public String getDistribution() {
@@ -39,8 +42,17 @@ public class DynamicCDHDistributionsGroup extends AbstractDynamicDistributionsGr
     }
 
     @Override
-    protected String getUsersFolderPath() {
-        return USERS_FOLDER_PATH;
+    public List<IDynamicPlugin> filterDynamicPlugins(List<IDynamicPlugin> allDynamicPlugins, IDynamicMonitor monitor) {
+        List<IDynamicPlugin> dynamicPlugins = new LinkedList<>();
+        if (allDynamicPlugins != null && !allDynamicPlugins.isEmpty()) {
+            String distributionId = getDistribution();
+            for (IDynamicPlugin userDynamicPlugin : allDynamicPlugins) {
+                if (distributionId.equalsIgnoreCase(userDynamicPlugin.getPluginConfiguration().getDistribution())) {
+                    dynamicPlugins.add(userDynamicPlugin);
+                }
+            }
+        }
+        return dynamicPlugins;
     }
 
 }

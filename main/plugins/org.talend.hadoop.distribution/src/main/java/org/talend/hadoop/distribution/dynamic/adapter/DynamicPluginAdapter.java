@@ -78,7 +78,7 @@ public class DynamicPluginAdapter {
                 configuration.removeAttribute(DynamicModuleGroupAdapter.ATTR_GROUP_TEMPLATE_ID);
             }
         }
-        plugin.setPluginConfiguration(null);
+        // plugin.setPluginConfiguration(null);
     }
 
     public IDynamicConfiguration getModuleGroupByTemplateId(String templateId) {

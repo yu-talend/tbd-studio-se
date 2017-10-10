@@ -23,8 +23,6 @@ import org.talend.hadoop.distribution.dynamic.bean.TemplateBean;
  */
 public interface IDynamicDistributionsGroup {
 
-    public static final String USERS_DISTRIBUTIONS_ROOT_FOLDER = "dynamicDistributions"; //$NON-NLS-1$
-
     public String getDistribution();
 
     public String getDistributionDisplay();
@@ -35,8 +33,6 @@ public interface IDynamicDistributionsGroup {
 
     public IDynamicPlugin buildDynamicPlugin(IDynamicMonitor monitor, DynamicConfiguration configuration) throws Exception;
 
-    public List<IDynamicPlugin> getAllUsersDynamicPlugins(IDynamicMonitor monitor) throws Exception;
-
     public List<IDynamicPlugin> getAllBuildinDynamicPlugins(IDynamicMonitor monitor) throws Exception;
 
     public List<String> getAllVersions(IDynamicMonitor monitor) throws Exception;
@@ -44,5 +40,19 @@ public interface IDynamicDistributionsGroup {
     public void registAllBuildin(IDynamicMonitor monitor) throws Exception;
 
     public void unregistAllBuildin(IDynamicMonitor monitor) throws Exception;
+
+    public boolean canRegist(IDynamicPlugin dynamicPlugin, IDynamicMonitor monitor) throws Exception;
+
+    public void regist(IDynamicPlugin dynamicPlugin, IDynamicMonitor monitor) throws Exception;
+
+    public void unregist(IDynamicPlugin dynamicPlugin, IDynamicMonitor monitor) throws Exception;
+
+    /**
+     * Filter dynamic plugins for specified distrubtion
+     * 
+     * @param dynamicPlugins
+     * @return
+     */
+    public List<IDynamicPlugin> filterDynamicPlugins(List<IDynamicPlugin> dynamicPlugins, IDynamicMonitor monitor);
 
 }
