@@ -30,11 +30,15 @@ import org.osgi.framework.ServiceListener;
 import org.osgi.framework.ServiceReference;
 import org.talend.commons.exception.CommonExceptionHandler;
 import org.talend.commons.exception.ExceptionHandler;
+import org.talend.core.runtime.dynamic.IDynamicPlugin;
 import org.talend.core.runtime.hd.IDistributionsManager;
 import org.talend.hadoop.distribution.ComponentType;
 import org.talend.hadoop.distribution.DistributionFactory;
 import org.talend.hadoop.distribution.component.HadoopComponent;
 import org.talend.hadoop.distribution.constants.Constant;
+import org.talend.hadoop.distribution.dynamic.DynamicDistributionManager;
+import org.talend.hadoop.distribution.dynamic.IDynamicDistribution;
+import org.talend.hadoop.distribution.dynamic.IDynamicDistributionsGroup;
 import org.talend.hadoop.distribution.model.DistributionBean;
 import org.talend.hadoop.distribution.model.DistributionVersion;
 
@@ -50,25 +54,40 @@ public final class DistributionsManager implements IDistributionsManager {
 
     private ServiceListener serviceListener;
 
-    // static {
-    // try {
-    // BundleContext bc = getBundleContext();
-    // Collection<ServiceReference<IDynamicDistribution>> serviceReferences = bc
-    // .getServiceReferences(IDynamicDistribution.class, null);
-    // if (serviceReferences != null && !serviceReferences.isEmpty()) {
-    // for (ServiceReference<IDynamicDistribution> sr : serviceReferences) {
-    // IDynamicDistribution service = bc.getService(sr);
-    // try {
-    // service.regist(null);
-    // } catch (Exception e) {
-    // ExceptionHandler.process(e);
-    // }
-    // }
-    // }
-    // } catch (Exception e) {
-    // ExceptionHandler.process(e);
-    // }
-    // }
+    static {
+        try {
+
+            DynamicDistributionManager dynamicDistributionManager = DynamicDistributionManager.getInstance();
+            try {
+                List<IDynamicDistributionsGroup> dynamicDistributionsGroups = dynamicDistributionManager
+                        .getDynamicDistributionsGroups();
+                if (dynamicDistributionsGroups != null && 0 < dynamicDistributionsGroups.size()) {
+                    List<IDynamicPlugin> dynamicPlugins = new LinkedList<>();
+                    for (IDynamicDistributionsGroup distributionGroup : dynamicDistributionsGroups) {
+
+                    }
+                }
+            } catch (Throwable e) {
+                ExceptionHandler.process(e);
+            }
+
+            BundleContext bc = getBundleContext();
+            Collection<ServiceReference<IDynamicDistribution>> serviceReferences = bc
+                    .getServiceReferences(IDynamicDistribution.class, null);
+            if (serviceReferences != null && !serviceReferences.isEmpty()) {
+                for (ServiceReference<IDynamicDistribution> sr : serviceReferences) {
+                    IDynamicDistribution service = bc.getService(sr);
+                    try {
+                        service.regist(null);
+                    } catch (Exception e) {
+                        ExceptionHandler.process(e);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            ExceptionHandler.process(e);
+        }
+    }
 
     /**
      * Service can't be null. if the service is HadoopComponent directly, the componentType will be null.

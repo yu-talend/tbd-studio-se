@@ -1,6 +1,5 @@
 package org.talend.repository.hadoopcluster.ui.dynamic.page;
 
-import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.talend.repository.hadoopcluster.i18n.Messages;
@@ -10,7 +9,7 @@ import org.talend.repository.hadoopcluster.ui.dynamic.form.DynamicOptionForm;
 public class DynamicOptionPage extends AbstractDynamicConfigurationPage {
 
     public DynamicOptionPage() {
-        super(DynamicOptionPage.class.getSimpleName(), null); // $NON-NLS-1$
+        super(DynamicOptionPage.class.getSimpleName()); // $NON-NLS-1$
         setTitle(Messages.getString("DynamicChoicePage.title")); //$NON-NLS-1$
         setDescription(Messages.getString("DynamicChoicePage.description")); //$NON-NLS-1$
     }
@@ -21,14 +20,14 @@ public class DynamicOptionPage extends AbstractDynamicConfigurationPage {
         AbstractDynamicDistributionForm setupForm = new DynamicOptionForm(parent, SWT.NONE);
 
         setControl(setupForm);
+        setCurrentForm(setupForm);
         
         setPageComplete(false);
     }
 
     @Override
-    public IWizardPage getNextPage() {
-        IWizardPage nextPage = super.getNextPage();
-        return nextPage;
+    public boolean isPageComplete() {
+        return getCurrentForm().isComplete();
     }
 
 }

@@ -19,7 +19,9 @@ import org.talend.hadoop.distribution.dynamic.IDynamicDistribution;
 /**
  * DOC cmeng  class global comment. Detailled comment
  */
-public class DynamicCDHDistributionsGroup extends AbstractDynamicDistributionsGroup {
+public class DynamicCDHDistributionsGroup extends AbstractDynamicDistributionsGroup implements IDynamicCDHDistributionsGroup {
+
+    public static final String USERS_FOLDER_PATH = USERS_DISTRIBUTIONS_ROOT_FOLDER + "/" + USERS_DYNAMIC_DISTRIBUTION_SUB_FOLDER; //$NON-NLS-1$
 
     @Override
     public String getDistribution() {
@@ -34,6 +36,11 @@ public class DynamicCDHDistributionsGroup extends AbstractDynamicDistributionsGr
     @Override
     protected Class<? extends IDynamicDistribution> getDynamicDistributionClass() {
         return IDynamicCDHDistribution.class;
+    }
+
+    @Override
+    protected String getUsersFolderPath() {
+        return USERS_FOLDER_PATH;
     }
 
 }

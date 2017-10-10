@@ -2,6 +2,7 @@ package org.talend.repository.hadoopcluster.ui.dynamic;
 
 import org.eclipse.jface.wizard.Wizard;
 import org.talend.commons.ui.runtime.image.ImageProvider;
+import org.talend.hadoop.distribution.dynamic.IDynamicDistributionsGroup;
 import org.talend.repository.hadoopcluster.i18n.Messages;
 import org.talend.repository.hadoopcluster.ui.dynamic.page.DynamicOptionPage;
 import org.talend.repository.hadoopcluster.ui.dynamic.page.DynamicRetrievePage;
@@ -13,8 +14,11 @@ public class DynamicBuildConfigurationWizard extends Wizard {
 
     private DynamicRetrievePage retrivePage;
 
-    public DynamicBuildConfigurationWizard() {
+    private IDynamicDistributionsGroup dynamicDistributionsGroup;
+
+    public DynamicBuildConfigurationWizard(IDynamicDistributionsGroup dynamicDistributionsGroup) {
         super();
+        this.dynamicDistributionsGroup = dynamicDistributionsGroup;
         setNeedsProgressMonitor(true);
         setForcePreviousAndNextButtons(true);
     }

@@ -12,6 +12,8 @@
 // ============================================================================
 package org.talend.repository.hadoopcluster.ui.dynamic.form;
 
+import java.util.List;
+
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -137,6 +139,18 @@ public class DynamicBuildConfigurationForm extends AbstractDynamicDistributionFo
         formData.bottom = new FormAttachment(100);
         exportConfigBtn.setLayoutData(formData);
 
+    }
+
+    @Override
+    public List<String> checkErrors() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public boolean isComplete() {
+        // TODO Auto-generated method stub
+        return false;
     }
 
 }

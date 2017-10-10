@@ -35,9 +35,9 @@ public class DynamicDistributionManager {
         return instance;
     }
 
-    private List<AbstractDynamicDistributionsGroup> dynamicDistributionsGroups;
+    private List<IDynamicDistributionsGroup> dynamicDistributionsGroups;
 
-    public List<AbstractDynamicDistributionsGroup> getDynamicDistributionsGroups() throws Exception {
+    public List<IDynamicDistributionsGroup> getDynamicDistributionsGroups() throws Exception {
 
         if (dynamicDistributionsGroups != null) {
             return dynamicDistributionsGroups;

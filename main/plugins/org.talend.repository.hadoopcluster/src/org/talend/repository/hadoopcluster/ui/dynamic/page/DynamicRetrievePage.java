@@ -12,7 +12,6 @@
 // ============================================================================
 package org.talend.repository.hadoopcluster.ui.dynamic.page;
 
-import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.talend.repository.hadoopcluster.i18n.Messages;
@@ -26,7 +25,7 @@ import org.talend.repository.hadoopcluster.ui.dynamic.form.DynamicBuildConfigura
 public class DynamicRetrievePage extends AbstractDynamicConfigurationPage {
 
     public DynamicRetrievePage() {
-        super(DynamicRetrievePage.class.getSimpleName(), null);
+        super(DynamicRetrievePage.class.getSimpleName());
         setTitle(Messages.getString("DynamicRetrievePage.title")); //$NON-NLS-1$
         setDescription(Messages.getString("DynamicRetrievePage.description")); //$NON-NLS-1$
     }
@@ -37,14 +36,14 @@ public class DynamicRetrievePage extends AbstractDynamicConfigurationPage {
         AbstractDynamicDistributionForm setupForm = new DynamicBuildConfigurationForm(parent, SWT.NONE);
 
         setControl(setupForm);
+        setCurrentForm(setupForm);
 
         setPageComplete(false);
     }
 
     @Override
-    public IWizardPage getNextPage() {
-        IWizardPage nextPage = super.getNextPage();
-        return nextPage;
+    public boolean isPageComplete() {
+        return getCurrentForm().isComplete();
     }
 
 }

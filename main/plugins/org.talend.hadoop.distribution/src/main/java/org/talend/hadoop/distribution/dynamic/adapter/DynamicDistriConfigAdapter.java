@@ -18,11 +18,14 @@ import org.talend.core.runtime.dynamic.IDynamicPluginConfiguration;
 import org.talend.designer.maven.aether.IDynamicMonitor;
 import org.talend.hadoop.distribution.dynamic.DynamicConfiguration;
 import org.talend.hadoop.distribution.dynamic.bean.TemplateBean;
+import org.talend.repository.ProjectManager;
 
 /**
  * DOC cmeng  class global comment. Detailled comment
  */
 public class DynamicDistriConfigAdapter extends AbstractDynamicAdapter {
+
+    public static final String ATTR_PROJECT_TECHNICAL_NAME = "projectTechnicalName"; //$NON-NLS-1$
 
     public DynamicDistriConfigAdapter(TemplateBean templateBean, DynamicConfiguration configuration) {
         super(templateBean, configuration);
@@ -45,13 +48,17 @@ public class DynamicDistriConfigAdapter extends AbstractDynamicAdapter {
             throw new Exception("Different distribution: " + distribution + "<>" + configuration.getDistribution());
         }
 
-        pluginConfiguration.setId(configuration.getId());
+        String projectTechnicalName = ProjectManager.getInstance().getCurrentProject().getTechnicalLabel();
+        // String id = projectTechnicalName + "_" + configuration.getId(); //$NON-NLS-1$
+        String id = configuration.getId();
+        pluginConfiguration.setId(id);
         pluginConfiguration.setName(configuration.getName());
         pluginConfiguration.setVersion(configuration.getVersion());
         pluginConfiguration.setDescription(description);
         pluginConfiguration.setDistribution(distribution);
         pluginConfiguration.setTemplateId(templateId);
         pluginConfiguration.setRepository(repository);
+        pluginConfiguration.setAttribute(ATTR_PROJECT_TECHNICAL_NAME, projectTechnicalName);
 
         return pluginConfiguration;
     }

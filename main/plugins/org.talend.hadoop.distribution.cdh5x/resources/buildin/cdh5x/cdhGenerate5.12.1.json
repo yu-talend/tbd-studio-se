@@ -5,8 +5,10 @@
     "distribution" : "CLOUDERA",
     "id" : "Cloudera_CDH5_X_CDH5_12_1",
     "name" : "Cloudera CDH5.12.1(Dynamic version)",
+    "projectTechnicalName" : "TEST",
     "repository" : "http://localhost:8081/nexus/content/repositories/central",
     "tagName" : "dynamicPluginConfiguration",
+    "templateId" : "CDH5xDistributionTemplate",
     "version" : "cdh5.12.1"
   }, {
     "childNodes" : [ {

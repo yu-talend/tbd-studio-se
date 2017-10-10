@@ -37,6 +37,8 @@ import org.talend.hadoop.distribution.component.SparkBatchComponent;
 import org.talend.hadoop.distribution.component.SparkStreamingComponent;
 import org.talend.hadoop.distribution.component.SqoopComponent;
 import org.talend.hadoop.distribution.dynamic.AbstractDynamicDistribution;
+import org.talend.hadoop.distribution.dynamic.IDynamicDistributionTemplate;
+import org.talend.hadoop.distribution.dynamic.adapter.DynamicPluginAdapter;
 import org.talend.hadoop.distribution.dynamic.cdh.IDynamicCDHDistribution;
 
 /**
@@ -44,9 +46,9 @@ import org.talend.hadoop.distribution.dynamic.cdh.IDynamicCDHDistribution;
  */
 public class DynamicCDH5xDistribution extends AbstractDynamicDistribution implements IDynamicCDHDistribution {
 
-    public static final String TEMPLATE_FOLDER_PATH = "resources/template/"; //$NON-NLS-1$
+    public static final String TEMPLATE_FOLDER_PATH = "resources/template/cdh5x/"; //$NON-NLS-1$
 
-    public static final String BUILD_IN_FOLDER_PATH = "resources/buildin/"; //$NON-NLS-1$
+    public static final String BUILD_IN_FOLDER_PATH = "resources/buildin/cdh5x/"; //$NON-NLS-1$
 
     private CDH5xDistributionTemplate cdhService;
 
@@ -94,6 +96,22 @@ public class DynamicCDH5xDistribution extends AbstractDynamicDistribution implem
     public void unregist(IDynamicMonitor monitor) throws Exception {
         DynamicServiceUtil.unregistOSGiService(osgiService);
         DynamicServiceUtil.removeContribution(runtimePlugin);
+    }
+
+    @Override
+    protected IDynamicDistributionTemplate initTemplate(DynamicPluginAdapter pluginAdapter, IDynamicMonitor monitor)
+            throws Exception {
+        IDynamicDistributionTemplate dynamicDistributionTemplate = null;
+        IDynamicPluginConfiguration pluginConfiguration = pluginAdapter.getPluginConfiguration();
+        String templateId = pluginConfiguration.getTemplateId();
+        switch (templateId) {
+        case CDH5xDistributionTemplate.TEMPLATE_ID:
+            dynamicDistributionTemplate = new CDH5xDistributionTemplate(pluginAdapter);
+            break;
+        default:
+            throw new Exception("Unknown templateId: " + templateId);
+        }
+        return dynamicDistributionTemplate;
     }
 
     @Override

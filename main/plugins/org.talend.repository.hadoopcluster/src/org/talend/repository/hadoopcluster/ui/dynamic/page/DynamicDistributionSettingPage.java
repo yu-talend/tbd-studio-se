@@ -16,6 +16,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.talend.designer.maven.aether.IDynamicMonitor;
+import org.talend.repository.hadoopcluster.ui.dynamic.form.AbstractDynamicDistributionForm;
 import org.talend.repository.hadoopcluster.ui.dynamic.form.DynamicDistributionsForm;
 import org.talend.repository.preference.ProjectSettingPage;
 
@@ -24,6 +25,8 @@ import org.talend.repository.preference.ProjectSettingPage;
  * DOC cmeng  class global comment. Detailled comment
  */
 public class DynamicDistributionSettingPage extends ProjectSettingPage {
+
+    private AbstractDynamicDistributionForm distributionForm;
 
     @Override
     public void refresh() {
@@ -41,7 +44,17 @@ public class DynamicDistributionSettingPage extends ProjectSettingPage {
             }
         };
         DynamicDistributionsForm existingConfigForm = new DynamicDistributionsForm(parent, SWT.NONE, monitor);
+        setCurrentForm(existingConfigForm);
+
         return existingConfigForm;
+    }
+
+    private void setCurrentForm(AbstractDynamicDistributionForm distributionForm) {
+        this.distributionForm = distributionForm;
+    }
+
+    private AbstractDynamicDistributionForm getCurrentForm() {
+        return this.distributionForm;
     }
 
 }

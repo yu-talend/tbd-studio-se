@@ -12,6 +12,8 @@
 // ============================================================================
 package org.talend.repository.hadoopcluster.ui.dynamic.form;
 
+import java.util.List;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FillLayout;
@@ -23,12 +25,16 @@ import org.eclipse.swt.widgets.Composite;
 /**
  * DOC cmeng  class global comment. Detailled comment
  */
-public class AbstractDynamicDistributionForm extends Composite {
+public abstract class AbstractDynamicDistributionForm extends Composite {
 
     public AbstractDynamicDistributionForm(Composite parent, int style) {
         super(parent, style);
         this.setLayout(new FillLayout());
     }
+
+    abstract public List<String> checkErrors();
+
+    abstract public boolean isComplete();
 
     public static Point getNewButtonSize(Button btn) {
         return getNewButtonSize(btn, 6);

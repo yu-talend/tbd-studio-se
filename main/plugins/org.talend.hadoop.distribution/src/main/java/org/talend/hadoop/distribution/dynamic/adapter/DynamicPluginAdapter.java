@@ -29,15 +29,22 @@ public class DynamicPluginAdapter {
 
     private IDynamicPlugin plugin;
 
+    private IDynamicPluginConfiguration pluginConfiguration;
+
     private Map<String, IDynamicConfiguration> moduleGroupMap;
 
     public DynamicPluginAdapter(IDynamicPlugin plugin) {
         this.plugin = plugin;
+        this.pluginConfiguration = this.plugin.getPluginConfiguration();
         moduleGroupMap = new HashMap<>();
     }
 
+    public IDynamicPlugin getPlugin() {
+        return plugin;
+    }
+
     public IDynamicPluginConfiguration getPluginConfiguration() {
-        return plugin.getPluginConfiguration();
+        return pluginConfiguration;
     }
 
     /**
@@ -71,6 +78,7 @@ public class DynamicPluginAdapter {
                 configuration.removeAttribute(DynamicModuleGroupAdapter.ATTR_GROUP_TEMPLATE_ID);
             }
         }
+        plugin.setPluginConfiguration(null);
     }
 
     public IDynamicConfiguration getModuleGroupByTemplateId(String templateId) {

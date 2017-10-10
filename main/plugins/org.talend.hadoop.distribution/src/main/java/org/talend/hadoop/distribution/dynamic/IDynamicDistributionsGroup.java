@@ -21,23 +21,24 @@ import org.talend.hadoop.distribution.dynamic.bean.TemplateBean;
 /**
  * DOC cmeng  class global comment. Detailled comment
  */
-public interface IDynamicDistribution {
+public interface IDynamicDistributionsGroup {
 
-    /**
-     * must return a sorted list
-     */
+    public static final String USERS_DISTRIBUTIONS_ROOT_FOLDER = "dynamicDistributions"; //$NON-NLS-1$
+
+    public String getDistribution();
+
+    public String getDistributionDisplay();
+
     public List<String> getCompatibleVersions(IDynamicMonitor monitor) throws Exception;
 
-    public List<TemplateBean> getTemplates(IDynamicMonitor monitor) throws Exception;
+    public List<TemplateBean> getAllTemplates(IDynamicMonitor monitor) throws Exception;
 
     public IDynamicPlugin buildDynamicPlugin(IDynamicMonitor monitor, DynamicConfiguration configuration) throws Exception;
 
+    public List<IDynamicPlugin> getAllUsersDynamicPlugins(IDynamicMonitor monitor) throws Exception;
+
     public List<IDynamicPlugin> getAllBuildinDynamicPlugins(IDynamicMonitor monitor) throws Exception;
 
-    public String getDistributionName();
-
-    public void regist(IDynamicPlugin dynamicPlugin, IDynamicMonitor monitor) throws Exception;
-
-    public void unregist(IDynamicPlugin dynamicPlugin, IDynamicMonitor monitor) throws Exception;
+    public List<String> getAllVersions(IDynamicMonitor monitor) throws Exception;
 
 }

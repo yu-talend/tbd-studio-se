@@ -13,15 +13,22 @@
 package org.talend.repository.hadoopcluster.ui.dynamic.page;
 
 import org.eclipse.jface.wizard.WizardPage;
-import org.talend.hadoop.distribution.model.DistributionBean;
+import org.talend.repository.hadoopcluster.ui.dynamic.form.AbstractDynamicDistributionForm;
 
 public abstract class AbstractDynamicConfigurationPage extends WizardPage {
 
-    protected DistributionBean distributionBean;
+    private AbstractDynamicDistributionForm currentForm;
 
-    protected AbstractDynamicConfigurationPage(String pageName, DistributionBean distributionBean) {
+    protected AbstractDynamicConfigurationPage(String pageName) {
         super(pageName);
-        this.distributionBean = distributionBean;
+    }
+
+    protected void setCurrentForm(AbstractDynamicDistributionForm form) {
+        this.currentForm = form;
+    }
+
+    protected AbstractDynamicDistributionForm getCurrentForm() {
+        return this.currentForm;
     }
 
 }

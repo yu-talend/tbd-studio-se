@@ -41,8 +41,8 @@ import org.talend.commons.exception.ExceptionHandler;
 import org.talend.core.runtime.dynamic.IDynamicPlugin;
 import org.talend.core.runtime.dynamic.IDynamicPluginConfiguration;
 import org.talend.designer.maven.aether.IDynamicMonitor;
-import org.talend.hadoop.distribution.dynamic.AbstractDynamicDistributionsGroup;
 import org.talend.hadoop.distribution.dynamic.DynamicDistributionManager;
+import org.talend.hadoop.distribution.dynamic.IDynamicDistributionsGroup;
 import org.talend.repository.hadoopcluster.i18n.Messages;
 import org.talend.repository.hadoopcluster.ui.dynamic.DynamicBuildConfigurationWizard;
 
@@ -57,7 +57,7 @@ public class DynamicDistributionsForm extends AbstractDynamicDistributionForm {
 
     private Button buildConfigBtn;
 
-    private Map<String, AbstractDynamicDistributionsGroup> dynDistriGroupMap = new HashMap<>();
+    private Map<String, IDynamicDistributionsGroup> dynDistriGroupMap = new HashMap<>();
 
     public DynamicDistributionsForm(Composite parent, int style, IDynamicMonitor monitor) {
         super(parent, style);
@@ -136,11 +136,28 @@ public class DynamicDistributionsForm extends AbstractDynamicDistributionForm {
 
             @Override
             public void widgetSelected(SelectionEvent e) {
-                DynamicBuildConfigurationWizard wizard = new DynamicBuildConfigurationWizard();
+                IStructuredSelection selection = (IStructuredSelection) distributionCombo.getSelection();
+                if (selection == null) {
+
+                }
+                Object distribution = selection.getFirstElement();
+                if (distribution == null) {
+
+                }
+                IDynamicDistributionsGroup dynamicDistributionsGroup = dynDistriGroupMap.get(distribution);
+                DynamicBuildConfigurationWizard wizard = new DynamicBuildConfigurationWizard(dynamicDistributionsGroup);
                 WizardDialog wizardDialog = new WizardDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
                         wizard);
                 wizardDialog.create();
                 if (wizardDialog.open() == IDialogConstants.OK_ID) {
+                    IDynamicMonitor monitor = new IDynamicMonitor() {
+
+                        @Override
+                        public void writeMessage(String message) {
+                            // nothing to do
+                        }
+                    };
+                    refreshVersionList(monitor);
                 }
             }
 
@@ -151,9 +168,9 @@ public class DynamicDistributionsForm extends AbstractDynamicDistributionForm {
         try {
             dynDistriGroupMap.clear();
             DynamicDistributionManager dynDistriManager = DynamicDistributionManager.getInstance();
-            List<AbstractDynamicDistributionsGroup> dynDistriGroups = dynDistriManager.getDynamicDistributionsGroups();
+            List<IDynamicDistributionsGroup> dynDistriGroups = dynDistriManager.getDynamicDistributionsGroups();
             if (dynDistriGroups != null && !dynDistriGroups.isEmpty()) {
-                for (AbstractDynamicDistributionsGroup dynDistriGroup : dynDistriGroups) {
+                for (IDynamicDistributionsGroup dynDistriGroup : dynDistriGroups) {
                     String displayName = dynDistriGroup.getDistributionDisplay();
                     dynDistriGroupMap.put(displayName, dynDistriGroup);
                 }
@@ -176,7 +193,7 @@ public class DynamicDistributionsForm extends AbstractDynamicDistributionForm {
             if (selection != null) {
                 Object selectedObject = selection.getFirstElement();
                 if (selectedObject != null) {
-                    AbstractDynamicDistributionsGroup dynDistriGroup = dynDistriGroupMap.get(selectedObject);
+                    IDynamicDistributionsGroup dynDistriGroup = dynDistriGroupMap.get(selectedObject);
                     if (dynDistriGroup == null) {
                         throw new Exception(Messages.getString("DynamicDistributionsForm.exception.noDistributionGroupFound", //$NON-NLS-1$
                                 dynDistriGroup));
@@ -212,6 +229,17 @@ public class DynamicDistributionsForm extends AbstractDynamicDistributionForm {
         } catch (Exception e) {
             ExceptionHandler.process(e);
         }
+    }
+
+    @Override
+    public List<String> checkErrors() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public boolean isComplete() {
+        return true;
     }
 
 }
