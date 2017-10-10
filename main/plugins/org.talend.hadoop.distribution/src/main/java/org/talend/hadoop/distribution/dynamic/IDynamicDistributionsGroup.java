@@ -41,4 +41,8 @@ public interface IDynamicDistributionsGroup {
 
     public List<String> getAllVersions(IDynamicMonitor monitor) throws Exception;
 
+    public void registAllBuildin(IDynamicMonitor monitor) throws Exception;
+
+    public void unregistAllBuildin(IDynamicMonitor monitor) throws Exception;
+
 }

@@ -236,6 +236,16 @@ public abstract class AbstractDynamicDistributionsGroup implements IDynamicDistr
         return registedDynamicDistributions;
     }
 
+    @Override
+    public void registAllBuildin(IDynamicMonitor monitor) throws Exception {
+        // nothing to do
+    }
+
+    @Override
+    public void unregistAllBuildin(IDynamicMonitor monitor) throws Exception {
+        // nothing to do
+    }
+
     protected static BundleContext getBundleContext() {
         return FrameworkUtil.getBundle(AbstractDynamicDistributionsGroup.class).getBundleContext();
     }
