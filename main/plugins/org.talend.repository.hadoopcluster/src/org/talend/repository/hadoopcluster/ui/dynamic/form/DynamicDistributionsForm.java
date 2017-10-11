@@ -246,6 +246,11 @@ public class DynamicDistributionsForm extends AbstractDynamicDistributionForm {
     }
 
     @Override
+    public boolean canFlipToNextPage() {
+        return isComplete();
+    }
+
+    @Override
     public boolean canFinish() {
         if (isComplete()) {
             return true;

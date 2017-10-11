@@ -428,6 +428,18 @@ public class DynamicOptionForm extends AbstractDynamicDistributionForm {
     }
 
     @Override
+    public boolean canFlipToNextPage() {
+        if (!isComplete()) {
+            return false;
+        }
+        if (importConfigBtn.getSelection()) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    @Override
     public boolean canFinish() {
         if (isComplete()) {
             if (importConfigBtn.getSelection()) {

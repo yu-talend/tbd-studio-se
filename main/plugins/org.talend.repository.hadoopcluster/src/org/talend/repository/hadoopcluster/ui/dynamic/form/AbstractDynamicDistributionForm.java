@@ -38,6 +38,8 @@ public abstract class AbstractDynamicDistributionForm extends Composite {
 
     abstract public boolean canFinish();
 
+    abstract public boolean canFlipToNextPage();
+
     public static Point getNewButtonSize(Button btn) {
         return getNewButtonSize(btn, 6);
     }
