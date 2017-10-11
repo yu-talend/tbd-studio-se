@@ -30,7 +30,9 @@ import org.talend.core.model.general.Project;
 import org.talend.core.runtime.dynamic.DynamicFactory;
 import org.talend.core.runtime.dynamic.DynamicServiceUtil;
 import org.talend.core.runtime.dynamic.IDynamicPlugin;
+import org.talend.core.runtime.dynamic.IDynamicPluginConfiguration;
 import org.talend.designer.maven.aether.IDynamicMonitor;
+import org.talend.hadoop.distribution.dynamic.adapter.DynamicDistriConfigAdapter;
 import org.talend.hadoop.distribution.dynamic.cdh.DynamicCDHDistributionsGroup;
 import org.talend.hadoop.distribution.helper.HadoopDistributionsHelper;
 import org.talend.repository.ProjectManager;
@@ -151,6 +153,8 @@ public class DynamicDistributionManager {
                     String absolutePath = member.getLocation().toPortableString();
                     String jsonContent = DynamicServiceUtil.readFile(new File(absolutePath));
                     IDynamicPlugin dynamicPlugin = DynamicFactory.getInstance().createPluginFromJson(jsonContent);
+                    IDynamicPluginConfiguration pluginConfiguration = dynamicPlugin.getPluginConfiguration();
+                    pluginConfiguration.setAttribute(DynamicDistriConfigAdapter.ATTR_FILE_PATH, absolutePath);
                     dynamicPlugins.add(dynamicPlugin);
                 } catch (Exception e) {
                     ExceptionHandler.process(e);

@@ -27,6 +27,8 @@ public class DynamicDistriConfigAdapter extends AbstractDynamicAdapter {
 
     public static final String ATTR_PROJECT_TECHNICAL_NAME = "projectTechnicalName"; //$NON-NLS-1$
 
+    public static final String ATTR_FILE_PATH = "filePath"; //$NON-NLS-1$
+
     public DynamicDistriConfigAdapter(TemplateBean templateBean, DynamicConfiguration configuration) {
         super(templateBean, configuration);
     }
