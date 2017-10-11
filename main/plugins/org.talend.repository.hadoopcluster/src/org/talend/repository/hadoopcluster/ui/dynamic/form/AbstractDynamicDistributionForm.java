@@ -12,7 +12,7 @@
 // ============================================================================
 package org.talend.repository.hadoopcluster.ui.dynamic.form;
 
-import java.util.List;
+import java.util.EventListener;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
@@ -27,12 +27,12 @@ import org.eclipse.swt.widgets.Composite;
  */
 public abstract class AbstractDynamicDistributionForm extends Composite {
 
+    private ICheckListener checkListener;
+
     public AbstractDynamicDistributionForm(Composite parent, int style) {
         super(parent, style);
         this.setLayout(new FillLayout());
     }
-
-    abstract public List<String> checkErrors();
 
     abstract public boolean isComplete();
 
@@ -73,4 +73,21 @@ public abstract class AbstractDynamicDistributionForm extends Composite {
         return 100;
     }
 
+    public ICheckListener getCheckListener() {
+        return this.checkListener;
+    }
+
+    public void setCheckListener(ICheckListener checkListener) {
+        this.checkListener = checkListener;
+    }
+
+    protected void showMessage(String message, int level) {
+        this.checkListener.showMessage(message, level);
+    }
+
+    public static interface ICheckListener extends EventListener {
+
+        public void showMessage(String message, int level);
+
+    }
 }

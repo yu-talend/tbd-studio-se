@@ -18,6 +18,7 @@ import org.talend.designer.maven.aether.IDynamicMonitor;
 import org.talend.hadoop.distribution.dynamic.IDynamicDistributionsGroup;
 import org.talend.repository.hadoopcluster.i18n.Messages;
 import org.talend.repository.hadoopcluster.ui.dynamic.form.AbstractDynamicDistributionForm;
+import org.talend.repository.hadoopcluster.ui.dynamic.form.AbstractDynamicDistributionForm.ICheckListener;
 import org.talend.repository.hadoopcluster.ui.dynamic.form.DynamicBuildConfigurationForm;
 
 
@@ -43,8 +44,18 @@ public class DynamicRetrievePage extends AbstractDynamicConfigurationPage {
             }
         };
 
+        AbstractDynamicDistributionForm.ICheckListener checkListener = new ICheckListener() {
+
+            @Override
+            public void showMessage(String message, int level) {
+                setMessage(message, level);
+                setErrorMessage(message);
+            }
+        };
+
         AbstractDynamicDistributionForm setupForm = new DynamicBuildConfigurationForm(parent, SWT.NONE,
                 getDynamicDistributionsGroup(), monitor);
+        setupForm.setCheckListener(checkListener);
 
         setControl(setupForm);
         setCurrentForm(setupForm);

@@ -241,12 +241,6 @@ public class DynamicDistributionsForm extends AbstractDynamicDistributionForm {
     }
 
     @Override
-    public List<String> checkErrors() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
     public boolean isComplete() {
         return true;
     }

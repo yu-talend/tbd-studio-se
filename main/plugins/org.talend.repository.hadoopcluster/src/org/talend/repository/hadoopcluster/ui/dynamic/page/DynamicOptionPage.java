@@ -6,6 +6,7 @@ import org.talend.designer.maven.aether.IDynamicMonitor;
 import org.talend.hadoop.distribution.dynamic.IDynamicDistributionsGroup;
 import org.talend.repository.hadoopcluster.i18n.Messages;
 import org.talend.repository.hadoopcluster.ui.dynamic.form.AbstractDynamicDistributionForm;
+import org.talend.repository.hadoopcluster.ui.dynamic.form.AbstractDynamicDistributionForm.ICheckListener;
 import org.talend.repository.hadoopcluster.ui.dynamic.form.DynamicOptionForm;
 
 public class DynamicOptionPage extends AbstractDynamicConfigurationPage {
@@ -27,8 +28,17 @@ public class DynamicOptionPage extends AbstractDynamicConfigurationPage {
             }
         };
 
+        AbstractDynamicDistributionForm.ICheckListener checkListener = new ICheckListener() {
+
+            @Override
+            public void showMessage(String message, int level) {
+                setMessage(message, level);
+            }
+        };
+
         AbstractDynamicDistributionForm setupForm = new DynamicOptionForm(parent, SWT.NONE, getDynamicDistributionsGroup(),
                 monitor);
+        setupForm.setCheckListener(checkListener);
 
         setControl(setupForm);
         setCurrentForm(setupForm);

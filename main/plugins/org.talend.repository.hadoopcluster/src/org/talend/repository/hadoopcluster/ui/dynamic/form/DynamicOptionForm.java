@@ -13,14 +13,20 @@
 package org.talend.repository.hadoopcluster.ui.dynamic.form;
 
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FormAttachment;
@@ -67,6 +73,8 @@ public class DynamicOptionForm extends AbstractDynamicDistributionForm {
     private Composite importConfigGroup;
 
     private IDynamicDistributionsGroup dynamicDistributionsGroup;
+
+    private Set<String> existingConfigurationNames;
 
     public DynamicOptionForm(Composite parent, int style, IDynamicDistributionsGroup dynamicDistributionsGroup,
             IDynamicMonitor monitor) {
@@ -193,11 +201,13 @@ public class DynamicOptionForm extends AbstractDynamicDistributionForm {
             @Override
             public void widgetSelected(SelectionEvent e) {
                 onNewConfigSelected(newConfigBtn.getSelection());
+                isComplete();
             }
             
             @Override
             public void widgetDefaultSelected(SelectionEvent e) {
                 onNewConfigSelected(newConfigBtn.getSelection());
+                isComplete();
             }
 
         });
@@ -207,11 +217,13 @@ public class DynamicOptionForm extends AbstractDynamicDistributionForm {
             @Override
             public void widgetSelected(SelectionEvent e) {
                 onEditExistingSelected(editExistingConfigBtn.getSelection());
+                isComplete();
             }
             
             @Override
             public void widgetDefaultSelected(SelectionEvent e) {
                 onEditExistingSelected(editExistingConfigBtn.getSelection());
+                isComplete();
             }
 
         });
@@ -221,13 +233,23 @@ public class DynamicOptionForm extends AbstractDynamicDistributionForm {
             @Override
             public void widgetSelected(SelectionEvent e) {
                 onImportConfigSelected(importConfigBtn.getSelection());
+                isComplete();
             }
 
             @Override
             public void widgetDefaultSelected(SelectionEvent e) {
                 onImportConfigSelected(importConfigBtn.getSelection());
+                isComplete();
             }
 
+        });
+
+        configNameText.addModifyListener(new ModifyListener() {
+
+            @Override
+            public void modifyText(ModifyEvent e) {
+                isComplete();
+            }
         });
 
     }
@@ -277,16 +299,58 @@ public class DynamicOptionForm extends AbstractDynamicDistributionForm {
         }
     }
 
-    @Override
-    public List<String> checkErrors() {
-        // TODO Auto-generated method stub
-        return null;
+    private boolean checkNewConfigNameValid() {
+        if (!configNameText.isEnabled()) {
+            return true;
+        }
+        String configName = configNameText.getText();
+        if (configName.trim().isEmpty()) {
+            showMessage(Messages.getString("DynamicDistributionsForm.newConfigName.check.empty"), WizardPage.ERROR); //$NON-NLS-1$
+            return false;
+        }
+        try {
+            if (isConfigurationNameExist(configName)) {
+                showMessage(Messages.getString("DynamicDistributionsForm.newConfigName.check.exist", configName), //$NON-NLS-1$
+                        WizardPage.ERROR);
+                return false;
+            }
+        } catch (Exception e) {
+            showMessage(e.getMessage(), WizardPage.ERROR);
+            return false;
+        }
+        return true;
+    }
+
+    private boolean isConfigurationNameExist(String name) throws Exception {
+        if (existingConfigurationNames == null) {
+            existingConfigurationNames = new HashSet<>();
+            IDynamicMonitor monitor = new IDynamicMonitor() {
+
+                @Override
+                public void writeMessage(String message) {
+                    // nothing to do
+                }
+            };
+            DynamicDistributionManager dynDistrManager = DynamicDistributionManager.getInstance();
+            List<IDynamicPlugin> allBuildinDynamicPlugins = dynDistrManager.getAllBuildinDynamicPlugins(monitor);
+            if (allBuildinDynamicPlugins != null && !allBuildinDynamicPlugins.isEmpty()) {
+                Iterator<IDynamicPlugin> iter = allBuildinDynamicPlugins.iterator();
+                while (iter.hasNext()) {
+                    IDynamicPlugin dynPlugin = iter.next();
+                    existingConfigurationNames.add(dynPlugin.getPluginConfiguration().getName());
+                }
+            }
+        }
+        return existingConfigurationNames.contains(name);
     }
 
     @Override
     public boolean isComplete() {
-        // TODO Auto-generated method stub
-        return false;
+        if (!checkNewConfigNameValid()) {
+            return false;
+        }
+        showMessage(null, WizardPage.NONE);
+        return true;
     }
 
     private class ExistingConfigsLabelProvider extends LabelProvider {

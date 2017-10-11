@@ -76,6 +76,24 @@ public class DynamicDistributionManager {
 
     }
 
+    public List<IDynamicPlugin> getAllBuildinDynamicPlugins(IDynamicMonitor monitor) throws Exception {
+        List<IDynamicPlugin> allBuildinPlugins = new LinkedList<>();
+        List<IDynamicDistributionsGroup> dynDistrGroups = getDynamicDistributionsGroups();
+        if (dynDistrGroups != null && !dynDistrGroups.isEmpty()) {
+            for (IDynamicDistributionsGroup dynDistrGroup : dynDistrGroups) {
+                try {
+                    List<IDynamicPlugin> allBuildinDynamicPlugins = dynDistrGroup.getAllBuildinDynamicPlugins(monitor);
+                    if (allBuildinDynamicPlugins != null && !allBuildinDynamicPlugins.isEmpty()) {
+                        allBuildinPlugins.addAll(allBuildinDynamicPlugins);
+                    }
+                } catch (Throwable e) {
+                    ExceptionHandler.process(e);
+                }
+            }
+        }
+        return allBuildinPlugins;
+    }
+
     public List<IDynamicPlugin> getAllUsersDynamicPlugins(IDynamicMonitor monitor) throws Exception {
         if (usersPluginsCache != null) {
             String systemCacheVersion = HadoopDistributionsHelper.getCacheVersion();
