@@ -31,8 +31,8 @@ public class DynamicBuildConfigurationWizard extends Wizard {
     @Override
     public void addPages() {
         setDefaultPageImageDescriptor(ImageProvider.getImageDesc(EHadoopClusterImage.HADOOPCLUSTER_WIZ));
-        optionPage = new DynamicOptionPage();
-        retrivePage = new DynamicRetrievePage();
+        optionPage = new DynamicOptionPage(this.dynamicDistributionsGroup);
+        retrivePage = new DynamicRetrievePage(this.dynamicDistributionsGroup);
         addPage(optionPage);
         addPage(retrivePage);
     }

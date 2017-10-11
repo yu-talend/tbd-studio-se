@@ -138,11 +138,15 @@ public class DynamicDistributionsForm extends AbstractDynamicDistributionForm {
             public void widgetSelected(SelectionEvent e) {
                 IStructuredSelection selection = (IStructuredSelection) distributionCombo.getSelection();
                 if (selection == null) {
-
+                    ExceptionHandler.process(
+                            new Exception(Messages.getString("DynamicDistributionsForm.exception.noDistributionSelected"))); //$NON-NLS-1$
+                    return;
                 }
                 Object distribution = selection.getFirstElement();
                 if (distribution == null) {
-
+                    ExceptionHandler.process(
+                            new Exception(Messages.getString("DynamicDistributionsForm.exception.noDistributionSelected"))); //$NON-NLS-1$
+                    return;
                 }
                 IDynamicDistributionsGroup dynamicDistributionsGroup = dynDistriGroupMap.get(distribution);
                 DynamicBuildConfigurationWizard wizard = new DynamicBuildConfigurationWizard(dynamicDistributionsGroup);
@@ -224,7 +228,7 @@ public class DynamicDistributionsForm extends AbstractDynamicDistributionForm {
                             ExceptionHandler.process(e);
                         }
                     }
-                    Collections.reverse(versions);
+                    Collections.sort(versions, Collections.reverseOrder());
                     versionCombo.setInput(versions);
                     if (0 < versions.size()) {
                         versionCombo.setSelection(new StructuredSelection(versions.get(0)));

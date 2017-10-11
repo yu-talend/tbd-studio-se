@@ -12,11 +12,6 @@
 // ============================================================================
 package org.talend.hadoop.distribution.dynamic.cdh;
 
-import java.util.LinkedList;
-import java.util.List;
-
-import org.talend.core.runtime.dynamic.IDynamicPlugin;
-import org.talend.designer.maven.aether.IDynamicMonitor;
 import org.talend.hadoop.distribution.constants.cdh.IClouderaDistribution;
 import org.talend.hadoop.distribution.dynamic.AbstractDynamicDistributionsGroup;
 import org.talend.hadoop.distribution.dynamic.IDynamicDistribution;
@@ -39,20 +34,6 @@ public class DynamicCDHDistributionsGroup extends AbstractDynamicDistributionsGr
     @Override
     protected Class<? extends IDynamicDistribution> getDynamicDistributionClass() {
         return IDynamicCDHDistribution.class;
-    }
-
-    @Override
-    public List<IDynamicPlugin> filterDynamicPlugins(List<IDynamicPlugin> allDynamicPlugins, IDynamicMonitor monitor) {
-        List<IDynamicPlugin> dynamicPlugins = new LinkedList<>();
-        if (allDynamicPlugins != null && !allDynamicPlugins.isEmpty()) {
-            String distributionId = getDistribution();
-            for (IDynamicPlugin userDynamicPlugin : allDynamicPlugins) {
-                if (distributionId.equalsIgnoreCase(userDynamicPlugin.getPluginConfiguration().getDistribution())) {
-                    dynamicPlugins.add(userDynamicPlugin);
-                }
-            }
-        }
-        return dynamicPlugins;
     }
 
 }

@@ -14,6 +14,8 @@ package org.talend.repository.hadoopcluster.ui.dynamic.page;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
+import org.talend.designer.maven.aether.IDynamicMonitor;
+import org.talend.hadoop.distribution.dynamic.IDynamicDistributionsGroup;
 import org.talend.repository.hadoopcluster.i18n.Messages;
 import org.talend.repository.hadoopcluster.ui.dynamic.form.AbstractDynamicDistributionForm;
 import org.talend.repository.hadoopcluster.ui.dynamic.form.DynamicBuildConfigurationForm;
@@ -24,8 +26,8 @@ import org.talend.repository.hadoopcluster.ui.dynamic.form.DynamicBuildConfigura
  */
 public class DynamicRetrievePage extends AbstractDynamicConfigurationPage {
 
-    public DynamicRetrievePage() {
-        super(DynamicRetrievePage.class.getSimpleName());
+    public DynamicRetrievePage(IDynamicDistributionsGroup dynamicDistributionsGroup) {
+        super(DynamicRetrievePage.class.getSimpleName(), dynamicDistributionsGroup);
         setTitle(Messages.getString("DynamicRetrievePage.title")); //$NON-NLS-1$
         setDescription(Messages.getString("DynamicRetrievePage.description")); //$NON-NLS-1$
     }
@@ -33,7 +35,16 @@ public class DynamicRetrievePage extends AbstractDynamicConfigurationPage {
     @Override
     public void createControl(Composite parent) {
 
-        AbstractDynamicDistributionForm setupForm = new DynamicBuildConfigurationForm(parent, SWT.NONE);
+        IDynamicMonitor monitor = new IDynamicMonitor() {
+
+            @Override
+            public void writeMessage(String message) {
+                // nothing to do
+            }
+        };
+
+        AbstractDynamicDistributionForm setupForm = new DynamicBuildConfigurationForm(parent, SWT.NONE,
+                getDynamicDistributionsGroup(), monitor);
 
         setControl(setupForm);
         setCurrentForm(setupForm);

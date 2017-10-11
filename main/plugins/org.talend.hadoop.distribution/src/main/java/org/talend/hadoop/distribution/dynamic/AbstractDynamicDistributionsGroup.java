@@ -17,6 +17,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -64,7 +65,7 @@ public abstract class AbstractDynamicDistributionsGroup implements IDynamicDistr
             }
         }
         List<String> compatibleVersionList = new ArrayList<>(compatibleVersions);
-        Collections.reverse(compatibleVersionList);
+        Collections.sort(compatibleVersionList, Collections.reverseOrder());
         return compatibleVersionList;
     }
 
@@ -97,7 +98,7 @@ public abstract class AbstractDynamicDistributionsGroup implements IDynamicDistr
         int distance = -1;
         for (Entry<IDynamicDistribution, List<String>> entry : entrySet) {
             List<String> list = entry.getValue();
-            Collections.reverse(list);
+            Collections.sort(list, Collections.reverseOrder());
             int size = list.size();
             int index = list.indexOf(version);
             int curDistance = size - index;
@@ -134,7 +135,7 @@ public abstract class AbstractDynamicDistributionsGroup implements IDynamicDistr
         configuration.setDistribution(getDistribution());
         IDependencyResolver resolver = DependencyResolverFactory.getInstance().getDependencyResolver(configuration);
         List<String> allVersions = resolver.listHadoopVersions(null, null, monitor);
-        Collections.reverse(allVersions);
+        Collections.sort(allVersions, Collections.reverseOrder());
         return allVersions;
     }
 
@@ -255,6 +256,20 @@ public abstract class AbstractDynamicDistributionsGroup implements IDynamicDistr
         if (!unregisted) {
             throw new Exception("No dynamic distribution serivce found for " + pluginConfiguration.getTemplateId());
         }
+    }
+
+    @Override
+    public List<IDynamicPlugin> filterDynamicPlugins(List<IDynamicPlugin> allDynamicPlugins, IDynamicMonitor monitor) {
+        List<IDynamicPlugin> dynamicPlugins = new LinkedList<>();
+        if (allDynamicPlugins != null && !allDynamicPlugins.isEmpty()) {
+            String distributionId = getDistribution();
+            for (IDynamicPlugin userDynamicPlugin : allDynamicPlugins) {
+                if (distributionId.equalsIgnoreCase(userDynamicPlugin.getPluginConfiguration().getDistribution())) {
+                    dynamicPlugins.add(userDynamicPlugin);
+                }
+            }
+        }
+        return dynamicPlugins;
     }
 
     protected static BundleContext getBundleContext() {

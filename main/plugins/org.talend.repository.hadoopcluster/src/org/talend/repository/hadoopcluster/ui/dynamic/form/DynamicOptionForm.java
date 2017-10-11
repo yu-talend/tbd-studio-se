@@ -12,11 +12,14 @@
 // ============================================================================
 package org.talend.repository.hadoopcluster.ui.dynamic.form;
 
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -27,6 +30,13 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.talend.commons.exception.ExceptionHandler;
+import org.talend.core.runtime.dynamic.IDynamicPlugin;
+import org.talend.core.runtime.dynamic.IDynamicPluginConfiguration;
+import org.talend.designer.maven.aether.IDynamicMonitor;
+import org.talend.hadoop.distribution.dynamic.DynamicDistributionManager;
+import org.talend.hadoop.distribution.dynamic.IDynamicDistributionsGroup;
+import org.talend.hadoop.distribution.dynamic.util.DynamicDistributionComparator;
 import org.talend.repository.hadoopcluster.i18n.Messages;
 
 /**
@@ -56,9 +66,15 @@ public class DynamicOptionForm extends AbstractDynamicDistributionForm {
 
     private Composite importConfigGroup;
 
-    public DynamicOptionForm(Composite parent, int style) {
+    private IDynamicDistributionsGroup dynamicDistributionsGroup;
+
+    public DynamicOptionForm(Composite parent, int style, IDynamicDistributionsGroup dynamicDistributionsGroup,
+            IDynamicMonitor monitor) {
         super(parent, style);
+        this.dynamicDistributionsGroup = dynamicDistributionsGroup;
         createControl();
+        initData(monitor);
+        addListeners();
     }
 
     protected void createControl() {
@@ -119,7 +135,7 @@ public class DynamicOptionForm extends AbstractDynamicDistributionForm {
 
         existingConfigsComboViewer = new ComboViewer(editExistingGroup, SWT.READ_ONLY);
         existingConfigsComboViewer.setContentProvider(ArrayContentProvider.getInstance());
-        existingConfigsComboViewer.setLabelProvider(new LabelProvider());
+        existingConfigsComboViewer.setLabelProvider(new ExistingConfigsLabelProvider());
         formData = new FormData();
         formData.top = new FormAttachment(0);
         formData.left = new FormAttachment(0, HORZON_WIDTH);
@@ -165,18 +181,100 @@ public class DynamicOptionForm extends AbstractDynamicDistributionForm {
         formData.bottom = new FormAttachment(100);
         descriptionText.setLayoutData(formData);
 
+        onNewConfigSelected(false);
+        onEditExistingSelected(false);
+        onImportConfigSelected(false);
     }
 
     protected void addListeners() {
-
-        importConfigBrowseBtn.addSelectionListener(new SelectionAdapter() {
-
+        
+        newConfigBtn.addSelectionListener(new SelectionAdapter() {
+            
             @Override
             public void widgetSelected(SelectionEvent e) {
+                onNewConfigSelected(newConfigBtn.getSelection());
+            }
+            
+            @Override
+            public void widgetDefaultSelected(SelectionEvent e) {
+                onNewConfigSelected(newConfigBtn.getSelection());
+            }
+
+        });
+        
+        editExistingConfigBtn.addSelectionListener(new SelectionAdapter() {
+            
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                onEditExistingSelected(editExistingConfigBtn.getSelection());
+            }
+            
+            @Override
+            public void widgetDefaultSelected(SelectionEvent e) {
+                onEditExistingSelected(editExistingConfigBtn.getSelection());
             }
 
         });
 
+        importConfigBtn.addSelectionListener(new SelectionAdapter() {
+
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                onImportConfigSelected(importConfigBtn.getSelection());
+            }
+
+            @Override
+            public void widgetDefaultSelected(SelectionEvent e) {
+                onImportConfigSelected(importConfigBtn.getSelection());
+            }
+
+        });
+
+    }
+
+    private void onNewConfigSelected(boolean selected) {
+        newConfigGroup.setEnabled(selected);
+        configNameText.setEnabled(selected);
+        descriptionText.setEnabled(selected);
+    }
+
+    private void onEditExistingSelected(boolean selected) {
+        editExistingGroup.setEnabled(selected);
+        existingConfigsComboViewer.getControl().setEnabled(selected);
+    }
+
+    private void onImportConfigSelected(boolean selected) {
+        importConfigGroup.setEnabled(selected);
+        importConfigText.setEnabled(selected);
+        importConfigBrowseBtn.setEnabled(selected);
+    }
+
+    private void initData(IDynamicMonitor monitor) {
+        try {
+            List<IDynamicPlugin> distriDynamicPlugins = new LinkedList<>();
+            List<IDynamicPlugin> allBuildinDynamicPlugins = this.dynamicDistributionsGroup.getAllBuildinDynamicPlugins(monitor);
+            if (allBuildinDynamicPlugins != null && !allBuildinDynamicPlugins.isEmpty()) {
+                distriDynamicPlugins.addAll(allBuildinDynamicPlugins);
+            }
+            List<IDynamicPlugin> allUsersDynamicPlugins = DynamicDistributionManager.getInstance()
+                    .getAllUsersDynamicPlugins(monitor);
+            if (allUsersDynamicPlugins != null && !allUsersDynamicPlugins.isEmpty()) {
+                List<IDynamicPlugin> filterDynamicPlugins = this.dynamicDistributionsGroup
+                        .filterDynamicPlugins(allUsersDynamicPlugins, monitor);
+                if (filterDynamicPlugins != null && !filterDynamicPlugins.isEmpty()) {
+                    distriDynamicPlugins.addAll(filterDynamicPlugins);
+                }
+            }
+
+            Collections.sort(distriDynamicPlugins, Collections.reverseOrder(new DynamicDistributionComparator()));
+            existingConfigsComboViewer.setInput(distriDynamicPlugins);
+            if (0 < distriDynamicPlugins.size()) {
+                existingConfigsComboViewer.setSelection(new StructuredSelection(distriDynamicPlugins.get(0)));
+            }
+
+        } catch (Exception e) {
+            ExceptionHandler.process(e);
+        }
     }
 
     @Override
@@ -189,6 +287,20 @@ public class DynamicOptionForm extends AbstractDynamicDistributionForm {
     public boolean isComplete() {
         // TODO Auto-generated method stub
         return false;
+    }
+
+    private class ExistingConfigsLabelProvider extends LabelProvider {
+
+        @Override
+        public String getText(Object element) {
+            if (element instanceof IDynamicPlugin) {
+                IDynamicPluginConfiguration pluginConfiguration = ((IDynamicPlugin) element).getPluginConfiguration();
+                String name = pluginConfiguration.getName();
+                return name;
+            } else {
+                return element == null ? "" : element.toString();//$NON-NLS-1$
+            }
+        }
     }
 
 }

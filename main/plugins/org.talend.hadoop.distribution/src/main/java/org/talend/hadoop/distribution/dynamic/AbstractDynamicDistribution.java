@@ -187,7 +187,7 @@ public abstract class AbstractDynamicDistribution implements IDynamicDistributio
         int distance = -1;
         for (Entry<TemplateBean, List<String>> entry : entrySet) {
             List<String> list = entry.getValue();
-            Collections.reverse(list);
+            Collections.sort(list, Collections.reverseOrder());
             int size = list.size();
             int index = list.indexOf(version);
             int curDistance = size - index;

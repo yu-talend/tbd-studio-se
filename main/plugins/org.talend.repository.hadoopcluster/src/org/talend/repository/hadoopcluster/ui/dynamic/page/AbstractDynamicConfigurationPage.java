@@ -13,14 +13,18 @@
 package org.talend.repository.hadoopcluster.ui.dynamic.page;
 
 import org.eclipse.jface.wizard.WizardPage;
+import org.talend.hadoop.distribution.dynamic.IDynamicDistributionsGroup;
 import org.talend.repository.hadoopcluster.ui.dynamic.form.AbstractDynamicDistributionForm;
 
 public abstract class AbstractDynamicConfigurationPage extends WizardPage {
 
     private AbstractDynamicDistributionForm currentForm;
 
-    protected AbstractDynamicConfigurationPage(String pageName) {
+    private IDynamicDistributionsGroup dynamicDistributionsGroup;
+
+    protected AbstractDynamicConfigurationPage(String pageName, IDynamicDistributionsGroup dynamicDistributionsGroup) {
         super(pageName);
+        this.dynamicDistributionsGroup = dynamicDistributionsGroup;
     }
 
     protected void setCurrentForm(AbstractDynamicDistributionForm form) {
@@ -29,6 +33,10 @@ public abstract class AbstractDynamicConfigurationPage extends WizardPage {
 
     protected AbstractDynamicDistributionForm getCurrentForm() {
         return this.currentForm;
+    }
+
+    protected IDynamicDistributionsGroup getDynamicDistributionsGroup() {
+        return this.dynamicDistributionsGroup;
     }
 
 }
