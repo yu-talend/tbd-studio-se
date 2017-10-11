@@ -1,9 +1,11 @@
 package org.talend.repository.hadoopcluster.ui.dynamic;
 
+import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 import org.talend.commons.ui.runtime.image.ImageProvider;
 import org.talend.hadoop.distribution.dynamic.IDynamicDistributionsGroup;
 import org.talend.repository.hadoopcluster.i18n.Messages;
+import org.talend.repository.hadoopcluster.ui.dynamic.form.AbstractDynamicDistributionForm;
 import org.talend.repository.hadoopcluster.ui.dynamic.page.DynamicOptionPage;
 import org.talend.repository.hadoopcluster.ui.dynamic.page.DynamicRetrievePage;
 import org.talend.repository.hadoopcluster.util.EHadoopClusterImage;
@@ -39,7 +41,12 @@ public class DynamicBuildConfigurationWizard extends Wizard {
 
     @Override
     public boolean canFinish() {
-        return super.canFinish();
+        IWizardPage currentPage = getContainer().getCurrentPage();
+        if (currentPage instanceof AbstractDynamicDistributionForm) {
+            return ((AbstractDynamicDistributionForm) currentPage).canFinish();
+        } else {
+            return super.canFinish();
+        }
     }
 
     @Override

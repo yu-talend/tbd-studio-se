@@ -19,9 +19,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
@@ -34,6 +37,7 @@ import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.talend.commons.exception.ExceptionHandler;
@@ -44,6 +48,7 @@ import org.talend.hadoop.distribution.dynamic.DynamicDistributionManager;
 import org.talend.hadoop.distribution.dynamic.IDynamicDistributionsGroup;
 import org.talend.hadoop.distribution.dynamic.util.DynamicDistributionComparator;
 import org.talend.repository.hadoopcluster.i18n.Messages;
+import org.talend.repository.ui.login.LoginDialogV2;
 
 /**
  * DOC cmeng  class global comment. Detailled comment
@@ -166,6 +171,9 @@ public class DynamicOptionForm extends AbstractDynamicDistributionForm {
         importConfigGroup.setLayoutData(formData);
         importConfigGroup.setLayout(new FormLayout());
 
+        importConfigText = new Text(importConfigGroup, SWT.BORDER);
+        importConfigText.setEditable(false);
+
         importConfigBrowseBtn = new Button(importConfigGroup, SWT.PUSH);
         importConfigBrowseBtn.setText(Messages.getString("DynamicOptionForm.form.importConfig.browse")); //$NON-NLS-1$
         formData = new FormData();
@@ -174,7 +182,6 @@ public class DynamicOptionForm extends AbstractDynamicDistributionForm {
         formData.right = new FormAttachment(100);
         importConfigBrowseBtn.setLayoutData(formData);
 
-        importConfigText = new Text(importConfigGroup, SWT.BORDER);
         formData = new FormData();
         formData.top = new FormAttachment(importConfigBrowseBtn, 0, SWT.CENTER);
         formData.left = new FormAttachment(0, HORZON_WIDTH);
@@ -201,13 +208,13 @@ public class DynamicOptionForm extends AbstractDynamicDistributionForm {
             @Override
             public void widgetSelected(SelectionEvent e) {
                 onNewConfigSelected(newConfigBtn.getSelection());
-                isComplete();
+                updateButtons();
             }
             
             @Override
             public void widgetDefaultSelected(SelectionEvent e) {
                 onNewConfigSelected(newConfigBtn.getSelection());
-                isComplete();
+                updateButtons();
             }
 
         });
@@ -217,13 +224,13 @@ public class DynamicOptionForm extends AbstractDynamicDistributionForm {
             @Override
             public void widgetSelected(SelectionEvent e) {
                 onEditExistingSelected(editExistingConfigBtn.getSelection());
-                isComplete();
+                updateButtons();
             }
             
             @Override
             public void widgetDefaultSelected(SelectionEvent e) {
                 onEditExistingSelected(editExistingConfigBtn.getSelection());
-                isComplete();
+                updateButtons();
             }
 
         });
@@ -233,13 +240,13 @@ public class DynamicOptionForm extends AbstractDynamicDistributionForm {
             @Override
             public void widgetSelected(SelectionEvent e) {
                 onImportConfigSelected(importConfigBtn.getSelection());
-                isComplete();
+                updateButtons();
             }
 
             @Override
             public void widgetDefaultSelected(SelectionEvent e) {
                 onImportConfigSelected(importConfigBtn.getSelection());
-                isComplete();
+                updateButtons();
             }
 
         });
@@ -248,8 +255,30 @@ public class DynamicOptionForm extends AbstractDynamicDistributionForm {
 
             @Override
             public void modifyText(ModifyEvent e) {
-                isComplete();
+                updateButtons();
             }
+
+        });
+
+        existingConfigsComboViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+
+            @Override
+            public void selectionChanged(SelectionChangedEvent event) {
+                existingConfigsComboViewer.getControl()
+                        .setToolTipText(existingConfigsComboViewer.getCombo().getText());
+                updateButtons();
+            }
+
+        });
+
+        importConfigBrowseBtn.addSelectionListener(new SelectionAdapter() {
+
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                onImportConfigBrowseBtnSelected();
+                updateButtons();
+            }
+
         });
 
     }
@@ -258,6 +287,10 @@ public class DynamicOptionForm extends AbstractDynamicDistributionForm {
         newConfigGroup.setEnabled(selected);
         configNameText.setEnabled(selected);
         descriptionText.setEnabled(selected);
+        if (selected) {
+            configNameText.selectAll();
+            configNameText.forceFocus();
+        }
     }
 
     private void onEditExistingSelected(boolean selected) {
@@ -269,6 +302,15 @@ public class DynamicOptionForm extends AbstractDynamicDistributionForm {
         importConfigGroup.setEnabled(selected);
         importConfigText.setEnabled(selected);
         importConfigBrowseBtn.setEnabled(selected);
+    }
+
+    private void onImportConfigBrowseBtnSelected() {
+        FileDialog fileDialog = new FileDialog(getShell());
+        fileDialog.setFilterExtensions(new String[] { "*.json" }); //$NON-NLS-1$
+        String filePath = fileDialog.open();
+        if (StringUtils.isNotEmpty(filePath)) {
+            importConfigText.setText(filePath);
+        }
     }
 
     private void initData(IDynamicMonitor monitor) {
@@ -301,23 +343,34 @@ public class DynamicOptionForm extends AbstractDynamicDistributionForm {
 
     private boolean checkNewConfigNameValid() {
         if (!configNameText.isEnabled()) {
+            configNameText.setBackground(null);
             return true;
         }
         String configName = configNameText.getText();
         if (configName.trim().isEmpty()) {
-            showMessage(Messages.getString("DynamicDistributionsForm.newConfigName.check.empty"), WizardPage.ERROR); //$NON-NLS-1$
+            String errorMessage = Messages.getString("DynamicDistributionsForm.newConfigName.check.empty"); //$NON-NLS-1$
+            showMessage(errorMessage, WizardPage.ERROR);
+            configNameText.setBackground(LoginDialogV2.RED_COLOR);
+            configNameText.setToolTipText(errorMessage);
             return false;
         }
         try {
             if (isConfigurationNameExist(configName)) {
-                showMessage(Messages.getString("DynamicDistributionsForm.newConfigName.check.exist", configName), //$NON-NLS-1$
-                        WizardPage.ERROR);
+                String errorMessage = Messages.getString("DynamicDistributionsForm.newConfigName.check.exist", configName); //$NON-NLS-1$
+                showMessage(errorMessage, WizardPage.ERROR);
+                configNameText.setBackground(LoginDialogV2.RED_COLOR);
+                configNameText.setToolTipText(errorMessage);
                 return false;
             }
         } catch (Exception e) {
-            showMessage(e.getMessage(), WizardPage.ERROR);
+            String errorMessage = e.getMessage();
+            showMessage(errorMessage, WizardPage.ERROR);
+            configNameText.setBackground(LoginDialogV2.RED_COLOR);
+            configNameText.setToolTipText(errorMessage);
             return false;
         }
+        configNameText.setBackground(null);
+        configNameText.setToolTipText(configNameText.getText());
         return true;
     }
 
@@ -344,13 +397,44 @@ public class DynamicOptionForm extends AbstractDynamicDistributionForm {
         return existingConfigurationNames.contains(name);
     }
 
+    private boolean checkImportConfigText() {
+        if (!importConfigText.isEnabled()) {
+            importConfigText.setBackground(null);
+            return true;
+        }
+        String importConfig = importConfigText.getText();
+        if (StringUtils.isEmpty(importConfig)) {
+            String errorMessage = Messages.getString("DynamicDistributionsForm.importConfigText.check.empty"); //$NON-NLS-1$
+            showMessage(errorMessage, WizardPage.ERROR);
+            importConfigText.setBackground(LoginDialogV2.RED_COLOR);
+            importConfigText.setToolTipText(errorMessage);
+            return false;
+        }
+        importConfigText.setBackground(null);
+        importConfigText.setToolTipText(importConfigText.getText());
+        return true;
+    }
+
     @Override
     public boolean isComplete() {
         if (!checkNewConfigNameValid()) {
             return false;
         }
+        if (!checkImportConfigText()) {
+            return false;
+        }
         showMessage(null, WizardPage.NONE);
         return true;
+    }
+
+    @Override
+    public boolean canFinish() {
+        if (isComplete()) {
+            if (importConfigBtn.getSelection()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private class ExistingConfigsLabelProvider extends LabelProvider {
@@ -365,6 +449,7 @@ public class DynamicOptionForm extends AbstractDynamicDistributionForm {
                 return element == null ? "" : element.toString();//$NON-NLS-1$
             }
         }
+
     }
 
 }

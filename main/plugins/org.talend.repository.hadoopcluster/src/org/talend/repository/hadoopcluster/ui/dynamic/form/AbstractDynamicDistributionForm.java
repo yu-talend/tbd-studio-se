@@ -36,6 +36,8 @@ public abstract class AbstractDynamicDistributionForm extends Composite {
 
     abstract public boolean isComplete();
 
+    abstract public boolean canFinish();
+
     public static Point getNewButtonSize(Button btn) {
         return getNewButtonSize(btn, 6);
     }
@@ -85,9 +87,15 @@ public abstract class AbstractDynamicDistributionForm extends Composite {
         this.checkListener.showMessage(message, level);
     }
 
+    protected void updateButtons() {
+        this.checkListener.updateButtons();
+    }
+
     public static interface ICheckListener extends EventListener {
 
         public void showMessage(String message, int level);
+
+        public void updateButtons();
 
     }
 }

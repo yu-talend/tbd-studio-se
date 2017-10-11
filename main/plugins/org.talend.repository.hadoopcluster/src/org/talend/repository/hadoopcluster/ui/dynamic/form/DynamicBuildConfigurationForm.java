@@ -147,7 +147,14 @@ public class DynamicBuildConfigurationForm extends AbstractDynamicDistributionFo
 
     @Override
     public boolean isComplete() {
-        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean canFinish() {
+        if (isComplete()) {
+            return true;
+        }
         return false;
     }
 

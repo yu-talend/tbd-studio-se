@@ -245,4 +245,12 @@ public class DynamicDistributionsForm extends AbstractDynamicDistributionForm {
         return true;
     }
 
+    @Override
+    public boolean canFinish() {
+        if (isComplete()) {
+            return true;
+        }
+        return false;
+    }
+
 }

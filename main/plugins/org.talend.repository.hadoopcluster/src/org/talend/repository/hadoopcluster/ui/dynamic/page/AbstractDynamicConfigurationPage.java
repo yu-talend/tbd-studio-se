@@ -39,4 +39,8 @@ public abstract class AbstractDynamicConfigurationPage extends WizardPage {
         return this.dynamicDistributionsGroup;
     }
 
+    public boolean canFinish() {
+        return getCurrentForm().canFinish();
+    }
+
 }

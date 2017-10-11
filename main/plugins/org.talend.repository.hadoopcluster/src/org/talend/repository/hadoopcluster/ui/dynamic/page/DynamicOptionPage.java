@@ -34,6 +34,12 @@ public class DynamicOptionPage extends AbstractDynamicConfigurationPage {
             public void showMessage(String message, int level) {
                 setMessage(message, level);
             }
+
+            @Override
+            public void updateButtons() {
+                getContainer().updateButtons();
+            }
+
         };
 
         AbstractDynamicDistributionForm setupForm = new DynamicOptionForm(parent, SWT.NONE, getDynamicDistributionsGroup(),
