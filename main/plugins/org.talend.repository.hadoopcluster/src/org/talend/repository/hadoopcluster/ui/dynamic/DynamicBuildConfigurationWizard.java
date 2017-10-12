@@ -3,7 +3,6 @@ package org.talend.repository.hadoopcluster.ui.dynamic;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 import org.talend.commons.ui.runtime.image.ImageProvider;
-import org.talend.hadoop.distribution.dynamic.IDynamicDistributionsGroup;
 import org.talend.repository.hadoopcluster.i18n.Messages;
 import org.talend.repository.hadoopcluster.ui.dynamic.page.AbstractDynamicConfigurationPage;
 import org.talend.repository.hadoopcluster.ui.dynamic.page.DynamicOptionPage;
@@ -16,11 +15,11 @@ public class DynamicBuildConfigurationWizard extends Wizard {
 
     private DynamicRetrievePage retrivePage;
 
-    private IDynamicDistributionsGroup dynamicDistributionsGroup;
+    private DynamicBuildConfigurationData configData;
 
-    public DynamicBuildConfigurationWizard(IDynamicDistributionsGroup dynamicDistributionsGroup) {
+    public DynamicBuildConfigurationWizard(DynamicBuildConfigurationData configData) {
         super();
-        this.dynamicDistributionsGroup = dynamicDistributionsGroup;
+        this.configData = configData;
         setNeedsProgressMonitor(true);
         setForcePreviousAndNextButtons(true);
     }
@@ -33,8 +32,8 @@ public class DynamicBuildConfigurationWizard extends Wizard {
     @Override
     public void addPages() {
         setDefaultPageImageDescriptor(ImageProvider.getImageDesc(EHadoopClusterImage.HADOOPCLUSTER_WIZ));
-        optionPage = new DynamicOptionPage(this.dynamicDistributionsGroup);
-        retrivePage = new DynamicRetrievePage(this.dynamicDistributionsGroup);
+        optionPage = new DynamicOptionPage(configData);
+        retrivePage = new DynamicRetrievePage(configData);
         addPage(optionPage);
         addPage(retrivePage);
     }

@@ -20,6 +20,7 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.talend.repository.hadoopcluster.ui.dynamic.DynamicBuildConfigurationData;
 
 
 /**
@@ -29,9 +30,12 @@ public abstract class AbstractDynamicDistributionForm extends Composite {
 
     private ICheckListener checkListener;
 
-    public AbstractDynamicDistributionForm(Composite parent, int style) {
+    private DynamicBuildConfigurationData configData;
+
+    public AbstractDynamicDistributionForm(Composite parent, int style, DynamicBuildConfigurationData configData) {
         super(parent, style);
         this.setLayout(new FillLayout());
+        this.configData = configData;
     }
 
     abstract public boolean isComplete();
@@ -91,6 +95,10 @@ public abstract class AbstractDynamicDistributionForm extends Composite {
 
     protected void updateButtons() {
         this.checkListener.updateButtons();
+    }
+
+    protected DynamicBuildConfigurationData getDynamicBuildConfigurationData() {
+        return this.configData;
     }
 
     public static interface ICheckListener extends EventListener {

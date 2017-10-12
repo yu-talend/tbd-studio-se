@@ -25,8 +25,8 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.talend.designer.maven.aether.IDynamicMonitor;
-import org.talend.hadoop.distribution.dynamic.IDynamicDistributionsGroup;
 import org.talend.repository.hadoopcluster.i18n.Messages;
+import org.talend.repository.hadoopcluster.ui.dynamic.DynamicBuildConfigurationData;
 
 /**
  * DOC cmeng  class global comment. Detailled comment
@@ -47,12 +47,9 @@ public class DynamicBuildConfigurationForm extends AbstractDynamicDistributionFo
 
     private Composite fetchGroup;
 
-    private IDynamicDistributionsGroup dynamicDistributionsGroup;
-
-    public DynamicBuildConfigurationForm(Composite parent, int style, IDynamicDistributionsGroup dynamicDistributionsGroup,
+    public DynamicBuildConfigurationForm(Composite parent, int style, DynamicBuildConfigurationData configData,
             IDynamicMonitor monitor) {
-        super(parent, style);
-        this.dynamicDistributionsGroup = dynamicDistributionsGroup;
+        super(parent, style, configData);
         createControl();
     }
 

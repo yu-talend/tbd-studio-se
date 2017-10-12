@@ -28,6 +28,8 @@ public class DynamicConfiguration {
 
     private String remoteRepositoryUrl;
 
+    private String description;
+
     public String getId() {
         return this.id;
     }
@@ -66,6 +68,14 @@ public class DynamicConfiguration {
 
     public void setRemoteRepositoryUrl(String remoteRepositoryUrl) {
         this.remoteRepositoryUrl = remoteRepositoryUrl;
+    }
+
+    public String getDescription() {
+        return this.description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
 }

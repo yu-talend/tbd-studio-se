@@ -44,6 +44,7 @@ import org.talend.designer.maven.aether.IDynamicMonitor;
 import org.talend.hadoop.distribution.dynamic.DynamicDistributionManager;
 import org.talend.hadoop.distribution.dynamic.IDynamicDistributionsGroup;
 import org.talend.repository.hadoopcluster.i18n.Messages;
+import org.talend.repository.hadoopcluster.ui.dynamic.DynamicBuildConfigurationData;
 import org.talend.repository.hadoopcluster.ui.dynamic.DynamicBuildConfigurationWizard;
 
 /**
@@ -60,7 +61,7 @@ public class DynamicDistributionsForm extends AbstractDynamicDistributionForm {
     private Map<String, IDynamicDistributionsGroup> dynDistriGroupMap = new HashMap<>();
 
     public DynamicDistributionsForm(Composite parent, int style, IDynamicMonitor monitor) {
-        super(parent, style);
+        super(parent, style, null);
         createControl();
         loadData(monitor);
         addListeners();
@@ -149,7 +150,9 @@ public class DynamicDistributionsForm extends AbstractDynamicDistributionForm {
                     return;
                 }
                 IDynamicDistributionsGroup dynamicDistributionsGroup = dynDistriGroupMap.get(distribution);
-                DynamicBuildConfigurationWizard wizard = new DynamicBuildConfigurationWizard(dynamicDistributionsGroup);
+                DynamicBuildConfigurationData configData = new DynamicBuildConfigurationData();
+                configData.setDynamicDistributionsGroup(dynamicDistributionsGroup);
+                DynamicBuildConfigurationWizard wizard = new DynamicBuildConfigurationWizard(configData);
                 WizardDialog wizardDialog = new WizardDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
                         wizard);
                 wizardDialog.create();

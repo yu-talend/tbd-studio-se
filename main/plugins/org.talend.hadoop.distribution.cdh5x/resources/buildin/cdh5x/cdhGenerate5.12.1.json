@@ -1,7 +1,7 @@
 {
   "childNodes" : [ {
     "childNodes" : [ ],
-    "description" : "",
+    "description" : "build-in dynamic distribution for CDH 5.12.1",
     "distribution" : "CLOUDERA",
     "id" : "Cloudera_CDH5_X_CDH5_12_1",
     "name" : "Cloudera CDH5.12.1(Dynamic version)",
