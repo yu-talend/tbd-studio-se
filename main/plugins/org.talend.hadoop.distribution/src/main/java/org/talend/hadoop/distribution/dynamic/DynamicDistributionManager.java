@@ -13,6 +13,7 @@
 package org.talend.hadoop.distribution.dynamic;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -94,6 +95,42 @@ public class DynamicDistributionManager {
             }
         }
         return allBuildinPlugins;
+    }
+
+    public void saveUsersDynamicPlugin(IDynamicPlugin dynamicPlugin, IDynamicMonitor monitor) throws Exception {
+        FileOutputStream outStream = null;
+        IDynamicPluginConfiguration pluginConfiguration = dynamicPlugin.getPluginConfiguration();
+        Object obj = pluginConfiguration.getAttribute(DynamicDistriConfigAdapter.ATTR_FILE_PATH);
+        try {
+            String filePath = (String) obj;
+            if (StringUtils.isEmpty(filePath)) {
+                IProject eProject = ResourceUtils.getProject(ProjectManager.getInstance().getCurrentProject());
+                IFolder usersFolder = ResourceUtils.getFolder(eProject,
+                        RepositoryConstants.SETTING_DIRECTORY + "/" + getUsersFolderPath(), //$NON-NLS-1$
+                        false);
+                if (usersFolder == null || !usersFolder.exists()) {
+                    ResourceUtils.createFolder(usersFolder);
+                }
+                String folderPath = usersFolder.getLocation().toPortableString();
+                String fileName = pluginConfiguration.getId();
+                filePath = folderPath + "/" + fileName + ".json"; //$NON-NLS-1$
+            }
+            obj = pluginConfiguration.removeAttribute(DynamicDistriConfigAdapter.ATTR_FILE_PATH);
+            String content = DynamicServiceUtil.formatJsonString(dynamicPlugin.toXmlJson().toString());
+            File outFile = new File(filePath);
+            outStream = new FileOutputStream(outFile);
+            outStream.write(content.getBytes("UTF-8")); //$NON-NLS-1$
+            outStream.flush();
+        } finally {
+            pluginConfiguration.setAttribute(DynamicDistriConfigAdapter.ATTR_FILE_PATH, obj);
+            if (outStream != null) {
+                try {
+                    outStream.close();
+                } catch (Exception e) {
+                    ExceptionHandler.process(e);
+                }
+            }
+        }
     }
 
     public List<IDynamicPlugin> getAllUsersDynamicPlugins(IDynamicMonitor monitor) throws Exception {

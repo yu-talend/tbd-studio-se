@@ -124,8 +124,9 @@ public abstract class AbstractDynamicDistribution implements IDynamicDistributio
                         String buildinDistributionPath = FileLocator.toFileURL(curUrl).getPath();
                         String jsonContent = DynamicServiceUtil.readFile(new File(buildinDistributionPath));
                         IDynamicPlugin dynamicPlugin = DynamicFactory.getInstance().createPluginFromJson(jsonContent);
-                        IDynamicPluginConfiguration pluginConfiguration = dynamicPlugin.getPluginConfiguration();
-                        pluginConfiguration.setAttribute(DynamicDistriConfigAdapter.ATTR_FILE_PATH, buildinDistributionPath);
+                        // IDynamicPluginConfiguration pluginConfiguration = dynamicPlugin.getPluginConfiguration();
+                        // pluginConfiguration.setAttribute(DynamicDistriConfigAdapter.ATTR_FILE_PATH,
+                        // buildinDistributionPath);
                         dynamicPlugins.add(dynamicPlugin);
                     }
                 } catch (Exception e) {
@@ -281,6 +282,8 @@ public abstract class AbstractDynamicDistribution implements IDynamicDistributio
         pluginAdapter.adapt();
 
         IDynamicDistributionTemplate distributionTemplate = initTemplate(pluginAdapter, monitor);
+        IDynamicPlugin plugin = pluginAdapter.getPlugin();
+        IDynamicPluginConfiguration pConfiguration = plugin.getPluginConfiguration();
         try {
             Bundle bundle = getBundle();
 
@@ -317,7 +320,8 @@ public abstract class AbstractDynamicDistribution implements IDynamicDistributio
                 DynamicServiceUtil.unregistOSGiService(registedOsgiService);
             }
 
-            DynamicServiceUtil.addContribution(bundle, pluginAdapter.getPlugin());
+            plugin.setPluginConfiguration(null);
+            DynamicServiceUtil.addContribution(bundle, plugin);
             registedPluginMap.put(id, pluginAdapter);
 
             BundleContext context = bundle.getBundleContext();
@@ -325,7 +329,7 @@ public abstract class AbstractDynamicDistribution implements IDynamicDistributio
                     distributionTemplate.getServices().toArray(new String[0]), distributionTemplate, null);
             registedOsgiServiceMap.put(id, osgiService);
         } finally {
-            // nothing to do
+            plugin.setPluginConfiguration(pConfiguration);
         }
     }
 
