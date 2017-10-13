@@ -56,7 +56,9 @@ public abstract class AbstractDynamicDistribution implements IDynamicDistributio
 
     private List<TemplateBean> templateBeansCache;
 
-    private Map<TemplateBean, List<String>> templateBeanVersionMap;
+    private Map<TemplateBean, List<String>> templateBeanCompatibleVersionMap;
+
+    private Map<TemplateBean, List<String>> templateBeanAllVersionMap;
 
     private Map<String, DynamicPluginAdapter> registedPluginMap = new HashMap<>();
 
@@ -141,14 +143,21 @@ public abstract class AbstractDynamicDistribution implements IDynamicDistributio
         Set<String> allCompatibleVersion = new HashSet<>();
         List<TemplateBean> templates = getTemplates(monitor);
         if (templates != null) {
-            templateBeanVersionMap = new HashMap<>();
-            DynamicConfiguration dynamicConfiguration = new DynamicConfiguration();
-            dynamicConfiguration.setDistribution(getDistributionName());
-            IDependencyResolver dependencyResolver = DependencyResolverFactory.getInstance()
-                    .getDependencyResolver(dynamicConfiguration);
-            List<String> allHadoopVersions = dependencyResolver.listHadoopVersions(null, null, monitor);
-            if (allHadoopVersions != null) {
-                for (TemplateBean templateBean : templates) {
+            templateBeanCompatibleVersionMap = new HashMap<>();
+            Map<String, List<String>> fetchedVersionsMap = new HashMap<>();
+            for (TemplateBean templateBean : templates) {
+                String remoteRepositoryUrl = templateBean.getRepository();
+                List<String> allHadoopVersions = fetchedVersionsMap.get(remoteRepositoryUrl);
+                if (allHadoopVersions == null) {
+                    DynamicConfiguration dynamicConfiguration = new DynamicConfiguration();
+                    dynamicConfiguration.setDistribution(getDistributionName());
+                    dynamicConfiguration.setRemoteRepositoryUrl(templateBean.getRepository());
+                    IDependencyResolver dependencyResolver = DependencyResolverFactory.getInstance()
+                            .getDependencyResolver(dynamicConfiguration);
+                    allHadoopVersions = dependencyResolver.listHadoopVersions(null, null, monitor);
+                    fetchedVersionsMap.put(remoteRepositoryUrl, allHadoopVersions);
+                }
+                if (allHadoopVersions != null) {
                     String baseVersion = templateBean.getBaseVersion();
                     String topVersion = templateBean.getTopVersion();
                     String versionRange = "["; //$NON-NLS-1$
@@ -166,7 +175,7 @@ public abstract class AbstractDynamicDistribution implements IDynamicDistributio
                             versionRange);
                     if (filteredVersions != null && !filteredVersions.isEmpty()) {
                         allCompatibleVersion.addAll(filteredVersions);
-                        templateBeanVersionMap.put(templateBean, filteredVersions);
+                        templateBeanCompatibleVersionMap.put(templateBean, filteredVersions);
                     }
                 }
             }
@@ -177,6 +186,38 @@ public abstract class AbstractDynamicDistribution implements IDynamicDistributio
     }
 
     @Override
+    public List<String> getAllVersions(IDynamicMonitor monitor) throws Exception {
+
+        Set<String> allCompatibleVersion = new HashSet<>();
+        List<TemplateBean> templates = getTemplates(monitor);
+        if (templates != null) {
+            templateBeanAllVersionMap = new HashMap<>();
+            Map<String, List<String>> fetchedVersionsMap = new HashMap<>();
+            for (TemplateBean templateBean : templates) {
+                String remoteRepositoryUrl = templateBean.getRepository();
+                List<String> allHadoopVersions = fetchedVersionsMap.get(remoteRepositoryUrl);
+                if (allHadoopVersions == null) {
+                    DynamicConfiguration dynamicConfiguration = new DynamicConfiguration();
+                    dynamicConfiguration.setDistribution(getDistributionName());
+                    dynamicConfiguration.setRemoteRepositoryUrl(templateBean.getRepository());
+                    IDependencyResolver dependencyResolver = DependencyResolverFactory.getInstance()
+                            .getDependencyResolver(dynamicConfiguration);
+                    allHadoopVersions = dependencyResolver.listHadoopVersions(null, null, monitor);
+                    fetchedVersionsMap.put(remoteRepositoryUrl, allHadoopVersions);
+                }
+                if (allHadoopVersions != null) {
+                    allCompatibleVersion.addAll(allHadoopVersions);
+                    templateBeanAllVersionMap.put(templateBean, allHadoopVersions);
+                }
+            }
+        }
+        List<String> compatibleVersionList = new LinkedList<>(allCompatibleVersion);
+        Collections.reverse(compatibleVersionList);
+        return compatibleVersionList;
+
+    }
+
+    @Override
     public IDynamicPlugin buildDynamicPlugin(IDynamicMonitor monitor, DynamicConfiguration configuration) throws Exception {
         String distribution = configuration.getDistribution();
         if (!StringUtils.equals(getDistributionName(), distribution)) {
@@ -184,7 +225,7 @@ public abstract class AbstractDynamicDistribution implements IDynamicDistributio
                     "only support to build dynamic plugin of " + getDistributionName() + " instead of " + distribution);
         }
         String version = configuration.getVersion();
-        Set<Entry<TemplateBean, List<String>>> entrySet = templateBeanVersionMap.entrySet();
+        Set<Entry<TemplateBean, List<String>>> entrySet = templateBeanCompatibleVersionMap.entrySet();
         TemplateBean bestTemplateBean = null;
         int distance = -1;
         for (Entry<TemplateBean, List<String>> entry : entrySet) {

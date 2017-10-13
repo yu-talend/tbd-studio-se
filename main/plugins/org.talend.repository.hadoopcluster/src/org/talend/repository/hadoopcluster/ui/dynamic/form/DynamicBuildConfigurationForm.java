@@ -12,11 +12,21 @@
 // ============================================================================
 package org.talend.repository.hadoopcluster.ui.dynamic.form;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import org.apache.commons.lang.StringUtils;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
@@ -24,9 +34,14 @@ import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.talend.commons.exception.ExceptionHandler;
+import org.talend.core.runtime.dynamic.IDynamicPlugin;
+import org.talend.core.runtime.dynamic.IDynamicPluginConfiguration;
 import org.talend.designer.maven.aether.IDynamicMonitor;
+import org.talend.hadoop.distribution.dynamic.IDynamicDistributionsGroup;
 import org.talend.repository.hadoopcluster.i18n.Messages;
 import org.talend.repository.hadoopcluster.ui.dynamic.DynamicBuildConfigurationData;
+import org.talend.repository.hadoopcluster.ui.dynamic.DynamicBuildConfigurationData.ActionType;
 
 /**
  * DOC cmeng  class global comment. Detailled comment
@@ -51,6 +66,8 @@ public class DynamicBuildConfigurationForm extends AbstractDynamicDistributionFo
             IDynamicMonitor monitor) {
         super(parent, style, configData);
         createControl();
+        initData();
+        addListeners();
     }
 
     protected void createControl() {
@@ -109,6 +126,7 @@ public class DynamicBuildConfigurationForm extends AbstractDynamicDistributionFo
 
         showOnlyCompatibleVersionBtn = new Button(fetchGroup, SWT.CHECK);
         showOnlyCompatibleVersionBtn.setText(Messages.getString("DynamicBuildConfigurationForm.showOnlyCompatibleVersionBtn")); //$NON-NLS-1$
+        showOnlyCompatibleVersionBtn.setSelection(true);
         formData = new FormData();
         formData.top = new FormAttachment(hadoopVersionCombo.getCombo(), ALIGN_VERTICAL_INNER, SWT.BOTTOM);
         formData.right = new FormAttachment(hadoopVersionCombo.getCombo(), 0, SWT.RIGHT);
@@ -142,14 +160,119 @@ public class DynamicBuildConfigurationForm extends AbstractDynamicDistributionFo
 
     }
 
+    private void initData() {
+        DynamicBuildConfigurationData dynConfigData = getDynamicBuildConfigurationData();
+        List<String> versionList = new ArrayList<>();
+        ActionType actionType = dynConfigData.getActionType();
+        if (actionType == ActionType.Import || actionType == ActionType.EditExisting) {
+            IDynamicPlugin dynamicPlugin = dynConfigData.getDynamicPlugin();
+            IDynamicPluginConfiguration pluginConfiguration = dynamicPlugin.getPluginConfiguration();
+            String version = pluginConfiguration.getVersion();
+            versionList.add(version);
+        }
+
+    }
+
+    private void addListeners() {
+        fetchVersionBtn.addSelectionListener(new SelectionAdapter() {
+
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                onFetchVersionBtnSelected();
+                updateButtons();
+            }
+
+        });
+    }
+
+    private void onFetchVersionBtnSelected() {
+        try {
+            List<String> versionList = getVersionList();
+            if (versionList != null && !versionList.isEmpty()) {
+                Collections.sort(versionList, Collections.reverseOrder());
+                hadoopVersionCombo.setInput(versionList);
+                hadoopVersionCombo.setSelection(new StructuredSelection(versionList.get(0)));
+            }
+        } catch (Exception ex) {
+            ExceptionHandler.process(ex);
+        }
+    }
+
+    private List<String> getVersionList() throws Exception {
+        List<String> versionList = null;
+        try {
+            DynamicBuildConfigurationData dynConfigData = getDynamicBuildConfigurationData();
+            IDynamicDistributionsGroup dynDistrGroup = dynConfigData.getDynamicDistributionsGroup();
+            IDynamicMonitor monitor = new IDynamicMonitor() {
+
+                @Override
+                public void writeMessage(String message) {
+                    // TODO Auto-generated method stub
+
+                }
+            };
+
+            if (showOnlyCompatibleVersionBtn.getSelection()) {
+                versionList = dynDistrGroup.getCompatibleVersions(monitor);
+            } else {
+                versionList = dynDistrGroup.getAllVersions(monitor);
+            }
+        } catch (Exception ex) {
+            ExceptionHandler.process(ex);
+        }
+        return versionList;
+    }
+
+    private void enableVersionCombo(boolean enable) {
+        hadoopVersionCombo.getControl().setEnabled(enable);
+    }
+
+    private void enableJarsTable(boolean enable) {
+        baseJarsTable.getControl().setEnabled(enable);
+    }
+
+    private void enableRetrieveBaseJarBtn(boolean enable) {
+        retrieveBaseJarsBtn.setEnabled(enable);
+        if (!enable) {
+            baseJarsTable.getControl().setEnabled(enable);
+        }
+    }
+
     @Override
     public boolean isComplete() {
-        return false;
+        showMessage(null, WizardPage.INFORMATION);
+        if (!checkVersionList()) {
+            return false;
+        }
+        return true;
+    }
+
+    private boolean checkVersionList() {
+        DynamicBuildConfigurationData dynConfigData = getDynamicBuildConfigurationData();
+        ActionType actionType = dynConfigData.getActionType();
+        enableVersionCombo(false);
+        enableRetrieveBaseJarBtn(false);
+        if (actionType == ActionType.NewConfig) {
+            String selectedVersion = null;
+            IStructuredSelection selection = (IStructuredSelection) hadoopVersionCombo.getSelection();
+            if (selection != null) {
+                selectedVersion = (String) selection.getFirstElement();
+            }
+            if (StringUtils.isEmpty(selectedVersion)) {
+                String errorMessage = Messages.getString("DynamicBuildConfigurationForm.check.versionList.empty", //$NON-NLS-1$
+                        Messages.getString("DynamicBuildConfigurationForm.fetchBtn")); //$NON-NLS-1$
+                showMessage(errorMessage, WizardPage.ERROR);
+                return false;
+            }
+        }
+        enableVersionCombo(true);
+        enableRetrieveBaseJarBtn(true);
+        return true;
     }
 
     @Override
     public boolean canFlipToNextPage() {
-        return isComplete();
+        return false;
     }
 
     @Override

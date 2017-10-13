@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.talend.commons.exception.ExceptionHandler;
 import org.talend.designer.maven.aether.IDynamicMonitor;
 import org.talend.designer.maven.aether.util.DynamicDistributionAetherUtils;
 import org.talend.hadoop.distribution.dynamic.DynamicConfiguration;
@@ -28,7 +27,7 @@ import org.talend.hadoop.distribution.dynamic.resolver.AbstractDependencyResolve
  */
 public class ClouderaDependencyResolver extends AbstractDependencyResolver implements IClouderaDependencyResolver {
 
-    private Pattern clouderaDistributionPattern;
+    private List<Pattern> clouderaDistributionPatterns;
 
     @Override
     public String getDependencyVersionByHadoopVersion(String groupId, String artifactId, IDynamicMonitor monitor)
@@ -59,39 +58,45 @@ public class ClouderaDependencyResolver extends AbstractDependencyResolver imple
     }
 
     public List<String> getCleanHadoopVersion(List<String> versionRange) throws Exception {
-        Pattern pattern = getClouderaDistributionPattern();
+        List<Pattern> patterns = getClouderaDistributionPatterns();
         List<String> cleanVersions = new ArrayList<>();
         for (String version : versionRange) {
-            Matcher matcher = pattern.matcher(version);
-            if (!matcher.find()) {
-                ExceptionHandler.process(new Exception("Unknown hadoop version: " + version));
-                continue;
+            for (Pattern pattern : patterns) {
+                Matcher matcher = pattern.matcher(version);
+                if (!matcher.find()) {
+                    continue;
+                }
+                String cleanVersion = matcher.group(1);
+                cleanVersions.add(cleanVersion);
+                break;
             }
-            String cleanVersion = matcher.group();
-            cleanVersions.add(cleanVersion.substring(3));
         }
         return cleanVersions;
     }
 
     public String getVersionByHadoopVersion(List<String> versionRange, String hadoopVersion) throws Exception {
-        Pattern pattern = getClouderaDistributionPattern();
+        List<Pattern> patterns = getClouderaDistributionPatterns();
         for (String version : versionRange) {
-            Matcher matcher = pattern.matcher(version);
-            if (matcher.find()) {
-                String group = matcher.group();
-                if (group.equals(hadoopVersion)) {
-                    return version;
+            for (Pattern pattern : patterns) {
+                Matcher matcher = pattern.matcher(version);
+                if (matcher.find()) {
+                    String group = matcher.group();
+                    if (group.equals(hadoopVersion)) {
+                        return version;
+                    }
                 }
             }
         }
         return null;
     }
 
-    private Pattern getClouderaDistributionPattern() {
-        if (clouderaDistributionPattern == null) {
-            clouderaDistributionPattern = Pattern.compile("[Cc][Dd][Hh][\\d]+\\.[\\d]+\\.[\\d]+"); //$NON-NLS-1$
+    private List<Pattern> getClouderaDistributionPatterns() {
+        if (clouderaDistributionPatterns == null || clouderaDistributionPatterns.isEmpty()) {
+            clouderaDistributionPatterns = new ArrayList<>();
+            Pattern clouderaDistributionPattern = Pattern.compile("(?:[Cc][Dd][Hh])([\\d]+\\.[\\d]+\\.[\\d]+)"); //$NON-NLS-1$
+            clouderaDistributionPatterns.add(clouderaDistributionPattern);
         }
-        return clouderaDistributionPattern;
+        return clouderaDistributionPatterns;
     }
 
 }
