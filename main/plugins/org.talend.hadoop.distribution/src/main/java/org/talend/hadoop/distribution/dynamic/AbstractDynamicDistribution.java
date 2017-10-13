@@ -36,6 +36,7 @@ import org.talend.core.runtime.dynamic.DynamicServiceUtil;
 import org.talend.core.runtime.dynamic.IDynamicPlugin;
 import org.talend.core.runtime.dynamic.IDynamicPluginConfiguration;
 import org.talend.designer.maven.aether.IDynamicMonitor;
+import org.talend.designer.maven.aether.comparator.VersionStringComparator;
 import org.talend.designer.maven.aether.util.DynamicDistributionAetherUtils;
 import org.talend.hadoop.distribution.dynamic.adapter.DynamicDistriConfigAdapter;
 import org.talend.hadoop.distribution.dynamic.adapter.DynamicPluginAdapter;
@@ -181,14 +182,14 @@ public abstract class AbstractDynamicDistribution implements IDynamicDistributio
             }
         }
         List<String> compatibleVersionList = new LinkedList<>(allCompatibleVersion);
-        Collections.reverse(compatibleVersionList);
+        Collections.sort(compatibleVersionList, Collections.reverseOrder(new VersionStringComparator()));
         return compatibleVersionList;
     }
 
     @Override
     public List<String> getAllVersions(IDynamicMonitor monitor) throws Exception {
 
-        Set<String> allCompatibleVersion = new HashSet<>();
+        Set<String> allVersion = new HashSet<>();
         List<TemplateBean> templates = getTemplates(monitor);
         if (templates != null) {
             templateBeanAllVersionMap = new HashMap<>();
@@ -206,14 +207,14 @@ public abstract class AbstractDynamicDistribution implements IDynamicDistributio
                     fetchedVersionsMap.put(remoteRepositoryUrl, allHadoopVersions);
                 }
                 if (allHadoopVersions != null) {
-                    allCompatibleVersion.addAll(allHadoopVersions);
+                    allVersion.addAll(allHadoopVersions);
                     templateBeanAllVersionMap.put(templateBean, allHadoopVersions);
                 }
             }
         }
-        List<String> compatibleVersionList = new LinkedList<>(allCompatibleVersion);
-        Collections.reverse(compatibleVersionList);
-        return compatibleVersionList;
+        List<String> versionList = new LinkedList<>(allVersion);
+        Collections.sort(versionList, Collections.reverseOrder(new VersionStringComparator()));
+        return versionList;
 
     }
 
@@ -225,21 +226,47 @@ public abstract class AbstractDynamicDistribution implements IDynamicDistributio
                     "only support to build dynamic plugin of " + getDistributionName() + " instead of " + distribution);
         }
         String version = configuration.getVersion();
+
+        // 1. try to get compatible bean
         Set<Entry<TemplateBean, List<String>>> entrySet = templateBeanCompatibleVersionMap.entrySet();
         TemplateBean bestTemplateBean = null;
+        // choose the biggest distance, normally means compatible with higher versions
         int distance = -1;
         for (Entry<TemplateBean, List<String>> entry : entrySet) {
             List<String> list = entry.getValue();
-            Collections.sort(list, Collections.reverseOrder());
+            Collections.sort(list, new VersionStringComparator());
             int size = list.size();
             int index = list.indexOf(version);
-            int curDistance = size - index;
-            if (distance < curDistance) {
-                curDistance = distance;
-                bestTemplateBean = entry.getKey();
+            if (0 <= index) {
+                int curDistance = size - index;
+                if (distance < curDistance) {
+                    distance = curDistance;
+                    bestTemplateBean = entry.getKey();
+                }
             }
         }
 
+        // 2. try to get bean from all beans
+        if (bestTemplateBean == null) {
+            entrySet = templateBeanAllVersionMap.entrySet();
+            // choose the biggest distance, normally means compatible with higher versions
+            distance = -1;
+            for (Entry<TemplateBean, List<String>> entry : entrySet) {
+                List<String> list = entry.getValue();
+                Collections.sort(list, new VersionStringComparator());
+                int size = list.size();
+                int index = list.indexOf(version);
+                if (0 <= index) {
+                    int curDistance = size - index;
+                    if (distance < curDistance) {
+                        distance = curDistance;
+                        bestTemplateBean = entry.getKey();
+                    }
+                }
+            }
+        }
+
+        // normally bestTemplateBean can't be null here
         DynamicTemplateAdapter templateAdapter = new DynamicTemplateAdapter(bestTemplateBean, configuration);
         templateAdapter.adapt(monitor);
         IDynamicPlugin dynamicPlugin = templateAdapter.getDynamicPlugin();

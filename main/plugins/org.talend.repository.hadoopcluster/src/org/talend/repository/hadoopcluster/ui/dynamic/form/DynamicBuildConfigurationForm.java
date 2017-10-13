@@ -12,8 +12,11 @@
 // ============================================================================
 package org.talend.repository.hadoopcluster.ui.dynamic.form;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -38,6 +41,8 @@ import org.talend.commons.exception.ExceptionHandler;
 import org.talend.core.runtime.dynamic.IDynamicPlugin;
 import org.talend.core.runtime.dynamic.IDynamicPluginConfiguration;
 import org.talend.designer.maven.aether.IDynamicMonitor;
+import org.talend.designer.maven.aether.comparator.VersionStringComparator;
+import org.talend.hadoop.distribution.dynamic.DynamicConfiguration;
 import org.talend.hadoop.distribution.dynamic.IDynamicDistributionsGroup;
 import org.talend.repository.hadoopcluster.i18n.Messages;
 import org.talend.repository.hadoopcluster.ui.dynamic.DynamicBuildConfigurationData;
@@ -61,6 +66,8 @@ public class DynamicBuildConfigurationForm extends AbstractDynamicDistributionFo
     private TableViewer baseJarsTable;
 
     private Composite fetchGroup;
+
+    private IDynamicPlugin generatedDynamicPlugin;
 
     public DynamicBuildConfigurationForm(Composite parent, int style, DynamicBuildConfigurationData configData,
             IDynamicMonitor monitor) {
@@ -183,19 +190,81 @@ public class DynamicBuildConfigurationForm extends AbstractDynamicDistributionFo
             }
 
         });
+
+        showOnlyCompatibleVersionBtn.addSelectionListener(new SelectionAdapter() {
+
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                onFetchVersionBtnSelected();
+                updateButtons();
+            }
+
+        });
+
+        retrieveBaseJarsBtn.addSelectionListener(new SelectionAdapter() {
+
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                onRetrieveBaseJarsSelected();
+                updateButtons();
+            }
+
+        });
+
+        exportConfigBtn.addSelectionListener(new SelectionAdapter() {
+
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                onExportConfigurationSelected();
+                // updateButtons();
+            }
+
+        });
+
+        hadoopVersionCombo.getCombo().addSelectionListener(new SelectionAdapter() {
+
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                updateButtons();
+            }
+
+        });
+
     }
 
     private void onFetchVersionBtnSelected() {
         try {
             List<String> versionList = getVersionList();
             if (versionList != null && !versionList.isEmpty()) {
-                Collections.sort(versionList, Collections.reverseOrder());
+                Collections.sort(versionList, Collections.reverseOrder(new VersionStringComparator()));
                 hadoopVersionCombo.setInput(versionList);
                 hadoopVersionCombo.setSelection(new StructuredSelection(versionList.get(0)));
             }
         } catch (Exception ex) {
             ExceptionHandler.process(ex);
         }
+    }
+
+    private void onRetrieveBaseJarsSelected() {
+        DynamicBuildConfigurationData dynConfigData = getDynamicBuildConfigurationData();
+        IDynamicDistributionsGroup dynDistrGroup = dynConfigData.getDynamicDistributionsGroup();
+        try {
+            generatedDynamicPlugin = null;
+            IDynamicMonitor monitor = new IDynamicMonitor() {
+
+                @Override
+                public void writeMessage(String message) {
+                    System.out.println(message);
+                }
+            };
+            generatedDynamicPlugin = dynDistrGroup.buildDynamicPlugin(monitor, dynConfigData.getNewDistrConfigration());
+        } catch (Exception e) {
+            ExceptionHandler.process(e);
+        }
+    }
+
+    private void onExportConfigurationSelected() {
+
     }
 
     private List<String> getVersionList() throws Exception {
@@ -234,17 +303,28 @@ public class DynamicBuildConfigurationForm extends AbstractDynamicDistributionFo
     private void enableRetrieveBaseJarBtn(boolean enable) {
         retrieveBaseJarsBtn.setEnabled(enable);
         if (!enable) {
-            baseJarsTable.getControl().setEnabled(enable);
+            enableJarsTable(enable);
         }
     }
 
     @Override
     public boolean isComplete() {
-        showMessage(null, WizardPage.INFORMATION);
-        if (!checkVersionList()) {
-            return false;
+        try {
+            showMessage(null, WizardPage.INFORMATION);
+            if (!checkVersionList()) {
+                return false;
+            }
+            if (!checkBaseJars()) {
+                return false;
+            }
+            return true;
+        } finally {
+            if (generatedDynamicPlugin != null) {
+                exportConfigBtn.setEnabled(true);
+            } else {
+                exportConfigBtn.setEnabled(false);
+            }
         }
-        return true;
     }
 
     private boolean checkVersionList() {
@@ -260,14 +340,46 @@ public class DynamicBuildConfigurationForm extends AbstractDynamicDistributionFo
             }
             if (StringUtils.isEmpty(selectedVersion)) {
                 String errorMessage = Messages.getString("DynamicBuildConfigurationForm.check.versionList.empty", //$NON-NLS-1$
-                        Messages.getString("DynamicBuildConfigurationForm.fetchBtn")); //$NON-NLS-1$
+                        fetchVersionBtn.getText());
+                fetchVersionBtn.getShell().setDefaultButton(fetchVersionBtn);
                 showMessage(errorMessage, WizardPage.ERROR);
                 return false;
             }
+            DynamicConfiguration newDistrConfigration = dynConfigData.getNewDistrConfigration();
+            newDistrConfigration.setVersion(selectedVersion);
+            newDistrConfigration.setId(generateId(newDistrConfigration.getDistribution(), selectedVersion));
+            hadoopVersionCombo.getControl().setToolTipText(selectedVersion);
         }
         enableVersionCombo(true);
         enableRetrieveBaseJarBtn(true);
         return true;
+    }
+
+    private boolean checkBaseJars() {
+        if (!retrieveBaseJarsBtn.isEnabled()) {
+            return true;
+        }
+
+        if (generatedDynamicPlugin == null) {
+            String errorMessage = Messages.getString("DynamicBuildConfigurationForm.check.baseJars.empty", //$NON-NLS-1$
+                    retrieveBaseJarsBtn.getText());
+            retrieveBaseJarsBtn.getShell().setDefaultButton(retrieveBaseJarsBtn);
+            showMessage(errorMessage, WizardPage.ERROR);
+            return false;
+        }
+
+        return true;
+    }
+
+    private String generateId(String distribution, String version) {
+        String versionStr = version.replaceAll("[\\W]", "_"); //$NON-NLS-1$//$NON-NLS-2$
+        Calendar cal = Calendar.getInstance();
+        Date date = cal.getTime();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmssSSSZ"); //$NON-NLS-1$
+        String timestamp = dateFormat.format(date);
+        timestamp = timestamp.replaceAll("[\\W]", "_"); //$NON-NLS-1$//$NON-NLS-2$
+        String id = distribution.toUpperCase() + "_" + versionStr.toUpperCase() + "_" + timestamp; //$NON-NLS-1$ //$NON-NLS-2$
+        return id;
     }
 
     @Override

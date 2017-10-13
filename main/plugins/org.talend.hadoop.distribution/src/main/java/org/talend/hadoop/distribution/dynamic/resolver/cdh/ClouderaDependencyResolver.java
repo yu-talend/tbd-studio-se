@@ -13,7 +13,9 @@
 package org.talend.hadoop.distribution.dynamic.resolver.cdh;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -59,7 +61,7 @@ public class ClouderaDependencyResolver extends AbstractDependencyResolver imple
 
     public List<String> getCleanHadoopVersion(List<String> versionRange) throws Exception {
         List<Pattern> patterns = getClouderaDistributionPatterns();
-        List<String> cleanVersions = new ArrayList<>();
+        Set<String> cleanVersions = new HashSet<>();
         for (String version : versionRange) {
             for (Pattern pattern : patterns) {
                 Matcher matcher = pattern.matcher(version);
@@ -71,7 +73,7 @@ public class ClouderaDependencyResolver extends AbstractDependencyResolver imple
                 break;
             }
         }
-        return cleanVersions;
+        return new ArrayList<String>(cleanVersions);
     }
 
     public String getVersionByHadoopVersion(List<String> versionRange, String hadoopVersion) throws Exception {
@@ -80,7 +82,7 @@ public class ClouderaDependencyResolver extends AbstractDependencyResolver imple
             for (Pattern pattern : patterns) {
                 Matcher matcher = pattern.matcher(version);
                 if (matcher.find()) {
-                    String group = matcher.group();
+                    String group = matcher.group(1);
                     if (group.equals(hadoopVersion)) {
                         return version;
                     }

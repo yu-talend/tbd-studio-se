@@ -31,6 +31,7 @@ import org.talend.commons.exception.ExceptionHandler;
 import org.talend.core.runtime.dynamic.IDynamicPlugin;
 import org.talend.core.runtime.dynamic.IDynamicPluginConfiguration;
 import org.talend.designer.maven.aether.IDynamicMonitor;
+import org.talend.designer.maven.aether.comparator.VersionStringComparator;
 import org.talend.hadoop.distribution.dynamic.bean.TemplateBean;
 
 /**
@@ -120,16 +121,17 @@ public abstract class AbstractDynamicDistributionsGroup implements IDynamicDistr
         // 1. try to get dynamicDistribution from compatible list
         Set<Entry<IDynamicDistribution, List<String>>> entrySet = compatibleDistribuionVersionMap.entrySet();
         IDynamicDistribution bestDistribution = null;
+        // choose the biggest distance, normally means compatible with higher versions
         int distance = -1;
         for (Entry<IDynamicDistribution, List<String>> entry : entrySet) {
             List<String> list = entry.getValue();
-            Collections.sort(list, Collections.reverseOrder());
+            Collections.sort(list, new VersionStringComparator());
             int size = list.size();
             int index = list.indexOf(version);
             if (0 <= index) {
                 int curDistance = size - index;
                 if (distance < curDistance) {
-                    curDistance = distance;
+                    distance = curDistance;
                     bestDistribution = entry.getKey();
                 }
             }
@@ -138,16 +140,17 @@ public abstract class AbstractDynamicDistributionsGroup implements IDynamicDistr
         // 2. try to get dynamicDistribution from all list
         if (bestDistribution == null) {
             entrySet = allDistribuionVersionMap.entrySet();
+            // choose the biggest distance, normally means compatible with higher versions
             distance = -1;
             for (Entry<IDynamicDistribution, List<String>> entry : entrySet) {
                 List<String> list = entry.getValue();
-                Collections.sort(list, Collections.reverseOrder());
+                Collections.sort(list, new VersionStringComparator());
                 int size = list.size();
                 int index = list.indexOf(version);
                 if (0 <= index) {
                     int curDistance = size - index;
                     if (distance < curDistance) {
-                        curDistance = distance;
+                        distance = curDistance;
                         bestDistribution = entry.getKey();
                     }
                 }
