@@ -21,8 +21,6 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
 import org.talend.commons.exception.ExceptionHandler;
 import org.talend.commons.utils.workbench.resources.ResourceUtils;
 import org.talend.core.GlobalServiceRegister;
@@ -45,6 +43,8 @@ import org.talend.repository.model.RepositoryConstants;
 public class DynamicDistributionManager {
 
     public static final String USERS_DISTRIBUTIONS_ROOT_FOLDER = "dynamicDistributions"; //$NON-NLS-1$
+
+    public static final String DISTRIBUTION_FILE_EXTENSION = "json"; //$NON-NLS-1$
 
     private static DynamicDistributionManager instance;
 
@@ -113,7 +113,7 @@ public class DynamicDistributionManager {
                 }
                 String folderPath = usersFolder.getLocation().toPortableString();
                 String fileName = pluginConfiguration.getId();
-                filePath = folderPath + "/" + fileName + ".json"; //$NON-NLS-1$
+                filePath = folderPath + "/" + fileName + "." + DISTRIBUTION_FILE_EXTENSION; //$NON-NLS-1$ //$NON-NLS-2$
             }
             obj = pluginConfiguration.removeAttribute(DynamicDistriConfigAdapter.ATTR_FILE_PATH);
             String content = DynamicServiceUtil.formatJsonString(dynamicPlugin.toXmlJson().toString());
@@ -181,13 +181,13 @@ public class DynamicDistributionManager {
         }
 
         List<IDynamicPlugin> dynamicPlugins = new ArrayList<>();
+        String absoluteFolderPath = usersFolder.getLocation().toPortableString();
+        File folder = new File(absoluteFolderPath);
+        List<String> files = getAllFiles(folder);
 
-        List<IResource> members = getAllFileResource(usersFolder);
-
-        if (members != null && 0 < members.size()) {
-            for (IResource member : members) {
+        if (files != null && 0 < files.size()) {
+            for (String absolutePath : files) {
                 try {
-                    String absolutePath = member.getLocation().toPortableString();
                     String jsonContent = DynamicServiceUtil.readFile(new File(absolutePath));
                     IDynamicPlugin dynamicPlugin = DynamicFactory.getInstance().createPluginFromJson(jsonContent);
                     IDynamicPluginConfiguration pluginConfiguration = dynamicPlugin.getPluginConfiguration();
@@ -201,22 +201,22 @@ public class DynamicDistributionManager {
         return dynamicPlugins;
     }
     
-    private List<IResource> getAllFileResource(IResource member) throws CoreException {
-        List<IResource> fileList = new ArrayList<>();
+    private List<String> getAllFiles(File file) throws Exception {
+        List<String> fileList = new ArrayList<>();
 
-        if (member != null) {
-            if (member instanceof IFolder) {
-                IResource[] members = ((IFolder) member).members();
-                if (members != null && 0 < members.length) {
-                    for (IResource resource : members) {
-                        List<IResource> subResources = getAllFileResource(resource);
-                        if (subResources != null && !subResources.isEmpty()) {
-                            fileList.addAll(subResources);
+        if (file != null) {
+            if (file.isDirectory()) {
+                File[] listFiles = file.listFiles();
+                if (listFiles != null && 0 < listFiles.length) {
+                    for (File childFile : listFiles) {
+                        List<String> subFiles = getAllFiles(childFile);
+                        if (subFiles != null && !subFiles.isEmpty()) {
+                            fileList.addAll(subFiles);
                         }
                     }
                 }
             } else {
-                fileList.add(member);
+                fileList.add(file.getCanonicalPath());
             }
         }
 

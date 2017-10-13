@@ -358,7 +358,7 @@ public class DynamicOptionForm extends AbstractDynamicDistributionForm {
 
     private void onImportConfigBrowseBtnSelected() throws Exception {
         FileDialog fileDialog = new FileDialog(getShell());
-        fileDialog.setFilterExtensions(new String[] { "*.json" }); //$NON-NLS-1$
+        fileDialog.setFilterExtensions(new String[] { "*." + DynamicDistributionManager.DISTRIBUTION_FILE_EXTENSION }); //$NON-NLS-1$
         String filePath = fileDialog.open();
         if (StringUtils.isNotEmpty(filePath)) {
 
@@ -428,8 +428,8 @@ public class DynamicOptionForm extends AbstractDynamicDistributionForm {
             configNameText.setToolTipText(""); //$NON-NLS-1$
             return true;
         }
-        String configName = configNameText.getText();
-        if (configName.trim().isEmpty()) {
+        String configName = configNameText.getText().trim();
+        if (configName.isEmpty()) {
             String errorMessage = Messages.getString("DynamicDistributionsForm.newConfigName.check.empty"); //$NON-NLS-1$
             showMessage(errorMessage, WizardPage.ERROR);
             configNameText.setBackground(LoginDialogV2.RED_COLOR);
@@ -484,9 +484,17 @@ public class DynamicOptionForm extends AbstractDynamicDistributionForm {
             }
         };
         DynamicDistributionManager dynDistrManager = DynamicDistributionManager.getInstance();
+        List<IDynamicPlugin> allDynamicPlugins = new LinkedList<>();
         List<IDynamicPlugin> allBuildinDynamicPlugins = dynDistrManager.getAllBuildinDynamicPlugins(monitor);
         if (allBuildinDynamicPlugins != null && !allBuildinDynamicPlugins.isEmpty()) {
-            Iterator<IDynamicPlugin> iter = allBuildinDynamicPlugins.iterator();
+            allDynamicPlugins.addAll(allBuildinDynamicPlugins);
+        }
+        List<IDynamicPlugin> allUsesDynamicPlugins = dynDistrManager.getAllUsersDynamicPlugins(monitor);
+        if (allUsesDynamicPlugins != null && !allUsesDynamicPlugins.isEmpty()) {
+            allDynamicPlugins.addAll(allUsesDynamicPlugins);
+        }
+        if (allDynamicPlugins != null && !allDynamicPlugins.isEmpty()) {
+            Iterator<IDynamicPlugin> iter = allDynamicPlugins.iterator();
             while (iter.hasNext()) {
                 IDynamicPlugin dynPlugin = iter.next();
                 IDynamicPluginConfiguration pluginConfiguration = dynPlugin.getPluginConfiguration();
