@@ -16,22 +16,30 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.TableViewerColumn;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CLabel;
+import org.eclipse.swt.custom.TableEditor;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Point;
@@ -42,7 +50,11 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableItem;
 import org.talend.commons.exception.ExceptionHandler;
+import org.talend.core.runtime.dynamic.IDynamicConfiguration;
+import org.talend.core.runtime.dynamic.IDynamicExtension;
 import org.talend.core.runtime.dynamic.IDynamicPlugin;
 import org.talend.core.runtime.dynamic.IDynamicPluginConfiguration;
 import org.talend.designer.maven.aether.IDynamicMonitor;
@@ -51,9 +63,12 @@ import org.talend.hadoop.distribution.dynamic.DynamicConfiguration;
 import org.talend.hadoop.distribution.dynamic.DynamicDistributionManager;
 import org.talend.hadoop.distribution.dynamic.IDynamicDistributionsGroup;
 import org.talend.hadoop.distribution.dynamic.adapter.DynamicDistriConfigAdapter;
+import org.talend.hadoop.distribution.dynamic.adapter.DynamicLibraryNeededExtensionAdaper;
+import org.talend.hadoop.distribution.dynamic.adapter.DynamicModuleGroupAdapter;
 import org.talend.repository.hadoopcluster.i18n.Messages;
 import org.talend.repository.hadoopcluster.ui.dynamic.DynamicBuildConfigurationData;
 import org.talend.repository.hadoopcluster.ui.dynamic.DynamicBuildConfigurationData.ActionType;
+import org.talend.repository.ui.login.LoginDialogV2;
 
 /**
  * DOC cmeng  class global comment. Detailled comment
@@ -158,8 +173,20 @@ public class DynamicBuildConfigurationForm extends AbstractDynamicDistributionFo
         retrieveBaseJarsBtn.setLayoutData(formData);
 
         baseJarsTable = new TableViewer(container, SWT.BORDER);
-        baseJarsTable.setContentProvider(ArrayContentProvider.getInstance());
-        baseJarsTable.setLabelProvider(new LabelProvider());
+        TableViewerColumn groupNameColumn = new TableViewerColumn(baseJarsTable, SWT.LEFT);
+        groupNameColumn.getColumn().setText(Messages.getString("DynamicBuildConfigurationForm.baseJars.table.groupName")); //$NON-NLS-1$
+        groupNameColumn.getColumn().setWidth(200);
+        groupNameColumn.setLabelProvider(new BaseJarTableGroupLabelProvider());
+        TableViewerColumn groupDetailsColumn = new TableViewerColumn(baseJarsTable, SWT.LEFT);
+        groupDetailsColumn.getColumn().setText(Messages.getString("DynamicBuildConfigurationForm.baseJars.table.groupDetails")); //$NON-NLS-1$
+        groupDetailsColumn.getColumn().setWidth(300);
+        BaseJarTableDetailLabelProvider detailLabelProvider = new BaseJarTableDetailLabelProvider();
+        groupDetailsColumn.setLabelProvider(detailLabelProvider);
+        Table table = baseJarsTable.getTable();
+        table.setHeaderVisible(true);
+        table.setLinesVisible(true);
+        baseJarsTable.setContentProvider(new BaseJarTableContentProvider(detailLabelProvider));
+        // baseJarsTable.setLabelProvider(new BaseJarTableLabelProvider());
         exportConfigBtn = new Button(container, SWT.PUSH);
 
         formData = new FormData();
@@ -497,6 +524,7 @@ public class DynamicBuildConfigurationForm extends AbstractDynamicDistributionFo
             generatedDynamicPlugin = dynamicPluginMap.get(version);
         }
         if (generatedDynamicPlugin == null) {
+            initTableViewData(null);
             String errorMessage = Messages.getString("DynamicBuildConfigurationForm.check.baseJars.empty", //$NON-NLS-1$
                     retrieveBaseJarsBtn.getText());
             retrieveBaseJarsBtn.getShell().setDefaultButton(retrieveBaseJarsBtn);
@@ -506,7 +534,35 @@ public class DynamicBuildConfigurationForm extends AbstractDynamicDistributionFo
 
         getDynamicBuildConfigurationData().setDynamicPlugin(generatedDynamicPlugin);
 
+        initTableViewData(generatedDynamicPlugin);
+        enableJarsTable(true);
+
         return true;
+    }
+
+    private void initTableViewData(IDynamicPlugin dynamicPlugin) {
+        if (dynamicPlugin == null) {
+            baseJarsTable.setInput(null);
+        } else {
+            List<IDynamicExtension> allExtensions = dynamicPlugin.getAllExtensions();
+            IDynamicExtension libNeededExtension = null;
+            for (IDynamicExtension extension : allExtensions) {
+                if (DynamicLibraryNeededExtensionAdaper.ATTR_POINT.equals(extension.getExtensionPoint())) {
+                    libNeededExtension = extension;
+                    break;
+                }
+            }
+            List<IDynamicConfiguration> configurations = libNeededExtension.getConfigurations();
+            Iterator<IDynamicConfiguration> iter = configurations.iterator();
+            List<IDynamicConfiguration> moduleGroups = new ArrayList<>();
+            while (iter.hasNext()) {
+                IDynamicConfiguration dynConfig = iter.next();
+                if (DynamicModuleGroupAdapter.TAG_NAME.equals(dynConfig.getTagName())) {
+                    moduleGroups.add(dynConfig);
+                }
+            }
+            baseJarsTable.setInput(moduleGroups);
+        }
     }
 
     private String generateId(String distribution, String version) {
@@ -533,6 +589,113 @@ public class DynamicBuildConfigurationForm extends AbstractDynamicDistributionFo
             return true;
         }
         return false;
+    }
+
+    protected static class BaseJarTableContentProvider extends ArrayContentProvider {
+
+        private BaseJarTableDetailLabelProvider detailLabelProvider;
+
+        public BaseJarTableContentProvider(BaseJarTableDetailLabelProvider detailLabelProvider) {
+            this.detailLabelProvider = detailLabelProvider;
+        }
+
+        @Override
+        public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+            this.detailLabelProvider.clearBtns();
+        }
+
+    }
+
+    protected static class BaseJarTableGroupLabelProvider extends ColumnLabelProvider {
+
+        @Override
+        public String getText(Object element) {
+            if (element instanceof IDynamicConfiguration) {
+                return (String) ((IDynamicConfiguration) element).getAttribute(DynamicModuleGroupAdapter.ATTR_GROUP_TEMPLATE_ID);
+            }
+            return element == null ? "" : element.toString();//$NON-NLS-1$
+        }
+
+    }
+
+    protected static class BaseJarTableDetailLabelProvider extends ColumnLabelProvider {
+
+        private Map<Object, Composite> compositeMap = new HashMap<Object, Composite>();
+
+        @Override
+        public String getText(Object element) {
+            if (element instanceof IDynamicConfiguration) {
+                return (String) ((IDynamicConfiguration) element).getAttribute(DynamicModuleGroupAdapter.ATTR_GROUP_TEMPLATE_ID);
+            }
+            return element == null ? "" : element.toString();//$NON-NLS-1$
+        }
+
+        @Override
+        public void update(ViewerCell cell) {
+
+            TableItem item = (TableItem) cell.getItem();
+            Composite composite = null;
+            Object element = cell.getElement();
+            if (compositeMap.containsKey(cell.getElement())) {
+                composite = compositeMap.get(cell.getElement());
+            } else {
+                composite = new Composite((Composite) cell.getViewerRow().getControl(), SWT.NONE);
+                composite.setLayout(new FormLayout());
+                // composite.setBackground(getBackground(element));
+                composite.setBackground(LoginDialogV2.WHITE_COLOR);
+                composite.setForeground(getForeground(element));
+
+                String text = getText(element);
+                CLabel label = new CLabel(composite, SWT.NONE);
+                label.setBackground(LoginDialogV2.WHITE_COLOR);
+                label.setText(text);
+                Button button = new Button(composite, SWT.PUSH);
+                button.setText(Messages.getString("DynamicBuildConfigurationForm.baseJars.table.groupDetails.btn")); //$NON-NLS-1$
+
+                FormData formData = new FormData();
+                formData.top = new FormAttachment(0);
+                formData.bottom = new FormAttachment(100);
+                formData.left = new FormAttachment(0);
+                formData.right = new FormAttachment(button, -10, SWT.LEFT);
+                label.setLayoutData(formData);
+
+                formData = new FormData();
+                formData.top = new FormAttachment(0);
+                formData.bottom = new FormAttachment(100);
+                formData.right = new FormAttachment(100);
+                button.setLayoutData(formData);
+
+                compositeMap.put(cell.getElement(), composite);
+            }
+
+            // cell.setBackground(getBackground(element));
+            cell.setBackground(LoginDialogV2.WHITE_COLOR);
+            cell.setForeground(getForeground(element));
+            cell.setFont(getFont(element));
+
+            TableEditor editor = new TableEditor(item.getParent());
+            editor.grabHorizontal = true;
+            editor.grabVertical = true;
+            editor.setEditor(composite, item, cell.getColumnIndex());
+            editor.layout();
+        }
+
+        @Override
+        public void dispose() {
+            super.dispose();
+            clearBtns();
+        }
+
+        public void clearBtns() {
+            Collection<Composite> values = compositeMap.values();
+            if (values != null) {
+                for (Composite composite : values) {
+                    composite.dispose();
+                }
+            }
+            compositeMap.clear();
+        }
+
     }
 
 }
