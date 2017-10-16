@@ -71,6 +71,9 @@ public class DynamicRetrievePage extends AbstractDynamicConfigurationPage {
 
     @Override
     public boolean isPageComplete() {
+        if (!isCurrentPage()) {
+            return false;
+        }
         return getCurrentForm().isComplete();
     }
 

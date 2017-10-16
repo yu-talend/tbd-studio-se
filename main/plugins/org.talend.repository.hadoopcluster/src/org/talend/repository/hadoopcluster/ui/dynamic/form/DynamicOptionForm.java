@@ -397,10 +397,16 @@ public class DynamicOptionForm extends AbstractDynamicDistributionForm {
 
         try {
             List<IDynamicPlugin> distriDynamicPlugins = new LinkedList<>();
-            List<IDynamicPlugin> allBuildinDynamicPlugins = dynamicDistributionsGroup.getAllBuildinDynamicPlugins(monitor);
-            if (allBuildinDynamicPlugins != null && !allBuildinDynamicPlugins.isEmpty()) {
-                distriDynamicPlugins.addAll(allBuildinDynamicPlugins);
-            }
+
+            /**
+             * Can't edit buildin plugins
+             */
+            // List<IDynamicPlugin> allBuildinDynamicPlugins =
+            // dynamicDistributionsGroup.getAllBuildinDynamicPlugins(monitor);
+            // if (allBuildinDynamicPlugins != null && !allBuildinDynamicPlugins.isEmpty()) {
+            // distriDynamicPlugins.addAll(allBuildinDynamicPlugins);
+            // }
+
             List<IDynamicPlugin> allUsersDynamicPlugins = DynamicDistributionManager.getInstance()
                     .getAllUsersDynamicPlugins(monitor);
             if (allUsersDynamicPlugins != null && !allUsersDynamicPlugins.isEmpty()) {
@@ -612,7 +618,7 @@ public class DynamicOptionForm extends AbstractDynamicDistributionForm {
 
             descriptionText.setText(pluginConfiguration.getDescription());
 
-            getDynamicBuildConfigurationData().setDynamicPlugin(existingDynamicPlugin);
+            getDynamicBuildConfigurationData().setDynamicPlugin(importedDynamicPlugin);
             return true;
         } catch (Exception e) {
             importConfigText.setBackground(LoginDialogV2.RED_COLOR);

@@ -59,12 +59,13 @@ public class DynamicLibraryNeededExtensionAdaper extends DynamicExtensionAdapter
         DynamicConfiguration configuration = getConfiguration();
         String repository = templateBean.getRepository();
         configuration.setRemoteRepositoryUrl(repository);
+        String templateId = templateBean.getId();
 
         String distributionName = configuration.getDistribution();
         String id = configuration.getId();
 
         IDynamicExtension libNeededExtension = DynamicFactory.getInstance().createDynamicExtension();
-        libNeededExtension.setExtensionId(DynamicDistributionUtils.getPluginKey(distributionName, id, ATTR_POINT));
+        libNeededExtension.setExtensionId(DynamicDistributionUtils.getPluginKey(distributionName, templateId, id, ATTR_POINT));
         libNeededExtension.setExtensionPoint(ATTR_POINT);
 
         List<ModuleBean> modules = templateBean.getModules();

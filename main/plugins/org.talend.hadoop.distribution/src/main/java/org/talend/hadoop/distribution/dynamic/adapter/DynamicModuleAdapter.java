@@ -86,6 +86,7 @@ public class DynamicModuleAdapter extends AbstractDynamicAdapter {
         DynamicConfiguration configuration = getConfiguration();
         String distribution = configuration.getDistribution();
         String hadoopVersion = configuration.getVersion();
+        String id = configuration.getId();
 
         List<IDynamicConfiguration> librariesNeeded = new ArrayList<>();
 
@@ -113,7 +114,7 @@ public class DynamicModuleAdapter extends AbstractDynamicAdapter {
                 baseNode.setExclusions(exclusions);
             }
             dependencyNode = dependencyResolver.collectDependencies(baseNode, monitor);
-            librariesNeeded = createLibrariesNeeded(dependencyNode, distribution, hadoopVersion, moduleBean, runtimeIds,
+            librariesNeeded = createLibrariesNeeded(dependencyNode, distribution, hadoopVersion, id, moduleBean, runtimeIds,
                     templateBean);
         } else if (ModuleBean.TYPE_REFERENCE.equalsIgnoreCase(type)) {
             List<ExclusionBean> exclusions = moduleBean.getExclusions();
@@ -135,14 +136,14 @@ public class DynamicModuleAdapter extends AbstractDynamicAdapter {
                         "Don't support to add exclusions for " + type + ", currently only support BASE type");
             }
 
-            String id = moduleBean.getId();
+            String beanId = moduleBean.getId();
             String jarName = moduleBean.getJarName();
             String runtimeId = null;
             ModuleNeeded moduleNeeded = existingModuleMap.get(jarName);
             if (moduleNeeded != null) {
                 runtimeId = moduleNeeded.getId();
             } else {
-                runtimeId = DynamicDistributionUtils.getPluginKey(distribution, hadoopVersion, id);
+                runtimeId = DynamicDistributionUtils.getPluginKey(distribution, hadoopVersion, id, beanId);
                 if (!registedModules.contains(runtimeId)) {
                     IDynamicConfiguration libraryNeeded = createLibraryNeeded(moduleBean);
                     libraryNeeded.setAttribute(ATTR_ID, runtimeId);
@@ -159,7 +160,7 @@ public class DynamicModuleAdapter extends AbstractDynamicAdapter {
         return librariesNeeded;
     }
 
-    private List<IDynamicConfiguration> createLibrariesNeeded(DependencyNode node, String distribution, String version,
+    private List<IDynamicConfiguration> createLibrariesNeeded(DependencyNode node, String distribution, String version, String id,
             ModuleBean bean, List<String> runtimeIds, TemplateBean templateBean) {
         List<IDynamicConfiguration> librariesNeeded = new ArrayList<>();
         if (node == null) {
@@ -169,7 +170,7 @@ public class DynamicModuleAdapter extends AbstractDynamicAdapter {
         List<String> registedRuntimeIds = new ArrayList<>();
         String registedModulesKey = getRegistedModulesKey(node);
         String jarName = node.getJarName();
-        String runtimeId = DynamicDistributionUtils.getPluginKey(distribution, version, jarName);
+        String runtimeId = DynamicDistributionUtils.getPluginKey(distribution, version, id, jarName);
         if (!registedModules.contains(registedModulesKey)) {
             ModuleNeeded moduleNeeded = null;
             if (reuseExistingJars()) {
@@ -191,8 +192,8 @@ public class DynamicModuleAdapter extends AbstractDynamicAdapter {
         List<DependencyNode> dependencies = node.getDependencies();
         if (dependencies != null) {
             for (DependencyNode dependency : dependencies) {
-                List<IDynamicConfiguration> childLibrariesNeeded = createLibrariesNeeded(dependency, distribution, version, bean,
-                        registedRuntimeIds, templateBean);
+                List<IDynamicConfiguration> childLibrariesNeeded = createLibrariesNeeded(dependency, distribution, version, id,
+                        bean, registedRuntimeIds, templateBean);
                 librariesNeeded.addAll(childLibrariesNeeded);
             }
         }

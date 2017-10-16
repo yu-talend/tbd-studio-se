@@ -98,7 +98,6 @@ public class DynamicDistributionManager {
     }
 
     public void saveUsersDynamicPlugin(IDynamicPlugin dynamicPlugin, IDynamicMonitor monitor) throws Exception {
-        FileOutputStream outStream = null;
         IDynamicPluginConfiguration pluginConfiguration = dynamicPlugin.getPluginConfiguration();
         Object obj = pluginConfiguration.getAttribute(DynamicDistriConfigAdapter.ATTR_FILE_PATH);
         try {
@@ -115,6 +114,17 @@ public class DynamicDistributionManager {
                 String fileName = pluginConfiguration.getId();
                 filePath = folderPath + "/" + fileName + "." + DISTRIBUTION_FILE_EXTENSION; //$NON-NLS-1$ //$NON-NLS-2$
             }
+            saveUsersDynamicPlugin(dynamicPlugin, filePath, monitor);
+        } finally {
+            // nothing to do
+        }
+    }
+
+    public void saveUsersDynamicPlugin(IDynamicPlugin dynamicPlugin, String filePath, IDynamicMonitor monitor) throws Exception {
+        FileOutputStream outStream = null;
+        IDynamicPluginConfiguration pluginConfiguration = dynamicPlugin.getPluginConfiguration();
+        Object obj = pluginConfiguration.getAttribute(DynamicDistriConfigAdapter.ATTR_FILE_PATH);
+        try {
             obj = pluginConfiguration.removeAttribute(DynamicDistriConfigAdapter.ATTR_FILE_PATH);
             String content = DynamicServiceUtil.formatJsonString(dynamicPlugin.toXmlJson().toString());
             File outFile = new File(filePath);

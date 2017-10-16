@@ -376,10 +376,12 @@ public abstract class AbstractDynamicDistribution implements IDynamicDistributio
         DynamicPluginAdapter registedPluginAdapter = registedPluginMap.get(id);
         if (registedPluginAdapter != null) {
             DynamicServiceUtil.removeContribution(registedPluginAdapter.getPlugin());
+            registedPluginMap.remove(id);
         }
         ServiceRegistration registedOsgiService = registedOsgiServiceMap.get(id);
         if (registedOsgiService != null) {
             DynamicServiceUtil.unregistOSGiService(registedOsgiService);
+            registedOsgiServiceMap.remove(id);
         }
     }
 

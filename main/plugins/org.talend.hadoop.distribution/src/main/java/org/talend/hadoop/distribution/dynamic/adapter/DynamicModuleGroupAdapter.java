@@ -67,16 +67,17 @@ public class DynamicModuleGroupAdapter extends AbstractDynamicAdapter {
         DynamicConfiguration configuration = getConfiguration();
         String distribution = configuration.getDistribution();
         String version = configuration.getVersion();
-        String id = moduleGroupBean.getId();
+        String id = configuration.getId();
+        String moduleGroupId = moduleGroupBean.getId();
         String description = moduleGroupBean.getDescription();
 
-        runtimeId = DynamicDistributionUtils.getPluginKey(distribution, version, id);
+        runtimeId = DynamicDistributionUtils.getPluginKey(distribution, version, id, moduleGroupId);
 
         IDynamicConfiguration dynamicModuleGroup = DynamicFactory.getInstance().createDynamicConfiguration();
 
         dynamicModuleGroup.setConfigurationName(TAG_NAME);
         dynamicModuleGroup.setAttribute(ATTR_ID, runtimeId);
-        dynamicModuleGroup.setAttribute(ATTR_GROUP_TEMPLATE_ID, id);
+        dynamicModuleGroup.setAttribute(ATTR_GROUP_TEMPLATE_ID, moduleGroupId);
         dynamicModuleGroup.setAttribute(ATTR_DESCRIPTION, description);
         
         List<String> modules = moduleGroupBean.getModules();

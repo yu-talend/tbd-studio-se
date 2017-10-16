@@ -12,6 +12,7 @@
 // ============================================================================
 package org.talend.repository.hadoopcluster.ui.dynamic.form;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -22,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -38,6 +40,7 @@ import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Label;
 import org.talend.commons.exception.ExceptionHandler;
 import org.talend.core.runtime.dynamic.IDynamicPlugin;
@@ -45,7 +48,9 @@ import org.talend.core.runtime.dynamic.IDynamicPluginConfiguration;
 import org.talend.designer.maven.aether.IDynamicMonitor;
 import org.talend.designer.maven.aether.comparator.VersionStringComparator;
 import org.talend.hadoop.distribution.dynamic.DynamicConfiguration;
+import org.talend.hadoop.distribution.dynamic.DynamicDistributionManager;
 import org.talend.hadoop.distribution.dynamic.IDynamicDistributionsGroup;
+import org.talend.hadoop.distribution.dynamic.adapter.DynamicDistriConfigAdapter;
 import org.talend.repository.hadoopcluster.i18n.Messages;
 import org.talend.repository.hadoopcluster.ui.dynamic.DynamicBuildConfigurationData;
 import org.talend.repository.hadoopcluster.ui.dynamic.DynamicBuildConfigurationData.ActionType;
@@ -69,11 +74,16 @@ public class DynamicBuildConfigurationForm extends AbstractDynamicDistributionFo
 
     private Composite fetchGroup;
 
-    private Map<String, IDynamicPlugin> generatedDynamicPluginMap;
+    private Map<String, IDynamicPlugin> dynamicPluginMap;
+
+    private IDynamicPlugin curDynamicPlugin;
+
+    private ActionType curActionType;
 
     public DynamicBuildConfigurationForm(Composite parent, int style, DynamicBuildConfigurationData configData,
             IDynamicMonitor monitor) {
         super(parent, style, configData);
+        dynamicPluginMap = new HashMap<>();
         createControl();
         initData();
         addListeners();
@@ -170,18 +180,62 @@ public class DynamicBuildConfigurationForm extends AbstractDynamicDistributionFo
     }
 
     private void initData() {
-        generatedDynamicPluginMap = new HashMap<>();
 
         DynamicBuildConfigurationData dynConfigData = getDynamicBuildConfigurationData();
-        List<String> versionList = new ArrayList<>();
         ActionType actionType = dynConfigData.getActionType();
-        if (ActionType.Import.equals(actionType) || ActionType.EditExisting.equals(actionType)) {
-            IDynamicPlugin dynamicPlugin = dynConfigData.getDynamicPlugin();
-            IDynamicPluginConfiguration pluginConfiguration = dynamicPlugin.getPluginConfiguration();
-            String version = pluginConfiguration.getVersion();
-            versionList.add(version);
-        }
 
+        boolean actionChanged = !actionType.equals(curActionType);
+        if (actionChanged) {
+            curDynamicPlugin = null;
+            dynamicPluginMap.clear();
+            if (ActionType.Import.equals(actionType) || ActionType.EditExisting.equals(actionType)) {
+                List<String> versionList = new ArrayList<>();
+                IDynamicPlugin dynamicPlugin = dynConfigData.getDynamicPlugin();
+                curDynamicPlugin = dynamicPlugin;
+                IDynamicPluginConfiguration pluginConfiguration = dynamicPlugin.getPluginConfiguration();
+                String version = pluginConfiguration.getVersion();
+                versionList.add(version);
+                dynamicPluginMap.put(version, dynamicPlugin);
+                hadoopVersionCombo.setInput(versionList);
+                hadoopVersionCombo.setSelection(new StructuredSelection(version));
+            } else if (ActionType.NewConfig.equals(actionType)) {
+                // nothing to do
+            }
+        } else {
+            boolean dataChanged = false;
+            String selectedVersion = getSelectedVersion();
+            if (ActionType.Import.equals(actionType) || ActionType.EditExisting.equals(actionType)) {
+                IDynamicPlugin dynamicPlugin = dynConfigData.getDynamicPlugin();
+
+                IDynamicPluginConfiguration pluginConfiguration = dynamicPlugin.getPluginConfiguration();
+                String version = pluginConfiguration.getVersion();
+
+                if (dynamicPlugin != curDynamicPlugin) {
+                    dataChanged = true;
+                    curDynamicPlugin = dynamicPlugin;
+                    selectedVersion = version;
+                    List<String> versionList = new ArrayList<>();
+                    versionList.add(version);
+                    hadoopVersionCombo.setInput(versionList);
+                    hadoopVersionCombo.setSelection(new StructuredSelection(version));
+                }
+            } else if (ActionType.NewConfig.equals(actionType)) {
+                if (curDynamicPlugin != null) {
+                    DynamicConfiguration newDistrConfigration = dynConfigData.getNewDistrConfigration();
+                    String name = newDistrConfigration.getName();
+                    String desc = newDistrConfigration.getDescription();
+                    IDynamicPluginConfiguration pluginConfiguration = curDynamicPlugin.getPluginConfiguration();
+                    pluginConfiguration.setName(name);
+                    pluginConfiguration.setDescription(desc);
+                }
+            }
+
+            if (dataChanged) {
+                dynamicPluginMap.clear();
+                dynamicPluginMap.put(selectedVersion, curDynamicPlugin);
+            }
+        }
+        curActionType = actionType;
     }
 
     private void addListeners() {
@@ -238,11 +292,15 @@ public class DynamicBuildConfigurationForm extends AbstractDynamicDistributionFo
 
     private void onFetchVersionBtnSelected() {
         try {
+            String selectedVersion = getSelectedVersion();
             List<String> versionList = getVersionList();
             if (versionList != null && !versionList.isEmpty()) {
                 Collections.sort(versionList, Collections.reverseOrder(new VersionStringComparator()));
                 hadoopVersionCombo.setInput(versionList);
-                hadoopVersionCombo.setSelection(new StructuredSelection(versionList.get(0)));
+                if (StringUtils.isEmpty(selectedVersion)) {
+                    selectedVersion = versionList.get(0);
+                }
+                hadoopVersionCombo.setSelection(new StructuredSelection(selectedVersion));
             }
         } catch (Exception ex) {
             ExceptionHandler.process(ex);
@@ -253,9 +311,28 @@ public class DynamicBuildConfigurationForm extends AbstractDynamicDistributionFo
         DynamicBuildConfigurationData dynConfigData = getDynamicBuildConfigurationData();
         IDynamicDistributionsGroup dynDistrGroup = dynConfigData.getDynamicDistributionsGroup();
         try {
-            DynamicConfiguration newDistrConfigration = dynConfigData.getNewDistrConfigration();
-            String version = newDistrConfigration.getVersion();
-            generatedDynamicPluginMap.remove(version);
+            DynamicConfiguration newDistrConfigration = null;
+            String version = getSelectedVersion();
+            ActionType actionType = dynConfigData.getActionType();
+            if (ActionType.NewConfig.equals(actionType)) {
+                newDistrConfigration = dynConfigData.getNewDistrConfigration();
+            } else if (ActionType.Import.equals(actionType) || ActionType.EditExisting.equals(actionType)) {
+                newDistrConfigration = new DynamicConfiguration();
+                IDynamicPlugin dynPlugin = dynConfigData.getDynamicPlugin();
+                IDynamicPluginConfiguration pluginConfiguration = dynPlugin.getPluginConfiguration();
+                String name = pluginConfiguration.getName();
+                String distribution = pluginConfiguration.getDistribution();
+                String description = pluginConfiguration.getDescription();
+                String id = pluginConfiguration.getId();
+
+                newDistrConfigration.setDescription(description);
+                newDistrConfigration.setDistribution(distribution);
+                newDistrConfigration.setId(id);
+                newDistrConfigration.setName(name);
+            }
+
+            newDistrConfigration.setVersion(version);
+            dynamicPluginMap.remove(version);
             IDynamicMonitor monitor = new IDynamicMonitor() {
 
                 @Override
@@ -263,9 +340,20 @@ public class DynamicBuildConfigurationForm extends AbstractDynamicDistributionFo
                     System.out.println(message);
                 }
             };
-            IDynamicPlugin generatedDynamicPlugin = dynDistrGroup.buildDynamicPlugin(monitor, newDistrConfigration);
-            if (generatedDynamicPlugin != null) {
-                generatedDynamicPluginMap.put(version, generatedDynamicPlugin);
+            IDynamicPlugin newDynamicPlugin = dynDistrGroup.buildDynamicPlugin(monitor, newDistrConfigration);
+            if (newDynamicPlugin != null) {
+                if (ActionType.Import.equals(actionType) || ActionType.EditExisting.equals(actionType)) {
+                    IDynamicPlugin dynPlugin = dynConfigData.getDynamicPlugin();
+
+                    IDynamicPluginConfiguration newConfig = newDynamicPlugin.getPluginConfiguration();
+                    IDynamicPluginConfiguration curConfig = dynPlugin.getPluginConfiguration();
+
+                    newConfig.setAttribute(DynamicDistriConfigAdapter.ATTR_FILE_PATH,
+                            curConfig.getAttribute(DynamicDistriConfigAdapter.ATTR_FILE_PATH));
+                }
+                curDynamicPlugin = newDynamicPlugin;
+                dynamicPluginMap.put(version, curDynamicPlugin);
+                dynConfigData.setDynamicPlugin(curDynamicPlugin);
             }
         } catch (Exception e) {
             ExceptionHandler.process(e);
@@ -273,7 +361,31 @@ public class DynamicBuildConfigurationForm extends AbstractDynamicDistributionFo
     }
 
     private void onExportConfigurationSelected() {
+        DirectoryDialog dirDialog = new DirectoryDialog(getShell());
+        String folderPath = dirDialog.open();
+        if (StringUtils.isNotEmpty(folderPath)) {
+            try {
+                IDynamicMonitor monitor = new IDynamicMonitor() {
 
+                    @Override
+                    public void writeMessage(String message) {
+                        // TODO Auto-generated method stub
+
+                    }
+                };
+                IDynamicPluginConfiguration pluginConfiguration = curDynamicPlugin.getPluginConfiguration();
+                String id = pluginConfiguration.getId();
+                String fileName = id + "." + DynamicDistributionManager.DISTRIBUTION_FILE_EXTENSION; //$NON-NLS-1$
+                String filePath = folderPath + "/" + fileName; //$NON-NLS-1$
+                DynamicDistributionManager.getInstance().saveUsersDynamicPlugin(curDynamicPlugin, filePath, monitor);
+                MessageDialog.openInformation(getShell(),
+                        Messages.getString("DynamicBuildConfigurationForm.exportConfig.dialog.title"), //$NON-NLS-1$
+                        Messages.getString("DynamicBuildConfigurationForm.exportConfig.dialog.message", //$NON-NLS-1$
+                                new File(filePath).getCanonicalPath()));
+            } catch (Exception e) {
+                ExceptionHandler.process(e);
+            }
+        }
     }
 
     private List<String> getVersionList() throws Exception {
@@ -301,6 +413,15 @@ public class DynamicBuildConfigurationForm extends AbstractDynamicDistributionFo
         return versionList;
     }
 
+    private String getSelectedVersion() {
+        String selectedVersion = null;
+        IStructuredSelection selection = (IStructuredSelection) hadoopVersionCombo.getSelection();
+        if (selection != null) {
+            selectedVersion = (String) selection.getFirstElement();
+        }
+        return selectedVersion;
+    }
+
     private void enableVersionCombo(boolean enable) {
         hadoopVersionCombo.getControl().setEnabled(enable);
     }
@@ -319,6 +440,7 @@ public class DynamicBuildConfigurationForm extends AbstractDynamicDistributionFo
     @Override
     public boolean isComplete() {
         try {
+            initData();
             showMessage(null, WizardPage.INFORMATION);
             if (!checkVersionList()) {
                 return false;
@@ -327,13 +449,11 @@ public class DynamicBuildConfigurationForm extends AbstractDynamicDistributionFo
                 return false;
             }
             return true;
+        } catch (Exception e) {
+            ExceptionHandler.process(e);
+            return false;
         } finally {
-            IDynamicPlugin generatedDynamicPlugin = null;
-            String version = getSelectedVersion();
-            if (StringUtils.isNotEmpty(version)) {
-                generatedDynamicPlugin = generatedDynamicPluginMap.get(version);
-            }
-            if (generatedDynamicPlugin != null) {
+            if (curDynamicPlugin != null) {
                 exportConfigBtn.setEnabled(true);
             } else {
                 exportConfigBtn.setEnabled(false);
@@ -346,32 +466,24 @@ public class DynamicBuildConfigurationForm extends AbstractDynamicDistributionFo
         ActionType actionType = dynConfigData.getActionType();
         enableVersionCombo(false);
         enableRetrieveBaseJarBtn(false);
+        String selectedVersion = getSelectedVersion();
+        if (StringUtils.isEmpty(selectedVersion)) {
+            String errorMessage = Messages.getString("DynamicBuildConfigurationForm.check.versionList.empty", //$NON-NLS-1$
+                    fetchVersionBtn.getText());
+            fetchVersionBtn.getShell().setDefaultButton(fetchVersionBtn);
+            showMessage(errorMessage, WizardPage.ERROR);
+            return false;
+        }
         if (ActionType.NewConfig.equals(actionType)) {
-            String selectedVersion = getSelectedVersion();
-            if (StringUtils.isEmpty(selectedVersion)) {
-                String errorMessage = Messages.getString("DynamicBuildConfigurationForm.check.versionList.empty", //$NON-NLS-1$
-                        fetchVersionBtn.getText());
-                fetchVersionBtn.getShell().setDefaultButton(fetchVersionBtn);
-                showMessage(errorMessage, WizardPage.ERROR);
-                return false;
-            }
             DynamicConfiguration newDistrConfigration = dynConfigData.getNewDistrConfigration();
             newDistrConfigration.setVersion(selectedVersion);
             newDistrConfigration.setId(generateId(newDistrConfigration.getDistribution(), selectedVersion));
             hadoopVersionCombo.getControl().setToolTipText(selectedVersion);
         }
+        curDynamicPlugin = dynamicPluginMap.get(selectedVersion);
         enableVersionCombo(true);
         enableRetrieveBaseJarBtn(true);
         return true;
-    }
-
-    private String getSelectedVersion() {
-        String selectedVersion = null;
-        IStructuredSelection selection = (IStructuredSelection) hadoopVersionCombo.getSelection();
-        if (selection != null) {
-            selectedVersion = (String) selection.getFirstElement();
-        }
-        return selectedVersion;
     }
 
     private boolean checkBaseJars() {
@@ -382,7 +494,7 @@ public class DynamicBuildConfigurationForm extends AbstractDynamicDistributionFo
         IDynamicPlugin generatedDynamicPlugin = null;
         String version = getSelectedVersion();
         if (StringUtils.isNotEmpty(version)) {
-            generatedDynamicPlugin = generatedDynamicPluginMap.get(version);
+            generatedDynamicPlugin = dynamicPluginMap.get(version);
         }
         if (generatedDynamicPlugin == null) {
             String errorMessage = Messages.getString("DynamicBuildConfigurationForm.check.baseJars.empty", //$NON-NLS-1$
@@ -404,7 +516,9 @@ public class DynamicBuildConfigurationForm extends AbstractDynamicDistributionFo
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmssSSSZ"); //$NON-NLS-1$
         String timestamp = dateFormat.format(date);
         timestamp = timestamp.replaceAll("[\\W]", "_"); //$NON-NLS-1$//$NON-NLS-2$
-        String id = distribution.toUpperCase() + "_" + versionStr.toUpperCase() + "_" + timestamp; //$NON-NLS-1$ //$NON-NLS-2$
+        // String id = distribution.toUpperCase() + "_" + versionStr.toUpperCase() + "_" + timestamp; //$NON-NLS-1$
+        // //$NON-NLS-2$
+        String id = distribution.toUpperCase() + "_" + timestamp; //$NON-NLS-1$ //$NON-NLS-2$
         return id;
     }
 
