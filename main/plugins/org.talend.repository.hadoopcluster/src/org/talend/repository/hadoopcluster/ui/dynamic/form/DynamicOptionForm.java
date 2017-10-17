@@ -396,28 +396,8 @@ public class DynamicOptionForm extends AbstractDynamicDistributionForm {
         dynConfigData.setNewDistrConfigration(dynamicConfiguration);
 
         try {
-            List<IDynamicPlugin> distriDynamicPlugins = new LinkedList<>();
+            List<IDynamicPlugin> distriDynamicPlugins = copyAllUsersDynamicPlugins(monitor, dynamicDistributionsGroup);
 
-            /**
-             * Can't edit buildin plugins
-             */
-            // List<IDynamicPlugin> allBuildinDynamicPlugins =
-            // dynamicDistributionsGroup.getAllBuildinDynamicPlugins(monitor);
-            // if (allBuildinDynamicPlugins != null && !allBuildinDynamicPlugins.isEmpty()) {
-            // distriDynamicPlugins.addAll(allBuildinDynamicPlugins);
-            // }
-
-            List<IDynamicPlugin> allUsersDynamicPlugins = DynamicDistributionManager.getInstance()
-                    .getAllUsersDynamicPlugins(monitor);
-            if (allUsersDynamicPlugins != null && !allUsersDynamicPlugins.isEmpty()) {
-                List<IDynamicPlugin> filterDynamicPlugins = dynamicDistributionsGroup.filterDynamicPlugins(allUsersDynamicPlugins,
-                        monitor);
-                if (filterDynamicPlugins != null && !filterDynamicPlugins.isEmpty()) {
-                    distriDynamicPlugins.addAll(filterDynamicPlugins);
-                }
-            }
-
-            Collections.sort(distriDynamicPlugins, Collections.reverseOrder(new DynamicDistributionComparator()));
             existingConfigsComboViewer.setInput(distriDynamicPlugins);
             if (0 < distriDynamicPlugins.size()) {
                 existingConfigsComboViewer.setSelection(new StructuredSelection(distriDynamicPlugins.get(0)));
@@ -426,6 +406,36 @@ public class DynamicOptionForm extends AbstractDynamicDistributionForm {
         } catch (Exception e) {
             ExceptionHandler.process(e);
         }
+    }
+
+    private List<IDynamicPlugin> copyAllUsersDynamicPlugins(IDynamicMonitor monitor,
+            IDynamicDistributionsGroup dynamicDistributionsGroup) throws Exception {
+        List<IDynamicPlugin> distriDynamicPlugins = new LinkedList<>();
+
+        /**
+         * Can't edit buildin plugins
+         */
+        // List<IDynamicPlugin> allBuildinDynamicPlugins =
+        // dynamicDistributionsGroup.getAllBuildinDynamicPlugins(monitor);
+        // if (allBuildinDynamicPlugins != null && !allBuildinDynamicPlugins.isEmpty()) {
+        // distriDynamicPlugins.addAll(allBuildinDynamicPlugins);
+        // }
+
+        List<IDynamicPlugin> allUsersDynamicPlugins = DynamicDistributionManager.getInstance().getAllUsersDynamicPlugins(monitor);
+        if (allUsersDynamicPlugins != null && !allUsersDynamicPlugins.isEmpty()) {
+            List<IDynamicPlugin> filterDynamicPlugins = dynamicDistributionsGroup.filterDynamicPlugins(allUsersDynamicPlugins,
+                    monitor);
+            if (filterDynamicPlugins != null && !filterDynamicPlugins.isEmpty()) {
+                for (IDynamicPlugin dynPlugin : filterDynamicPlugins) {
+                    IDynamicPlugin clonedPlugin = DynamicFactory.getInstance()
+                            .createPluginFromJson(dynPlugin.toXmlJson().toString());
+                    distriDynamicPlugins.add(clonedPlugin);
+                }
+            }
+        }
+
+        Collections.sort(distriDynamicPlugins, Collections.reverseOrder(new DynamicDistributionComparator()));
+        return distriDynamicPlugins;
     }
 
     private boolean checkNewConfigNameValid() {

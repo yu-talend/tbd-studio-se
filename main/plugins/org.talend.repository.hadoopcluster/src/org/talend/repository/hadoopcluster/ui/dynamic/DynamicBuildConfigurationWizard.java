@@ -91,7 +91,7 @@ public class DynamicBuildConfigurationWizard extends Wizard {
                     configData.getDynamicDistributionsGroup().unregist(dynamicPlugin, monitor);
                 }
                 configData.getDynamicDistributionsGroup().regist(dynamicPlugin, monitor);
-                DynamicDistributionManager.getInstance().cleanCache();
+                DynamicDistributionManager.getInstance().cleanSystemCache();
             }
         } catch (Exception e) {
             ExceptionHandler.process(e);

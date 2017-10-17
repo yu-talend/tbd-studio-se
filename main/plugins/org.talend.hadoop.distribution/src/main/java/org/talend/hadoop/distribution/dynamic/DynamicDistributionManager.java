@@ -236,7 +236,7 @@ public class DynamicDistributionManager {
     public void registAll(IDynamicMonitor monitor) throws Exception {
         registAllBuildin(monitor, false);
         registAllUsers(monitor, false);
-        cleanCache();
+        cleanSystemCache();
     }
 
     public void registAllBuildin(IDynamicMonitor monitor, boolean cleanCache) throws Exception {
@@ -256,7 +256,7 @@ public class DynamicDistributionManager {
         }
 
         if (cleanCache) {
-            cleanCache();
+            cleanSystemCache();
         }
 
     }
@@ -292,7 +292,7 @@ public class DynamicDistributionManager {
         }
 
         if (cleanCache) {
-            cleanCache();
+            cleanSystemCache();
         }
 
     }
@@ -300,7 +300,7 @@ public class DynamicDistributionManager {
     public void unregistAll(IDynamicMonitor monitor) throws Exception {
         unregistAllUsers(monitor, false);
         unregistAllBuildin(monitor, false);
-        cleanCache();
+        cleanSystemCache();
     }
 
     public void unregistAllBuildin(IDynamicMonitor monitor, boolean cleanCache) throws Exception {
@@ -320,7 +320,7 @@ public class DynamicDistributionManager {
         }
 
         if (cleanCache) {
-            cleanCache();
+            cleanSystemCache();
         }
 
     }
@@ -356,12 +356,12 @@ public class DynamicDistributionManager {
         }
 
         if (cleanCache) {
-            cleanCache();
+            cleanSystemCache();
         }
 
     }
 
-    public void cleanCache() throws Exception {
+    public void cleanSystemCache() throws Exception {
 
         // 1. reset modulesNeeded cache
         getLibrariesService().resetModulesNeeded();

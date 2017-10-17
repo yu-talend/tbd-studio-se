@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
@@ -36,6 +37,7 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerCell;
+import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
@@ -52,7 +54,9 @@ import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.ui.PlatformUI;
 import org.talend.commons.exception.ExceptionHandler;
+import org.talend.core.runtime.dynamic.DynamicFactory;
 import org.talend.core.runtime.dynamic.IDynamicConfiguration;
 import org.talend.core.runtime.dynamic.IDynamicExtension;
 import org.talend.core.runtime.dynamic.IDynamicPlugin;
@@ -65,9 +69,12 @@ import org.talend.hadoop.distribution.dynamic.IDynamicDistributionsGroup;
 import org.talend.hadoop.distribution.dynamic.adapter.DynamicDistriConfigAdapter;
 import org.talend.hadoop.distribution.dynamic.adapter.DynamicLibraryNeededExtensionAdaper;
 import org.talend.hadoop.distribution.dynamic.adapter.DynamicModuleGroupAdapter;
+import org.talend.hadoop.distribution.dynamic.adapter.DynamicPluginAdapter;
 import org.talend.repository.hadoopcluster.i18n.Messages;
 import org.talend.repository.hadoopcluster.ui.dynamic.DynamicBuildConfigurationData;
 import org.talend.repository.hadoopcluster.ui.dynamic.DynamicBuildConfigurationData.ActionType;
+import org.talend.repository.hadoopcluster.ui.dynamic.DynamicModuleGroupData;
+import org.talend.repository.hadoopcluster.ui.dynamic.DynamicModuleGroupWizard;
 import org.talend.repository.ui.login.LoginDialogV2;
 
 /**
@@ -591,7 +598,7 @@ public class DynamicBuildConfigurationForm extends AbstractDynamicDistributionFo
         return false;
     }
 
-    protected static class BaseJarTableContentProvider extends ArrayContentProvider {
+    protected class BaseJarTableContentProvider extends ArrayContentProvider {
 
         private BaseJarTableDetailLabelProvider detailLabelProvider;
 
@@ -602,6 +609,7 @@ public class DynamicBuildConfigurationForm extends AbstractDynamicDistributionFo
         @Override
         public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
             this.detailLabelProvider.clearBtns();
+            this.detailLabelProvider.setDynamicPlugin(curDynamicPlugin);
         }
 
     }
@@ -622,10 +630,14 @@ public class DynamicBuildConfigurationForm extends AbstractDynamicDistributionFo
 
         private Map<Object, Composite> compositeMap = new HashMap<Object, Composite>();
 
+        private IDynamicPlugin dynamicPlugin;
+
+        private DynamicPluginAdapter pluginAdapter;
+
         @Override
         public String getText(Object element) {
             if (element instanceof IDynamicConfiguration) {
-                return (String) ((IDynamicConfiguration) element).getAttribute(DynamicModuleGroupAdapter.ATTR_GROUP_TEMPLATE_ID);
+                return getModuleGroupTemplateId(element);
             }
             return element == null ? "" : element.toString();//$NON-NLS-1$
         }
@@ -651,6 +663,7 @@ public class DynamicBuildConfigurationForm extends AbstractDynamicDistributionFo
                 label.setText(text);
                 Button button = new Button(composite, SWT.PUSH);
                 button.setText(Messages.getString("DynamicBuildConfigurationForm.baseJars.table.groupDetails.btn")); //$NON-NLS-1$
+                addDetailBtnListener(button, getModuleGroupTemplateId(element));
 
                 FormData formData = new FormData();
                 formData.top = new FormAttachment(0);
@@ -666,6 +679,7 @@ public class DynamicBuildConfigurationForm extends AbstractDynamicDistributionFo
                 button.setLayoutData(formData);
 
                 compositeMap.put(cell.getElement(), composite);
+
             }
 
             // cell.setBackground(getBackground(element));
@@ -678,6 +692,10 @@ public class DynamicBuildConfigurationForm extends AbstractDynamicDistributionFo
             editor.grabVertical = true;
             editor.setEditor(composite, item, cell.getColumnIndex());
             editor.layout();
+        }
+
+        private String getModuleGroupTemplateId(Object element) {
+            return (String) ((IDynamicConfiguration) element).getAttribute(DynamicModuleGroupAdapter.ATTR_GROUP_TEMPLATE_ID);
         }
 
         @Override
@@ -694,6 +712,38 @@ public class DynamicBuildConfigurationForm extends AbstractDynamicDistributionFo
                 }
             }
             compositeMap.clear();
+        }
+
+        public void setDynamicPlugin(IDynamicPlugin dynPlugin) {
+            this.dynamicPlugin = dynPlugin;
+            try {
+                pluginAdapter = new DynamicPluginAdapter(
+                        DynamicFactory.getInstance().createPluginFromJson(dynPlugin.toXmlJson().toString()));
+                pluginAdapter.buildIdMaps();
+            } catch (Exception e) {
+                ExceptionHandler.process(e);
+            }
+        }
+
+        private void addDetailBtnListener(Button btn, final String groupTemplateId) {
+            btn.addSelectionListener(new SelectionAdapter() {
+
+                @Override
+                public void widgetSelected(SelectionEvent e) {
+                    DynamicModuleGroupData groupData = new DynamicModuleGroupData();
+                    groupData.setDynamicPlugin(dynamicPlugin);
+                    groupData.setGroupTemplateId(groupTemplateId);
+                    groupData.setPluginAdapter(pluginAdapter);
+                    DynamicModuleGroupWizard wizard = new DynamicModuleGroupWizard(groupData);
+                    WizardDialog wizardDialog = new WizardDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
+                            wizard);
+                    wizardDialog.create();
+                    if (wizardDialog.open() == IDialogConstants.OK_ID) {
+
+                    }
+                }
+
+            });
         }
 
     }

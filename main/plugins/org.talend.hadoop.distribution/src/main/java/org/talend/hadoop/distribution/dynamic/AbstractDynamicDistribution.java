@@ -277,8 +277,10 @@ public abstract class AbstractDynamicDistribution implements IDynamicDistributio
 
     @Override
     public void regist(IDynamicPlugin dynamicPlugin, IDynamicMonitor monitor) throws Exception {
+        IDynamicPlugin copiedDynamicPlugin = DynamicFactory.getInstance()
+                .createPluginFromJson(dynamicPlugin.toXmlJson().toString());
 
-        DynamicPluginAdapter pluginAdapter = new DynamicPluginAdapter(dynamicPlugin);
+        DynamicPluginAdapter pluginAdapter = new DynamicPluginAdapter(copiedDynamicPlugin);
         pluginAdapter.adapt();
 
         IDynamicDistributionTemplate distributionTemplate = initTemplate(pluginAdapter, monitor);

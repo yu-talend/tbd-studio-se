@@ -158,7 +158,7 @@ public class DynamicDistributionUtils {
 
     public static String getPluginKey(String distri, String version, String id, String module) {
         String key = "DYNAMIC_" + id + "_" + module; //$NON-NLS-1$ //$NON-NLS-2$
-        key = key.replaceAll("\\.", "_"); //$NON-NLS-1$//$NON-NLS-2$
+        key = key.replaceAll("[\\W]", "_"); //$NON-NLS-1$//$NON-NLS-2$
         return key;
     }
 

@@ -31,12 +31,15 @@ public class DynamicPluginAdapter {
 
     private IDynamicPluginConfiguration pluginConfiguration;
 
-    private Map<String, IDynamicConfiguration> moduleGroupMap;
+    private Map<String, IDynamicConfiguration> moduleGroupTemplateMap;
+    
+    private Map<String, IDynamicConfiguration> moduleMap;
 
     public DynamicPluginAdapter(IDynamicPlugin plugin) {
         this.plugin = plugin;
         this.pluginConfiguration = this.plugin.getPluginConfiguration();
-        moduleGroupMap = new HashMap<>();
+        moduleGroupTemplateMap = new HashMap<>();
+        moduleMap = new HashMap<>();
     }
 
     public IDynamicPlugin getPlugin() {
@@ -74,15 +77,58 @@ public class DynamicPluginAdapter {
                 if (StringUtils.isEmpty(templateId)) {
                     throw new Exception("Template id is not configured!");
                 }
-                moduleGroupMap.put(templateId, configuration);
+                moduleGroupTemplateMap.put(templateId, configuration);
                 configuration.removeAttribute(DynamicModuleGroupAdapter.ATTR_GROUP_TEMPLATE_ID);
+            } else if (DynamicModuleAdapter.TAG_NAME.equals(configuration.getTagName())) {
+                String moduleId = (String) configuration.getAttribute(DynamicModuleAdapter.ATTR_ID);
+                if (StringUtils.isEmpty(moduleId)) {
+                    throw new Exception("Module id is empty!");
+                }
+                moduleMap.put(moduleId, configuration);
             }
         }
         // plugin.setPluginConfiguration(null);
     }
 
+    public void buildIdMaps() throws Exception {
+        List<IDynamicExtension> allExtensions = plugin.getAllExtensions();
+        IDynamicExtension libNeededExtension = null;
+        for (IDynamicExtension extension : allExtensions) {
+            if (DynamicLibraryNeededExtensionAdaper.ATTR_POINT.equals(extension.getExtensionPoint())) {
+                libNeededExtension = extension;
+                break;
+            }
+        }
+        if (libNeededExtension == null) {
+            throw new Exception("Can't find extension: " + DynamicLibraryNeededExtensionAdaper.ATTR_POINT);
+        }
+        List<IDynamicConfiguration> configurations = libNeededExtension.getConfigurations();
+        if (configurations == null || configurations.isEmpty()) {
+            throw new Exception("No libraryModuelGroup configured");
+        }
+        for (IDynamicConfiguration configuration : configurations) {
+            if (DynamicModuleGroupAdapter.TAG_NAME.equals(configuration.getTagName())) {
+                String templateId = (String) configuration.getAttribute(DynamicModuleGroupAdapter.ATTR_GROUP_TEMPLATE_ID);
+                if (StringUtils.isEmpty(templateId)) {
+                    throw new Exception("Template id is not configured!");
+                }
+                moduleGroupTemplateMap.put(templateId, configuration);
+            } else if (DynamicModuleAdapter.TAG_NAME.equals(configuration.getTagName())) {
+                String moduleId = (String) configuration.getAttribute(DynamicModuleAdapter.ATTR_ID);
+                if (StringUtils.isEmpty(moduleId)) {
+                    throw new Exception("Module id is empty!");
+                }
+                moduleMap.put(moduleId, configuration);
+            }
+        }
+    }
+
+    public IDynamicConfiguration getModuleById(String id) {
+        return moduleMap.get(id);
+    }
+
     public IDynamicConfiguration getModuleGroupByTemplateId(String templateId) {
-        return moduleGroupMap.get(templateId);
+        return moduleGroupTemplateMap.get(templateId);
     }
 
     public String getRuntimeModuleGroupIdByTemplateId(String templateId) {
