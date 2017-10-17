@@ -13,16 +13,14 @@
 package org.talend.repository.hadoopcluster.ui.dynamic.form;
 
 import java.io.File;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -68,8 +66,10 @@ import org.talend.hadoop.distribution.dynamic.DynamicDistributionManager;
 import org.talend.hadoop.distribution.dynamic.IDynamicDistributionsGroup;
 import org.talend.hadoop.distribution.dynamic.adapter.DynamicDistriConfigAdapter;
 import org.talend.hadoop.distribution.dynamic.adapter.DynamicLibraryNeededExtensionAdaper;
+import org.talend.hadoop.distribution.dynamic.adapter.DynamicModuleAdapter;
 import org.talend.hadoop.distribution.dynamic.adapter.DynamicModuleGroupAdapter;
 import org.talend.hadoop.distribution.dynamic.adapter.DynamicPluginAdapter;
+import org.talend.hadoop.distribution.dynamic.util.DynamicDistributionUtils;
 import org.talend.repository.hadoopcluster.i18n.Messages;
 import org.talend.repository.hadoopcluster.ui.dynamic.DynamicBuildConfigurationData;
 import org.talend.repository.hadoopcluster.ui.dynamic.DynamicBuildConfigurationData.ActionType;
@@ -573,15 +573,11 @@ public class DynamicBuildConfigurationForm extends AbstractDynamicDistributionFo
     }
 
     private String generateId(String distribution, String version) {
-        String versionStr = version.replaceAll("[\\W]", "_"); //$NON-NLS-1$//$NON-NLS-2$
-        Calendar cal = Calendar.getInstance();
-        Date date = cal.getTime();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmssSSSZ"); //$NON-NLS-1$
-        String timestamp = dateFormat.format(date);
-        timestamp = timestamp.replaceAll("[\\W]", "_"); //$NON-NLS-1$//$NON-NLS-2$
+        String versionStr = DynamicDistributionUtils.formatId(version);
+        String timestamp = DynamicDistributionUtils.generateTimestampId();
         // String id = distribution.toUpperCase() + "_" + versionStr.toUpperCase() + "_" + timestamp; //$NON-NLS-1$
         // //$NON-NLS-2$
-        String id = distribution.toUpperCase() + "_" + timestamp; //$NON-NLS-1$ //$NON-NLS-2$
+        String id = DynamicDistributionUtils.formatId(distribution.toUpperCase() + "_" + timestamp); //$NON-NLS-1$
         return id;
     }
 
@@ -630,14 +626,18 @@ public class DynamicBuildConfigurationForm extends AbstractDynamicDistributionFo
 
         private Map<Object, Composite> compositeMap = new HashMap<Object, Composite>();
 
+        private Map<String, String> mavenUriMap = new HashMap<>();
+
         private IDynamicPlugin dynamicPlugin;
+
+        private IDynamicPlugin tempDynamicPlugin;
 
         private DynamicPluginAdapter pluginAdapter;
 
         @Override
         public String getText(Object element) {
             if (element instanceof IDynamicConfiguration) {
-                return getModuleGroupTemplateId(element);
+                return getModuleGroupRuntimeId(element);
             }
             return element == null ? "" : element.toString();//$NON-NLS-1$
         }
@@ -698,6 +698,10 @@ public class DynamicBuildConfigurationForm extends AbstractDynamicDistributionFo
             return (String) ((IDynamicConfiguration) element).getAttribute(DynamicModuleGroupAdapter.ATTR_GROUP_TEMPLATE_ID);
         }
 
+        private String getModuleGroupRuntimeId(Object element) {
+            return (String) ((IDynamicConfiguration) element).getAttribute(DynamicModuleGroupAdapter.ATTR_ID);
+        }
+
         @Override
         public void dispose() {
             super.dispose();
@@ -712,14 +716,25 @@ public class DynamicBuildConfigurationForm extends AbstractDynamicDistributionFo
                 }
             }
             compositeMap.clear();
+            mavenUriMap.clear();
         }
 
         public void setDynamicPlugin(IDynamicPlugin dynPlugin) {
-            this.dynamicPlugin = dynPlugin;
             try {
-                pluginAdapter = new DynamicPluginAdapter(
-                        DynamicFactory.getInstance().createPluginFromJson(dynPlugin.toXmlJson().toString()));
+                this.dynamicPlugin = dynPlugin;
+                this.tempDynamicPlugin = DynamicFactory.getInstance()
+                        .createPluginFromJson(this.dynamicPlugin.toXmlJson().toString());
+
+                pluginAdapter = new DynamicPluginAdapter(tempDynamicPlugin);
                 pluginAdapter.buildIdMaps();
+                Set<String> allModuleIds = pluginAdapter.getAllModuleIds();
+                Iterator<String> iter = allModuleIds.iterator();
+                while (iter.hasNext()) {
+                    String id = iter.next();
+                    IDynamicConfiguration module = pluginAdapter.getModuleById(id);
+                    String mavenUri = (String) module.getAttribute(DynamicModuleAdapter.ATTR_MVN_URI);
+                    mavenUriMap.put(mavenUri, id);
+                }
             } catch (Exception e) {
                 ExceptionHandler.process(e);
             }
@@ -731,15 +746,18 @@ public class DynamicBuildConfigurationForm extends AbstractDynamicDistributionFo
                 @Override
                 public void widgetSelected(SelectionEvent e) {
                     DynamicModuleGroupData groupData = new DynamicModuleGroupData();
-                    groupData.setDynamicPlugin(dynamicPlugin);
+                    groupData.setDynamicPlugin(tempDynamicPlugin);
                     groupData.setGroupTemplateId(groupTemplateId);
                     groupData.setPluginAdapter(pluginAdapter);
+                    groupData.setMavenUriIdMap(new HashMap<>(mavenUriMap));
                     DynamicModuleGroupWizard wizard = new DynamicModuleGroupWizard(groupData);
                     WizardDialog wizardDialog = new WizardDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
                             wizard);
                     wizardDialog.create();
                     if (wizardDialog.open() == IDialogConstants.OK_ID) {
-
+                        dynamicPlugin.removeExtension(DynamicLibraryNeededExtensionAdaper.ATTR_POINT);
+                        dynamicPlugin.addExtension(DynamicPluginAdapter.getLibraryNeededExtension(tempDynamicPlugin));
+                        setDynamicPlugin(dynamicPlugin);
                     }
                 }
 

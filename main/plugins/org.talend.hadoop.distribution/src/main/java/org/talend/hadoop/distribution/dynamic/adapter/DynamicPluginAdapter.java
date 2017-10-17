@@ -15,6 +15,7 @@ package org.talend.hadoop.distribution.dynamic.adapter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.talend.core.runtime.dynamic.IDynamicConfiguration;
@@ -91,14 +92,7 @@ public class DynamicPluginAdapter {
     }
 
     public void buildIdMaps() throws Exception {
-        List<IDynamicExtension> allExtensions = plugin.getAllExtensions();
-        IDynamicExtension libNeededExtension = null;
-        for (IDynamicExtension extension : allExtensions) {
-            if (DynamicLibraryNeededExtensionAdaper.ATTR_POINT.equals(extension.getExtensionPoint())) {
-                libNeededExtension = extension;
-                break;
-            }
-        }
+        IDynamicExtension libNeededExtension = getLibraryNeededExtension(plugin);
         if (libNeededExtension == null) {
             throw new Exception("Can't find extension: " + DynamicLibraryNeededExtensionAdaper.ATTR_POINT);
         }
@@ -121,6 +115,22 @@ public class DynamicPluginAdapter {
                 moduleMap.put(moduleId, configuration);
             }
         }
+    }
+
+    public static IDynamicExtension getLibraryNeededExtension(IDynamicPlugin dynamicPlugin) {
+        List<IDynamicExtension> allExtensions = dynamicPlugin.getAllExtensions();
+        IDynamicExtension libNeededExtension = null;
+        for (IDynamicExtension extension : allExtensions) {
+            if (DynamicLibraryNeededExtensionAdaper.ATTR_POINT.equals(extension.getExtensionPoint())) {
+                libNeededExtension = extension;
+                break;
+            }
+        }
+        return libNeededExtension;
+    }
+
+    public Set<String> getAllModuleIds() {
+        return moduleMap.keySet();
     }
 
     public IDynamicConfiguration getModuleById(String id) {

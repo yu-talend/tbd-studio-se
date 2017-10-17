@@ -12,6 +12,8 @@
 // ============================================================================
 package org.talend.repository.hadoopcluster.ui.dynamic;
 
+import java.util.Map;
+
 import org.talend.core.runtime.dynamic.IDynamicPlugin;
 import org.talend.hadoop.distribution.dynamic.adapter.DynamicPluginAdapter;
 
@@ -25,6 +27,8 @@ public class DynamicModuleGroupData {
     private DynamicPluginAdapter pluginAdapter;
 
     private String groupTemplateId;
+
+    private Map<String, String> mavenUriIdMap;
 
     public IDynamicPlugin getDynamicPlugin() {
         return this.dynamicPlugin;
@@ -48,6 +52,14 @@ public class DynamicModuleGroupData {
 
     public void setPluginAdapter(DynamicPluginAdapter pluginAdapter) {
         this.pluginAdapter = pluginAdapter;
+    }
+
+    public Map<String, String> getMavenUriIdMap() {
+        return this.mavenUriIdMap;
+    }
+
+    public void setMavenUriIdMap(Map<String, String> mavenUriIdMap) {
+        this.mavenUriIdMap = mavenUriIdMap;
     }
 
 }

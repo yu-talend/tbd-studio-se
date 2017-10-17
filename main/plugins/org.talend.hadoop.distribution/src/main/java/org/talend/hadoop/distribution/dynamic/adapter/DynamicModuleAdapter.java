@@ -224,7 +224,7 @@ public class DynamicModuleAdapter extends AbstractDynamicAdapter {
         return libraryNeeded;
     }
 
-    private IDynamicConfiguration createLibraryNeeded(ModuleBean bean) {
+    public static IDynamicConfiguration createLibraryNeeded(ModuleBean bean) {
         IDynamicConfiguration libraryNeeded = null;
 
         libraryNeeded = DynamicFactory.getInstance().createDynamicConfiguration();

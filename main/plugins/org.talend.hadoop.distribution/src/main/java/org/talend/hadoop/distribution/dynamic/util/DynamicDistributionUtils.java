@@ -12,7 +12,10 @@
 // ============================================================================
 package org.talend.hadoop.distribution.dynamic.util;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -158,8 +161,21 @@ public class DynamicDistributionUtils {
 
     public static String getPluginKey(String distri, String version, String id, String module) {
         String key = "DYNAMIC_" + id + "_" + module; //$NON-NLS-1$ //$NON-NLS-2$
-        key = key.replaceAll("[\\W]", "_"); //$NON-NLS-1$//$NON-NLS-2$
+        key = formatId(key);
         return key;
+    }
+
+    public static String generateTimestampId() {
+        Calendar cal = Calendar.getInstance();
+        Date date = cal.getTime();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmssSSSZ"); //$NON-NLS-1$
+        String timestamp = dateFormat.format(date);
+        timestamp = formatId(timestamp);
+        return timestamp;
+    }
+
+    public static String formatId(String id) {
+        return id.replaceAll("[\\W]", "_"); //$NON-NLS-1$//$NON-NLS-2$
     }
 
     public static String getMvnUrl(DependencyNode node, String repositoryUri) {

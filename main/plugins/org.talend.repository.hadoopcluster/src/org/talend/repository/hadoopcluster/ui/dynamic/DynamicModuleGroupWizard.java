@@ -61,8 +61,7 @@ public class DynamicModuleGroupWizard extends Wizard {
 
     @Override
     public boolean performFinish() {
-        // TODO Auto-generated method stub
-        return false;
+        return true;
     }
 
 }
