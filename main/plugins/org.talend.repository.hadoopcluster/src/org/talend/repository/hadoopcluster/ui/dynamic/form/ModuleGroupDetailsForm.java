@@ -240,6 +240,7 @@ public class ModuleGroupDetailsForm extends AbstractModuleGroupDetailsForm {
             } catch (Exception e) {
                 ExceptionHandler.process(e);
             }
+            getViewer().update(element, null);
         }
 
     }

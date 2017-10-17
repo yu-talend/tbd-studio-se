@@ -720,6 +720,15 @@ public class DynamicBuildConfigurationForm extends AbstractDynamicDistributionFo
         }
 
         public void setDynamicPlugin(IDynamicPlugin dynPlugin) {
+
+            if (dynPlugin == null) {
+                mavenUriMap.clear();
+                dynamicPlugin = null;
+                tempDynamicPlugin = null;
+                pluginAdapter = null;
+                return;
+            }
+
             try {
                 this.dynamicPlugin = dynPlugin;
                 this.tempDynamicPlugin = DynamicFactory.getInstance()
@@ -754,9 +763,15 @@ public class DynamicBuildConfigurationForm extends AbstractDynamicDistributionFo
                     WizardDialog wizardDialog = new WizardDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
                             wizard);
                     wizardDialog.create();
-                    if (wizardDialog.open() == IDialogConstants.OK_ID) {
-                        dynamicPlugin.removeExtension(DynamicLibraryNeededExtensionAdaper.ATTR_POINT);
-                        dynamicPlugin.addExtension(DynamicPluginAdapter.getLibraryNeededExtension(tempDynamicPlugin));
+                    int result = wizardDialog.open();
+                    if (result == IDialogConstants.OK_ID) {
+                        IDynamicExtension oldLibNeeded = DynamicPluginAdapter.getLibraryNeededExtension(dynamicPlugin);
+                        int index = dynamicPlugin.getChildIndex(oldLibNeeded);
+                        if (index < 0) {
+                            index = 1;
+                        }
+                        dynamicPlugin.removeExtensions(DynamicLibraryNeededExtensionAdaper.ATTR_POINT);
+                        dynamicPlugin.addExtension(index, DynamicPluginAdapter.getLibraryNeededExtension(tempDynamicPlugin));
                         setDynamicPlugin(dynamicPlugin);
                     }
                 }

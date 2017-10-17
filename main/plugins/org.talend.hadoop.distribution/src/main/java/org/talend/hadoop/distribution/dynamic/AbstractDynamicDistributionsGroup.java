@@ -39,9 +39,9 @@ import org.talend.hadoop.distribution.dynamic.bean.TemplateBean;
  */
 public abstract class AbstractDynamicDistributionsGroup implements IDynamicDistributionsGroup {
 
-    private Map<IDynamicDistribution, List<String>> compatibleDistribuionVersionMap;
+    private Map<IDynamicDistribution, List<String>> compatibleDistribuionVersionMap = new HashMap<>();
 
-    private Map<IDynamicDistribution, List<String>> allDistribuionVersionMap;
+    private Map<IDynamicDistribution, List<String>> allDistribuionVersionMap = new HashMap<>();
 
     private Map<String, IDynamicDistribution> templateIdMap;
 
@@ -50,18 +50,11 @@ public abstract class AbstractDynamicDistributionsGroup implements IDynamicDistr
     @Override
     public List<String> getCompatibleVersions(IDynamicMonitor monitor) throws Exception {
         Set<String> compatibleVersions = new HashSet<>();
-        compatibleDistribuionVersionMap = new HashMap<>();
-        List<IDynamicDistribution> allRegistedDynamicDistributions = getAllRegistedDynamicDistributions(monitor);
-        if (allRegistedDynamicDistributions != null) {
-            for (IDynamicDistribution dynamicDistribution : allRegistedDynamicDistributions) {
-                try {
-                    List<String> curCompatibleVersions = dynamicDistribution.getCompatibleVersions(monitor);
-                    if (curCompatibleVersions != null && !curCompatibleVersions.isEmpty()) {
-                        compatibleDistribuionVersionMap.put(dynamicDistribution, curCompatibleVersions);
-                        compatibleVersions.addAll(curCompatibleVersions);
-                    }
-                } catch (Exception e) {
-                    ExceptionHandler.process(e);
+        compatibleDistribuionVersionMap = buildCompatibleDistribuionVersionMap(monitor);
+        if (compatibleDistribuionVersionMap != null) {
+            for (List<String> curCompatibleVersions : compatibleDistribuionVersionMap.values()) {
+                if (curCompatibleVersions != null && !curCompatibleVersions.isEmpty()) {
+                    compatibleVersions.addAll(curCompatibleVersions);
                 }
             }
         }
@@ -73,18 +66,11 @@ public abstract class AbstractDynamicDistributionsGroup implements IDynamicDistr
     @Override
     public List<String> getAllVersions(IDynamicMonitor monitor) throws Exception {
         Set<String> allVersions = new HashSet<>();
-        allDistribuionVersionMap = new HashMap<>();
-        List<IDynamicDistribution> allRegistedDynamicDistributions = getAllRegistedDynamicDistributions(monitor);
-        if (allRegistedDynamicDistributions != null) {
-            for (IDynamicDistribution dynamicDistribution : allRegistedDynamicDistributions) {
-                try {
-                    List<String> curAllVersions = dynamicDistribution.getAllVersions(monitor);
-                    if (curAllVersions != null && !curAllVersions.isEmpty()) {
-                        allDistribuionVersionMap.put(dynamicDistribution, curAllVersions);
-                        allVersions.addAll(curAllVersions);
-                    }
-                } catch (Exception e) {
-                    ExceptionHandler.process(e);
+        allDistribuionVersionMap = buildAllDistribuionVersionMap(monitor);
+        if (allDistribuionVersionMap != null) {
+            for (List<String> curAllVersions : allDistribuionVersionMap.values()) {
+                if (curAllVersions != null && !curAllVersions.isEmpty()) {
+                    allVersions.addAll(curAllVersions);
                 }
             }
         }
@@ -119,7 +105,7 @@ public abstract class AbstractDynamicDistributionsGroup implements IDynamicDistr
         String version = configuration.getVersion();
 
         // 1. try to get dynamicDistribution from compatible list
-        Set<Entry<IDynamicDistribution, List<String>>> entrySet = compatibleDistribuionVersionMap.entrySet();
+        Set<Entry<IDynamicDistribution, List<String>>> entrySet = getCompatibleDistribuionVersionMap(monitor).entrySet();
         IDynamicDistribution bestDistribution = null;
         // choose the biggest distance, normally means compatible with higher versions
         int distance = -1;
@@ -139,7 +125,7 @@ public abstract class AbstractDynamicDistributionsGroup implements IDynamicDistr
 
         // 2. try to get dynamicDistribution from all list
         if (bestDistribution == null) {
-            entrySet = allDistribuionVersionMap.entrySet();
+            entrySet = getAllDistribuionVersionMap(monitor).entrySet();
             // choose the biggest distance, normally means compatible with higher versions
             distance = -1;
             for (Entry<IDynamicDistribution, List<String>> entry : entrySet) {
@@ -315,6 +301,57 @@ public abstract class AbstractDynamicDistributionsGroup implements IDynamicDistr
 
     protected static BundleContext getBundleContext() {
         return FrameworkUtil.getBundle(AbstractDynamicDistributionsGroup.class).getBundleContext();
+    }
+
+    private Map<IDynamicDistribution, List<String>> getCompatibleDistribuionVersionMap(IDynamicMonitor monitor) throws Exception {
+        if (this.compatibleDistribuionVersionMap == null) {
+            this.compatibleDistribuionVersionMap = buildCompatibleDistribuionVersionMap(monitor);
+        }
+        return this.compatibleDistribuionVersionMap;
+    }
+
+    private Map<IDynamicDistribution, List<String>> buildCompatibleDistribuionVersionMap(IDynamicMonitor monitor)
+            throws Exception {
+        Map<IDynamicDistribution, List<String>> compDistrVersionMap = new HashMap<>();
+        List<IDynamicDistribution> allRegistedDynamicDistributions = getAllRegistedDynamicDistributions(monitor);
+        if (allRegistedDynamicDistributions != null) {
+            for (IDynamicDistribution dynamicDistribution : allRegistedDynamicDistributions) {
+                try {
+                    List<String> curCompatibleVersions = dynamicDistribution.getCompatibleVersions(monitor);
+                    if (curCompatibleVersions != null && !curCompatibleVersions.isEmpty()) {
+                        compDistrVersionMap.put(dynamicDistribution, curCompatibleVersions);
+                    }
+                } catch (Exception e) {
+                    ExceptionHandler.process(e);
+                }
+            }
+        }
+        return compDistrVersionMap;
+    }
+
+    private Map<IDynamicDistribution, List<String>> getAllDistribuionVersionMap(IDynamicMonitor monitor) throws Exception {
+        if (this.allDistribuionVersionMap == null) {
+            this.allDistribuionVersionMap = buildAllDistribuionVersionMap(monitor);
+        }
+        return this.allDistribuionVersionMap;
+    }
+
+    private Map<IDynamicDistribution, List<String>> buildAllDistribuionVersionMap(IDynamicMonitor monitor) throws Exception {
+        Map<IDynamicDistribution, List<String>> allDistrVersionMap = new HashMap<>();
+        List<IDynamicDistribution> allRegistedDynamicDistributions = getAllRegistedDynamicDistributions(monitor);
+        if (allRegistedDynamicDistributions != null) {
+            for (IDynamicDistribution dynamicDistribution : allRegistedDynamicDistributions) {
+                try {
+                    List<String> curAllVersions = dynamicDistribution.getAllVersions(monitor);
+                    if (curAllVersions != null && !curAllVersions.isEmpty()) {
+                        allDistrVersionMap.put(dynamicDistribution, curAllVersions);
+                    }
+                } catch (Exception e) {
+                    ExceptionHandler.process(e);
+                }
+            }
+        }
+        return allDistrVersionMap;
     }
 
 }
