@@ -141,7 +141,7 @@ public class DynamicModuleGroupAdapter extends AbstractDynamicAdapter {
         setResolved(true);
     }
 
-    private IDynamicConfiguration createDynamicLibrary(String runtimeId) {
+    public static IDynamicConfiguration createDynamicLibrary(String runtimeId) {
         IDynamicConfiguration dynamicLibrary = DynamicFactory.getInstance().createDynamicConfiguration();
 
         dynamicLibrary.setConfigurationName(TAG_LIBRARY_NAME);

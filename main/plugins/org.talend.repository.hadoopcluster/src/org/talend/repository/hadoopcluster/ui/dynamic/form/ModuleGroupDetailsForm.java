@@ -12,6 +12,8 @@
 // ============================================================================
 package org.talend.repository.hadoopcluster.ui.dynamic.form;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -20,40 +22,57 @@ import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ColumnViewer;
+import org.eclipse.jface.viewers.ColumnViewerToolTipSupport;
 import org.eclipse.jface.viewers.EditingSupport;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.TextCellEditor;
+import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.talend.commons.exception.ExceptionHandler;
+import org.talend.core.model.general.ModuleNeeded;
 import org.talend.core.runtime.dynamic.IDynamicConfiguration;
 import org.talend.core.runtime.dynamic.IDynamicExtension;
 import org.talend.core.runtime.dynamic.IDynamicPlugin;
 import org.talend.core.runtime.dynamic.IDynamicPluginConfiguration;
 import org.talend.core.runtime.maven.MavenArtifact;
 import org.talend.core.runtime.maven.MavenUrlHelper;
+import org.talend.hadoop.distribution.HadoopDistributionPlugin;
 import org.talend.hadoop.distribution.dynamic.adapter.DynamicModuleAdapter;
 import org.talend.hadoop.distribution.dynamic.adapter.DynamicModuleGroupAdapter;
 import org.talend.hadoop.distribution.dynamic.adapter.DynamicPluginAdapter;
 import org.talend.hadoop.distribution.dynamic.bean.ModuleBean;
+import org.talend.hadoop.distribution.dynamic.comparator.DynamicAttributeComparator;
 import org.talend.hadoop.distribution.dynamic.util.DynamicDistributionUtils;
 import org.talend.repository.hadoopcluster.HadoopClusterPlugin;
 import org.talend.repository.hadoopcluster.i18n.Messages;
 import org.talend.repository.hadoopcluster.ui.dynamic.DynamicModuleGroupData;
 
 /**
- * DOC cmeng  class global comment. Detailled comment
+ * DOC cmeng class global comment. Detailled comment
  */
 public class ModuleGroupDetailsForm extends AbstractModuleGroupDetailsForm {
 
     private Label groupTemplateIdLabel;
 
     private TableViewer groupDetailsViewer;
+
+    private Button addBtn;
+
+    private Button deleteBtn;
 
     public ModuleGroupDetailsForm(Composite parent, int style, DynamicModuleGroupData moduleGroupData) {
         super(parent, style, moduleGroupData);
@@ -78,9 +97,13 @@ public class ModuleGroupDetailsForm extends AbstractModuleGroupDetailsForm {
         formData.right = new FormAttachment(100);
         groupTemplateIdLabel.setLayoutData(formData);
 
-        groupDetailsViewer = new TableViewer(container, SWT.BORDER);
+        groupDetailsViewer = new TableViewer(container, SWT.BORDER | SWT.FULL_SELECTION);
+        TableViewerColumn indexColumn = new TableViewerColumn(groupDetailsViewer, SWT.CENTER);
+        indexColumn.getColumn().setText(Messages.getString("ModuleGroupDetailsForm.groupDetails.column.index")); //$NON-NLS-1$
+        indexColumn.getColumn().setWidth(50);
+        indexColumn.setLabelProvider(new RowNumberLabelProvider());
         TableViewerColumn groupColumn = new TableViewerColumn(groupDetailsViewer, SWT.LEFT);
-        groupColumn.getColumn().setText(Messages.getString("ModuleGroupDetailsForm.groupDetails.column")); //$NON-NLS-1$
+        groupColumn.getColumn().setText(Messages.getString("ModuleGroupDetailsForm.groupDetails.column.detail")); //$NON-NLS-1$
         groupColumn.getColumn().setWidth(500);
         groupColumn.setLabelProvider(new GroupDetailsColumnLabelProvider());
         groupColumn.setEditingSupport(new MavenUriEditingSupport(groupDetailsViewer));
@@ -88,13 +111,42 @@ public class ModuleGroupDetailsForm extends AbstractModuleGroupDetailsForm {
         groupDetailsTable.setHeaderVisible(true);
         groupDetailsTable.setLinesVisible(true);
         groupDetailsViewer.setContentProvider(ArrayContentProvider.getInstance());
+        ColumnViewerToolTipSupport.enableFor(groupDetailsViewer);
+
+        deleteBtn = new Button(container, SWT.PUSH);
+        deleteBtn.setText(Messages.getString("ModuleGroupDetailsForm.groupDetails.btn.delete.label")); //$NON-NLS-1$
+        addBtn = new Button(container, SWT.PUSH);
+        addBtn.setText(Messages.getString("ModuleGroupDetailsForm.groupDetails.btn.add.label")); //$NON-NLS-1$
 
         formData = new FormData();
         formData.left = new FormAttachment(groupTemplateIdLabel, 0, SWT.LEFT);
         formData.right = new FormAttachment(groupTemplateIdLabel, 0, SWT.RIGHT);
         formData.top = new FormAttachment(groupTemplateIdLabel, ALIGN_VERTICAL, SWT.BOTTOM);
-        formData.bottom = new FormAttachment(100);
+        formData.bottom = new FormAttachment(deleteBtn, -1 * ALIGN_VERTICAL_INNER, SWT.TOP);
         groupDetailsTable.setLayoutData(formData);
+
+        int deleteBtnWidth = getNewButtonSize(deleteBtn).x;
+        int addBtnWidth = getNewButtonSize(addBtn).x;
+        int btnWidth = 0;
+        if (deleteBtnWidth < addBtnWidth) {
+            btnWidth = addBtnWidth;
+        } else {
+            btnWidth = deleteBtnWidth;
+        }
+
+        formData = new FormData();
+        // formData.top = new FormAttachment(groupDetailsTable, ALIGN_VERTICAL_INNER, SWT.BOTTOM);
+        formData.right = new FormAttachment(100);
+        formData.width = btnWidth;
+        formData.bottom = new FormAttachment(100);
+        deleteBtn.setLayoutData(formData);
+        deleteBtn.setEnabled(false);
+
+        formData = new FormData();
+        formData.top = new FormAttachment(deleteBtn, 0, SWT.CENTER);
+        formData.right = new FormAttachment(deleteBtn, -1 * ALIGN_HORIZON, SWT.LEFT);
+        formData.width = btnWidth;
+        addBtn.setLayoutData(formData);
 
     }
 
@@ -109,6 +161,9 @@ public class ModuleGroupDetailsForm extends AbstractModuleGroupDetailsForm {
             DynamicPluginAdapter pluginAdapter = moduleGroupData.getPluginAdapter();
             IDynamicConfiguration moduleGroup = pluginAdapter.getModuleGroupByTemplateId(groupTemplateId);
             List<IDynamicConfiguration> childConfigurations = moduleGroup.getChildConfigurations();
+            if (childConfigurations != null) {
+                Collections.sort(childConfigurations, new DynamicAttributeComparator());
+            }
             groupDetailsViewer.setInput(childConfigurations);
         } catch (Exception e) {
             ExceptionHandler.process(e);
@@ -116,17 +171,141 @@ public class ModuleGroupDetailsForm extends AbstractModuleGroupDetailsForm {
     }
 
     protected void addListeners() {
+        groupDetailsViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 
+            @Override
+            public void selectionChanged(SelectionChangedEvent event) {
+                IStructuredSelection selection = (IStructuredSelection) event.getSelection();
+                if (selection != null) {
+                    Object firstElement = selection.getFirstElement();
+                    if (firstElement != null) {
+                        deleteBtn.setEnabled(true);
+                        return;
+                    }
+                }
+                deleteBtn.setEnabled(false);
+            }
+        });
+
+        addBtn.addSelectionListener(new SelectionAdapter() {
+
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                onAddBtnSelected();
+                updateButtons();
+            }
+
+        });
+
+        deleteBtn.addSelectionListener(new SelectionAdapter() {
+
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                onDeleteBtnSelected();
+                updateButtons();
+            }
+
+        });
+    }
+
+    protected void onAddBtnSelected() {
+        DynamicModuleGroupData moduleGroupData = getModuleGroupData();
+        String groupTemplateId = moduleGroupData.getGroupTemplateId();
+        DynamicPluginAdapter pluginAdapter = moduleGroupData.getPluginAdapter();
+        IDynamicConfiguration moduleGroup = pluginAdapter.getModuleGroupByTemplateId(groupTemplateId);
+        // IDynamicPluginConfiguration pluginConfiguration = pluginAdapter.getPluginConfiguration();
+        // String id = pluginConfiguration.getId();
+        // String moduleName = "Not set"; //$NON-NLS-1$
+        // String runtimeId = DynamicDistributionUtils.getPluginKey("USER", "GENERATED", id, moduleName); //$NON-NLS-1$
+        // //$NON-NLS-2$
+        String runtimeId = ""; //$NON-NLS-1$
+        IDynamicConfiguration dynamicLibrary = DynamicModuleGroupAdapter.createDynamicLibrary(runtimeId);
+
+        List<IDynamicConfiguration> childConfigurations = moduleGroup.getChildConfigurations();
+        childConfigurations.add(dynamicLibrary);
+        groupDetailsViewer.refresh();
+
+    }
+
+    protected void onDeleteBtnSelected() {
+        IStructuredSelection selection = (IStructuredSelection) groupDetailsViewer.getSelection();
+        IDynamicConfiguration firstElement = (IDynamicConfiguration) selection.getFirstElement();
+
+        DynamicModuleGroupData moduleGroupData = getModuleGroupData();
+        String groupTemplateId = moduleGroupData.getGroupTemplateId();
+        DynamicPluginAdapter pluginAdapter = moduleGroupData.getPluginAdapter();
+        IDynamicConfiguration moduleGroup = pluginAdapter.getModuleGroupByTemplateId(groupTemplateId);
+        List<IDynamicConfiguration> childConfigurations = moduleGroup.getChildConfigurations();
+
+        childConfigurations.remove(firstElement);
+
+        groupDetailsViewer.refresh();
+    }
+
+    private boolean checkLibraries() {
+        List<IDynamicConfiguration> childConfigurations = (List<IDynamicConfiguration>) groupDetailsViewer.getInput();
+        List<String> errorLines = new ArrayList<>();
+        for (int i = 0; i < childConfigurations.size(); ++i) {
+            IDynamicConfiguration library = childConfigurations.get(i);
+            if (checkLibrary(library) != null) {
+                errorLines.add(String.valueOf(i + 1));
+            }
+        }
+        if (errorLines.isEmpty()) {
+            return true;
+        } else {
+            String seperator = ", "; //$NON-NLS-1$
+            StringBuffer errorLinesBuf = new StringBuffer();
+            for (String errorLine : errorLines) {
+                errorLinesBuf.append(errorLine).append(seperator);
+            }
+            String errorLinesStr = errorLinesBuf.toString();
+            errorLinesStr = errorLinesStr.substring(0, errorLinesStr.length() - seperator.length());
+            String message = Messages.getString("ModuleGroupDetailsForm.groupDetails.check.errorLines", errorLinesStr); //$NON-NLS-1$
+            showMessage(message, WizardPage.ERROR);
+            return false;
+        }
+    }
+
+    private String checkLibrary(IDynamicConfiguration library) {
+        String id = (String) library.getAttribute(DynamicModuleGroupAdapter.ATTR_LIBRARY_ID);
+        String mvnUri = getMavenUri(library);
+        String mvnUriFormat = Messages.getString("ModuleGroupDetailsForm.groupDetails.check.mvnUriFormat"); //$NON-NLS-1$
+        if (StringUtils.isEmpty(mvnUri)) {
+            String errorEmpty = Messages.getString("ModuleGroupDetailsForm.groupDetails.check.empty", mvnUriFormat); //$NON-NLS-1$
+            return errorEmpty;
+        } else {
+            if (mvnUri.equals(id)) {
+                String invalidUri = Messages.getString("ModuleGroupDetailsForm.groupDetails.check.mvnUriFormat.invalid", //$NON-NLS-1$
+                        mvnUriFormat);
+                return invalidUri;
+            } else {
+                MavenArtifact mavenArtifact = MavenUrlHelper.parseMvnUrl(mvnUri, false);
+                String groupId = mavenArtifact.getGroupId();
+                String artifactId = mavenArtifact.getArtifactId();
+                String version = mavenArtifact.getVersion();
+                if (!StringUtils.isNoneEmpty(groupId, artifactId, version)) {
+                    String invalidUri = Messages.getString("ModuleGroupDetailsForm.groupDetails.check.mvnUriFormat.invalid", //$NON-NLS-1$
+                            mvnUriFormat);
+                    return invalidUri;
+                }
+            }
+        }
+        return null;
     }
 
     @Override
     public boolean isComplete() {
+        showMessage(null, WizardPage.INFORMATION);
+        if (!checkLibraries()) {
+            return false;
+        }
         return true;
     }
 
     @Override
     public boolean canFinish() {
-        return true;
+        return isComplete();
     }
 
     @Override
@@ -143,11 +322,13 @@ public class ModuleGroupDetailsForm extends AbstractModuleGroupDetailsForm {
                 IDynamicConfiguration moduleById = pluginAdapter.getModuleById(id);
                 String mvnUri = null;
                 if (moduleById == null) {
-                    // should be an existing module in studio
-                    mvnUri = id;
-                    // ModuleNeeded moduleNeeded =
-                    // HadoopDistributionPlugin.getInstance().getExistingModuleMap().get(id);
-                    // mvnUri = moduleNeeded.getMavenUri();
+                    // should be an existing module in studio, or a bad one
+                    ModuleNeeded moduleNeeded = HadoopDistributionPlugin.getInstance().getExistingModuleMap().get(id);
+                    if (moduleNeeded != null) {
+                        mvnUri = moduleNeeded.getMavenUri();
+                    } else {
+                        mvnUri = id;
+                    }
                 } else {
                     mvnUri = (String) moduleById.getAttribute(DynamicModuleAdapter.ATTR_MVN_URI);
                 }
@@ -156,14 +337,70 @@ public class ModuleGroupDetailsForm extends AbstractModuleGroupDetailsForm {
                 ExceptionHandler.process(e);
             }
         }
-        return element == null ? "" : element.toString();//$NON-NLS-1$
+        return "";//$NON-NLS-1$
     }
 
     protected class GroupDetailsColumnLabelProvider extends ColumnLabelProvider {
 
         @Override
+        public Color getBackground(Object element) {
+            try {
+                String message = checkLibrary((IDynamicConfiguration) element);
+                if (message != null) {
+                    return Display.getDefault().getSystemColor(SWT.COLOR_RED);
+                }
+            } catch (Exception e) {
+                ExceptionHandler.process(e);
+            }
+            return super.getBackground(element);
+        }
+
+        @Override
+        public String getToolTipText(Object element) {
+            try {
+                String message = checkLibrary((IDynamicConfiguration) element);
+                if (message != null) {
+                    return message;
+                } else {
+                    return Messages.getString("ModuleGroupDetailsForm.groupDetails.tooltip.click2Edit"); //$NON-NLS-1$
+                }
+            } catch (Exception e) {
+                ExceptionHandler.process(e);
+            }
+            return super.getToolTipText(element);
+        }
+
+        @Override
         public String getText(Object element) {
-            return getMavenUri(element);
+            if (element instanceof IDynamicConfiguration) {
+                try {
+                    String id = (String) ((IDynamicConfiguration) element)
+                            .getAttribute(DynamicModuleGroupAdapter.ATTR_LIBRARY_ID);
+                    DynamicModuleGroupData moduleGroupData = getModuleGroupData();
+                    DynamicPluginAdapter pluginAdapter = moduleGroupData.getPluginAdapter();
+                    IDynamicConfiguration moduleById = pluginAdapter.getModuleById(id);
+                    String text = null;
+                    if (moduleById == null) {
+                        // should be an existing module in studio or a bad one
+                        ModuleNeeded moduleNeeded = HadoopDistributionPlugin.getInstance().getExistingModuleMap().get(id);
+                        if (moduleNeeded != null) {
+                            text = moduleNeeded.getMavenUri();
+                            MavenArtifact mavenArtifact = MavenUrlHelper.parseMvnUrl(text, false);
+                            text = mavenArtifact.getFileName();
+                        } else {
+                            text = id;
+                        }
+                    } else {
+                        text = (String) moduleById.getAttribute(DynamicModuleAdapter.ATTR_MVN_URI);
+                        MavenArtifact mavenArtifact = MavenUrlHelper.parseMvnUrl(text, false);
+                        text = mavenArtifact.getFileName();
+                    }
+                    return text;
+                } catch (Exception e) {
+                    ExceptionHandler.process(e);
+                }
+            }
+            return "";//$NON-NLS-1$
         }
 
     }
@@ -181,11 +418,6 @@ public class ModuleGroupDetailsForm extends AbstractModuleGroupDetailsForm {
 
         @Override
         protected boolean canEdit(Object element) {
-            String id = (String) ((IDynamicConfiguration) element).getAttribute(DynamicModuleGroupAdapter.ATTR_LIBRARY_ID);
-            String mavenUri = getMavenUri(element);
-            if (StringUtils.equals(id, mavenUri)) {
-                return false;
-            }
             return true;
         }
 
@@ -202,6 +434,8 @@ public class ModuleGroupDetailsForm extends AbstractModuleGroupDetailsForm {
                 if (valueStr.endsWith("/")) { //$NON-NLS-1$
                     valueStr = valueStr.substring(0, valueStr.length() - 1);
                 }
+                ((IDynamicConfiguration) element).setAttribute(DynamicModuleGroupAdapter.ATTR_LIBRARY_ID, valueStr);
+
                 DynamicModuleGroupData moduleGroupData = getModuleGroupData();
                 Map<String, String> mavenUriIdMap = moduleGroupData.getMavenUriIdMap();
                 String existId = mavenUriIdMap.get(value);
@@ -210,37 +444,44 @@ public class ModuleGroupDetailsForm extends AbstractModuleGroupDetailsForm {
                 } else {
                     MavenArtifact mavenArtifact = MavenUrlHelper.parseMvnUrl(valueStr, false);
                     if (mavenArtifact != null) {
-                        DynamicPluginAdapter pluginAdapter = moduleGroupData.getPluginAdapter();
-                        IDynamicPluginConfiguration pluginConfiguration = pluginAdapter.getPluginConfiguration();
+                        String groupId = mavenArtifact.getGroupId();
+                        String artifactId = mavenArtifact.getArtifactId();
+                        String version = mavenArtifact.getVersion();
+                        if (StringUtils.isNoneEmpty(groupId, artifactId, version)) {
+                            String jarName = mavenArtifact.getFileName();
+                            DynamicPluginAdapter pluginAdapter = moduleGroupData.getPluginAdapter();
+                            IDynamicPluginConfiguration pluginConfiguration = pluginAdapter.getPluginConfiguration();
 
-                        String id = pluginConfiguration.getId();
-                        String jarName = mavenArtifact.getFileName();
-                        String moduleName = DynamicDistributionUtils
-                                .formatId(jarName + "_" + DynamicDistributionUtils.generateTimestampId()); //$NON-NLS-1$
-                        String runtimeId = DynamicDistributionUtils.getPluginKey("USER", "GENERATED", id, moduleName); //$NON-NLS-1$ //$NON-NLS-2$
+                            String id = pluginConfiguration.getId();
+                            String moduleName = DynamicDistributionUtils
+                                    .formatId(jarName + "_" + DynamicDistributionUtils.generateTimestampId()); //$NON-NLS-1$
+                            String runtimeId = DynamicDistributionUtils.getPluginKey("USER", "GENERATED", id, moduleName); //$NON-NLS-1$ //$NON-NLS-2$
 
-                        ModuleBean moduleBean = new ModuleBean();
-                        moduleBean.setContext("plugin:" + HadoopClusterPlugin.PLUGIN_ID); //$NON-NLS-1$
-                        moduleBean.setExcludeDependencies(Boolean.TRUE.toString());
-                        moduleBean.setId(runtimeId);
-                        moduleBean.setMvnUri(valueStr);
-                        moduleBean.setJarName(jarName);
+                            ModuleBean moduleBean = new ModuleBean();
+                            moduleBean.setContext("plugin:" + HadoopClusterPlugin.PLUGIN_ID); //$NON-NLS-1$
+                            moduleBean.setExcludeDependencies(Boolean.TRUE.toString());
+                            moduleBean.setId(runtimeId);
+                            moduleBean.setMvnUri(valueStr);
+                            moduleBean.setJarName(jarName);
 
-                        IDynamicConfiguration libraryNeeded = DynamicModuleAdapter.createLibraryNeeded(moduleBean);
-                        IDynamicPlugin dynamicPlugin = moduleGroupData.getDynamicPlugin();
-                        IDynamicExtension libraryNeededExtension = DynamicPluginAdapter.getLibraryNeededExtension(dynamicPlugin);
-                        libraryNeededExtension.addConfiguration(libraryNeeded);
+                            IDynamicConfiguration libraryNeeded = DynamicModuleAdapter.createLibraryNeeded(moduleBean);
+                            IDynamicPlugin dynamicPlugin = moduleGroupData.getDynamicPlugin();
+                            IDynamicExtension libraryNeededExtension = DynamicPluginAdapter
+                                    .getLibraryNeededExtension(dynamicPlugin);
+                            libraryNeededExtension.addConfiguration(libraryNeeded);
 
-                        ((IDynamicConfiguration) element).setAttribute(DynamicModuleGroupAdapter.ATTR_LIBRARY_ID, runtimeId);
-                        mavenUriIdMap.put(valueStr, runtimeId);
-                        pluginAdapter.buildIdMaps();
+                            ((IDynamicConfiguration) element).setAttribute(DynamicModuleGroupAdapter.ATTR_LIBRARY_ID, runtimeId);
+                            mavenUriIdMap.put(valueStr, runtimeId);
+                            pluginAdapter.buildIdMaps();
+                        }
                     }
                 }
-                
+
             } catch (Exception e) {
                 ExceptionHandler.process(e);
             }
             getViewer().update(element, null);
+            updateButtons();
         }
 
     }

@@ -55,7 +55,7 @@ import org.talend.designer.maven.aether.IDynamicMonitor;
 import org.talend.hadoop.distribution.dynamic.DynamicConfiguration;
 import org.talend.hadoop.distribution.dynamic.DynamicDistributionManager;
 import org.talend.hadoop.distribution.dynamic.IDynamicDistributionsGroup;
-import org.talend.hadoop.distribution.dynamic.util.DynamicDistributionComparator;
+import org.talend.hadoop.distribution.dynamic.comparator.DynamicPluginComparator;
 import org.talend.repository.hadoopcluster.i18n.Messages;
 import org.talend.repository.hadoopcluster.ui.dynamic.DynamicBuildConfigurationData;
 import org.talend.repository.hadoopcluster.ui.dynamic.DynamicBuildConfigurationData.ActionType;
@@ -434,7 +434,7 @@ public class DynamicOptionForm extends AbstractDynamicDistributionForm {
             }
         }
 
-        Collections.sort(distriDynamicPlugins, Collections.reverseOrder(new DynamicDistributionComparator()));
+        Collections.sort(distriDynamicPlugins, Collections.reverseOrder(new DynamicPluginComparator()));
         return distriDynamicPlugins;
     }
 

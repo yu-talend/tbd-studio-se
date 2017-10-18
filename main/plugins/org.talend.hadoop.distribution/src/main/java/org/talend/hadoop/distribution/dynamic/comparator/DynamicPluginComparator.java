@@ -10,7 +10,7 @@
 // 9 rue Pages 92150 Suresnes, France
 //
 // ============================================================================
-package org.talend.hadoop.distribution.dynamic.util;
+package org.talend.hadoop.distribution.dynamic.comparator;
 
 import java.util.Comparator;
 
@@ -21,7 +21,7 @@ import org.talend.core.runtime.dynamic.IDynamicPluginConfiguration;
 /**
  * DOC cmeng  class global comment. Detailled comment
  */
-public class DynamicDistributionComparator implements Comparator<IDynamicPlugin> {
+public class DynamicPluginComparator implements Comparator<IDynamicPlugin> {
 
     @Override
     public int compare(IDynamicPlugin o1, IDynamicPlugin o2) {

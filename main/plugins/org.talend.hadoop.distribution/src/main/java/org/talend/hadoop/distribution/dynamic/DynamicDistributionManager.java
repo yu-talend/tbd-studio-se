@@ -153,13 +153,9 @@ public class DynamicDistributionManager {
         usersPluginsCacheVersion = HadoopDistributionsHelper.getCacheVersion();
 
         List<IDynamicPlugin> dynamicPlugins = new LinkedList<>();
+        List<IDynamicPlugin> tempDynPlugins = null;
 
         ProjectManager projectManager = ProjectManager.getInstance();
-
-        List<IDynamicPlugin> tempDynPlugins = getAllUsersDynamicPluginsForProject(projectManager.getCurrentProject(), monitor);
-        if (tempDynPlugins != null && 0 < tempDynPlugins.size()) {
-            dynamicPlugins.addAll(tempDynPlugins);
-        }
 
         List<Project> allRefProjects = ProjectManager.getInstance().getAllReferencedProjects();
         if (allRefProjects != null && 0 < allRefProjects.size()) {
@@ -173,6 +169,11 @@ public class DynamicDistributionManager {
                     ExceptionHandler.process(e);
                 }
             }
+        }
+
+        tempDynPlugins = getAllUsersDynamicPluginsForProject(projectManager.getCurrentProject(), monitor);
+        if (tempDynPlugins != null && 0 < tempDynPlugins.size()) {
+            dynamicPlugins.addAll(tempDynPlugins);
         }
 
         usersPluginsCache = dynamicPlugins;

@@ -69,6 +69,7 @@ import org.talend.hadoop.distribution.dynamic.adapter.DynamicLibraryNeededExtens
 import org.talend.hadoop.distribution.dynamic.adapter.DynamicModuleAdapter;
 import org.talend.hadoop.distribution.dynamic.adapter.DynamicModuleGroupAdapter;
 import org.talend.hadoop.distribution.dynamic.adapter.DynamicPluginAdapter;
+import org.talend.hadoop.distribution.dynamic.comparator.DynamicAttributeComparator;
 import org.talend.hadoop.distribution.dynamic.util.DynamicDistributionUtils;
 import org.talend.repository.hadoopcluster.i18n.Messages;
 import org.talend.repository.hadoopcluster.ui.dynamic.DynamicBuildConfigurationData;
@@ -179,7 +180,11 @@ public class DynamicBuildConfigurationForm extends AbstractDynamicDistributionFo
         formData.right = new FormAttachment(fetchVersionBtn, 0, SWT.RIGHT);
         retrieveBaseJarsBtn.setLayoutData(formData);
 
-        baseJarsTable = new TableViewer(container, SWT.BORDER);
+        baseJarsTable = new TableViewer(container, SWT.BORDER | SWT.FULL_SELECTION);
+        TableViewerColumn indexColumn = new TableViewerColumn(baseJarsTable, SWT.RIGHT);
+        indexColumn.getColumn().setText(Messages.getString("DynamicBuildConfigurationForm.baseJars.table.index")); //$NON-NLS-1$
+        indexColumn.getColumn().setWidth(50);
+        indexColumn.setLabelProvider(new RowNumberLabelProvider());
         TableViewerColumn groupNameColumn = new TableViewerColumn(baseJarsTable, SWT.LEFT);
         groupNameColumn.getColumn().setText(Messages.getString("DynamicBuildConfigurationForm.baseJars.table.groupName")); //$NON-NLS-1$
         groupNameColumn.getColumn().setWidth(200);
@@ -194,6 +199,7 @@ public class DynamicBuildConfigurationForm extends AbstractDynamicDistributionFo
         table.setLinesVisible(true);
         baseJarsTable.setContentProvider(new BaseJarTableContentProvider(detailLabelProvider));
         // baseJarsTable.setLabelProvider(new BaseJarTableLabelProvider());
+
         exportConfigBtn = new Button(container, SWT.PUSH);
 
         formData = new FormData();
@@ -568,6 +574,7 @@ public class DynamicBuildConfigurationForm extends AbstractDynamicDistributionFo
                     moduleGroups.add(dynConfig);
                 }
             }
+            Collections.sort(moduleGroups, new DynamicAttributeComparator());
             baseJarsTable.setInput(moduleGroups);
         }
     }
@@ -772,8 +779,8 @@ public class DynamicBuildConfigurationForm extends AbstractDynamicDistributionFo
                         }
                         dynamicPlugin.removeExtensions(DynamicLibraryNeededExtensionAdaper.ATTR_POINT);
                         dynamicPlugin.addExtension(index, DynamicPluginAdapter.getLibraryNeededExtension(tempDynamicPlugin));
-                        setDynamicPlugin(dynamicPlugin);
                     }
+                    setDynamicPlugin(dynamicPlugin);
                 }
 
             });
