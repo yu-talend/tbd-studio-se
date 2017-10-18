@@ -15,6 +15,7 @@ package org.talend.repository.hadoopcluster.ui.dynamic.page;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.talend.designer.maven.aether.DummyDynamicMonitor;
 import org.talend.designer.maven.aether.IDynamicMonitor;
 import org.talend.repository.hadoopcluster.ui.dynamic.form.AbstractDynamicDistributionForm;
 import org.talend.repository.hadoopcluster.ui.dynamic.form.DynamicDistributionsForm;
@@ -36,13 +37,7 @@ public class DynamicDistributionSettingPage extends ProjectSettingPage {
 
     @Override
     protected Control createContents(Composite parent) {
-        IDynamicMonitor monitor = new IDynamicMonitor() {
-
-            @Override
-            public void writeMessage(String message) {
-                // nothing to do
-            }
-        };
+        IDynamicMonitor monitor = new DummyDynamicMonitor();
         DynamicDistributionsForm existingConfigForm = new DynamicDistributionsForm(parent, SWT.NONE, monitor);
         setCurrentForm(existingConfigForm);
 

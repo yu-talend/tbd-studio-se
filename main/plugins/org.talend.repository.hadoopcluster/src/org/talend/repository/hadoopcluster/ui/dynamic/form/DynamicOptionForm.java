@@ -51,6 +51,7 @@ import org.talend.core.runtime.dynamic.DynamicFactory;
 import org.talend.core.runtime.dynamic.DynamicServiceUtil;
 import org.talend.core.runtime.dynamic.IDynamicPlugin;
 import org.talend.core.runtime.dynamic.IDynamicPluginConfiguration;
+import org.talend.designer.maven.aether.DummyDynamicMonitor;
 import org.talend.designer.maven.aether.IDynamicMonitor;
 import org.talend.hadoop.distribution.dynamic.DynamicConfiguration;
 import org.talend.hadoop.distribution.dynamic.DynamicDistributionManager;
@@ -492,13 +493,7 @@ public class DynamicOptionForm extends AbstractDynamicDistributionForm {
     private void initExistingConfigurationInfos() throws Exception {
         existingConfigurationNames = new HashSet<>();
         existingConfigurationIdMap = new HashMap<>();
-        IDynamicMonitor monitor = new IDynamicMonitor() {
-
-            @Override
-            public void writeMessage(String message) {
-                // nothing to do
-            }
-        };
+        IDynamicMonitor monitor = new DummyDynamicMonitor();
         DynamicDistributionManager dynDistrManager = DynamicDistributionManager.getInstance();
         List<IDynamicPlugin> allDynamicPlugins = new LinkedList<>();
         List<IDynamicPlugin> allBuildinDynamicPlugins = dynDistrManager.getAllBuildinDynamicPlugins(monitor);
@@ -629,6 +624,7 @@ public class DynamicOptionForm extends AbstractDynamicDistributionForm {
             descriptionText.setText(pluginConfiguration.getDescription());
 
             getDynamicBuildConfigurationData().setDynamicPlugin(importedDynamicPlugin);
+            getDynamicBuildConfigurationData().setDistrConfigOfDynPlugin(buildDynamicConfiguration(importedDynamicPlugin));
             return true;
         } catch (Exception e) {
             importConfigText.setBackground(LoginDialogV2.RED_COLOR);
@@ -659,6 +655,7 @@ public class DynamicOptionForm extends AbstractDynamicDistributionForm {
         updateDistributionDescription(dynamicPlugin);
 
         getDynamicBuildConfigurationData().setDynamicPlugin(dynamicPlugin);
+        getDynamicBuildConfigurationData().setDistrConfigOfDynPlugin(buildDynamicConfiguration(dynamicPlugin));
 
         return true;
     }
@@ -695,6 +692,20 @@ public class DynamicOptionForm extends AbstractDynamicDistributionForm {
     @Override
     public boolean canFinish() {
         return false;
+    }
+
+    private DynamicConfiguration buildDynamicConfiguration(IDynamicPlugin plugin) {
+        if (plugin == null) {
+            return null;
+        }
+        IDynamicPluginConfiguration pluginConfiguration = plugin.getPluginConfiguration();
+        DynamicConfiguration config = new DynamicConfiguration();
+        config.setDescription(pluginConfiguration.getDescription());
+        config.setDistribution(pluginConfiguration.getDistribution());
+        config.setId(pluginConfiguration.getId());
+        config.setName(pluginConfiguration.getName());
+        config.setVersion(pluginConfiguration.getVersion());
+        return config;
     }
 
     private class ExistingConfigsLabelProvider extends LabelProvider {

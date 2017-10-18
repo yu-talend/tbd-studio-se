@@ -40,6 +40,7 @@ import org.eclipse.ui.PlatformUI;
 import org.talend.commons.exception.ExceptionHandler;
 import org.talend.core.runtime.dynamic.IDynamicPlugin;
 import org.talend.core.runtime.dynamic.IDynamicPluginConfiguration;
+import org.talend.designer.maven.aether.DummyDynamicMonitor;
 import org.talend.designer.maven.aether.IDynamicMonitor;
 import org.talend.hadoop.distribution.dynamic.DynamicDistributionManager;
 import org.talend.hadoop.distribution.dynamic.IDynamicDistributionsGroup;
@@ -157,13 +158,7 @@ public class DynamicDistributionsForm extends AbstractDynamicDistributionForm {
                         wizard);
                 wizardDialog.create();
                 if (wizardDialog.open() == IDialogConstants.OK_ID) {
-                    IDynamicMonitor monitor = new IDynamicMonitor() {
-
-                        @Override
-                        public void writeMessage(String message) {
-                            // nothing to do
-                        }
-                    };
+                    IDynamicMonitor monitor = new DummyDynamicMonitor();
                     refreshVersionList(monitor);
                 }
             }

@@ -14,6 +14,7 @@ package org.talend.repository.hadoopcluster.ui.dynamic.page;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
+import org.talend.designer.maven.aether.DummyDynamicMonitor;
 import org.talend.designer.maven.aether.IDynamicMonitor;
 import org.talend.repository.hadoopcluster.i18n.Messages;
 import org.talend.repository.hadoopcluster.ui.dynamic.DynamicBuildConfigurationData;
@@ -36,13 +37,7 @@ public class DynamicRetrievePage extends AbstractDynamicConfigurationPage {
     @Override
     public void createControl(Composite parent) {
 
-        IDynamicMonitor monitor = new IDynamicMonitor() {
-
-            @Override
-            public void writeMessage(String message) {
-                // nothing to do
-            }
-        };
+        IDynamicMonitor monitor = new DummyDynamicMonitor();
 
         AbstractDynamicDistributionForm.ICheckListener checkListener = new ICheckListener() {
 

@@ -40,7 +40,7 @@ public class DynamicModuleGroupWizard extends Wizard {
 
     @Override
     public String getWindowTitle() {
-        return Messages.getString("DynamicBuildConfigurationWizard.title"); //$NON-NLS-1$
+        return Messages.getString("DynamicModuleGroupWizard.title"); //$NON-NLS-1$
     }
 
     @Override

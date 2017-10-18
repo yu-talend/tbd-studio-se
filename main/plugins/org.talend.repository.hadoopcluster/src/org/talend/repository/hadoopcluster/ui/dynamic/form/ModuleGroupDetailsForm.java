@@ -260,6 +260,7 @@ public class ModuleGroupDetailsForm extends AbstractModuleGroupDetailsForm {
                 if (0 < errorLinesBuf.length()) {
                     errorLinesBuf.append(seperator);
                 }
+                groupDetailsViewer.refresh(childConfigurations.get(Integer.valueOf(errorLine) - 1));
                 errorLinesBuf.append(errorLine);
             }
             String errorLinesStr = errorLinesBuf.toString();
@@ -293,16 +294,45 @@ public class ModuleGroupDetailsForm extends AbstractModuleGroupDetailsForm {
                 }
             }
         }
+        List<IDynamicConfiguration> childConfigurations = (List<IDynamicConfiguration>) groupDetailsViewer.getInput();
+        List<String> duplicateLines = new ArrayList<>();
+        for (int i = 0; i < childConfigurations.size(); ++i) {
+            IDynamicConfiguration childConfig = childConfigurations.get(i);
+            String attr = (String) childConfig.getAttribute(DynamicModuleGroupAdapter.ATTR_LIBRARY_ID);
+            if (StringUtils.equals(id, attr)) {
+                if (childConfig.equals(library)) {
+                    continue;
+                }
+                duplicateLines.add(String.valueOf(i + 1));
+            }
+        }
+        if (!duplicateLines.isEmpty()) {
+            StringBuffer lineBuf = new StringBuffer();
+            for (String duplicateLine : duplicateLines) {
+                if (0 < lineBuf.length()) {
+                    lineBuf.append(", "); //$NON-NLS-1$
+                }
+                lineBuf.append(duplicateLine);
+            }
+            String lines = lineBuf.toString();
+            String duplicate = Messages.getString("ModuleGroupDetailsForm.groupDetails.check.duplicateLines", lines); //$NON-NLS-1$
+            return duplicate;
+        }
         return null;
     }
 
     @Override
     public boolean isComplete() {
-        showMessage(null, WizardPage.INFORMATION);
-        if (!checkLibraries()) {
-            return false;
+        try {
+            showMessage(null, WizardPage.INFORMATION);
+            if (!checkLibraries()) {
+                return false;
+            }
+            return true;
+        } catch (Exception e) {
+            ExceptionHandler.process(e);
         }
-        return true;
+        return false;
     }
 
     @Override

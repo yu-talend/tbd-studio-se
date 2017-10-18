@@ -8,6 +8,7 @@ import org.talend.commons.exception.PersistenceException;
 import org.talend.commons.ui.runtime.image.ImageProvider;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.core.runtime.dynamic.IDynamicPlugin;
+import org.talend.designer.maven.aether.DummyDynamicMonitor;
 import org.talend.designer.maven.aether.IDynamicMonitor;
 import org.talend.hadoop.distribution.dynamic.DynamicDistributionManager;
 import org.talend.hadoop.distribution.dynamic.adapter.DynamicPluginAdapter;
@@ -60,14 +61,7 @@ public class DynamicBuildConfigurationWizard extends Wizard {
 
     @Override
     public boolean performFinish() {
-        final IDynamicMonitor monitor = new IDynamicMonitor() {
-
-            @Override
-            public void writeMessage(String message) {
-                // TODO Auto-generated method stub
-
-            }
-        };
+        final IDynamicMonitor monitor = new DummyDynamicMonitor();
 
         try {
             IDynamicPlugin dynamicPlugin = configData.getDynamicPlugin();

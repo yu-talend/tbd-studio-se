@@ -13,6 +13,7 @@
 package org.talend.repository.hadoopcluster.ui.dynamic.form;
 
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -23,6 +24,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -54,17 +56,19 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.PlatformUI;
 import org.talend.commons.exception.ExceptionHandler;
+import org.talend.commons.ui.gmf.util.DisplayUtils;
+import org.talend.commons.ui.swt.dialogs.ProgressDialog;
 import org.talend.core.runtime.dynamic.DynamicFactory;
 import org.talend.core.runtime.dynamic.IDynamicConfiguration;
 import org.talend.core.runtime.dynamic.IDynamicExtension;
 import org.talend.core.runtime.dynamic.IDynamicPlugin;
 import org.talend.core.runtime.dynamic.IDynamicPluginConfiguration;
+import org.talend.designer.maven.aether.DummyDynamicMonitor;
 import org.talend.designer.maven.aether.IDynamicMonitor;
 import org.talend.designer.maven.aether.comparator.VersionStringComparator;
 import org.talend.hadoop.distribution.dynamic.DynamicConfiguration;
 import org.talend.hadoop.distribution.dynamic.DynamicDistributionManager;
 import org.talend.hadoop.distribution.dynamic.IDynamicDistributionsGroup;
-import org.talend.hadoop.distribution.dynamic.adapter.DynamicDistriConfigAdapter;
 import org.talend.hadoop.distribution.dynamic.adapter.DynamicLibraryNeededExtensionAdaper;
 import org.talend.hadoop.distribution.dynamic.adapter.DynamicModuleAdapter;
 import org.talend.hadoop.distribution.dynamic.adapter.DynamicModuleGroupAdapter;
@@ -101,7 +105,9 @@ public class DynamicBuildConfigurationForm extends AbstractDynamicDistributionFo
 
     private IDynamicPlugin curDynamicPlugin;
 
-    private ActionType curActionType;
+    private IDynamicPlugin dynamicPluginCache;
+
+    private ActionType actionTypeCache;
 
     public DynamicBuildConfigurationForm(Composite parent, int style, DynamicBuildConfigurationData configData,
             IDynamicMonitor monitor) {
@@ -224,7 +230,7 @@ public class DynamicBuildConfigurationForm extends AbstractDynamicDistributionFo
         DynamicBuildConfigurationData dynConfigData = getDynamicBuildConfigurationData();
         ActionType actionType = dynConfigData.getActionType();
 
-        boolean actionChanged = !actionType.equals(curActionType);
+        boolean actionChanged = !actionType.equals(actionTypeCache);
         if (actionChanged) {
             curDynamicPlugin = null;
             dynamicPluginMap.clear();
@@ -247,17 +253,26 @@ public class DynamicBuildConfigurationForm extends AbstractDynamicDistributionFo
             if (ActionType.Import.equals(actionType) || ActionType.EditExisting.equals(actionType)) {
                 IDynamicPlugin dynamicPlugin = dynConfigData.getDynamicPlugin();
 
-                IDynamicPluginConfiguration pluginConfiguration = dynamicPlugin.getPluginConfiguration();
-                String version = pluginConfiguration.getVersion();
-
-                if (dynamicPlugin != curDynamicPlugin) {
-                    dataChanged = true;
-                    curDynamicPlugin = dynamicPlugin;
-                    selectedVersion = version;
-                    List<String> versionList = new ArrayList<>();
-                    versionList.add(version);
-                    hadoopVersionCombo.setInput(versionList);
-                    hadoopVersionCombo.setSelection(new StructuredSelection(version));
+                if (dynamicPlugin != null) {
+                    if (dynamicPlugin != curDynamicPlugin && dynamicPlugin != dynamicPluginCache) {
+                        IDynamicPluginConfiguration pluginConfiguration = dynamicPlugin.getPluginConfiguration();
+                        String version = pluginConfiguration.getVersion();
+                        dataChanged = true;
+                        curDynamicPlugin = dynamicPlugin;
+                        dynamicPluginCache = dynamicPlugin;
+                        selectedVersion = version;
+                        List<String> versionList = new ArrayList<>();
+                        List<String> existingList = (List<String>) hadoopVersionCombo.getInput();
+                        if (existingList != null && !existingList.isEmpty()) {
+                            versionList.addAll(existingList);
+                        }
+                        if (!versionList.contains(version)) {
+                            versionList.add(version);
+                        }
+                        Collections.sort(versionList, Collections.reverseOrder());
+                        hadoopVersionCombo.setInput(versionList);
+                        hadoopVersionCombo.setSelection(new StructuredSelection(version));
+                    }
                 }
             } else if (ActionType.NewConfig.equals(actionType)) {
                 if (curDynamicPlugin != null) {
@@ -275,7 +290,7 @@ public class DynamicBuildConfigurationForm extends AbstractDynamicDistributionFo
                 dynamicPluginMap.put(selectedVersion, curDynamicPlugin);
             }
         }
-        curActionType = actionType;
+        actionTypeCache = actionType;
     }
 
     private void addListeners() {
@@ -358,12 +373,11 @@ public class DynamicBuildConfigurationForm extends AbstractDynamicDistributionFo
                 newDistrConfigration = dynConfigData.getNewDistrConfigration();
             } else if (ActionType.Import.equals(actionType) || ActionType.EditExisting.equals(actionType)) {
                 newDistrConfigration = new DynamicConfiguration();
-                IDynamicPlugin dynPlugin = dynConfigData.getDynamicPlugin();
-                IDynamicPluginConfiguration pluginConfiguration = dynPlugin.getPluginConfiguration();
-                String name = pluginConfiguration.getName();
-                String distribution = pluginConfiguration.getDistribution();
-                String description = pluginConfiguration.getDescription();
-                String id = pluginConfiguration.getId();
+                DynamicConfiguration distrConfigOfDynPlugin = dynConfigData.getDistrConfigOfDynPlugin();
+                String name = distrConfigOfDynPlugin.getName();
+                String distribution = distrConfigOfDynPlugin.getDistribution();
+                String description = distrConfigOfDynPlugin.getDescription();
+                String id = distrConfigOfDynPlugin.getId();
 
                 newDistrConfigration.setDescription(description);
                 newDistrConfigration.setDistribution(distribution);
@@ -373,25 +387,45 @@ public class DynamicBuildConfigurationForm extends AbstractDynamicDistributionFo
 
             newDistrConfigration.setVersion(version);
             dynamicPluginMap.remove(version);
-            IDynamicMonitor monitor = new IDynamicMonitor() {
+
+            final IDynamicPlugin[] result = new IDynamicPlugin[1];
+            final DynamicConfiguration dynConfiguration = newDistrConfigration;
+
+            ProgressDialog progressMonitorDialog = new ProgressDialog(DisplayUtils.getDefaultShell(), 0) {
 
                 @Override
-                public void writeMessage(String message) {
-                    System.out.println(message);
+                public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+                    try {
+                        IDynamicMonitor dMonitor = new DummyDynamicMonitor() {
+
+                            @Override
+                            public void writeMessage(String message) {
+                                System.out.println(message);
+                            }
+                        };
+                        result[0] = dynDistrGroup.buildDynamicPlugin(dMonitor, dynConfiguration);
+                    } catch (Exception e) {
+                        ExceptionHandler.process(e);
+                    }
                 }
             };
-            IDynamicPlugin newDynamicPlugin = dynDistrGroup.buildDynamicPlugin(monitor, newDistrConfigration);
+            progressMonitorDialog.executeProcess(false);
+
+            IDynamicPlugin newDynamicPlugin = result[0];
             if (newDynamicPlugin != null) {
                 if (ActionType.Import.equals(actionType) || ActionType.EditExisting.equals(actionType)) {
-                    IDynamicPlugin dynPlugin = dynConfigData.getDynamicPlugin();
+                    IDynamicPluginConfiguration curConfig = dynamicPluginCache.getPluginConfiguration();
 
+                    newDynamicPlugin.setPluginConfiguration(
+                            DynamicFactory.getInstance().createDynamicPluginConfiguration(curConfig.toXmlJson().toString()));
                     IDynamicPluginConfiguration newConfig = newDynamicPlugin.getPluginConfiguration();
-                    IDynamicPluginConfiguration curConfig = dynPlugin.getPluginConfiguration();
-
-                    newConfig.setAttribute(DynamicDistriConfigAdapter.ATTR_FILE_PATH,
-                            curConfig.getAttribute(DynamicDistriConfigAdapter.ATTR_FILE_PATH));
+                    newConfig.setVersion(dynConfiguration.getVersion());
+                    newConfig.setName(dynConfiguration.getName());
+                    newConfig.setDescription(dynConfiguration.getDescription());
+                    newConfig.setId(dynConfiguration.getId());
+                    newConfig.setDistribution(dynConfiguration.getDistribution());
                 }
-                curDynamicPlugin = newDynamicPlugin;
+                setCurDynamicPlugin(newDynamicPlugin);
                 dynamicPluginMap.put(version, curDynamicPlugin);
                 dynConfigData.setDynamicPlugin(curDynamicPlugin);
             }
@@ -421,14 +455,7 @@ public class DynamicBuildConfigurationForm extends AbstractDynamicDistributionFo
                     }
                 }
 
-                IDynamicMonitor monitor = new IDynamicMonitor() {
-
-                    @Override
-                    public void writeMessage(String message) {
-                        // TODO Auto-generated method stub
-
-                    }
-                };
+                IDynamicMonitor monitor = new DummyDynamicMonitor();
                 DynamicDistributionManager.getInstance().saveUsersDynamicPlugin(curDynamicPlugin, filePath, monitor);
                 MessageDialog.openInformation(getShell(),
                         Messages.getString("DynamicBuildConfigurationForm.exportConfig.dialog.title"), //$NON-NLS-1$
@@ -441,28 +468,40 @@ public class DynamicBuildConfigurationForm extends AbstractDynamicDistributionFo
     }
 
     private List<String> getVersionList() throws Exception {
-        List<String> versionList = null;
+        final List<List<String>> result = new ArrayList<>();
+
         try {
             DynamicBuildConfigurationData dynConfigData = getDynamicBuildConfigurationData();
             IDynamicDistributionsGroup dynDistrGroup = dynConfigData.getDynamicDistributionsGroup();
-            IDynamicMonitor monitor = new IDynamicMonitor() {
+
+            ProgressDialog progressMonitorDialog = new ProgressDialog(DisplayUtils.getDefaultShell(), 0) {
 
                 @Override
-                public void writeMessage(String message) {
-                    // TODO Auto-generated method stub
+                public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+                    try {
+                        IDynamicMonitor dMonitor = new DummyDynamicMonitor();
 
+                        List<String> version = null;
+                        if (showOnlyCompatibleVersionBtn.getSelection()) {
+                            version = dynDistrGroup.getCompatibleVersions(dMonitor);
+                        } else {
+                            version = dynDistrGroup.getAllVersions(dMonitor);
+                        }
+                        result.add(version);
+                    } catch (Exception e) {
+                        ExceptionHandler.process(e);
+                    }
                 }
             };
+            progressMonitorDialog.executeProcess(false);
 
-            if (showOnlyCompatibleVersionBtn.getSelection()) {
-                versionList = dynDistrGroup.getCompatibleVersions(monitor);
-            } else {
-                versionList = dynDistrGroup.getAllVersions(monitor);
-            }
         } catch (Exception ex) {
             ExceptionHandler.process(ex);
         }
-        return versionList;
+        if (result.isEmpty()) {
+            return null;
+        }
+        return result.get(0);
     }
 
     private String getSelectedVersion() {
@@ -532,12 +571,12 @@ public class DynamicBuildConfigurationForm extends AbstractDynamicDistributionFo
             newDistrConfigration.setId(generateId(newDistrConfigration.getDistribution(), selectedVersion));
             hadoopVersionCombo.getControl().setToolTipText(selectedVersion);
         }
-        curDynamicPlugin = dynamicPluginMap.get(selectedVersion);
+        setCurDynamicPlugin(dynamicPluginMap.get(selectedVersion));
         enableVersionCombo(true);
         enableRetrieveBaseJarBtn(true);
         return true;
     }
-
+    
     private boolean checkBaseJars() {
         if (!retrieveBaseJarsBtn.isEnabled()) {
             return true;
@@ -569,14 +608,7 @@ public class DynamicBuildConfigurationForm extends AbstractDynamicDistributionFo
         if (dynamicPlugin == null) {
             baseJarsTable.setInput(null);
         } else {
-            List<IDynamicExtension> allExtensions = dynamicPlugin.getAllExtensions();
-            IDynamicExtension libNeededExtension = null;
-            for (IDynamicExtension extension : allExtensions) {
-                if (DynamicLibraryNeededExtensionAdaper.ATTR_POINT.equals(extension.getExtensionPoint())) {
-                    libNeededExtension = extension;
-                    break;
-                }
-            }
+            IDynamicExtension libNeededExtension = DynamicPluginAdapter.getLibraryNeededExtension(dynamicPlugin);
             List<IDynamicConfiguration> configurations = libNeededExtension.getConfigurations();
             Iterator<IDynamicConfiguration> iter = configurations.iterator();
             List<IDynamicConfiguration> moduleGroups = new ArrayList<>();
@@ -598,6 +630,11 @@ public class DynamicBuildConfigurationForm extends AbstractDynamicDistributionFo
         // //$NON-NLS-2$
         String id = DynamicDistributionUtils.formatId(distribution.toUpperCase() + "_" + timestamp); //$NON-NLS-1$
         return id;
+    }
+
+    private void setCurDynamicPlugin(IDynamicPlugin plugin) {
+        this.curDynamicPlugin = plugin;
+        getDynamicBuildConfigurationData().setDynamicPlugin(plugin);
     }
 
     @Override

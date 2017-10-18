@@ -31,6 +31,7 @@ import org.osgi.framework.ServiceReference;
 import org.talend.commons.exception.CommonExceptionHandler;
 import org.talend.commons.exception.ExceptionHandler;
 import org.talend.core.runtime.hd.IDistributionsManager;
+import org.talend.designer.maven.aether.DummyDynamicMonitor;
 import org.talend.designer.maven.aether.IDynamicMonitor;
 import org.talend.hadoop.distribution.ComponentType;
 import org.talend.hadoop.distribution.DistributionFactory;
@@ -57,13 +58,7 @@ public final class DistributionsManager implements IDistributionsManager {
 
             DynamicDistributionManager dynamicDistributionManager = DynamicDistributionManager.getInstance();
             try {
-                IDynamicMonitor monitor = new IDynamicMonitor() {
-
-                    @Override
-                    public void writeMessage(String message) {
-                        // nothing to do
-                    }
-                };
+                IDynamicMonitor monitor = new DummyDynamicMonitor();
                 dynamicDistributionManager.registAll(monitor);
             } catch (Throwable e) {
                 ExceptionHandler.process(e);

@@ -46,6 +46,7 @@ import org.talend.core.runtime.dynamic.DynamicFactory;
 import org.talend.core.runtime.dynamic.DynamicServiceUtil;
 import org.talend.core.runtime.dynamic.IDynamicPlugin;
 import org.talend.core.runtime.dynamic.IDynamicPluginConfiguration;
+import org.talend.designer.maven.aether.DummyDynamicMonitor;
 import org.talend.designer.maven.aether.IDynamicMonitor;
 import org.talend.designer.maven.aether.node.DependencyNode;
 import org.talend.designer.maven.aether.node.ExclusionNode;
@@ -282,17 +283,7 @@ public class TestDialog extends Dialog {
         String classifier = "";
         String scope = "compile";
         // String scope = "runtime";
-        IDynamicMonitor monitor = new IDynamicMonitor() {
-
-            @Override
-            public void writeMessage(String message) {
-                try {
-                    System.out.print(message);
-                } catch (Exception e) {
-                    ExceptionHandler.process(e);
-                }
-            }
-        };
+        IDynamicMonitor monitor = new DummyDynamicMonitor();
 
         List<ExclusionNode> exclusionNodes = new ArrayList<>();
 
@@ -343,7 +334,7 @@ public class TestDialog extends Dialog {
                     // bufferedLogStream = new BufferedOutputStream(logStream);
                     final BufferedOutputStream bos = bufferedLogStream;
 
-                    IDynamicMonitor monitor = new IDynamicMonitor() {
+                    IDynamicMonitor monitor = new DummyDynamicMonitor() {
 
                         @Override
                         public void writeMessage(String message) {
