@@ -12,7 +12,12 @@
 // ============================================================================
 package org.talend.hadoop.distribution.dynamic.adapter;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -22,6 +27,7 @@ import org.talend.core.runtime.dynamic.IDynamicConfiguration;
 import org.talend.core.runtime.dynamic.IDynamicExtension;
 import org.talend.core.runtime.dynamic.IDynamicPlugin;
 import org.talend.core.runtime.dynamic.IDynamicPluginConfiguration;
+import org.talend.hadoop.distribution.dynamic.comparator.DynamicAttributeComparator;
 
 /**
  * DOC cmeng  class global comment. Detailled comment
@@ -59,15 +65,21 @@ public class DynamicPluginAdapter {
     public void adapt() throws Exception {
         List<IDynamicExtension> allExtensions = plugin.getAllExtensions();
         IDynamicExtension libNeededExtension = null;
+        IDynamicExtension classLoaderExtension = null;
         for (IDynamicExtension extension : allExtensions) {
             if (DynamicLibraryNeededExtensionAdaper.ATTR_POINT.equals(extension.getExtensionPoint())) {
                 libNeededExtension = extension;
-                break;
+            } else if (DynamicClassLoaderExtensionAdaper.ATTR_POINT.equals(extension.getExtensionPoint())) {
+                classLoaderExtension = extension;
             }
         }
         if (libNeededExtension == null) {
             throw new Exception("Can't find extension: " + DynamicLibraryNeededExtensionAdaper.ATTR_POINT);
         }
+        if (classLoaderExtension == null) {
+            throw new Exception("Can't find extension: " + DynamicClassLoaderExtensionAdaper.ATTR_POINT);
+        }
+
         List<IDynamicConfiguration> configurations = libNeededExtension.getConfigurations();
         if (configurations == null || configurations.isEmpty()) {
             throw new Exception("No libraryModuelGroup configured");
@@ -88,10 +100,100 @@ public class DynamicPluginAdapter {
                 moduleMap.put(moduleId, configuration);
             }
         }
+
+        List<IDynamicConfiguration> classLoaders = classLoaderExtension.getConfigurations();
+        if (classLoaders == null || classLoaders.isEmpty()) {
+            throw new Exception("No classLoader configured");
+        }
+        for (IDynamicConfiguration classLoader : classLoaders) {
+            classLoader.removeAttribute(DynamicClassloaderAdapter.ATTR_MODULE_GROUP_TEMPLATE_ID);
+        }
+
         // plugin.setPluginConfiguration(null);
+
+    }
+
+    /**
+     * can't use adapt and clean same time
+     * 
+     * @throws Exception
+     */
+    public void cleanUnusedAndRefresh() throws Exception {
+        buildIdMaps();
+
+        // 1. clean unused modules
+        Set<String> usedModulesSet = new HashSet<String>();
+        Collection<IDynamicConfiguration> moduleGroups = moduleGroupTemplateMap.values();
+        Iterator<IDynamicConfiguration> moduleGroupIter = moduleGroups.iterator();
+        while (moduleGroupIter.hasNext()) {
+            IDynamicConfiguration moduleGroup = moduleGroupIter.next();
+            List<IDynamicConfiguration> childConfigurations = moduleGroup.getChildConfigurations();
+            if (childConfigurations != null) {
+                Set<String> curUsedModules = new HashSet<>();
+                Iterator<IDynamicConfiguration> libraryIter = childConfigurations.iterator();
+                while (libraryIter.hasNext()) {
+                    IDynamicConfiguration childConfig = libraryIter.next();
+                    String libraryId = (String) childConfig.getAttribute(DynamicModuleGroupAdapter.ATTR_LIBRARY_ID);
+                    if (libraryId != null) {
+                        if (curUsedModules.contains(libraryId)) {
+                            libraryIter.remove();
+                        } else {
+                            curUsedModules.add(libraryId);
+                        }
+                    }
+                }
+                Collections.sort(childConfigurations, new DynamicAttributeComparator(DynamicModuleGroupAdapter.ATTR_LIBRARY_ID));
+                usedModulesSet.addAll(curUsedModules);
+            }
+        }
+        Set<String> unusedModulesSet = new HashSet<String>(moduleMap.keySet());
+        unusedModulesSet.removeAll(usedModulesSet);
+        if (!unusedModulesSet.isEmpty()) {
+            Set<IDynamicConfiguration> unusedConfigs = new HashSet<>();
+            for (String unusedModule : unusedModulesSet) {
+                IDynamicConfiguration moduleById = getModuleById(unusedModule);
+                if (moduleById != null) {
+                    unusedConfigs.add(moduleById);
+                }
+                moduleMap.remove(unusedModule);
+            }
+            if (!unusedConfigs.isEmpty()) {
+                IDynamicExtension libNeededExtension = getLibraryNeededExtension(plugin);
+                List<IDynamicConfiguration> configurations = libNeededExtension.getConfigurations();
+                configurations.removeAll(unusedConfigs);
+                Collections.sort(configurations, new DynamicAttributeComparator());
+            }
+        }
+        
+        // 2. refresh classLoader
+        IDynamicExtension classLoaderExtension = getClassLoaderExtension(plugin);
+        List<IDynamicConfiguration> classLoaders = classLoaderExtension.getConfigurations();
+        if (classLoaders != null) {
+            for (IDynamicConfiguration classLoader : classLoaders) {
+                String moduleGroupTemplateId = (String) classLoader
+                        .getAttribute(DynamicClassloaderAdapter.ATTR_MODULE_GROUP_TEMPLATE_ID);
+                IDynamicConfiguration moduleGroupByTemplateId = getModuleGroupByTemplateId(moduleGroupTemplateId);
+                List<IDynamicConfiguration> libraries = moduleGroupByTemplateId.getChildConfigurations();
+                List<String> libraryIds = new ArrayList<>();
+                for (IDynamicConfiguration library : libraries) {
+                    String libraryId = (String) library.getAttribute(DynamicModuleGroupAdapter.ATTR_LIBRARY_ID);
+                    if (!libraryIds.contains(libraryId)) {
+                        libraryIds.add(libraryId);
+                    }
+                }
+                if (!libraryIds.isEmpty()) {
+                    Collections.sort(libraryIds);
+                    String buildLibrariesString = DynamicClassloaderAdapter.buildLibrariesString(libraryIds);
+                    classLoader.setAttribute(DynamicClassloaderAdapter.ATTR_LIBRARIES, buildLibrariesString);
+                }
+
+            }
+        }
     }
 
     public void buildIdMaps() throws Exception {
+        moduleMap.clear();
+        moduleGroupTemplateMap.clear();
         IDynamicExtension libNeededExtension = getLibraryNeededExtension(plugin);
         if (libNeededExtension == null) {
             throw new Exception("Can't find extension: " + DynamicLibraryNeededExtensionAdaper.ATTR_POINT);
@@ -118,10 +220,18 @@ public class DynamicPluginAdapter {
     }
 
     public static IDynamicExtension getLibraryNeededExtension(IDynamicPlugin dynamicPlugin) {
+        return getDynamicExtension(dynamicPlugin, DynamicLibraryNeededExtensionAdaper.ATTR_POINT);
+    }
+
+    public static IDynamicExtension getClassLoaderExtension(IDynamicPlugin dynamicPlugin) {
+        return getDynamicExtension(dynamicPlugin, DynamicClassLoaderExtensionAdaper.ATTR_POINT);
+    }
+
+    public static IDynamicExtension getDynamicExtension(IDynamicPlugin dynamicPlugin, String extensionPoint) {
         List<IDynamicExtension> allExtensions = dynamicPlugin.getAllExtensions();
         IDynamicExtension libNeededExtension = null;
         for (IDynamicExtension extension : allExtensions) {
-            if (DynamicLibraryNeededExtensionAdaper.ATTR_POINT.equals(extension.getExtensionPoint())) {
+            if (extensionPoint.equals(extension.getExtensionPoint())) {
                 libNeededExtension = extension;
                 break;
             }

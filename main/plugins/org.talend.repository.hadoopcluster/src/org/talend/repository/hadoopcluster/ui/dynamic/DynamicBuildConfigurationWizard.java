@@ -10,6 +10,7 @@ import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.core.runtime.dynamic.IDynamicPlugin;
 import org.talend.designer.maven.aether.IDynamicMonitor;
 import org.talend.hadoop.distribution.dynamic.DynamicDistributionManager;
+import org.talend.hadoop.distribution.dynamic.adapter.DynamicPluginAdapter;
 import org.talend.repository.RepositoryWorkUnit;
 import org.talend.repository.hadoopcluster.i18n.Messages;
 import org.talend.repository.hadoopcluster.ui.dynamic.DynamicBuildConfigurationData.ActionType;
@@ -69,8 +70,11 @@ public class DynamicBuildConfigurationWizard extends Wizard {
         };
 
         try {
-            final IDynamicPlugin dynamicPlugin = configData.getDynamicPlugin();
+            IDynamicPlugin dynamicPlugin = configData.getDynamicPlugin();
             if (dynamicPlugin != null) {
+                DynamicPluginAdapter pluginAdapter = new DynamicPluginAdapter(dynamicPlugin);
+                pluginAdapter.cleanUnusedAndRefresh();
+                IDynamicPlugin fDynPlugin = pluginAdapter.getPlugin();
                 ProxyRepositoryFactory.getInstance().executeRepositoryWorkUnit(new RepositoryWorkUnit<Boolean>(
                         Messages.getString("DynamicBuildConfigurationWizard.repositoryWorkUnit.title")) { //$NON-NLS-1$
 
@@ -78,7 +82,7 @@ public class DynamicBuildConfigurationWizard extends Wizard {
                     protected void run() throws LoginException, PersistenceException {
                         result = false;
                         try {
-                            DynamicDistributionManager.getInstance().saveUsersDynamicPlugin(dynamicPlugin, monitor);
+                            DynamicDistributionManager.getInstance().saveUsersDynamicPlugin(fDynPlugin, monitor);
                         } catch (Exception e) {
                             throw new PersistenceException(e);
                         }
@@ -88,9 +92,9 @@ public class DynamicBuildConfigurationWizard extends Wizard {
                 });
                 ActionType actionType = configData.getActionType();
                 if (ActionType.EditExisting.equals(actionType)) {
-                    configData.getDynamicDistributionsGroup().unregist(dynamicPlugin, monitor);
+                    configData.getDynamicDistributionsGroup().unregist(fDynPlugin, monitor);
                 }
-                configData.getDynamicDistributionsGroup().regist(dynamicPlugin, monitor);
+                configData.getDynamicDistributionsGroup().regist(fDynPlugin, monitor);
                 DynamicDistributionManager.getInstance().cleanSystemCache();
             }
         } catch (Exception e) {

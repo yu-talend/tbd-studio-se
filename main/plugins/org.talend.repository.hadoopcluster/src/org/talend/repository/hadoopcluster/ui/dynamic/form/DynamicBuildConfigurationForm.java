@@ -405,6 +405,22 @@ public class DynamicBuildConfigurationForm extends AbstractDynamicDistributionFo
         String folderPath = dirDialog.open();
         if (StringUtils.isNotEmpty(folderPath)) {
             try {
+                IDynamicPluginConfiguration pluginConfiguration = curDynamicPlugin.getPluginConfiguration();
+                String id = pluginConfiguration.getId();
+                String fileName = id + "." + DynamicDistributionManager.DISTRIBUTION_FILE_EXTENSION; //$NON-NLS-1$
+                String filePath = folderPath + "/" + fileName; //$NON-NLS-1$
+
+                File file = new File(filePath);
+                if (file.exists()) {
+                    boolean agree = MessageDialog.openQuestion(getShell(),
+                            Messages.getString("DynamicBuildConfigurationForm.exportConfig.dialog.fileExist.title"), //$NON-NLS-1$
+                            Messages.getString("DynamicBuildConfigurationForm.exportConfig.dialog.fileExist.message", //$NON-NLS-1$
+                                    file.getCanonicalPath()));
+                    if (!agree) {
+                        return;
+                    }
+                }
+
                 IDynamicMonitor monitor = new IDynamicMonitor() {
 
                     @Override
@@ -413,10 +429,6 @@ public class DynamicBuildConfigurationForm extends AbstractDynamicDistributionFo
 
                     }
                 };
-                IDynamicPluginConfiguration pluginConfiguration = curDynamicPlugin.getPluginConfiguration();
-                String id = pluginConfiguration.getId();
-                String fileName = id + "." + DynamicDistributionManager.DISTRIBUTION_FILE_EXTENSION; //$NON-NLS-1$
-                String filePath = folderPath + "/" + fileName; //$NON-NLS-1$
                 DynamicDistributionManager.getInstance().saveUsersDynamicPlugin(curDynamicPlugin, filePath, monitor);
                 MessageDialog.openInformation(getShell(),
                         Messages.getString("DynamicBuildConfigurationForm.exportConfig.dialog.title"), //$NON-NLS-1$

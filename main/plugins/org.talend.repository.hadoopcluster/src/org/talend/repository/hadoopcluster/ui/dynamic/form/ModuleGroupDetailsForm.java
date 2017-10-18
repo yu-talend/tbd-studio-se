@@ -257,10 +257,12 @@ public class ModuleGroupDetailsForm extends AbstractModuleGroupDetailsForm {
             String seperator = ", "; //$NON-NLS-1$
             StringBuffer errorLinesBuf = new StringBuffer();
             for (String errorLine : errorLines) {
-                errorLinesBuf.append(errorLine).append(seperator);
+                if (0 < errorLinesBuf.length()) {
+                    errorLinesBuf.append(seperator);
+                }
+                errorLinesBuf.append(errorLine);
             }
             String errorLinesStr = errorLinesBuf.toString();
-            errorLinesStr = errorLinesStr.substring(0, errorLinesStr.length() - seperator.length());
             String message = Messages.getString("ModuleGroupDetailsForm.groupDetails.check.errorLines", errorLinesStr); //$NON-NLS-1$
             showMessage(message, WizardPage.ERROR);
             return false;

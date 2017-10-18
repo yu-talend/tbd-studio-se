@@ -14,6 +14,7 @@ package org.talend.repository.hadoopcluster.ui.dynamic;
 
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
+import org.talend.commons.exception.ExceptionHandler;
 import org.talend.commons.ui.runtime.image.ImageProvider;
 import org.talend.repository.hadoopcluster.i18n.Messages;
 import org.talend.repository.hadoopcluster.ui.dynamic.page.AbsDynamicModuleGroupDetailsPage;
@@ -61,6 +62,11 @@ public class DynamicModuleGroupWizard extends Wizard {
 
     @Override
     public boolean performFinish() {
+        try {
+            groupData.getPluginAdapter().cleanUnusedAndRefresh();
+        } catch (Exception e) {
+            ExceptionHandler.process(e);
+        }
         return true;
     }
 
