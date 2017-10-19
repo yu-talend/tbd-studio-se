@@ -43,8 +43,22 @@ public interface IDynamicDistributionsGroup {
 
     public boolean canRegist(IDynamicPlugin dynamicPlugin, IDynamicMonitor monitor) throws Exception;
 
+    /**
+     * Don't forget to reset cache in DynamicDistributionManager
+     * 
+     * @param dynamicPlugin
+     * @param monitor
+     * @throws Exception
+     */
     public void regist(IDynamicPlugin dynamicPlugin, IDynamicMonitor monitor) throws Exception;
 
+    /**
+     * Don't forget to reset cache in DynamicDistributionManager
+     * 
+     * @param dynamicPlugin
+     * @param monitor
+     * @throws Exception
+     */
     public void unregist(IDynamicPlugin dynamicPlugin, IDynamicMonitor monitor) throws Exception;
 
     /**

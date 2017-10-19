@@ -304,7 +304,7 @@ public abstract class AbstractDynamicDistributionsGroup implements IDynamicDistr
     }
 
     private Map<IDynamicDistribution, List<String>> getCompatibleDistribuionVersionMap(IDynamicMonitor monitor) throws Exception {
-        if (this.compatibleDistribuionVersionMap == null) {
+        if (this.compatibleDistribuionVersionMap == null || this.compatibleDistribuionVersionMap.isEmpty()) {
             this.compatibleDistribuionVersionMap = buildCompatibleDistribuionVersionMap(monitor);
         }
         return this.compatibleDistribuionVersionMap;
@@ -330,7 +330,7 @@ public abstract class AbstractDynamicDistributionsGroup implements IDynamicDistr
     }
 
     private Map<IDynamicDistribution, List<String>> getAllDistribuionVersionMap(IDynamicMonitor monitor) throws Exception {
-        if (this.allDistribuionVersionMap == null) {
+        if (this.allDistribuionVersionMap == null || this.allDistribuionVersionMap.isEmpty()) {
             this.allDistribuionVersionMap = buildAllDistribuionVersionMap(monitor);
         }
         return this.allDistribuionVersionMap;

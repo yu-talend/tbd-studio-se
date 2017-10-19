@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -47,6 +48,10 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.talend.commons.exception.ExceptionHandler;
+import org.talend.commons.exception.LoginException;
+import org.talend.commons.exception.PersistenceException;
+import org.talend.commons.ui.runtime.exception.ExceptionMessageDialog;
+import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.core.runtime.dynamic.DynamicFactory;
 import org.talend.core.runtime.dynamic.DynamicServiceUtil;
 import org.talend.core.runtime.dynamic.IDynamicPlugin;
@@ -56,14 +61,16 @@ import org.talend.designer.maven.aether.IDynamicMonitor;
 import org.talend.hadoop.distribution.dynamic.DynamicConfiguration;
 import org.talend.hadoop.distribution.dynamic.DynamicDistributionManager;
 import org.talend.hadoop.distribution.dynamic.IDynamicDistributionsGroup;
+import org.talend.hadoop.distribution.dynamic.adapter.DynamicDistriConfigAdapter;
 import org.talend.hadoop.distribution.dynamic.comparator.DynamicPluginComparator;
+import org.talend.repository.RepositoryWorkUnit;
 import org.talend.repository.hadoopcluster.i18n.Messages;
 import org.talend.repository.hadoopcluster.ui.dynamic.DynamicBuildConfigurationData;
 import org.talend.repository.hadoopcluster.ui.dynamic.DynamicBuildConfigurationData.ActionType;
 import org.talend.repository.ui.login.LoginDialogV2;
 
 /**
- * DOC cmeng  class global comment. Detailled comment
+ * DOC cmeng class global comment. Detailled comment
  */
 public class DynamicOptionForm extends AbstractDynamicDistributionForm {
 
@@ -72,6 +79,8 @@ public class DynamicOptionForm extends AbstractDynamicDistributionForm {
     private Button editExistingConfigBtn;
 
     private Button importConfigBtn;
+
+    private Button deleteExistingConfigBtn;
 
     private Text configNameText;
 
@@ -99,8 +108,7 @@ public class DynamicOptionForm extends AbstractDynamicDistributionForm {
 
     private DynamicConfiguration dynamicConfiguration;
 
-    public DynamicOptionForm(Composite parent, int style, DynamicBuildConfigurationData configData,
-            IDynamicMonitor monitor) {
+    public DynamicOptionForm(Composite parent, int style, DynamicBuildConfigurationData configData, IDynamicMonitor monitor) {
         super(parent, style, configData);
         createControl();
         initData(monitor);
@@ -172,11 +180,22 @@ public class DynamicOptionForm extends AbstractDynamicDistributionForm {
         existingConfigsComboViewer = new ComboViewer(editExistingGroup, SWT.READ_ONLY);
         existingConfigsComboViewer.setContentProvider(ArrayContentProvider.getInstance());
         existingConfigsComboViewer.setLabelProvider(new ExistingConfigsLabelProvider());
+
+        deleteExistingConfigBtn = new Button(editExistingGroup, SWT.PUSH);
+        deleteExistingConfigBtn.setText(Messages.getString("DynamicOptionForm.form.deleteExistingConfigBtn")); //$NON-NLS-1$
+
         formData = new FormData();
         formData.top = new FormAttachment(0);
         formData.left = new FormAttachment(0, HORZON_WIDTH);
+        formData.right = new FormAttachment(deleteExistingConfigBtn, -1 * ALIGN_HORIZON, SWT.LEFT);
+        existingConfigsComboViewer.getControl().setLayoutData(formData);
+
+        formData = new FormData();
+        formData.top = new FormAttachment(existingConfigsComboViewer.getControl(), 0, SWT.CENTER);
+        // formData.bottom = new FormAttachment(existingConfigsComboViewer.getControl(), 0, SWT.BOTTOM);
         formData.right = new FormAttachment(100);
-        existingConfigsComboViewer.getCombo().setLayoutData(formData);
+        formData.width = getNewButtonSize(deleteExistingConfigBtn).x;
+        deleteExistingConfigBtn.setLayoutData(formData);
 
         importConfigBtn = new Button(container, SWT.RADIO);
         importConfigBtn.setText(Messages.getString("DynamicOptionForm.form.importConfigBtn")); //$NON-NLS-1$
@@ -222,15 +241,15 @@ public class DynamicOptionForm extends AbstractDynamicDistributionForm {
     }
 
     protected void addListeners() {
-        
+
         newConfigBtn.addSelectionListener(new SelectionAdapter() {
-            
+
             @Override
             public void widgetSelected(SelectionEvent e) {
                 onNewConfigSelected(newConfigBtn.getSelection());
                 updateButtons();
             }
-            
+
             @Override
             public void widgetDefaultSelected(SelectionEvent e) {
                 onNewConfigSelected(newConfigBtn.getSelection());
@@ -238,18 +257,28 @@ public class DynamicOptionForm extends AbstractDynamicDistributionForm {
             }
 
         });
-        
+
         editExistingConfigBtn.addSelectionListener(new SelectionAdapter() {
-            
+
             @Override
             public void widgetSelected(SelectionEvent e) {
                 onEditExistingSelected(editExistingConfigBtn.getSelection());
                 updateButtons();
             }
-            
+
             @Override
             public void widgetDefaultSelected(SelectionEvent e) {
                 onEditExistingSelected(editExistingConfigBtn.getSelection());
+                updateButtons();
+            }
+
+        });
+
+        deleteExistingConfigBtn.addSelectionListener(new SelectionAdapter() {
+
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                onDeleteExistingSelected();
                 updateButtons();
             }
 
@@ -342,6 +371,56 @@ public class DynamicOptionForm extends AbstractDynamicDistributionForm {
 
         // editExistingGroup.setEnabled(selected);
         existingConfigsComboViewer.getControl().setEnabled(selected);
+        deleteExistingConfigBtn.setEnabled(selected);
+    }
+
+    private void onDeleteExistingSelected() {
+        boolean agree = MessageDialog.openConfirm(getShell(),
+                Messages.getString("DynamicOptionForm.form.deleteExistingConfig.confirm.dialog.title"), //$NON-NLS-1$
+                Messages.getString("DynamicOptionForm.form.deleteExistingConfig.confirm.dialog.message")); //$NON-NLS-1$
+        if (agree) {
+            try {
+                final IDynamicMonitor monitor = new DummyDynamicMonitor();
+
+                IStructuredSelection selection = (IStructuredSelection) existingConfigsComboViewer.getSelection();
+                final IDynamicPlugin dynamicPlugin = (IDynamicPlugin) selection.getFirstElement();
+                final Throwable throwable[] = new Throwable[1];
+                ProxyRepositoryFactory.getInstance().executeRepositoryWorkUnit(new RepositoryWorkUnit<Boolean>(
+                        Messages.getString("DynamicOptionForm.form.deleteExistingConfig.workunit.title")) { //$NON-NLS-1$
+
+                    @Override
+                    protected void run() throws LoginException, PersistenceException {
+                        try {
+                            IDynamicPluginConfiguration pluginConfiguration = dynamicPlugin.getPluginConfiguration();
+                            String distribution = pluginConfiguration.getDistribution();
+                            IDynamicDistributionsGroup dynamicDistributionGroup = DynamicDistributionManager.getInstance()
+                                    .getDynamicDistributionGroup(distribution);
+                            dynamicDistributionGroup.unregist(dynamicPlugin, monitor);
+
+                            String filePath = (String) pluginConfiguration
+                                    .getAttribute(DynamicDistriConfigAdapter.ATTR_FILE_PATH);
+                            File file = new File(filePath);
+                            file.delete();
+                            DynamicDistributionManager.getInstance().cleanSystemCache();
+                        } catch (Throwable e) {
+                            throwable[0] = e;
+                        }
+                    }
+
+                });
+                if (throwable[0] != null) {
+                    throw throwable[0];
+                }
+                refreshExistingConfigsCombo(monitor, getDynamicBuildConfigurationData().getDynamicDistributionsGroup());
+            } catch (Throwable e) {
+                ExceptionHandler.process(e);
+                String message = e.getMessage();
+                if (StringUtils.isEmpty(message)) {
+                    message = Messages.getString("ExceptionDialog.message.empty"); //$NON-NLS-1$
+                }
+                ExceptionMessageDialog.openError(getShell(), Messages.getString("ExceptionDialog.title"), message, e); //$NON-NLS-1$
+            }
+        }
     }
 
     private void onImportConfigSelected(boolean selected) {
@@ -397,15 +476,19 @@ public class DynamicOptionForm extends AbstractDynamicDistributionForm {
         dynConfigData.setNewDistrConfigration(dynamicConfiguration);
 
         try {
-            List<IDynamicPlugin> distriDynamicPlugins = copyAllUsersDynamicPlugins(monitor, dynamicDistributionsGroup);
-
-            existingConfigsComboViewer.setInput(distriDynamicPlugins);
-            if (0 < distriDynamicPlugins.size()) {
-                existingConfigsComboViewer.setSelection(new StructuredSelection(distriDynamicPlugins.get(0)));
-            }
-
+            refreshExistingConfigsCombo(monitor, dynamicDistributionsGroup);
         } catch (Exception e) {
             ExceptionHandler.process(e);
+        }
+    }
+
+    private void refreshExistingConfigsCombo(IDynamicMonitor monitor, IDynamicDistributionsGroup dynamicDistributionsGroup)
+            throws Exception {
+        List<IDynamicPlugin> distriDynamicPlugins = copyAllUsersDynamicPlugins(monitor, dynamicDistributionsGroup);
+
+        existingConfigsComboViewer.setInput(distriDynamicPlugins);
+        if (0 < distriDynamicPlugins.size()) {
+            existingConfigsComboViewer.setSelection(new StructuredSelection(distriDynamicPlugins.get(0)));
         }
     }
 
@@ -441,8 +524,6 @@ public class DynamicOptionForm extends AbstractDynamicDistributionForm {
 
     private boolean checkNewConfigNameValid() {
         if (!newConfigBtn.getSelection()) {
-            configNameText.setBackground(null);
-            configNameText.setToolTipText(""); //$NON-NLS-1$
             return true;
         }
         String configName = configNameText.getText().trim();
@@ -518,8 +599,6 @@ public class DynamicOptionForm extends AbstractDynamicDistributionForm {
     private boolean checkImportConfigText() {
         try {
             if (!importConfigBtn.getSelection()) {
-                importConfigText.setBackground(null);
-                importConfigText.setToolTipText(""); //$NON-NLS-1$
                 return true;
             }
             StringBuffer messageBuffer = new StringBuffer();
@@ -624,7 +703,6 @@ public class DynamicOptionForm extends AbstractDynamicDistributionForm {
             descriptionText.setText(pluginConfiguration.getDescription());
 
             getDynamicBuildConfigurationData().setDynamicPlugin(importedDynamicPlugin);
-            getDynamicBuildConfigurationData().setDistrConfigOfDynPlugin(buildDynamicConfiguration(importedDynamicPlugin));
             return true;
         } catch (Exception e) {
             importConfigText.setBackground(LoginDialogV2.RED_COLOR);
@@ -637,6 +715,7 @@ public class DynamicOptionForm extends AbstractDynamicDistributionForm {
         if (!editExistingConfigBtn.getSelection()) {
             return true;
         }
+        deleteExistingConfigBtn.setEnabled(false);
         IStructuredSelection selection = (IStructuredSelection) existingConfigsComboViewer.getSelection();
         if (selection == null) {
             String errorMessage = Messages.getString("DynamicDistributionsForm.importConfigText.check.existingConfig.empty"); //$NON-NLS-1$
@@ -655,7 +734,8 @@ public class DynamicOptionForm extends AbstractDynamicDistributionForm {
         updateDistributionDescription(dynamicPlugin);
 
         getDynamicBuildConfigurationData().setDynamicPlugin(dynamicPlugin);
-        getDynamicBuildConfigurationData().setDistrConfigOfDynPlugin(buildDynamicConfiguration(dynamicPlugin));
+
+        deleteExistingConfigBtn.setEnabled(true);
 
         return true;
     }
@@ -663,7 +743,7 @@ public class DynamicOptionForm extends AbstractDynamicDistributionForm {
     @Override
     public boolean isComplete() {
         try {
-            showMessage(null, WizardPage.NONE);
+            clearErrorStatus();
             if (!checkNewConfigNameValid()) {
                 return false;
             }
@@ -679,6 +759,16 @@ public class DynamicOptionForm extends AbstractDynamicDistributionForm {
             descriptionText.setToolTipText(description);
             dynamicConfiguration.setDescription(description);
         }
+    }
+
+    private void clearErrorStatus() {
+        showMessage(null, WizardPage.NONE);
+
+        configNameText.setBackground(null);
+        configNameText.setToolTipText(""); //$NON-NLS-1$
+
+        importConfigText.setBackground(null);
+        importConfigText.setToolTipText(""); //$NON-NLS-1$
     }
 
     @Override

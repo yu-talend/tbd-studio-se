@@ -12,12 +12,11 @@
 // ============================================================================
 package org.talend.repository.hadoopcluster.ui.dynamic.form;
 
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -49,7 +48,7 @@ import org.talend.repository.hadoopcluster.ui.dynamic.DynamicBuildConfigurationD
 import org.talend.repository.hadoopcluster.ui.dynamic.DynamicBuildConfigurationWizard;
 
 /**
- * DOC cmeng  class global comment. Detailled comment
+ * DOC cmeng class global comment. Detailled comment
  */
 public class DynamicDistributionsForm extends AbstractDynamicDistributionForm {
 
@@ -58,8 +57,6 @@ public class DynamicDistributionsForm extends AbstractDynamicDistributionForm {
     private ComboViewer versionCombo;
 
     private Button buildConfigBtn;
-
-    private Map<String, IDynamicDistributionsGroup> dynDistriGroupMap = new HashMap<>();
 
     public DynamicDistributionsForm(Composite parent, int style, IDynamicMonitor monitor) {
         super(parent, style, null);
@@ -138,28 +135,34 @@ public class DynamicDistributionsForm extends AbstractDynamicDistributionForm {
 
             @Override
             public void widgetSelected(SelectionEvent e) {
-                IStructuredSelection selection = (IStructuredSelection) distributionCombo.getSelection();
-                if (selection == null) {
-                    ExceptionHandler.process(
-                            new Exception(Messages.getString("DynamicDistributionsForm.exception.noDistributionSelected"))); //$NON-NLS-1$
-                    return;
-                }
-                Object distribution = selection.getFirstElement();
-                if (distribution == null) {
-                    ExceptionHandler.process(
-                            new Exception(Messages.getString("DynamicDistributionsForm.exception.noDistributionSelected"))); //$NON-NLS-1$
-                    return;
-                }
-                IDynamicDistributionsGroup dynamicDistributionsGroup = dynDistriGroupMap.get(distribution);
-                DynamicBuildConfigurationData configData = new DynamicBuildConfigurationData();
-                configData.setDynamicDistributionsGroup(dynamicDistributionsGroup);
-                DynamicBuildConfigurationWizard wizard = new DynamicBuildConfigurationWizard(configData);
-                WizardDialog wizardDialog = new WizardDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
-                        wizard);
-                wizardDialog.create();
-                if (wizardDialog.open() == IDialogConstants.OK_ID) {
+                try {
+                    IStructuredSelection selection = (IStructuredSelection) distributionCombo.getSelection();
+                    if (selection == null) {
+                        ExceptionHandler.process(
+                                new Exception(Messages.getString("DynamicDistributionsForm.exception.noDistributionSelected"))); //$NON-NLS-1$
+                        return;
+                    }
+                    String distribution = (String) selection.getFirstElement();
+                    if (distribution == null) {
+                        ExceptionHandler.process(
+                                new Exception(Messages.getString("DynamicDistributionsForm.exception.noDistributionSelected"))); //$NON-NLS-1$
+                        return;
+                    }
+                    IDynamicDistributionsGroup dynamicDistributionsGroup = DynamicDistributionManager.getInstance()
+                            .getDynamicDistributionGroup(distribution);
+                    DynamicBuildConfigurationData configData = new DynamicBuildConfigurationData();
+                    configData.setDynamicDistributionsGroup(dynamicDistributionsGroup);
+                    DynamicBuildConfigurationWizard wizard = new DynamicBuildConfigurationWizard(configData);
+                    WizardDialog wizardDialog = new WizardDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
+                            wizard);
+                    wizardDialog.create();
+                    if (wizardDialog.open() == IDialogConstants.OK_ID) {
+                        // nothing to do
+                    }
                     IDynamicMonitor monitor = new DummyDynamicMonitor();
                     refreshVersionList(monitor);
+                } catch (Throwable ex) {
+                    ExceptionHandler.process(ex);
                 }
             }
 
@@ -168,15 +171,14 @@ public class DynamicDistributionsForm extends AbstractDynamicDistributionForm {
 
     private void loadData(IDynamicMonitor monitor) {
         try {
-            dynDistriGroupMap.clear();
             DynamicDistributionManager dynDistriManager = DynamicDistributionManager.getInstance();
             List<IDynamicDistributionsGroup> dynDistriGroups = dynDistriManager.getDynamicDistributionsGroups();
             if (dynDistriGroups != null && !dynDistriGroups.isEmpty()) {
+                List<String> distributionDisplayNames = new ArrayList<>();
                 for (IDynamicDistributionsGroup dynDistriGroup : dynDistriGroups) {
                     String displayName = dynDistriGroup.getDistributionDisplay();
-                    dynDistriGroupMap.put(displayName, dynDistriGroup);
+                    distributionDisplayNames.add(displayName);
                 }
-                List<String> distributionDisplayNames = new LinkedList<>(dynDistriGroupMap.keySet());
                 Collections.sort(distributionDisplayNames);
                 distributionCombo.setInput(distributionDisplayNames);
                 if (0 < distributionDisplayNames.size()) {
@@ -193,9 +195,10 @@ public class DynamicDistributionsForm extends AbstractDynamicDistributionForm {
         try {
             IStructuredSelection selection = (IStructuredSelection) distributionCombo.getSelection();
             if (selection != null) {
-                Object selectedObject = selection.getFirstElement();
+                String selectedObject = (String) selection.getFirstElement();
                 if (selectedObject != null) {
-                    IDynamicDistributionsGroup dynDistriGroup = dynDistriGroupMap.get(selectedObject);
+                    IDynamicDistributionsGroup dynDistriGroup = DynamicDistributionManager.getInstance()
+                            .getDynamicDistributionGroup(selectedObject);
                     if (dynDistriGroup == null) {
                         throw new Exception(Messages.getString("DynamicDistributionsForm.exception.noDistributionGroupFound", //$NON-NLS-1$
                                 dynDistriGroup));

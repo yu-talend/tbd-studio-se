@@ -15,8 +15,10 @@ package org.talend.hadoop.distribution.dynamic;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.core.resources.IFolder;
@@ -49,6 +51,8 @@ public class DynamicDistributionManager {
     private static DynamicDistributionManager instance;
 
     private List<IDynamicPlugin> usersPluginsCache;
+
+    private Map<String, IDynamicDistributionsGroup> dynDistriGroupMap;
 
     private String usersPluginsCacheVersion;
 
@@ -360,6 +364,22 @@ public class DynamicDistributionManager {
             cleanSystemCache();
         }
 
+    }
+
+    public IDynamicDistributionsGroup getDynamicDistributionGroup(String distribution) throws Exception {
+        if (dynDistriGroupMap == null || dynDistriGroupMap.isEmpty()) {
+            dynDistriGroupMap = new HashMap<>();
+            List<IDynamicDistributionsGroup> dynDistriGroups = getDynamicDistributionsGroups();
+            if (dynDistriGroups != null && !dynDistriGroups.isEmpty()) {
+                for (IDynamicDistributionsGroup dynDistriGroup : dynDistriGroups) {
+                    String name = dynDistriGroup.getDistribution();
+                    String displayName = dynDistriGroup.getDistributionDisplay();
+                    dynDistriGroupMap.put(name, dynDistriGroup);
+                    dynDistriGroupMap.put(displayName, dynDistriGroup);
+                }
+            }
+        }
+        return dynDistriGroupMap.get(distribution);
     }
 
     public void cleanSystemCache() throws Exception {

@@ -27,6 +27,8 @@ import org.apache.commons.lang.StringUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ComboViewer;
@@ -56,8 +58,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.PlatformUI;
 import org.talend.commons.exception.ExceptionHandler;
-import org.talend.commons.ui.gmf.util.DisplayUtils;
-import org.talend.commons.ui.swt.dialogs.ProgressDialog;
+import org.talend.commons.ui.runtime.exception.ExceptionMessageDialog;
 import org.talend.core.runtime.dynamic.DynamicFactory;
 import org.talend.core.runtime.dynamic.IDynamicConfiguration;
 import org.talend.core.runtime.dynamic.IDynamicExtension;
@@ -238,6 +239,7 @@ public class DynamicBuildConfigurationForm extends AbstractDynamicDistributionFo
                 List<String> versionList = new ArrayList<>();
                 IDynamicPlugin dynamicPlugin = dynConfigData.getDynamicPlugin();
                 curDynamicPlugin = dynamicPlugin;
+                dynamicPluginCache = dynamicPlugin;
                 IDynamicPluginConfiguration pluginConfiguration = dynamicPlugin.getPluginConfiguration();
                 String version = pluginConfiguration.getVersion();
                 versionList.add(version);
@@ -373,7 +375,8 @@ public class DynamicBuildConfigurationForm extends AbstractDynamicDistributionFo
                 newDistrConfigration = dynConfigData.getNewDistrConfigration();
             } else if (ActionType.Import.equals(actionType) || ActionType.EditExisting.equals(actionType)) {
                 newDistrConfigration = new DynamicConfiguration();
-                DynamicConfiguration distrConfigOfDynPlugin = dynConfigData.getDistrConfigOfDynPlugin();
+
+                IDynamicPluginConfiguration distrConfigOfDynPlugin = dynamicPluginCache.getPluginConfiguration();
                 String name = distrConfigOfDynPlugin.getName();
                 String distribution = distrConfigOfDynPlugin.getDistribution();
                 String description = distrConfigOfDynPlugin.getDescription();
@@ -390,8 +393,10 @@ public class DynamicBuildConfigurationForm extends AbstractDynamicDistributionFo
 
             final IDynamicPlugin[] result = new IDynamicPlugin[1];
             final DynamicConfiguration dynConfiguration = newDistrConfigration;
+            final Throwable throwable[] = new Throwable[1];
 
-            ProgressDialog progressMonitorDialog = new ProgressDialog(DisplayUtils.getDefaultShell(), 0) {
+            ProgressMonitorDialog progressDialog = new ProgressMonitorDialog(getShell());
+            progressDialog.run(true, true, new IRunnableWithProgress() {
 
                 @Override
                 public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
@@ -404,12 +409,15 @@ public class DynamicBuildConfigurationForm extends AbstractDynamicDistributionFo
                             }
                         };
                         result[0] = dynDistrGroup.buildDynamicPlugin(dMonitor, dynConfiguration);
-                    } catch (Exception e) {
-                        ExceptionHandler.process(e);
+                    } catch (Throwable e) {
+                        throwable[0] = e;
                     }
                 }
-            };
-            progressMonitorDialog.executeProcess(false);
+            });
+
+            if (throwable[0] != null) {
+                throw throwable[0];
+            }
 
             IDynamicPlugin newDynamicPlugin = result[0];
             if (newDynamicPlugin != null) {
@@ -429,8 +437,13 @@ public class DynamicBuildConfigurationForm extends AbstractDynamicDistributionFo
                 dynamicPluginMap.put(version, curDynamicPlugin);
                 dynConfigData.setDynamicPlugin(curDynamicPlugin);
             }
-        } catch (Exception e) {
+        } catch (Throwable e) {
             ExceptionHandler.process(e);
+            String message = e.getMessage();
+            if (StringUtils.isEmpty(message)) {
+                message = Messages.getString("ExceptionDialog.message.empty"); //$NON-NLS-1$
+            }
+            ExceptionMessageDialog.openError(getShell(), Messages.getString("DynamicModuleGroupWizard.title"), message, e); //$NON-NLS-1$
         }
     }
 
@@ -473,8 +486,11 @@ public class DynamicBuildConfigurationForm extends AbstractDynamicDistributionFo
         try {
             DynamicBuildConfigurationData dynConfigData = getDynamicBuildConfigurationData();
             IDynamicDistributionsGroup dynDistrGroup = dynConfigData.getDynamicDistributionsGroup();
+            final Throwable throwable[] = new Throwable[1];
 
-            ProgressDialog progressMonitorDialog = new ProgressDialog(DisplayUtils.getDefaultShell(), 0) {
+            ProgressMonitorDialog progressDialog = new ProgressMonitorDialog(getShell());
+            final boolean showOnlyCompatibleVersions = showOnlyCompatibleVersionBtn.getSelection();
+            progressDialog.run(true, true, new IRunnableWithProgress() {
 
                 @Override
                 public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
@@ -482,21 +498,29 @@ public class DynamicBuildConfigurationForm extends AbstractDynamicDistributionFo
                         IDynamicMonitor dMonitor = new DummyDynamicMonitor();
 
                         List<String> version = null;
-                        if (showOnlyCompatibleVersionBtn.getSelection()) {
+                        if (showOnlyCompatibleVersions) {
                             version = dynDistrGroup.getCompatibleVersions(dMonitor);
                         } else {
                             version = dynDistrGroup.getAllVersions(dMonitor);
                         }
                         result.add(version);
                     } catch (Exception e) {
-                        ExceptionHandler.process(e);
+                        throwable[0] = e;
                     }
                 }
-            };
-            progressMonitorDialog.executeProcess(false);
+            });
 
-        } catch (Exception ex) {
+            if (throwable[0] != null) {
+                throw throwable[0];
+            }
+
+        } catch (Throwable ex) {
             ExceptionHandler.process(ex);
+            String message = ex.getMessage();
+            if (StringUtils.isEmpty(message)) {
+                message = Messages.getString("ExceptionDialog.message.empty"); //$NON-NLS-1$
+            }
+            ExceptionMessageDialog.openError(getShell(), Messages.getString("DynamicModuleGroupWizard.title"), message, ex); //$NON-NLS-1$
         }
         if (result.isEmpty()) {
             return null;

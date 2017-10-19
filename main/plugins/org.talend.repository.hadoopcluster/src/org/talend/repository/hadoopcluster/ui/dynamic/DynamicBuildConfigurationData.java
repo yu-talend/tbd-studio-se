@@ -27,8 +27,6 @@ public class DynamicBuildConfigurationData {
 
     private DynamicConfiguration newDistrConfigration;
 
-    private DynamicConfiguration distrConfigOfDynPlugin;
-
     private ActionType actionType;
 
     public IDynamicDistributionsGroup getDynamicDistributionsGroup() {
@@ -61,14 +59,6 @@ public class DynamicBuildConfigurationData {
 
     public void setActionType(ActionType actionType) {
         this.actionType = actionType;
-    }
-
-    public DynamicConfiguration getDistrConfigOfDynPlugin() {
-        return this.distrConfigOfDynPlugin;
-    }
-
-    public void setDistrConfigOfDynPlugin(DynamicConfiguration distrConfigOfDynPlugin) {
-        this.distrConfigOfDynPlugin = distrConfigOfDynPlugin;
     }
 
     public static enum ActionType {
