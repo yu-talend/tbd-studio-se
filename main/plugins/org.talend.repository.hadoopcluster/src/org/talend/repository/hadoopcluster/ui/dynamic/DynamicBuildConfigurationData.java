@@ -29,6 +29,8 @@ public class DynamicBuildConfigurationData {
 
     private ActionType actionType;
 
+    private boolean isReadonly;
+
     public IDynamicDistributionsGroup getDynamicDistributionsGroup() {
         return this.dynamicDistributionsGroup;
     }
@@ -59,6 +61,14 @@ public class DynamicBuildConfigurationData {
 
     public void setActionType(ActionType actionType) {
         this.actionType = actionType;
+    }
+
+    public boolean isReadonly() {
+        return this.isReadonly;
+    }
+
+    public void setReadonly(boolean isReadonly) {
+        this.isReadonly = isReadonly;
     }
 
     public static enum ActionType {

@@ -109,6 +109,10 @@ public class DynamicOptionForm extends AbstractDynamicDistributionForm {
 
     private DynamicConfiguration dynamicConfiguration;
 
+    private List<IDynamicPlugin> allBuildinDynamicPlugins;
+
+    private List<IDynamicPlugin> allCurrentUsersDynamicPlugins;
+
     public DynamicOptionForm(Composite parent, int style, DynamicBuildConfigurationData configData, IDynamicMonitor monitor) {
         super(parent, style, configData);
         createControl();
@@ -351,6 +355,7 @@ public class DynamicOptionForm extends AbstractDynamicDistributionForm {
     private void onNewConfigSelected(boolean selected) {
         if (selected) {
             getDynamicBuildConfigurationData().setActionType(ActionType.NewConfig);
+            getDynamicBuildConfigurationData().setReadonly(false);
         }
 
         // newConfigGroup.setEnabled(selected);
@@ -368,6 +373,7 @@ public class DynamicOptionForm extends AbstractDynamicDistributionForm {
     private void onEditExistingSelected(boolean selected) {
         if (selected) {
             getDynamicBuildConfigurationData().setActionType(ActionType.EditExisting);
+            getDynamicBuildConfigurationData().setReadonly(true);
         }
 
         // editExistingGroup.setEnabled(selected);
@@ -402,7 +408,7 @@ public class DynamicOptionForm extends AbstractDynamicDistributionForm {
                                     .getAttribute(DynamicDistriConfigAdapter.ATTR_FILE_PATH);
                             File file = new File(filePath);
                             file.delete();
-                            DynamicDistributionManager.getInstance().cleanSystemCache();
+                            DynamicDistributionManager.getInstance().resetSystemCache();
                         } catch (Throwable e) {
                             throwable[0] = e;
                         }
@@ -427,6 +433,7 @@ public class DynamicOptionForm extends AbstractDynamicDistributionForm {
     private void onImportConfigSelected(boolean selected) {
         if (selected) {
             getDynamicBuildConfigurationData().setActionType(ActionType.Import);
+            getDynamicBuildConfigurationData().setReadonly(false);
         }
 
         // importConfigGroup.setEnabled(selected);
@@ -500,11 +507,10 @@ public class DynamicOptionForm extends AbstractDynamicDistributionForm {
         /**
          * Can't edit buildin plugins
          */
-        // List<IDynamicPlugin> allBuildinDynamicPlugins =
-        // dynamicDistributionsGroup.getAllBuildinDynamicPlugins(monitor);
-        // if (allBuildinDynamicPlugins != null && !allBuildinDynamicPlugins.isEmpty()) {
-        // distriDynamicPlugins.addAll(allBuildinDynamicPlugins);
-        // }
+        allBuildinDynamicPlugins = dynamicDistributionsGroup.getAllBuildinDynamicPlugins(monitor);
+        if (allBuildinDynamicPlugins != null && !allBuildinDynamicPlugins.isEmpty()) {
+            distriDynamicPlugins.addAll(allBuildinDynamicPlugins);
+        }
 
         List<IDynamicPlugin> allUsersDynamicPlugins = DynamicDistributionManager.getInstance()
                 .getAllUsersDynamicPluginsForProject(ProjectManager.getInstance().getCurrentProject(), monitor);
@@ -519,6 +525,7 @@ public class DynamicOptionForm extends AbstractDynamicDistributionForm {
                 }
             }
         }
+        allCurrentUsersDynamicPlugins = allUsersDynamicPlugins;
 
         Collections.sort(distriDynamicPlugins, Collections.reverseOrder(new DynamicPluginComparator()));
         return distriDynamicPlugins;
@@ -736,8 +743,10 @@ public class DynamicOptionForm extends AbstractDynamicDistributionForm {
         updateDistributionDescription(dynamicPlugin);
 
         getDynamicBuildConfigurationData().setDynamicPlugin(dynamicPlugin);
+        boolean isBuildin = isBuildinDynamicConfiguration(dynamicPlugin);
+        getDynamicBuildConfigurationData().setReadonly(isBuildin);
 
-        deleteExistingConfigBtn.setEnabled(true);
+        deleteExistingConfigBtn.setEnabled(!isBuildin);
 
         return true;
     }
@@ -771,6 +780,16 @@ public class DynamicOptionForm extends AbstractDynamicDistributionForm {
 
         importConfigText.setBackground(null);
         importConfigText.setToolTipText(""); //$NON-NLS-1$
+    }
+
+    private boolean isBuildinDynamicConfiguration(IDynamicPlugin dynamicPlugin) {
+        boolean isBuildin = true;
+
+        if (allBuildinDynamicPlugins != null) {
+            isBuildin = allBuildinDynamicPlugins.contains(dynamicPlugin);
+        }
+
+        return isBuildin;
     }
 
     @Override

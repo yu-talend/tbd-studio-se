@@ -30,6 +30,8 @@ public class DynamicModuleGroupData {
 
     private Map<String, String> mavenUriIdMap;
 
+    private boolean isReadonly;
+
     public IDynamicPlugin getDynamicPlugin() {
         return this.dynamicPlugin;
     }
@@ -60,6 +62,14 @@ public class DynamicModuleGroupData {
 
     public void setMavenUriIdMap(Map<String, String> mavenUriIdMap) {
         this.mavenUriIdMap = mavenUriIdMap;
+    }
+
+    public boolean isReadonly() {
+        return this.isReadonly;
+    }
+
+    public void setReadonly(boolean isReadonly) {
+        this.isReadonly = isReadonly;
     }
 
 }

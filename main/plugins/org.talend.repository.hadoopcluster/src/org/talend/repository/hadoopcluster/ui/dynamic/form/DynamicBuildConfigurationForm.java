@@ -59,6 +59,7 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.PlatformUI;
 import org.talend.commons.exception.ExceptionHandler;
 import org.talend.commons.ui.runtime.exception.ExceptionMessageDialog;
+import org.talend.core.CorePlugin;
 import org.talend.core.runtime.dynamic.DynamicFactory;
 import org.talend.core.runtime.dynamic.IDynamicConfiguration;
 import org.talend.core.runtime.dynamic.IDynamicExtension;
@@ -111,10 +112,13 @@ public class DynamicBuildConfigurationForm extends AbstractDynamicDistributionFo
 
     private ActionType actionTypeCache;
 
+    private boolean isDebugging = false;
+
     public DynamicBuildConfigurationForm(Composite parent, int style, DynamicBuildConfigurationData configData,
             IDynamicMonitor monitor) {
         super(parent, style, configData);
         dynamicPluginMap = new HashMap<>();
+        isDebugging = CorePlugin.getDefault().isDebugging();
         createControl();
         initData();
         addListeners();
@@ -406,7 +410,9 @@ public class DynamicBuildConfigurationForm extends AbstractDynamicDistributionFo
 
                             @Override
                             public void writeMessage(String message) {
-                                System.out.print(message);
+                                if (isDebugging) {
+                                    System.out.print(message);
+                                }
                             }
                         };
                         dMonitor.beginTask(Messages.getString("DynamicDistribution.progress.retrieveBaseJars"), //$NON-NLS-1$
@@ -502,7 +508,9 @@ public class DynamicBuildConfigurationForm extends AbstractDynamicDistributionFo
 
                             @Override
                             public void writeMessage(String message) {
-                                System.out.print(message);
+                                if (isDebugging) {
+                                    System.out.print(message);
+                                }
                             }
                         };
                         dMonitor.beginTask(Messages.getString("DynamicDistribution.progress.fetchVersions"), //$NON-NLS-1$
@@ -548,14 +556,24 @@ public class DynamicBuildConfigurationForm extends AbstractDynamicDistributionFo
     }
 
     private void enableVersionCombo(boolean enable) {
+        if (isReadonly()) {
+            enable = false;
+        }
         hadoopVersionCombo.getControl().setEnabled(enable);
     }
 
     private void enableJarsTable(boolean enable) {
-        baseJarsTable.getControl().setEnabled(enable);
+        // if (isReadonly()) {
+        // enable = false;
+        // }
+        // baseJarsTable.getControl().setEnabled(enable);
+        baseJarsTable.getControl().setEnabled(true);
     }
 
     private void enableRetrieveBaseJarBtn(boolean enable) {
+        if (isReadonly()) {
+            enable = false;
+        }
         retrieveBaseJarsBtn.setEnabled(enable);
         if (!enable) {
             enableJarsTable(enable);
@@ -566,6 +584,7 @@ public class DynamicBuildConfigurationForm extends AbstractDynamicDistributionFo
     public boolean isComplete() {
         try {
             initData();
+            enableUI();
             showMessage(null, WizardPage.INFORMATION);
             if (!checkVersionList()) {
                 return false;
@@ -584,6 +603,12 @@ public class DynamicBuildConfigurationForm extends AbstractDynamicDistributionFo
                 exportConfigBtn.setEnabled(false);
             }
         }
+    }
+
+    private void enableUI() {
+        boolean isReadonly = isReadonly();
+        fetchVersionBtn.setEnabled(!isReadonly);
+        showOnlyCompatibleVersionBtn.setEnabled(!isReadonly);
     }
 
     private boolean checkVersionList() {
@@ -613,6 +638,17 @@ public class DynamicBuildConfigurationForm extends AbstractDynamicDistributionFo
     
     private boolean checkBaseJars() {
         if (!retrieveBaseJarsBtn.isEnabled()) {
+            if (isReadonly()) {
+                String version = getSelectedVersion();
+                if (StringUtils.isNotEmpty(version)) {
+                    IDynamicPlugin generatedDynamicPlugin = dynamicPluginMap.get(version);
+                    if (generatedDynamicPlugin != null) {
+                        getDynamicBuildConfigurationData().setDynamicPlugin(generatedDynamicPlugin);
+                        initTableViewData(generatedDynamicPlugin);
+                    }
+                }
+                enableJarsTable(true);
+            }
             return true;
         }
 
@@ -679,9 +715,16 @@ public class DynamicBuildConfigurationForm extends AbstractDynamicDistributionFo
     @Override
     public boolean canFinish() {
         if (isComplete()) {
+            if (isReadonly()) {
+                return false;
+            }
             return true;
         }
         return false;
+    }
+
+    protected boolean isReadonly() {
+        return getDynamicBuildConfigurationData().isReadonly();
     }
 
     protected class BaseJarTableContentProvider extends ArrayContentProvider {
@@ -696,6 +739,7 @@ public class DynamicBuildConfigurationForm extends AbstractDynamicDistributionFo
         public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
             this.detailLabelProvider.clearBtns();
             this.detailLabelProvider.setDynamicPlugin(curDynamicPlugin);
+            this.detailLabelProvider.setReadonly(isReadonly());
         }
 
     }
@@ -723,6 +767,8 @@ public class DynamicBuildConfigurationForm extends AbstractDynamicDistributionFo
         private IDynamicPlugin tempDynamicPlugin;
 
         private DynamicPluginAdapter pluginAdapter;
+
+        private boolean readonly = false;
 
         @Override
         public String getText(Object element) {
@@ -809,6 +855,14 @@ public class DynamicBuildConfigurationForm extends AbstractDynamicDistributionFo
             mavenUriMap.clear();
         }
 
+        public void setReadonly(boolean readonly) {
+            this.readonly = readonly;
+        }
+
+        public boolean isReadonly() {
+            return readonly;
+        }
+
         public void setDynamicPlugin(IDynamicPlugin dynPlugin) {
 
             if (dynPlugin == null) {
@@ -849,6 +903,7 @@ public class DynamicBuildConfigurationForm extends AbstractDynamicDistributionFo
                     groupData.setGroupTemplateId(groupTemplateId);
                     groupData.setPluginAdapter(pluginAdapter);
                     groupData.setMavenUriIdMap(new HashMap<>(mavenUriMap));
+                    groupData.setReadonly(isReadonly());
                     DynamicModuleGroupWizard wizard = new DynamicModuleGroupWizard(groupData);
                     WizardDialog wizardDialog = new WizardDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
                             wizard);

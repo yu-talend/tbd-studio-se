@@ -147,6 +147,7 @@ public class ModuleGroupDetailsForm extends AbstractModuleGroupDetailsForm {
         formData.right = new FormAttachment(deleteBtn, -1 * ALIGN_HORIZON, SWT.LEFT);
         formData.width = btnWidth;
         addBtn.setLayoutData(formData);
+        addBtn.setEnabled(!isReadonly());
 
     }
 
@@ -179,11 +180,11 @@ public class ModuleGroupDetailsForm extends AbstractModuleGroupDetailsForm {
                 if (selection != null) {
                     Object firstElement = selection.getFirstElement();
                     if (firstElement != null) {
-                        deleteBtn.setEnabled(true);
+                        enableDeleteBtn(true);
                         return;
                     }
                 }
-                deleteBtn.setEnabled(false);
+                enableDeleteBtn(false);
             }
         });
 
@@ -337,12 +338,36 @@ public class ModuleGroupDetailsForm extends AbstractModuleGroupDetailsForm {
 
     @Override
     public boolean canFinish() {
-        return isComplete();
+        if (isComplete()) {
+            if (isReadonly()) {
+                return false;
+            }
+            return true;
+        }
+        return false;
     }
 
     @Override
     public boolean canFlipToNextPage() {
         return false;
+    }
+
+    protected boolean isReadonly() {
+        return getModuleGroupData().isReadonly();
+    }
+
+    protected void enableAddBtn(boolean enable) {
+        if (isReadonly()) {
+            enable = false;
+        }
+        addBtn.setEnabled(enable);
+    }
+
+    protected void enableDeleteBtn(boolean enable) {
+        if (isReadonly()) {
+            enable = false;
+        }
+        deleteBtn.setEnabled(enable);
     }
 
     protected String getMavenUri(Object element) {
@@ -395,7 +420,12 @@ public class ModuleGroupDetailsForm extends AbstractModuleGroupDetailsForm {
                     return message;
                 } else {
                     String mavenUri = getMavenUri(element);
-                    return Messages.getString("ModuleGroupDetailsForm.groupDetails.tooltip.click2Edit", mavenUri); //$NON-NLS-1$
+                    if (isReadonly()) {
+                        message = mavenUri;
+                    } else {
+                        message = Messages.getString("ModuleGroupDetailsForm.groupDetails.tooltip.click2Edit", mavenUri); //$NON-NLS-1$
+                    }
+                    return message;
                 }
             } catch (Exception e) {
                 ExceptionHandler.process(e);
@@ -451,6 +481,9 @@ public class ModuleGroupDetailsForm extends AbstractModuleGroupDetailsForm {
 
         @Override
         protected boolean canEdit(Object element) {
+            if (isReadonly()) {
+                return false;
+            }
             return true;
         }
 
