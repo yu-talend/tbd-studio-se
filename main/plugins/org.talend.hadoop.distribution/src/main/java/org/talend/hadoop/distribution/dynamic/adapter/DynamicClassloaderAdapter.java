@@ -22,9 +22,10 @@ import org.talend.hadoop.distribution.dynamic.DynamicConfiguration;
 import org.talend.hadoop.distribution.dynamic.bean.ClassLoaderBean;
 import org.talend.hadoop.distribution.dynamic.bean.TemplateBean;
 import org.talend.hadoop.distribution.dynamic.util.DynamicDistributionUtils;
+import org.talend.hadoop.distribution.i18n.Messages;
 
 /**
- * DOC cmeng  class global comment. Detailled comment
+ * DOC cmeng class global comment. Detailled comment
  */
 public class DynamicClassloaderAdapter extends AbstractDynamicAdapter {
 
@@ -48,7 +49,12 @@ public class DynamicClassloaderAdapter extends AbstractDynamicAdapter {
     }
 
     public IDynamicConfiguration adapt(IDynamicMonitor monitor) throws Exception {
+        DynamicDistributionUtils.checkCancelOrNot(monitor);
         resolve();
+        if (monitor != null) {
+            monitor.setTaskName(
+                    Messages.getString("DynamicClassloaderAdapter.monitor.buildClassLoader", classLoaderBean.getId())); //$NON-NLS-1$
+        }
 
         IDynamicConfiguration classLoader = DynamicFactory.getInstance().createDynamicConfiguration();
         classLoader.setConfigurationName(TAG_NAME);
@@ -57,8 +63,8 @@ public class DynamicClassloaderAdapter extends AbstractDynamicAdapter {
         String moduleGroupId = classLoaderBean.getModuleGroup();
         DynamicModuleGroupAdapter dynamicModuleGroupAdapter = moduleGroupBeanAdapterMap.get(moduleGroupId);
         if (dynamicModuleGroupAdapter == null) {
-            throw new Exception("Can't find module group which id is " + moduleGroupId + ", if it is not mistake, please check "
-                    + DynamicModuleGroupAdapter.class.getName());
+            throw new Exception(Messages.getString("DynamicClassloaderAdapter.exception.noModuleAdapterFound", moduleGroupId, //$NON-NLS-1$
+                    DynamicModuleGroupAdapter.class.getName()));
         }
         classLoader.setAttribute(ATTR_MODULE_GROUP_TEMPLATE_ID, moduleGroupId);
 

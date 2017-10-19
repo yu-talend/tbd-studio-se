@@ -18,10 +18,12 @@ import org.talend.core.runtime.dynamic.IDynamicPluginConfiguration;
 import org.talend.designer.maven.aether.IDynamicMonitor;
 import org.talend.hadoop.distribution.dynamic.DynamicConfiguration;
 import org.talend.hadoop.distribution.dynamic.bean.TemplateBean;
+import org.talend.hadoop.distribution.dynamic.util.DynamicDistributionUtils;
+import org.talend.hadoop.distribution.i18n.Messages;
 import org.talend.repository.ProjectManager;
 
 /**
- * DOC cmeng  class global comment. Detailled comment
+ * DOC cmeng class global comment. Detailled comment
  */
 public class DynamicDistriConfigAdapter extends AbstractDynamicAdapter {
 
@@ -34,6 +36,7 @@ public class DynamicDistriConfigAdapter extends AbstractDynamicAdapter {
     }
 
     public IDynamicPluginConfiguration adapt(IDynamicMonitor monitor) throws Exception {
+        DynamicDistributionUtils.checkCancelOrNot(monitor);
         resolve();
 
         IDynamicPluginConfiguration pluginConfiguration = DynamicFactory.getInstance().createDynamicPluginConfiguration();
@@ -46,7 +49,8 @@ public class DynamicDistriConfigAdapter extends AbstractDynamicAdapter {
         String templateId = templateBean.getTemplateId();
 
         if (!StringUtils.equals(distribution, configuration.getDistribution())) {
-            throw new Exception("Different distribution: " + distribution + "<>" + configuration.getDistribution());
+            throw new Exception(
+                    Messages.getString("DynamicDistriConfigAdapter.diffDistri", distribution, configuration.getDistribution())); //$NON-NLS-1$
         }
 
         String projectTechnicalName = ProjectManager.getInstance().getCurrentProject().getTechnicalLabel();

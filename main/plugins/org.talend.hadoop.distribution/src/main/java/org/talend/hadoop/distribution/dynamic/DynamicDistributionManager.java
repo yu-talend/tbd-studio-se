@@ -185,7 +185,7 @@ public class DynamicDistributionManager {
         return usersPluginsCache;
     }
 
-    protected List<IDynamicPlugin> getAllUsersDynamicPluginsForProject(Project project, IDynamicMonitor monitor)
+    public List<IDynamicPlugin> getAllUsersDynamicPluginsForProject(Project project, IDynamicMonitor monitor)
             throws Exception {
         IProject eProject = ResourceUtils.getProject(project);
         IFolder usersFolder = ResourceUtils.getFolder(eProject,

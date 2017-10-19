@@ -21,6 +21,7 @@ import org.apache.commons.lang.StringUtils;
 import org.talend.core.model.general.ModuleNeeded;
 import org.talend.core.runtime.dynamic.DynamicFactory;
 import org.talend.core.runtime.dynamic.IDynamicConfiguration;
+import org.talend.core.runtime.maven.MavenUrlHelper;
 import org.talend.designer.maven.aether.IDynamicMonitor;
 import org.talend.designer.maven.aether.node.DependencyNode;
 import org.talend.designer.maven.aether.node.ExclusionNode;
@@ -31,9 +32,10 @@ import org.talend.hadoop.distribution.dynamic.bean.ModuleBean;
 import org.talend.hadoop.distribution.dynamic.bean.TemplateBean;
 import org.talend.hadoop.distribution.dynamic.resolver.IDependencyResolver;
 import org.talend.hadoop.distribution.dynamic.util.DynamicDistributionUtils;
+import org.talend.hadoop.distribution.i18n.Messages;
 
 /**
- * DOC cmeng  class global comment. Detailled comment
+ * DOC cmeng class global comment. Detailled comment
  */
 public class DynamicModuleAdapter extends AbstractDynamicAdapter {
 
@@ -80,8 +82,17 @@ public class DynamicModuleAdapter extends AbstractDynamicAdapter {
     }
 
     public List<IDynamicConfiguration> adapt(IDynamicMonitor monitor) throws Exception {
+        DynamicDistributionUtils.checkCancelOrNot(monitor);
         resolve();
-        
+        if (monitor != null) {
+            String mvnUri = moduleBean.getMvnUri();
+            if (StringUtils.isEmpty(mvnUri)) {
+                mvnUri = getMvnUri();
+            }
+            monitor.setTaskName(
+                    Messages.getString("DynamicModuleAdapter.monitor.buildModule", moduleBean.getId(), mvnUri)); //$NON-NLS-1$
+        }
+
         TemplateBean templateBean = getTemplateBean();
         DynamicConfiguration configuration = getConfiguration();
         String distribution = configuration.getDistribution();
@@ -120,20 +131,21 @@ public class DynamicModuleAdapter extends AbstractDynamicAdapter {
             List<ExclusionBean> exclusions = moduleBean.getExclusions();
             if (exclusions != null && !exclusions.isEmpty()) {
                 throw new UnsupportedOperationException(
-                        "Don't support to add exclusions for " + type + ", currently only support BASE type");
+                        Messages.getString("DynamicModuleAdapter.exception.exclusion.unsupport", type)); //$NON-NLS-1$
             }
 
             String jarName = moduleBean.getJarName();
             ModuleNeeded moduleNeeded = existingModuleMap.get(jarName);
             if (moduleNeeded == null) {
-                throw new UnsupportedOperationException("can't find existing library: " + jarName);
+                throw new UnsupportedOperationException(
+                        Messages.getString("DynamicModuleAdapter.exception.reference.notFound", jarName)); //$NON-NLS-1$
             }
             runtimeIds.add(moduleNeeded.getId());
         } else if (ModuleBean.TYPE_STANDARD.equalsIgnoreCase(type)) {
             List<ExclusionBean> exclusions = moduleBean.getExclusions();
             if (exclusions != null && !exclusions.isEmpty()) {
                 throw new UnsupportedOperationException(
-                        "Don't support to add exclusions for " + type + ", currently only support BASE type");
+                        Messages.getString("DynamicModuleAdapter.exception.exclusion.unsupport", type)); //$NON-NLS-1$
             }
 
             String beanId = moduleBean.getId();
@@ -327,7 +339,37 @@ public class DynamicModuleAdapter extends AbstractDynamicAdapter {
     }
 
     private String getRegistedModulesKey(String groupId, String artifactId, String version, String classifier) {
-        return groupId + "/" + artifactId + "/" + version + "/" + classifier;
+        return groupId + "/" + artifactId + "/" + version + "/" + classifier; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    }
+
+    private String getMvnUri() {
+        String mvnUri = null;
+        try {
+            String repository = getTemplateBean().getRepository();
+            String group = moduleBean.getGroupId();
+            String artifact = moduleBean.getArtifactId();
+            String vertion = moduleBean.getVersion();
+            String classifier = moduleBean.getClassifier();
+            if (StringUtils.isEmpty(repository)) {
+                repository = null;
+            }
+            if (StringUtils.isEmpty(group)) {
+                group = null;
+            }
+            if (StringUtils.isEmpty(artifact)) {
+                artifact = null;
+            }
+            if (StringUtils.isEmpty(vertion)) {
+                vertion = null;
+            }
+            if (StringUtils.isEmpty(classifier)) {
+                classifier = null;
+            }
+            mvnUri = MavenUrlHelper.generateMvnUrl(repository, group, artifact, vertion, null, classifier);
+        } catch (Exception e) {
+            // don't care
+        }
+        return mvnUri;
     }
 
     public List<String> getRuntimeIds() {

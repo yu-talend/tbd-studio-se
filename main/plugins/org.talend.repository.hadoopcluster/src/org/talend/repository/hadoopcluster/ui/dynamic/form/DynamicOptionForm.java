@@ -63,6 +63,7 @@ import org.talend.hadoop.distribution.dynamic.DynamicDistributionManager;
 import org.talend.hadoop.distribution.dynamic.IDynamicDistributionsGroup;
 import org.talend.hadoop.distribution.dynamic.adapter.DynamicDistriConfigAdapter;
 import org.talend.hadoop.distribution.dynamic.comparator.DynamicPluginComparator;
+import org.talend.repository.ProjectManager;
 import org.talend.repository.RepositoryWorkUnit;
 import org.talend.repository.hadoopcluster.i18n.Messages;
 import org.talend.repository.hadoopcluster.ui.dynamic.DynamicBuildConfigurationData;
@@ -505,7 +506,8 @@ public class DynamicOptionForm extends AbstractDynamicDistributionForm {
         // distriDynamicPlugins.addAll(allBuildinDynamicPlugins);
         // }
 
-        List<IDynamicPlugin> allUsersDynamicPlugins = DynamicDistributionManager.getInstance().getAllUsersDynamicPlugins(monitor);
+        List<IDynamicPlugin> allUsersDynamicPlugins = DynamicDistributionManager.getInstance()
+                .getAllUsersDynamicPluginsForProject(ProjectManager.getInstance().getCurrentProject(), monitor);
         if (allUsersDynamicPlugins != null && !allUsersDynamicPlugins.isEmpty()) {
             List<IDynamicPlugin> filterDynamicPlugins = dynamicDistributionsGroup.filterDynamicPlugins(allUsersDynamicPlugins,
                     monitor);

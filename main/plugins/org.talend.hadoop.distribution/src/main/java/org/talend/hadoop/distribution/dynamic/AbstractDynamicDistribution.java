@@ -44,6 +44,7 @@ import org.talend.hadoop.distribution.dynamic.adapter.DynamicTemplateAdapter;
 import org.talend.hadoop.distribution.dynamic.bean.TemplateBean;
 import org.talend.hadoop.distribution.dynamic.resolver.DependencyResolverFactory;
 import org.talend.hadoop.distribution.dynamic.resolver.IDependencyResolver;
+import org.talend.hadoop.distribution.dynamic.util.DynamicDistributionUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -148,6 +149,7 @@ public abstract class AbstractDynamicDistribution implements IDynamicDistributio
             templateBeanCompatibleVersionMap = new HashMap<>();
             Map<String, List<String>> fetchedVersionsMap = new HashMap<>();
             for (TemplateBean templateBean : templates) {
+                DynamicDistributionUtils.checkCancelOrNot(monitor);
                 String remoteRepositoryUrl = templateBean.getRepository();
                 List<String> allHadoopVersions = fetchedVersionsMap.get(remoteRepositoryUrl);
                 if (allHadoopVersions == null) {

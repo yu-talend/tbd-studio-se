@@ -53,6 +53,7 @@ public class DynamicLibraryNeededExtensionAdaper extends DynamicExtensionAdapter
     }
 
     public IDynamicExtension adapt(IDynamicMonitor monitor) throws Exception {
+        DynamicDistributionUtils.checkCancelOrNot(monitor);
         resolve();
 
         TemplateBean templateBean = getTemplateBean();
@@ -73,6 +74,7 @@ public class DynamicLibraryNeededExtensionAdaper extends DynamicExtensionAdapter
         if (modules != null) {
             Set<String> registedModules = new LinkedHashSet<>();
             for (ModuleBean moduleBean : modules) {
+                DynamicDistributionUtils.checkCancelOrNot(monitor);
                 DynamicModuleAdapter dynamicModuleAdapter = new DynamicModuleAdapter(templateBean, configuration, moduleBean,
                         dependencyResolver, registedModules);
                 List<IDynamicConfiguration> librariesNeeded = dynamicModuleAdapter.adapt(monitor);
@@ -87,6 +89,7 @@ public class DynamicLibraryNeededExtensionAdaper extends DynamicExtensionAdapter
         List<ModuleGroupBean> moduleGroups = templateBean.getModuleGroups();
         if (moduleGroups != null) {
             for (ModuleGroupBean moduleGroupBean : moduleGroups) {
+                DynamicDistributionUtils.checkCancelOrNot(monitor);
                 DynamicModuleGroupAdapter libNeededGroupAdapter = new DynamicModuleGroupAdapter(templateBean, configuration,
                         moduleGroupBean, moduleBeanAdapterMap);
                 IDynamicConfiguration dynamicModuleGroup = libNeededGroupAdapter.adapt(monitor);

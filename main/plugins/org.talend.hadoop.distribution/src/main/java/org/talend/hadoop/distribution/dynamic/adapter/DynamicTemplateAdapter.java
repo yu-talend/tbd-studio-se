@@ -44,6 +44,7 @@ public class DynamicTemplateAdapter extends AbstractDynamicAdapter {
     }
 
     public void adapt(IDynamicMonitor monitor) throws Exception {
+        DynamicDistributionUtils.checkCancelOrNot(monitor);
         resolve();
 
         TemplateBean templateBean = getTemplateBean();

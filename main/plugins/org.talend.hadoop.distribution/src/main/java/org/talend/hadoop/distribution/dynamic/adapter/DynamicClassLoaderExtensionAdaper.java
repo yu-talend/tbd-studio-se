@@ -42,6 +42,7 @@ public class DynamicClassLoaderExtensionAdaper extends DynamicExtensionAdapter {
     }
 
     public IDynamicExtension adapt(IDynamicMonitor monitor) throws Exception {
+        DynamicDistributionUtils.checkCancelOrNot(monitor);
         resolve();
 
         TemplateBean templateBean = getTemplateBean();
@@ -60,6 +61,7 @@ public class DynamicClassLoaderExtensionAdaper extends DynamicExtensionAdapter {
         List<ClassLoaderBean> classLoaders = templateBean.getClassLoaders();
         if (classLoaders != null) {
             for (ClassLoaderBean classLoader : classLoaders) {
+                DynamicDistributionUtils.checkCancelOrNot(monitor);
                 DynamicClassloaderAdapter classLoaderAdapter = new DynamicClassloaderAdapter(templateBean, configuration,
                         classLoader, moduleGroupBeanAdapterMap);
                 IDynamicConfiguration dynamicClassLoader = classLoaderAdapter.adapt(monitor);

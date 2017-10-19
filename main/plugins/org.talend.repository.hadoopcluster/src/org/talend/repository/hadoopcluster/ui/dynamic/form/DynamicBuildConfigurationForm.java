@@ -64,6 +64,7 @@ import org.talend.core.runtime.dynamic.IDynamicConfiguration;
 import org.talend.core.runtime.dynamic.IDynamicExtension;
 import org.talend.core.runtime.dynamic.IDynamicPlugin;
 import org.talend.core.runtime.dynamic.IDynamicPluginConfiguration;
+import org.talend.designer.maven.aether.AbsDynamicProgressMonitor;
 import org.talend.designer.maven.aether.DummyDynamicMonitor;
 import org.talend.designer.maven.aether.IDynamicMonitor;
 import org.talend.designer.maven.aether.comparator.VersionStringComparator;
@@ -401,13 +402,15 @@ public class DynamicBuildConfigurationForm extends AbstractDynamicDistributionFo
                 @Override
                 public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
                     try {
-                        IDynamicMonitor dMonitor = new DummyDynamicMonitor() {
+                        IDynamicMonitor dMonitor = new AbsDynamicProgressMonitor(monitor) {
 
                             @Override
                             public void writeMessage(String message) {
-                                System.out.println(message);
+                                System.out.print(message);
                             }
                         };
+                        dMonitor.beginTask(Messages.getString("DynamicDistribution.progress.retrieveBaseJars"), //$NON-NLS-1$
+                                IDynamicMonitor.UNKNOWN);
                         result[0] = dynDistrGroup.buildDynamicPlugin(dMonitor, dynConfiguration);
                     } catch (Throwable e) {
                         throwable[0] = e;
@@ -495,8 +498,15 @@ public class DynamicBuildConfigurationForm extends AbstractDynamicDistributionFo
                 @Override
                 public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
                     try {
-                        IDynamicMonitor dMonitor = new DummyDynamicMonitor();
+                        IDynamicMonitor dMonitor = new AbsDynamicProgressMonitor(monitor) {
 
+                            @Override
+                            public void writeMessage(String message) {
+                                System.out.print(message);
+                            }
+                        };
+                        dMonitor.beginTask(Messages.getString("DynamicDistribution.progress.fetchVersions"), //$NON-NLS-1$
+                                IDynamicMonitor.UNKNOWN);
                         List<String> version = null;
                         if (showOnlyCompatibleVersions) {
                             version = dynDistrGroup.getCompatibleVersions(dMonitor);

@@ -394,7 +394,8 @@ public class ModuleGroupDetailsForm extends AbstractModuleGroupDetailsForm {
                 if (message != null) {
                     return message;
                 } else {
-                    return Messages.getString("ModuleGroupDetailsForm.groupDetails.tooltip.click2Edit"); //$NON-NLS-1$
+                    String mavenUri = getMavenUri(element);
+                    return Messages.getString("ModuleGroupDetailsForm.groupDetails.tooltip.click2Edit", mavenUri); //$NON-NLS-1$
                 }
             } catch (Exception e) {
                 ExceptionHandler.process(e);
