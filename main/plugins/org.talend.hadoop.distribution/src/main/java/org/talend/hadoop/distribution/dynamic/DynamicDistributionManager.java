@@ -23,6 +23,8 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.talend.commons.exception.ExceptionHandler;
 import org.talend.commons.utils.workbench.resources.ResourceUtils;
 import org.talend.core.GlobalServiceRegister;
@@ -32,6 +34,8 @@ import org.talend.core.runtime.dynamic.DynamicFactory;
 import org.talend.core.runtime.dynamic.DynamicServiceUtil;
 import org.talend.core.runtime.dynamic.IDynamicPlugin;
 import org.talend.core.runtime.dynamic.IDynamicPluginConfiguration;
+import org.talend.core.runtime.hd.IDynamicDistributionManager;
+import org.talend.designer.maven.aether.AbsDynamicProgressMonitor;
 import org.talend.designer.maven.aether.IDynamicMonitor;
 import org.talend.hadoop.distribution.dynamic.adapter.DynamicDistriConfigAdapter;
 import org.talend.hadoop.distribution.dynamic.cdh.DynamicCDHDistributionsGroup;
@@ -40,13 +44,9 @@ import org.talend.repository.ProjectManager;
 import org.talend.repository.model.RepositoryConstants;
 
 /**
- * DOC cmeng  class global comment. Detailled comment
+ * DOC cmeng class global comment. Detailled comment
  */
-public class DynamicDistributionManager {
-
-    public static final String USERS_DISTRIBUTIONS_ROOT_FOLDER = "dynamicDistributions"; //$NON-NLS-1$
-
-    public static final String DISTRIBUTION_FILE_EXTENSION = "json"; //$NON-NLS-1$
+public class DynamicDistributionManager implements IDynamicDistributionManager {
 
     private static DynamicDistributionManager instance;
 
@@ -56,8 +56,10 @@ public class DynamicDistributionManager {
 
     private String usersPluginsCacheVersion;
 
+    private boolean isLoaded;
+
     private DynamicDistributionManager() {
-        // nothing to do
+        isLoaded = false;
     }
 
     public static DynamicDistributionManager getInstance() {
@@ -108,9 +110,7 @@ public class DynamicDistributionManager {
             String filePath = (String) obj;
             if (StringUtils.isEmpty(filePath)) {
                 IProject eProject = ResourceUtils.getProject(ProjectManager.getInstance().getCurrentProject());
-                IFolder usersFolder = ResourceUtils.getFolder(eProject,
-                        RepositoryConstants.SETTING_DIRECTORY + "/" + getUsersFolderPath(), //$NON-NLS-1$
-                        false);
+                IFolder usersFolder = ResourceUtils.getFolder(eProject, getUserStoragePath(), false);
                 if (usersFolder == null || !usersFolder.exists()) {
                     ResourceUtils.createFolder(usersFolder);
                 }
@@ -185,12 +185,9 @@ public class DynamicDistributionManager {
         return usersPluginsCache;
     }
 
-    public List<IDynamicPlugin> getAllUsersDynamicPluginsForProject(Project project, IDynamicMonitor monitor)
-            throws Exception {
+    public List<IDynamicPlugin> getAllUsersDynamicPluginsForProject(Project project, IDynamicMonitor monitor) throws Exception {
         IProject eProject = ResourceUtils.getProject(project);
-        IFolder usersFolder = ResourceUtils.getFolder(eProject,
-                RepositoryConstants.SETTING_DIRECTORY + "/" + getUsersFolderPath(), //$NON-NLS-1$
-                false);
+        IFolder usersFolder = ResourceUtils.getFolder(eProject, getUserStoragePath(), false);
         if (usersFolder == null || !usersFolder.exists()) {
             return null;
         }
@@ -215,7 +212,7 @@ public class DynamicDistributionManager {
         }
         return dynamicPlugins;
     }
-    
+
     private List<String> getAllFiles(File file) throws Exception {
         List<String> fileList = new ArrayList<>();
 
@@ -246,6 +243,7 @@ public class DynamicDistributionManager {
 
     public void registAllBuildin(IDynamicMonitor monitor, boolean cleanCache) throws Exception {
 
+        isLoaded = true;
         List<IDynamicDistributionsGroup> dynDistriGroups = getDynamicDistributionsGroups();
 
         if (dynDistriGroups == null || dynDistriGroups.isEmpty()) {
@@ -268,6 +266,7 @@ public class DynamicDistributionManager {
 
     public void registAllUsers(IDynamicMonitor monitor, boolean cleanCache) throws Exception {
 
+        isLoaded = true;
         List<IDynamicPlugin> allUsersDynamicPlugins = getAllUsersDynamicPlugins(monitor);
         if (allUsersDynamicPlugins == null || allUsersDynamicPlugins.isEmpty()) {
             return;
@@ -382,6 +381,24 @@ public class DynamicDistributionManager {
         return dynDistriGroupMap.get(distribution);
     }
 
+    @Override
+    public void reloadAllUsersDynamicDistributions(IProgressMonitor monitor) throws Exception {
+        if (monitor == null) {
+            monitor = new NullProgressMonitor();
+        }
+        IDynamicMonitor dynamicMonitor = new AbsDynamicProgressMonitor(monitor) {
+
+            @Override
+            public void writeMessage(String message) {
+                // nothing to do
+            }
+        };
+        unregistAllUsers(dynamicMonitor, false);
+        usersPluginsCache = null;
+        registAllUsers(dynamicMonitor, false);
+        resetSystemCache();
+    }
+
     public void resetSystemCache() throws Exception {
 
         // 1. reset modulesNeeded cache
@@ -393,7 +410,21 @@ public class DynamicDistributionManager {
         return (ILibrariesService) GlobalServiceRegister.getDefault().getService(ILibrariesService.class);
     }
 
-    private String getUsersFolderPath() {
+    @Override
+    public boolean isLoaded() {
+        return this.isLoaded;
+    }
+
+    public void setLoaded(boolean isLoaded) {
+        this.isLoaded = isLoaded;
+    }
+
+    @Override
+    public String getUserStoragePath() {
+        return RepositoryConstants.SETTING_DIRECTORY + "/" + getFolderPath(); //$NON-NLS-1$
+    }
+
+    private String getFolderPath() {
         return USERS_DISTRIBUTIONS_ROOT_FOLDER;
     }
 }
