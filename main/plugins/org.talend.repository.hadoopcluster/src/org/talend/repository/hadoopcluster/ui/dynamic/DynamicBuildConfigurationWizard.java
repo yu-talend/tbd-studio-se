@@ -91,7 +91,7 @@ public class DynamicBuildConfigurationWizard extends Wizard {
                         };
                         IDynamicPlugin dynamicPlugin = configData.getDynamicPlugin();
                         if (dynamicPlugin != null) {
-                            dMonitor.beginTask(Messages.getString("DynamicBuildConfigurationForm.finish.progress.save"), //$NON-NLS-1$
+                            dMonitor.beginTask(Messages.getString("DynamicBuildConfigurationWizard.finish.progress.save"), //$NON-NLS-1$
                                     IDynamicMonitor.UNKNOWN);
                             DynamicPluginAdapter pluginAdapter = new DynamicPluginAdapter(dynamicPlugin);
                             pluginAdapter.cleanUnusedAndRefresh();
@@ -112,14 +112,15 @@ public class DynamicBuildConfigurationWizard extends Wizard {
 
                             });
 
-                            dMonitor.setTaskName(Messages.getString("DynamicBuildConfigurationForm.finish.progress.regist")); //$NON-NLS-1$
+                            dMonitor.setTaskName(Messages.getString("DynamicBuildConfigurationWizard.finish.progress.regist")); //$NON-NLS-1$
                             ActionType actionType = configData.getActionType();
                             if (ActionType.EditExisting.equals(actionType)) {
                                 configData.getDynamicDistributionsGroup().unregist(fDynPlugin, dMonitor);
                             }
                             configData.getDynamicDistributionsGroup().regist(fDynPlugin, dMonitor);
 
-                            dMonitor.setTaskName(Messages.getString("DynamicBuildConfigurationForm.finish.progress.resetCache")); //$NON-NLS-1$
+                            dMonitor.setTaskName(
+                                    Messages.getString("DynamicBuildConfigurationWizard.finish.progress.resetCache")); //$NON-NLS-1$
                             DynamicDistributionManager.getInstance().resetSystemCache();
                         }
                     } catch (Throwable ex) {

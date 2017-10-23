@@ -36,6 +36,7 @@ import org.talend.core.runtime.dynamic.IDynamicPlugin;
 import org.talend.core.runtime.dynamic.IDynamicPluginConfiguration;
 import org.talend.core.runtime.hd.IDynamicDistributionManager;
 import org.talend.designer.maven.aether.AbsDynamicProgressMonitor;
+import org.talend.designer.maven.aether.DummyDynamicMonitor;
 import org.talend.designer.maven.aether.IDynamicMonitor;
 import org.talend.hadoop.distribution.dynamic.adapter.DynamicDistriConfigAdapter;
 import org.talend.hadoop.distribution.dynamic.cdh.DynamicCDHDistributionsGroup;
@@ -55,6 +56,10 @@ public class DynamicDistributionManager implements IDynamicDistributionManager {
     private Map<String, IDynamicDistributionsGroup> dynDistriGroupMap;
 
     private String usersPluginsCacheVersion;
+
+    private Map<String, IDynamicPlugin> idDistributionMap;
+
+    private String idDistributionMapCacheVersion;
 
     private boolean isLoaded;
 
@@ -397,6 +402,41 @@ public class DynamicDistributionManager implements IDynamicDistributionManager {
         usersPluginsCache = null;
         registAllUsers(dynamicMonitor, false);
         resetSystemCache();
+    }
+
+    @Override
+    public boolean isBuildinDistribution(String dynamicDistributionId) {
+        try {
+            return getIdDynamicDistributionMap().containsKey(dynamicDistributionId);
+        } catch (Exception e) {
+            ExceptionHandler.process(e);
+        }
+        return false;
+    }
+
+    private Map<String, IDynamicPlugin> getIdDynamicDistributionMap() throws Exception {
+        if (idDistributionMap != null) {
+            String systemCacheVersion = HadoopDistributionsHelper.getCacheVersion();
+            if (StringUtils.equals(systemCacheVersion, idDistributionMapCacheVersion)) {
+                return idDistributionMap;
+            }
+        }
+        idDistributionMap = new HashMap<>();
+        idDistributionMapCacheVersion = HadoopDistributionsHelper.getCacheVersion();
+
+        IDynamicMonitor monitor = new DummyDynamicMonitor();
+        List<IDynamicPlugin> allBuildinDynamicPlugins = getAllBuildinDynamicPlugins(monitor);
+        if (allBuildinDynamicPlugins != null && !allBuildinDynamicPlugins.isEmpty()) {
+            for (IDynamicPlugin dynamicPlugin : allBuildinDynamicPlugins) {
+                IDynamicPluginConfiguration pluginConfiguration = dynamicPlugin.getPluginConfiguration();
+                if (pluginConfiguration != null) {
+                    String id = pluginConfiguration.getId();
+                    idDistributionMap.put(id, dynamicPlugin);
+                }
+            }
+        }
+
+        return idDistributionMap;
     }
 
     public void resetSystemCache() throws Exception {

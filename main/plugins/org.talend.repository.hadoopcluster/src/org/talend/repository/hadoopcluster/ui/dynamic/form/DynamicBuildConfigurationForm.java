@@ -252,7 +252,8 @@ public class DynamicBuildConfigurationForm extends AbstractDynamicDistributionFo
                 hadoopVersionCombo.setInput(versionList);
                 hadoopVersionCombo.setSelection(new StructuredSelection(version));
             } else if (ActionType.NewConfig.equals(actionType)) {
-                // nothing to do
+                List<String> versionList = new ArrayList<>();
+                hadoopVersionCombo.setInput(versionList);
             }
         } else {
             boolean dataChanged = false;
@@ -621,6 +622,7 @@ public class DynamicBuildConfigurationForm extends AbstractDynamicDistributionFo
             String errorMessage = Messages.getString("DynamicBuildConfigurationForm.check.versionList.empty", //$NON-NLS-1$
                     fetchVersionBtn.getText());
             fetchVersionBtn.getShell().setDefaultButton(fetchVersionBtn);
+            baseJarsTable.setInput(null);
             showMessage(errorMessage, WizardPage.ERROR);
             return false;
         }

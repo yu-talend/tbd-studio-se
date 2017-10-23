@@ -13,6 +13,7 @@
 package org.talend.repository.hadoopcluster.ui.dynamic.form;
 
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -25,7 +26,10 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -56,6 +60,7 @@ import org.talend.core.runtime.dynamic.DynamicFactory;
 import org.talend.core.runtime.dynamic.DynamicServiceUtil;
 import org.talend.core.runtime.dynamic.IDynamicPlugin;
 import org.talend.core.runtime.dynamic.IDynamicPluginConfiguration;
+import org.talend.designer.maven.aether.AbsDynamicProgressMonitor;
 import org.talend.designer.maven.aether.DummyDynamicMonitor;
 import org.talend.designer.maven.aether.IDynamicMonitor;
 import org.talend.hadoop.distribution.dynamic.DynamicConfiguration;
@@ -387,37 +392,10 @@ public class DynamicOptionForm extends AbstractDynamicDistributionForm {
                 Messages.getString("DynamicOptionForm.form.deleteExistingConfig.confirm.dialog.message")); //$NON-NLS-1$
         if (agree) {
             try {
-                final IDynamicMonitor monitor = new DummyDynamicMonitor();
-
                 IStructuredSelection selection = (IStructuredSelection) existingConfigsComboViewer.getSelection();
                 final IDynamicPlugin dynamicPlugin = (IDynamicPlugin) selection.getFirstElement();
-                final Throwable throwable[] = new Throwable[1];
-                ProxyRepositoryFactory.getInstance().executeRepositoryWorkUnit(new RepositoryWorkUnit<Boolean>(
-                        Messages.getString("DynamicOptionForm.form.deleteExistingConfig.workunit.title")) { //$NON-NLS-1$
-
-                    @Override
-                    protected void run() throws LoginException, PersistenceException {
-                        try {
-                            IDynamicPluginConfiguration pluginConfiguration = dynamicPlugin.getPluginConfiguration();
-                            String distribution = pluginConfiguration.getDistribution();
-                            IDynamicDistributionsGroup dynamicDistributionGroup = DynamicDistributionManager.getInstance()
-                                    .getDynamicDistributionGroup(distribution);
-                            dynamicDistributionGroup.unregist(dynamicPlugin, monitor);
-
-                            String filePath = (String) pluginConfiguration
-                                    .getAttribute(DynamicDistriConfigAdapter.ATTR_FILE_PATH);
-                            File file = new File(filePath);
-                            file.delete();
-                            DynamicDistributionManager.getInstance().resetSystemCache();
-                        } catch (Throwable e) {
-                            throwable[0] = e;
-                        }
-                    }
-
-                });
-                if (throwable[0] != null) {
-                    throw throwable[0];
-                }
+                doDelete(dynamicPlugin);
+                IDynamicMonitor monitor = new DummyDynamicMonitor();
                 refreshExistingConfigsCombo(monitor, getDynamicBuildConfigurationData().getDynamicDistributionsGroup());
             } catch (Throwable e) {
                 ExceptionHandler.process(e);
@@ -428,6 +406,57 @@ public class DynamicOptionForm extends AbstractDynamicDistributionForm {
                 ExceptionMessageDialog.openError(getShell(), Messages.getString("ExceptionDialog.title"), message, e); //$NON-NLS-1$
             }
         }
+    }
+
+    private void doDelete(IDynamicPlugin dynamicPlugin) throws Throwable {
+        final Throwable throwable[] = new Throwable[1];
+        ProgressMonitorDialog progressDialog = new ProgressMonitorDialog(getShell());
+        progressDialog.run(true, false, new IRunnableWithProgress() {
+
+            @Override
+            public void run(IProgressMonitor pMonitor) throws InvocationTargetException, InterruptedException {
+
+                ProxyRepositoryFactory.getInstance().executeRepositoryWorkUnit(new RepositoryWorkUnit<Boolean>(
+                        Messages.getString("DynamicOptionForm.form.deleteExistingConfig.workunit.title")) { //$NON-NLS-1$
+
+                    @Override
+                    protected void run() throws LoginException, PersistenceException {
+                        IDynamicMonitor monitor = new AbsDynamicProgressMonitor(pMonitor) {
+
+                            @Override
+                            public void writeMessage(String message) {
+                                // nothing to do
+                            }
+                        };
+                        try {
+                            monitor.beginTask(Messages.getString("DynamicBuildConfigurationForm.delete.progress.unregist"), //$NON-NLS-1$
+                                    IDynamicMonitor.UNKNOWN);
+                            IDynamicPluginConfiguration pluginConfiguration = dynamicPlugin.getPluginConfiguration();
+                            String distribution = pluginConfiguration.getDistribution();
+                            IDynamicDistributionsGroup dynamicDistributionGroup = DynamicDistributionManager.getInstance()
+                                    .getDynamicDistributionGroup(distribution);
+                            dynamicDistributionGroup.unregist(dynamicPlugin, monitor);
+
+                            monitor.setTaskName(Messages.getString("DynamicBuildConfigurationForm.delete.progress.deleteFile")); //$NON-NLS-1$
+                            String filePath = (String) pluginConfiguration
+                                    .getAttribute(DynamicDistriConfigAdapter.ATTR_FILE_PATH);
+                            File file = new File(filePath);
+                            file.delete();
+
+                            monitor.setTaskName(Messages.getString("DynamicBuildConfigurationForm.delete.progress.resetCache")); //$NON-NLS-1$
+                            DynamicDistributionManager.getInstance().resetSystemCache();
+                        } catch (Throwable e) {
+                            throwable[0] = e;
+                        }
+                    }
+
+                });
+            }
+        });
+        if (throwable[0] != null) {
+            throw throwable[0];
+        }
+
     }
 
     private void onImportConfigSelected(boolean selected) {
