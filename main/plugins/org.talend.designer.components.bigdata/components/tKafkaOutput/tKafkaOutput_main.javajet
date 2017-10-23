@@ -26,15 +26,13 @@ final TKafkaOutputUtil tKafkaOutputUtil = new TKafkaOutputUtil(node);
 final String cid = node.getUniqueName();
 %>
 
-final java.util.HashMap<String, Exception> producerException = new java.util.HashMap<>();
+final java.util.concurrent.ConcurrentHashMap<String, Exception> producerException = new java.util.concurrent.ConcurrentHashMap<>();
 
 <%=cid%>_kafkaProducer.send(new org.apache.kafka.clients.producer.ProducerRecord<byte[], byte[]>(<%=tKafkaOutputUtil.getKafkaTopic()%>, <%=tKafkaOutputUtil.getIncomingConnection().getName()%>.<%=tKafkaOutputUtil.getIncomingColumnName()%>), new org.apache.kafka.clients.producer.Callback() {
 	public void onCompletion(org.apache.kafka.clients.producer.RecordMetadata metadata, Exception e) {
-		synchronized (producerException) {
-			producerException.put("exception", null);
-			if (e != null) {
-				producerException.put("exception", e);
-			}
+		producerException.put("exception", new Exception());
+		if (e != null) {
+			producerException.put("exception", e);
 		}
 	}
 });
