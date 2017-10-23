@@ -57,9 +57,13 @@ public class DynamicDistributionManager implements IDynamicDistributionManager {
 
     private String usersPluginsCacheVersion;
 
-    private Map<String, IDynamicPlugin> idDistributionMap;
+    private Map<String, IDynamicPlugin> buildinIdDistributionMap;
 
-    private String idDistributionMapCacheVersion;
+    private String buildinIdDistributionMapCacheVersion;
+
+    private Map<String, IDynamicPlugin> usersIdDistributionMap;
+
+    private String usersIdDistributionMapCacheVersion;
 
     private boolean isLoaded;
 
@@ -405,24 +409,34 @@ public class DynamicDistributionManager implements IDynamicDistributionManager {
     }
 
     @Override
-    public boolean isBuildinDistribution(String dynamicDistributionId) {
+    public boolean isUsersDynamicDistribution(String dynamicDistributionId) {
         try {
-            return getIdDynamicDistributionMap().containsKey(dynamicDistributionId);
+            return getUsersIdDynamicDistributionMap().containsKey(dynamicDistributionId);
         } catch (Exception e) {
             ExceptionHandler.process(e);
         }
         return false;
     }
 
-    private Map<String, IDynamicPlugin> getIdDynamicDistributionMap() throws Exception {
-        if (idDistributionMap != null) {
+    @Override
+    public boolean isBuildinDynamicDistribution(String dynamicDistributionId) {
+        try {
+            return getBuildinIdDynamicDistributionMap().containsKey(dynamicDistributionId);
+        } catch (Exception e) {
+            ExceptionHandler.process(e);
+        }
+        return false;
+    }
+
+    private Map<String, IDynamicPlugin> getBuildinIdDynamicDistributionMap() throws Exception {
+        if (buildinIdDistributionMap != null) {
             String systemCacheVersion = HadoopDistributionsHelper.getCacheVersion();
-            if (StringUtils.equals(systemCacheVersion, idDistributionMapCacheVersion)) {
-                return idDistributionMap;
+            if (StringUtils.equals(systemCacheVersion, buildinIdDistributionMapCacheVersion)) {
+                return buildinIdDistributionMap;
             }
         }
-        idDistributionMap = new HashMap<>();
-        idDistributionMapCacheVersion = HadoopDistributionsHelper.getCacheVersion();
+        buildinIdDistributionMap = new HashMap<>();
+        buildinIdDistributionMapCacheVersion = HadoopDistributionsHelper.getCacheVersion();
 
         IDynamicMonitor monitor = new DummyDynamicMonitor();
         List<IDynamicPlugin> allBuildinDynamicPlugins = getAllBuildinDynamicPlugins(monitor);
@@ -431,12 +445,37 @@ public class DynamicDistributionManager implements IDynamicDistributionManager {
                 IDynamicPluginConfiguration pluginConfiguration = dynamicPlugin.getPluginConfiguration();
                 if (pluginConfiguration != null) {
                     String id = pluginConfiguration.getId();
-                    idDistributionMap.put(id, dynamicPlugin);
+                    buildinIdDistributionMap.put(id, dynamicPlugin);
                 }
             }
         }
 
-        return idDistributionMap;
+        return buildinIdDistributionMap;
+    }
+
+    private Map<String, IDynamicPlugin> getUsersIdDynamicDistributionMap() throws Exception {
+        if (usersIdDistributionMap != null) {
+            String systemCacheVersion = HadoopDistributionsHelper.getCacheVersion();
+            if (StringUtils.equals(systemCacheVersion, usersIdDistributionMapCacheVersion)) {
+                return usersIdDistributionMap;
+            }
+        }
+        usersIdDistributionMap = new HashMap<>();
+        usersIdDistributionMapCacheVersion = HadoopDistributionsHelper.getCacheVersion();
+
+        IDynamicMonitor monitor = new DummyDynamicMonitor();
+        List<IDynamicPlugin> allBuildinDynamicPlugins = getAllUsersDynamicPlugins(monitor);
+        if (allBuildinDynamicPlugins != null && !allBuildinDynamicPlugins.isEmpty()) {
+            for (IDynamicPlugin dynamicPlugin : allBuildinDynamicPlugins) {
+                IDynamicPluginConfiguration pluginConfiguration = dynamicPlugin.getPluginConfiguration();
+                if (pluginConfiguration != null) {
+                    String id = pluginConfiguration.getId();
+                    usersIdDistributionMap.put(id, dynamicPlugin);
+                }
+            }
+        }
+
+        return usersIdDistributionMap;
     }
 
     public void resetSystemCache() throws Exception {

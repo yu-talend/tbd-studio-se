@@ -87,7 +87,7 @@ public class HadoopClusterPropertyTypeParameterRelationshipHandler extends Abstr
                             if (elemParam != null) {
                                 String value = elemParam.getValue();
                                 if (StringUtils.isNotEmpty(value)) {
-                                    if (!DynamicDistributionManager.getInstance().isBuildinDistribution(value)) {
+                                    if (DynamicDistributionManager.getInstance().isUsersDynamicDistribution(value)) {
                                         Relation addedRelation = new Relation();
                                         addedRelation.setId(value);
                                         addedRelation.setType(RelationshipItemBuilder.DYNAMIC_DISTRIBUTION_RELATION);
