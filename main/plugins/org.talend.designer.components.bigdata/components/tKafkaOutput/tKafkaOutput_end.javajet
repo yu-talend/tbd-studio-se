@@ -18,12 +18,36 @@ CodeGeneratorArgument codeGenArgument = (CodeGeneratorArgument) argument;
 INode node = (INode)codeGenArgument.getArgument();
 String cid = node.getUniqueName();
 
+final boolean dieOnError = "true".equals(ElementParameterParser.getValue(node, "__DIE_ON_TIMEOUT__"));
+final boolean isLog4jEnabled = ("true").equals(ElementParameterParser.getValue(node.getProcess(), "__LOG4J_ACTIVATE__"));
+
 //%cid%_kafkaProducer.close();
 %>
 
-int cnt = 0;
-while (producerException.containsKey("exception") && cnt < 500) {
-	cnt++;
-	if (!producerException.get("exception").equals(new Exception()))
-		throw producerException.get("exception");
+final long startCheckingTime = System.nanoTime();
+while (<%=cid%>_producerException.containsKey("exception")) {
+	if (java.util.concurrent.TimeUnit.NANOSECONDS.toSeconds(System.nanoTime() - startCheckingTime) > 10)
+		break;
+	if (<%=cid%>_producerException.get("exception").getMessage() != null){
+		Exception e = <%=cid%>_producerException.get("exception");
+		<%
+		if (dieOnError) {
+		%>
+			throw e;
+		<%
+		} else {
+		%>
+			if (e instanceof java.lang.IllegalStateException || e instanceof org.apache.kafka.common.errors.SerializationException || e instanceof org.apache.kafka.common.errors.TimeoutException) {
+			<%if(isLog4jEnabled){%>	
+				log.error("<%=cid%> - " + e.getMessage());
+			<%}%>
+				System.err.println(e);
+				break;
+			} else {
+				throw e;
+			}
+		<%
+		}
+		%>
+	}
 }

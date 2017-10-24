@@ -29,7 +29,7 @@ if(tKafkaInputUtil.isKafkaVersion("KAFKA_0_8_2_0")) {
 <%
 } else {
 %>
-	<%@ include file="@{org.talend.designer.components.bigdata}/components/tKafkaInput/0.9.0.x/tKafkaInput_main_0.9.0.x.javajet"%>
+	<%@ include file="@{org.talend.designer.components.bigdata}/components/tKafkaInput/0.9.0.x_later/tKafkaInput_main_0.9.0.x_later.javajet"%>
 <%
 }
 %>

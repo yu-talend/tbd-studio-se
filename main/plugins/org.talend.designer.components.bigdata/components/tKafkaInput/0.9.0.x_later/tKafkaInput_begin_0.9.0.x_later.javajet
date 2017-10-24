@@ -1,3 +1,5 @@
+<%@ jet %>
+
 <%
 	// This is the tKafkaInput_begin javajet part for Kafka 0.9.0.x
 
@@ -8,6 +10,7 @@
 <%
 String outStructName = tKafkaInputUtil.getOutStructName();
 TSetKeystoreUtil tSetKeystoreUtil = tKafkaInputUtil.getTSetKeystoreUtil();
+final boolean dieOnTimeout = "true".equals(ElementParameterParser.getValue(node, "__DIE_ON_TIMEOUT__"));
 %>
 
 class <%=cid%>_ValueDeserializer implements org.apache.kafka.common.serialization.Deserializer<<%=outStructName%>> {
@@ -128,11 +131,11 @@ if (tKafkaInputUtil.isResetNewConsumerGroup()) {
 <%
 	if ("earliest".equals(tKafkaInputUtil.getAutoOffsetResetNew())) {
 %>
-	<%=cid%>_kafkaConsumer.seekToBeginning(<%=cid%>_assignedtopicPartitions);
+	<%=cid%>_kafkaConsumer.seekToBeginning(<%=cid%>_assignedtopicPartitions.toArray(new org.apache.kafka.common.TopicPartition[<%=cid%>_assignedtopicPartitions.size()]));
 <%
 	} else if ("latest".equals(tKafkaInputUtil.getAutoOffsetResetNew())) {
 %>
-	<%=cid%>_kafkaConsumer.seekToEnd(<%=cid%>_assignedtopicPartitions);
+	<%=cid%>_kafkaConsumer.seekToEnd(<%=cid%>_assignedtopicPartitions.toArray(new org.apache.kafka.common.TopicPartition[<%=cid%>_assignedtopicPartitions.size()]));
 <%
 	}
 
@@ -196,6 +199,11 @@ while (true) {
 %>
 			// Either use a default poll timeout of 1s or the provided timeout precision. The consumer won't stop if there is no record polled from the topic.
 			org.apache.kafka.clients.consumer.ConsumerRecords<byte[], <%=outStructName%>> <%=cid%>_consumerRecords = <%=cid%>_kafkaConsumer.poll(<%=tKafkaInputUtil.getConsumerTimeout()%>);
+			<% if (dieOnTimeout) {%>
+			if (<%=cid%>_consumerRecords.isEmpty())
+				throw new org.apache.kafka.common.errors.TimeoutException("Kafka consumer's poll has timed out after <%=tKafkaInputUtil.getConsumerTimeout()%> ms");
+			<% } %>
+				
 <%
 		}
 

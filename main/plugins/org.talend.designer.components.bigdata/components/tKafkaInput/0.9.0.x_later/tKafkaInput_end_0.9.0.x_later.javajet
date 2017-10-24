@@ -30,9 +30,7 @@
 
 // Close the loop scope.
 %>
-    } catch (org.apache.kafka.common.KafkaException e) {
-		// Unexpected exception
-		e.printStackTrace();
-		break;
+    } catch (Exception e) {
+    	throw e;
 	}
 } // end while(true)

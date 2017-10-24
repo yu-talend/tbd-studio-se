@@ -1,3 +1,4 @@
+<%@ jet %>
 <%
 	// This is the tKafkaInput_main javajet part for Kafka 0.9.0.x
 	
