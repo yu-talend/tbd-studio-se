@@ -27,10 +27,5 @@
         break;
 <%
 	}
-
-// Close the loop scope.
 %>
-    } catch (Exception e) {
-    	throw e;
-	}
 } // end while(true)

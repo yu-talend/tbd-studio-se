@@ -10,7 +10,6 @@
 <%
 String outStructName = tKafkaInputUtil.getOutStructName();
 TSetKeystoreUtil tSetKeystoreUtil = tKafkaInputUtil.getTSetKeystoreUtil();
-final boolean dieOnTimeout = "true".equals(ElementParameterParser.getValue(node, "__DIE_ON_TIMEOUT__"));
 %>
 
 class <%=cid%>_ValueDeserializer implements org.apache.kafka.common.serialization.Deserializer<<%=outStructName%>> {
@@ -166,7 +165,6 @@ if (tKafkaInputUtil.isStopOnMaxDuration()) {
 
 // Start consumption
 while (true) {
-	try {
 <%
 		if (tKafkaInputUtil.isStopOnMaxMsgWait()) {
 			if (tKafkaInputUtil.isStopOnMaxDuration()) {
@@ -199,11 +197,6 @@ while (true) {
 %>
 			// Either use a default poll timeout of 1s or the provided timeout precision. The consumer won't stop if there is no record polled from the topic.
 			org.apache.kafka.clients.consumer.ConsumerRecords<byte[], <%=outStructName%>> <%=cid%>_consumerRecords = <%=cid%>_kafkaConsumer.poll(<%=tKafkaInputUtil.getConsumerTimeout()%>);
-			<% if (dieOnTimeout) {%>
-			if (<%=cid%>_consumerRecords.isEmpty())
-				throw new org.apache.kafka.common.errors.TimeoutException("Kafka consumer's poll has timed out after <%=tKafkaInputUtil.getConsumerTimeout()%> ms");
-			<% } %>
-				
 <%
 		}
 
