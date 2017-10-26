@@ -98,5 +98,6 @@ if(null == <%=cid%>_kafkaProducer) {
 }
 
 final java.util.Set<Exception> <%=cid%>_producerExceptions = java.util.concurrent.ConcurrentHashMap.newKeySet();
-java.util.concurrent.atomic.AtomicInteger counter_send = new java.util.concurrent.atomic.AtomicInteger();
+final int EXCEPTION_CATCH_TIMEOUT = 5;
+int counter_send = 0;
 java.util.concurrent.atomic.AtomicInteger counter_rev = new java.util.concurrent.atomic.AtomicInteger();

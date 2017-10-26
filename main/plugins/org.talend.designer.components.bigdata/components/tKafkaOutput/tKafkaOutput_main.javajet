@@ -29,18 +29,15 @@ final boolean dieOnError = "true".equals(ElementParameterParser.getValue(node, "
 final boolean isLog4jEnabled = ("true").equals(ElementParameterParser.getValue(node.getProcess(), "__LOG4J_ACTIVATE__"));
 %>
 
-final java.util.concurrent.ConcurrentHashMap<String, Exception> <%=cid%>_producerException = new java.util.concurrent.ConcurrentHashMap<>();
-
 <%=cid%>_kafkaProducer.send(new org.apache.kafka.clients.producer.ProducerRecord<byte[], byte[]>(<%=tKafkaOutputUtil.getKafkaTopic()%>, <%=tKafkaOutputUtil.getIncomingConnection().getName()%>.<%=tKafkaOutputUtil.getIncomingColumnName()%>), new org.apache.kafka.clients.producer.Callback() {
 	public void onCompletion(org.apache.kafka.clients.producer.RecordMetadata metadata, Exception e) {
-		<%=cid%>_producerException.put("exception", new Exception());
 		if (e != null) {
 			<%=cid%>_producerExceptions.add(e);
 		}
 		counter_rev.getAndIncrement();
 	}
 });
-counter_send.getAndIncrement();
+counter_send++;
 
 if (!<%=cid%>_producerExceptions.isEmpty()) {
 	Exception e = <%=cid%>_producerExceptions.iterator().next();
