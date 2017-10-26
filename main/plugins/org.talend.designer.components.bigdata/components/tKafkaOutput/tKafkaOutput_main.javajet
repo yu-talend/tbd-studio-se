@@ -24,6 +24,9 @@ final INode node = (INode)codeGenArgument.getArgument();
 final TKafkaOutputUtil tKafkaOutputUtil = new TKafkaOutputUtil(node);
 
 final String cid = node.getUniqueName();
+
+final boolean dieOnError = "true".equals(ElementParameterParser.getValue(node, "__DIE_ON_ERROR__"));
+final boolean isLog4jEnabled = ("true").equals(ElementParameterParser.getValue(node.getProcess(), "__LOG4J_ACTIVATE__"));
 %>
 
 final java.util.concurrent.ConcurrentHashMap<String, Exception> <%=cid%>_producerException = new java.util.concurrent.ConcurrentHashMap<>();
@@ -32,7 +35,32 @@ final java.util.concurrent.ConcurrentHashMap<String, Exception> <%=cid%>_produce
 	public void onCompletion(org.apache.kafka.clients.producer.RecordMetadata metadata, Exception e) {
 		<%=cid%>_producerException.put("exception", new Exception());
 		if (e != null) {
-			<%=cid%>_producerException.put("exception", e);
+			<%=cid%>_producerExceptions.add(e);
 		}
+		counter_rev.getAndIncrement();
 	}
 });
+counter_send.getAndIncrement();
+
+if (!<%=cid%>_producerExceptions.isEmpty()) {
+	Exception e = <%=cid%>_producerExceptions.iterator().next();
+	<%
+	if (dieOnError) {
+	%>
+		throw e;
+	<%
+	} else {
+	%>
+		if (e instanceof java.lang.IllegalStateException || e instanceof org.apache.kafka.common.errors.SerializationException || e instanceof org.apache.kafka.common.errors.TimeoutException) {
+		<%if(isLog4jEnabled){%>	
+			log.error("<%=cid%> - " + e.getMessage());
+		<%}%>
+			System.err.println(e);
+		} else {
+			throw e;
+		}
+	<%
+	}
+	%>
+}
+	

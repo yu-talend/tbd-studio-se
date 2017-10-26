@@ -25,11 +25,11 @@ final boolean isLog4jEnabled = ("true").equals(ElementParameterParser.getValue(n
 %>
 
 final long startCheckingTime = System.nanoTime();
-while (<%=cid%>_producerException.containsKey("exception")) {
-	if (java.util.concurrent.TimeUnit.NANOSECONDS.toSeconds(System.nanoTime() - startCheckingTime) > 10)
-		break;
-	if (<%=cid%>_producerException.get("exception").getMessage() != null){
-		Exception e = <%=cid%>_producerException.get("exception");
+while (counter_send.intValue() > counter_rev.intValue() && java.util.concurrent.TimeUnit.NANOSECONDS.toSeconds(System.nanoTime() - startCheckingTime) < 5) {
+}
+if (counter_send.intValue() <= counter_rev.intValue()) {
+	if (!<%=cid%>_producerExceptions.isEmpty()) {
+		Exception e = <%=cid%>_producerExceptions.iterator().next();
 		<%
 		if (dieOnError) {
 		%>
@@ -42,7 +42,6 @@ while (<%=cid%>_producerException.containsKey("exception")) {
 				log.error("<%=cid%> - " + e.getMessage());
 			<%}%>
 				System.err.println(e);
-				break;
 			} else {
 				throw e;
 			}
