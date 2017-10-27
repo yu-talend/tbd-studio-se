@@ -129,13 +129,25 @@ if (tKafkaInputUtil.isResetNewConsumerGroup()) {
 	java.util.Set<org.apache.kafka.common.TopicPartition> <%=cid%>_assignedtopicPartitions = <%=cid%>_kafkaConsumer.assignment();
 <%
 	if ("earliest".equals(tKafkaInputUtil.getAutoOffsetResetNew())) {
+		if (tKafkaInputUtil.isKafkaVersion("KAFKA_0_9_0_1")) {
 %>
-	<%=cid%>_kafkaConsumer.seekToBeginning(<%=cid%>_assignedtopicPartitions.toArray(new org.apache.kafka.common.TopicPartition[<%=cid%>_assignedtopicPartitions.size()]));
+			<%=cid%>_kafkaConsumer.seekToBeginning(<%=cid%>_assignedtopicPartitions.toArray(new org.apache.kafka.common.TopicPartition[<%=cid%>_assignedtopicPartitions.size()]));
 <%
+		}
+		if(tKafkaInputUtil.isKafkaVersion("KAFKA_0_10_0_1")) {
+		%>
+			<%=cid%>_kafkaConsumer.seekToBeginning(<%=cid%>_assignedtopicPartitions);
+		<%}
 	} else if ("latest".equals(tKafkaInputUtil.getAutoOffsetResetNew())) {
+		if (tKafkaInputUtil.isKafkaVersion("KAFKA_0_9_0_1")) {
 %>
-	<%=cid%>_kafkaConsumer.seekToEnd(<%=cid%>_assignedtopicPartitions.toArray(new org.apache.kafka.common.TopicPartition[<%=cid%>_assignedtopicPartitions.size()]));
+			<%=cid%>_kafkaConsumer.seekToEnd(<%=cid%>_assignedtopicPartitions.toArray(new org.apache.kafka.common.TopicPartition[<%=cid%>_assignedtopicPartitions.size()]));
 <%
+		}
+		if (tKafkaInputUtil.isKafkaVersion("KAFKA_0_10_0_1")) {
+		%>
+			<%=cid%>_kafkaConsumer.seekToEnd(<%=cid%>_assignedtopicPartitions);
+		<%}
 	}
 
 	if (!tKafkaInputUtil.isAutoCommitOffset()) {
