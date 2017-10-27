@@ -155,6 +155,7 @@ public class DynamicDistributionsForm extends AbstractDynamicDistributionForm {
                     DynamicBuildConfigurationWizard wizard = new DynamicBuildConfigurationWizard(configData);
                     WizardDialog wizardDialog = new WizardDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
                             wizard);
+                    wizardDialog.setMinimumPageSize(600, 400);
                     wizardDialog.create();
                     if (wizardDialog.open() == IDialogConstants.OK_ID) {
                         // nothing to do
