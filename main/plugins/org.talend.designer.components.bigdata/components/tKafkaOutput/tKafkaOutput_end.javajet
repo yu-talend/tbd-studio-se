@@ -24,8 +24,8 @@ final boolean isLog4jEnabled = ("true").equals(ElementParameterParser.getValue(n
 //%cid%_kafkaProducer.close();
 %>
 
-final long startCheckingTime = System.nanoTime();
-while (<%=cid%>_counter_send > <%=cid%>_counter_rev.intValue() && java.util.concurrent.TimeUnit.NANOSECONDS.toSeconds(System.nanoTime() - startCheckingTime) < <%=cid%>_EXCEPTION_CATCH_TIMEOUT);
+final long <%=cid%>_startCheckingTime = System.nanoTime();
+while (<%=cid%>_counter_send > <%=cid%>_counter_rev.intValue() && java.util.concurrent.TimeUnit.NANOSECONDS.toSeconds(System.nanoTime() - <%=cid%>_startCheckingTime) < <%=cid%>_EXCEPTION_CATCH_TIMEOUT);
 if (<%=cid%>_counter_send <= <%=cid%>_counter_rev.intValue()) {
 	if (!<%=cid%>_producerExceptions.isEmpty()) {
 		Exception e = <%=cid%>_producerExceptions.iterator().next();
