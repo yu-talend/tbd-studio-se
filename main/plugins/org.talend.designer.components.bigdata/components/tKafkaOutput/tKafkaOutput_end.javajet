@@ -35,16 +35,15 @@ if (<%=cid%>_counter_send <= <%=cid%>_counter_rev.intValue()) {
 			throw e;
 		<%
 		} else {
-		// if DIE_ON_ERROR unchecked, the process will keep runing if there is IllegalStateException, SerializationException or TimeoutException,
-		// otherwise any other Exception will be thrown and the process will stop.
+		// if DIE_ON_ERROR unchecked, the process stops when there is AuthenticationException, AuthorizationException, UnknownServerException or UnsupportedVersionException
 		%>
-			if (e instanceof java.lang.IllegalStateException || e instanceof org.apache.kafka.common.errors.SerializationException || e instanceof org.apache.kafka.common.errors.TimeoutException) {
-			<%if(isLog4jEnabled){%>	
-				log.error("<%=cid%> - " + e.getMessage());
-			<%}%>
-				System.err.println(e);
-			} else {
+			if (e instanceof org.apache.kafka.common.errors.AuthenticationException || e instanceof org.apache.kafka.common.errors.AuthorizationException || e instanceof org.apache.kafka.common.errors.UnknownServerException || e instanceof org.apache.kafka.common.errors.UnsupportedVersionException) {
 				throw e;
+			} else {
+				<%if(isLog4jEnabled){%>	
+					log.error("<%=cid%> - " + e.getMessage());
+				<%}%>
+				System.err.println(e);
 			}
 		<%
 		}

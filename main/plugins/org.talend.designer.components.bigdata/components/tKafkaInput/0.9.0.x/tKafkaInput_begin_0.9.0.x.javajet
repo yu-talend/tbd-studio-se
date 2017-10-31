@@ -163,6 +163,7 @@ if (tKafkaInputUtil.isStopOnMaxDuration()) {
 
 // Start consumption
 while (true) {
+	try {
 <%
 		if (tKafkaInputUtil.isStopOnMaxMsgWait()) {
 			if (tKafkaInputUtil.isStopOnMaxDuration()) {

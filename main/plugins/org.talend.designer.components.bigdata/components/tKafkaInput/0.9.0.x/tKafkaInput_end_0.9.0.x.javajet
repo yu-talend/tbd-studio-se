@@ -25,5 +25,19 @@
         break;
 <%
 	}
+
+// Close the loop scope.
 %>
+    } catch (org.apache.kafka.common.KafkaException e) {
+    	// the process stops when there is AuthenticationException, AuthorizationException, UnknownServerException or UnsupportedVersionException
+		if (e instanceof org.apache.kafka.common.errors.AuthenticationException || e instanceof org.apache.kafka.common.errors.AuthorizationException || e instanceof org.apache.kafka.common.errors.UnknownServerException || e instanceof org.apache.kafka.common.errors.UnsupportedVersionException) {
+			throw e;
+		} else {
+			<%if(isLog4jEnabled){%>	
+				log.error("<%=cid%> - " + e.getMessage());
+			<%}%>
+			System.err.println(e);
+			break;
+		}
+	}
 } // end while(true)
