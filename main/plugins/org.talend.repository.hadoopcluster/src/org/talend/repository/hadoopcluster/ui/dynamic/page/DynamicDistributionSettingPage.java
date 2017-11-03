@@ -18,6 +18,7 @@ import org.eclipse.swt.widgets.Control;
 import org.talend.designer.maven.aether.DummyDynamicMonitor;
 import org.talend.designer.maven.aether.IDynamicMonitor;
 import org.talend.repository.hadoopcluster.ui.dynamic.form.AbstractDynamicDistributionForm;
+import org.talend.repository.hadoopcluster.ui.dynamic.form.AbstractDynamicDistributionForm.ICheckListener;
 import org.talend.repository.hadoopcluster.ui.dynamic.form.DynamicDistributionsForm;
 import org.talend.repository.preference.ProjectSettingPage;
 
@@ -37,11 +38,32 @@ public class DynamicDistributionSettingPage extends ProjectSettingPage {
 
     @Override
     protected Control createContents(Composite parent) {
+
+        AbstractDynamicDistributionForm.ICheckListener checkListener = new ICheckListener() {
+
+            @Override
+            public void showMessage(String message, int level) {
+                setMessage(message, level);
+            }
+
+            @Override
+            public void updateButtons() {
+                getContainer().updateButtons();
+            }
+
+        };
+
         IDynamicMonitor monitor = new DummyDynamicMonitor();
         DynamicDistributionsForm existingConfigForm = new DynamicDistributionsForm(parent, SWT.NONE, monitor);
+        existingConfigForm.setCheckListener(checkListener);
         setCurrentForm(existingConfigForm);
 
         return existingConfigForm;
+    }
+
+    @Override
+    public boolean isValid() {
+        return getCurrentForm().isComplete();
     }
 
     private void setCurrentForm(AbstractDynamicDistributionForm distributionForm) {

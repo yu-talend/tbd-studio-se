@@ -38,7 +38,6 @@ import org.talend.core.runtime.hd.IDynamicDistributionManager;
 import org.talend.designer.maven.aether.AbsDynamicProgressMonitor;
 import org.talend.designer.maven.aether.DummyDynamicMonitor;
 import org.talend.designer.maven.aether.IDynamicMonitor;
-import org.talend.hadoop.distribution.dynamic.adapter.DynamicDistriConfigAdapter;
 import org.talend.hadoop.distribution.dynamic.cdh.DynamicCDHDistributionsGroup;
 import org.talend.hadoop.distribution.helper.HadoopDistributionsHelper;
 import org.talend.repository.ProjectManager;
@@ -114,7 +113,7 @@ public class DynamicDistributionManager implements IDynamicDistributionManager {
 
     public void saveUsersDynamicPlugin(IDynamicPlugin dynamicPlugin, IDynamicMonitor monitor) throws Exception {
         IDynamicPluginConfiguration pluginConfiguration = dynamicPlugin.getPluginConfiguration();
-        Object obj = pluginConfiguration.getAttribute(DynamicDistriConfigAdapter.ATTR_FILE_PATH);
+        Object obj = pluginConfiguration.getAttribute(DynamicConstants.ATTR_FILE_PATH);
         try {
             String filePath = (String) obj;
             if (StringUtils.isEmpty(filePath)) {
@@ -136,16 +135,16 @@ public class DynamicDistributionManager implements IDynamicDistributionManager {
     public void saveUsersDynamicPlugin(IDynamicPlugin dynamicPlugin, String filePath, IDynamicMonitor monitor) throws Exception {
         FileOutputStream outStream = null;
         IDynamicPluginConfiguration pluginConfiguration = dynamicPlugin.getPluginConfiguration();
-        Object obj = pluginConfiguration.getAttribute(DynamicDistriConfigAdapter.ATTR_FILE_PATH);
+        Object obj = pluginConfiguration.getAttribute(DynamicConstants.ATTR_FILE_PATH);
         try {
-            obj = pluginConfiguration.removeAttribute(DynamicDistriConfigAdapter.ATTR_FILE_PATH);
+            obj = pluginConfiguration.removeAttribute(DynamicConstants.ATTR_FILE_PATH);
             String content = DynamicServiceUtil.formatJsonString(dynamicPlugin.toXmlJson().toString());
             File outFile = new File(filePath);
             outStream = new FileOutputStream(outFile);
             outStream.write(content.getBytes("UTF-8")); //$NON-NLS-1$
             outStream.flush();
         } finally {
-            pluginConfiguration.setAttribute(DynamicDistriConfigAdapter.ATTR_FILE_PATH, obj);
+            pluginConfiguration.setAttribute(DynamicConstants.ATTR_FILE_PATH, obj);
             if (outStream != null) {
                 try {
                     outStream.close();
@@ -207,12 +206,15 @@ public class DynamicDistributionManager implements IDynamicDistributionManager {
         List<String> files = getAllFiles(folder);
 
         if (files != null && 0 < files.size()) {
+            String projTechName = project.getTechnicalLabel();
             for (String absolutePath : files) {
                 try {
                     String jsonContent = DynamicServiceUtil.readFile(new File(absolutePath));
                     IDynamicPlugin dynamicPlugin = DynamicFactory.getInstance().createPluginFromJson(jsonContent);
                     IDynamicPluginConfiguration pluginConfiguration = dynamicPlugin.getPluginConfiguration();
-                    pluginConfiguration.setAttribute(DynamicDistriConfigAdapter.ATTR_FILE_PATH, absolutePath);
+                    pluginConfiguration.setAttribute(DynamicConstants.ATTR_FILE_PATH, absolutePath);
+                    pluginConfiguration.setAttribute(DynamicConstants.ATTR_IS_BUILDIN, Boolean.FALSE.toString());
+                    pluginConfiguration.setAttribute(DynamicConstants.ATTR_PROJECT_TECHNICAL_NAME, projTechName);
                     dynamicPlugins.add(dynamicPlugin);
                 } catch (Exception e) {
                     ExceptionHandler.process(e);

@@ -12,22 +12,31 @@
 // ============================================================================
 package org.talend.repository.hadoopcluster.ui.dynamic.form;
 
+import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
@@ -35,14 +44,25 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 import org.talend.commons.exception.ExceptionHandler;
+import org.talend.commons.exception.LoginException;
+import org.talend.commons.exception.PersistenceException;
+import org.talend.commons.ui.runtime.exception.ExceptionMessageDialog;
+import org.talend.core.model.general.Project;
+import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.core.runtime.dynamic.IDynamicPlugin;
 import org.talend.core.runtime.dynamic.IDynamicPluginConfiguration;
+import org.talend.designer.maven.aether.AbsDynamicProgressMonitor;
 import org.talend.designer.maven.aether.DummyDynamicMonitor;
 import org.talend.designer.maven.aether.IDynamicMonitor;
+import org.talend.hadoop.distribution.dynamic.DynamicConstants;
 import org.talend.hadoop.distribution.dynamic.DynamicDistributionManager;
 import org.talend.hadoop.distribution.dynamic.IDynamicDistributionsGroup;
+import org.talend.hadoop.distribution.dynamic.comparator.DynamicPluginComparator;
+import org.talend.repository.ProjectManager;
+import org.talend.repository.RepositoryWorkUnit;
 import org.talend.repository.hadoopcluster.i18n.Messages;
 import org.talend.repository.hadoopcluster.ui.dynamic.DynamicBuildConfigurationData;
 import org.talend.repository.hadoopcluster.ui.dynamic.DynamicBuildConfigurationWizard;
@@ -56,7 +76,21 @@ public class DynamicDistributionsForm extends AbstractDynamicDistributionForm {
 
     private ComboViewer versionCombo;
 
+    private Button deleteBtn;
+
     private Button buildConfigBtn;
+
+    private ComboViewer setupDistriCombo;
+
+    private Button overrideDefaultSetupBtn;
+
+    private Text repositoryText;
+
+    private Button anonymousBtn;
+
+    private Text userText;
+
+    private Text passwordText;
 
     public DynamicDistributionsForm(Composite parent, int style, IDynamicMonitor monitor) {
         super(parent, style, null);
@@ -71,6 +105,9 @@ public class DynamicDistributionsForm extends AbstractDynamicDistributionForm {
         Composite container = createFormContainer(parent);
         int ALIGN_HORIZON = getAlignHorizon();
         int ALIGN_VERTICAL_INNER = getAlignVerticalInner();
+        int ALIGN_VERTICAL_INNER2 = ALIGN_VERTICAL_INNER - ALIGN_VERTICAL_INNER / 2;
+        int ALIGN_VERTICAL = getAlignVertical();
+        int MARGIN_GROUP = 5;
 
         Group group = new Group(container, SWT.NONE);
         group.setText(Messages.getString("DynamicDistributionsForm.group.existing")); //$NON-NLS-1$
@@ -80,14 +117,45 @@ public class DynamicDistributionsForm extends AbstractDynamicDistributionForm {
         formData.right = new FormAttachment(100);
         group.setLayoutData(formData);
         FormLayout formLayout = new FormLayout();
-        formLayout.marginTop = 5;
-        formLayout.marginBottom = 5;
-        formLayout.marginLeft = 5;
-        formLayout.marginRight = 5;
+        formLayout.marginTop = MARGIN_GROUP;
+        formLayout.marginBottom = MARGIN_GROUP;
+        formLayout.marginLeft = MARGIN_GROUP;
+        formLayout.marginRight = MARGIN_GROUP;
         group.setLayout(formLayout);
+
+        Group nexusSetupGroup = new Group(container, SWT.NONE);
+        nexusSetupGroup.setText(Messages.getString("DynamicDistributionsForm.group.nexusSetup")); //$NON-NLS-1$
+        formData = new FormData();
+        formData.left = new FormAttachment(group, 0, SWT.LEFT);
+        formData.top = new FormAttachment(group, ALIGN_VERTICAL, SWT.BOTTOM);
+        formData.right = new FormAttachment(group, 0, SWT.RIGHT);
+        nexusSetupGroup.setLayoutData(formData);
+        formLayout = new FormLayout();
+        formLayout.marginTop = MARGIN_GROUP;
+        formLayout.marginBottom = MARGIN_GROUP;
+        formLayout.marginLeft = MARGIN_GROUP;
+        formLayout.marginRight = MARGIN_GROUP;
+        nexusSetupGroup.setLayout(formLayout);
 
         Label distributionLabel = new Label(group, SWT.NONE);
         distributionLabel.setText(Messages.getString("DynamicDistributionsForm.label.existing.distribution")); //$NON-NLS-1$
+        Point distributionLabelSize = distributionLabel.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+
+        Label nexusSetupDistriLabel = new Label(nexusSetupGroup, SWT.NONE);
+        nexusSetupDistriLabel.setText(Messages.getString("DynamicDistributionsForm.label.nexusSetup.distribution")); //$NON-NLS-1$
+        Point nexusSetupDistriLabelSize = nexusSetupDistriLabel.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+
+        Label repositoryLabel = new Label(nexusSetupGroup, SWT.NONE);
+        repositoryLabel.setText(Messages.getString("DynamicDistributionsForm.label.nexusSetup.repository")); //$NON-NLS-1$
+        Point repositoryLabelSize = repositoryLabel.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+
+        int labelWidth = distributionLabelSize.x;
+        if (labelWidth < nexusSetupDistriLabelSize.x) {
+            labelWidth = nexusSetupDistriLabelSize.x;
+        }
+        if (labelWidth < repositoryLabelSize.x) {
+            labelWidth = repositoryLabelSize.x;
+        }
 
         distributionCombo = new ComboViewer(group, SWT.READ_ONLY);
         distributionCombo.setContentProvider(ArrayContentProvider.getInstance());
@@ -102,6 +170,7 @@ public class DynamicDistributionsForm extends AbstractDynamicDistributionForm {
         formData = new FormData();
         formData.top = new FormAttachment(distributionCombo.getControl(), 0, SWT.CENTER);
         formData.left = new FormAttachment(0);
+        formData.width = labelWidth;
         distributionLabel.setLayoutData(formData);
 
         Label versionLabel = new Label(group, SWT.NONE);
@@ -112,13 +181,22 @@ public class DynamicDistributionsForm extends AbstractDynamicDistributionForm {
         versionLabel.setLayoutData(formData);
 
         versionCombo = new ComboViewer(group, SWT.READ_ONLY);
+        deleteBtn = new Button(group, SWT.PUSH);
+
         versionCombo.setContentProvider(ArrayContentProvider.getInstance());
-        versionCombo.setLabelProvider(new LabelProvider());
+        versionCombo.setLabelProvider(new ExistingConfigsLabelProvider());
         formData = new FormData();
         formData.top = new FormAttachment(versionLabel, 0, SWT.CENTER);
         formData.left = new FormAttachment(versionLabel, ALIGN_HORIZON, SWT.RIGHT);
-        formData.right = new FormAttachment(100);
+        formData.right = new FormAttachment(deleteBtn, -1 * ALIGN_HORIZON, SWT.LEFT);
         versionCombo.getControl().setLayoutData(formData);
+
+        deleteBtn.setText(Messages.getString("DynamicDistributionsForm.label.existing.delete")); //$NON-NLS-1$
+        formData = new FormData();
+        formData.top = new FormAttachment(versionCombo.getControl(), 0, SWT.CENTER);
+        formData.right = new FormAttachment(100);
+        formData.width = getNewButtonSize(deleteBtn).x;
+        deleteBtn.setLayoutData(formData);
 
         buildConfigBtn = new Button(group, SWT.PUSH);
         buildConfigBtn.setText(Messages.getString("DynamicDistributionsForm.button.existing.buildConfig")); //$NON-NLS-1$
@@ -128,9 +206,98 @@ public class DynamicDistributionsForm extends AbstractDynamicDistributionForm {
         formData.right = new FormAttachment(0, getNewButtonSize(buildConfigBtn).x);
         buildConfigBtn.setLayoutData(formData);
 
+        setupDistriCombo = new ComboViewer(nexusSetupGroup, SWT.READ_ONLY);
+        setupDistriCombo.setContentProvider(ArrayContentProvider.getInstance());
+        setupDistriCombo.setLabelProvider(new LabelProvider());
+        formData = new FormData();
+        formData.top = new FormAttachment(0);
+        formData.left = new FormAttachment(nexusSetupDistriLabel, distriAlignHorizon, SWT.RIGHT);
+        formData.right = new FormAttachment(nexusSetupDistriLabel, distriAlignHorizon + 180, SWT.RIGHT);
+        setupDistriCombo.getControl().setLayoutData(formData);
+
+        formData = new FormData();
+        formData.top = new FormAttachment(setupDistriCombo.getControl(), 0, SWT.CENTER);
+        formData.left = new FormAttachment(0);
+        formData.width = labelWidth;
+        nexusSetupDistriLabel.setLayoutData(formData);
+
+        overrideDefaultSetupBtn = new Button(nexusSetupGroup, SWT.CHECK);
+        overrideDefaultSetupBtn.setText(Messages.getString("DynamicDistributionsForm.label.nexusSetup.overrideDefaultSetup")); //$NON-NLS-1$
+        formData = new FormData();
+        formData.top = new FormAttachment(setupDistriCombo.getControl(), ALIGN_VERTICAL_INNER, SWT.BOTTOM);
+        formData.left = new FormAttachment(nexusSetupDistriLabel, 0, SWT.LEFT);
+        overrideDefaultSetupBtn.setLayoutData(formData);
+
+        repositoryText = new Text(nexusSetupGroup, SWT.BORDER);
+
+        formData = new FormData();
+        formData.top = new FormAttachment(repositoryText, 0, SWT.CENTER);
+        formData.left = new FormAttachment(overrideDefaultSetupBtn, 0, SWT.LEFT);
+        formData.width = labelWidth;
+        repositoryLabel.setLayoutData(formData);
+
+        formData = new FormData();
+        formData.top = new FormAttachment(overrideDefaultSetupBtn, ALIGN_VERTICAL_INNER, SWT.BOTTOM);
+        formData.left = new FormAttachment(repositoryLabel, ALIGN_HORIZON, SWT.RIGHT);
+        formData.right = new FormAttachment(100);
+        repositoryText.setLayoutData(formData);
+
+        anonymousBtn = new Button(nexusSetupGroup, SWT.CHECK);
+        anonymousBtn.setText(Messages.getString("DynamicDistributionsForm.label.nexusSetup.anonymous")); //$NON-NLS-1$
+        formData = new FormData();
+        formData.top = new FormAttachment(repositoryText, ALIGN_VERTICAL_INNER, SWT.BOTTOM);
+        formData.left = new FormAttachment(repositoryText, 0, SWT.LEFT);
+        anonymousBtn.setLayoutData(formData);
+
+        Label userLabel = new Label(nexusSetupGroup, SWT.NONE);
+        userLabel.setText(Messages.getString("DynamicDistributionsForm.label.nexusSetup.user")); //$NON-NLS-1$
+
+        userText = new Text(nexusSetupGroup, SWT.BORDER);
+        formData = new FormData();
+        formData.top = new FormAttachment(anonymousBtn, ALIGN_VERTICAL_INNER2, SWT.BOTTOM);
+        formData.left = new FormAttachment(anonymousBtn, ALIGN_HORIZON, SWT.RIGHT);
+        formData.width = 180;
+        userText.setLayoutData(formData);
+
+        formData = new FormData();
+        formData.top = new FormAttachment(userText, 0, SWT.CENTER);
+        formData.right = new FormAttachment(userText, -1 * ALIGN_HORIZON, SWT.LEFT);
+        userLabel.setLayoutData(formData);
+
+        Label passwordLabel = new Label(nexusSetupGroup, SWT.NONE);
+        passwordLabel.setText(Messages.getString("DynamicDistributionsForm.label.nexusSetup.password")); //$NON-NLS-1$
+
+        passwordText = new Text(nexusSetupGroup, SWT.BORDER | SWT.PASSWORD);
+        formData = new FormData();
+        formData.top = new FormAttachment(userText, ALIGN_VERTICAL_INNER2, SWT.BOTTOM);
+        formData.left = new FormAttachment(userText, 0, SWT.LEFT);
+        formData.right = new FormAttachment(userText, 0, SWT.RIGHT);
+        passwordText.setLayoutData(formData);
+
+        formData = new FormData();
+        formData.top = new FormAttachment(passwordText, 0, SWT.CENTER);
+        formData.right = new FormAttachment(userLabel, 0, SWT.RIGHT);
+        passwordLabel.setLayoutData(formData);
     }
 
     private void addListeners() {
+        distributionCombo.addSelectionChangedListener(new ISelectionChangedListener() {
+
+            @Override
+            public void selectionChanged(SelectionChangedEvent event) {
+                refreshVersionList(new DummyDynamicMonitor());
+                updateButtons();
+            }
+        });
+
+        versionCombo.addSelectionChangedListener(new ISelectionChangedListener() {
+
+            @Override
+            public void selectionChanged(SelectionChangedEvent event) {
+                updateButtons();
+            }
+        });
+
         buildConfigBtn.addSelectionListener(new SelectionAdapter() {
 
             @Override
@@ -167,6 +334,15 @@ public class DynamicDistributionsForm extends AbstractDynamicDistributionForm {
                 }
             }
 
+        });
+
+        deleteBtn.addSelectionListener(new SelectionAdapter() {
+
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                onDeleteBtnPressed();
+                updateButtons();
+            }
         });
     }
 
@@ -218,22 +394,10 @@ public class DynamicDistributionsForm extends AbstractDynamicDistributionForm {
                             dynamicPlugins.addAll(tempDynamicPlugins);
                         }
                     }
-                    List<String> versions = new LinkedList<>();
-                    Iterator<IDynamicPlugin> iter = dynamicPlugins.iterator();
-                    while (iter.hasNext()) {
-                        try {
-                            IDynamicPlugin plugin = iter.next();
-                            IDynamicPluginConfiguration pluginConfiguration = plugin.getPluginConfiguration();
-                            String name = pluginConfiguration.getName();
-                            versions.add(name);
-                        } catch (Exception e) {
-                            ExceptionHandler.process(e);
-                        }
-                    }
-                    Collections.sort(versions, Collections.reverseOrder());
-                    versionCombo.setInput(versions);
-                    if (0 < versions.size()) {
-                        versionCombo.setSelection(new StructuredSelection(versions.get(0)));
+                    Collections.sort(dynamicPlugins, Collections.reverseOrder(new DynamicPluginComparator()));
+                    versionCombo.setInput(dynamicPlugins);
+                    if (!dynamicPlugins.isEmpty()) {
+                        versionCombo.setSelection(new StructuredSelection(dynamicPlugins.get(0)));
                     }
                 }
             }
@@ -242,9 +406,112 @@ public class DynamicDistributionsForm extends AbstractDynamicDistributionForm {
         }
     }
 
+    private void onDeleteBtnPressed() {
+        boolean agree = MessageDialog.openConfirm(getShell(),
+                Messages.getString("DynamicDistributionsForm.form.deleteExistingConfig.confirm.dialog.title"), //$NON-NLS-1$
+                Messages.getString("DynamicDistributionsForm.form.deleteExistingConfig.confirm.dialog.message")); //$NON-NLS-1$
+        if (agree) {
+            try {
+                IStructuredSelection selection = (IStructuredSelection) versionCombo.getSelection();
+                final IDynamicPlugin dynamicPlugin = (IDynamicPlugin) selection.getFirstElement();
+                doDelete(dynamicPlugin);
+                IDynamicMonitor monitor = new DummyDynamicMonitor();
+                refreshVersionList(monitor);
+            } catch (Throwable e) {
+                ExceptionHandler.process(e);
+                String message = e.getMessage();
+                if (StringUtils.isEmpty(message)) {
+                    message = Messages.getString("ExceptionDialog.message.empty"); //$NON-NLS-1$
+                }
+                ExceptionMessageDialog.openError(getShell(), Messages.getString("ExceptionDialog.title"), message, e); //$NON-NLS-1$
+            }
+        }
+    }
+
+    private void doDelete(IDynamicPlugin dynamicPlugin) throws Throwable {
+        final Throwable throwable[] = new Throwable[1];
+        ProgressMonitorDialog progressDialog = new ProgressMonitorDialog(getShell());
+        progressDialog.run(true, false, new IRunnableWithProgress() {
+
+            @Override
+            public void run(IProgressMonitor pMonitor) throws InvocationTargetException, InterruptedException {
+
+                ProxyRepositoryFactory.getInstance().executeRepositoryWorkUnit(new RepositoryWorkUnit<Boolean>(
+                        Messages.getString("DynamicDistributionsForm.form.deleteExistingConfig.workunit.title")) { //$NON-NLS-1$
+
+                    @Override
+                    protected void run() throws LoginException, PersistenceException {
+                        IDynamicMonitor monitor = new AbsDynamicProgressMonitor(pMonitor) {
+
+                            @Override
+                            public void writeMessage(String message) {
+                                // nothing to do
+                            }
+                        };
+                        try {
+                            monitor.beginTask(Messages.getString("DynamicBuildConfigurationForm.delete.progress.unregist"), //$NON-NLS-1$
+                                    IDynamicMonitor.UNKNOWN);
+                            IDynamicPluginConfiguration pluginConfiguration = dynamicPlugin.getPluginConfiguration();
+                            String distribution = pluginConfiguration.getDistribution();
+                            IDynamicDistributionsGroup dynamicDistributionGroup = DynamicDistributionManager.getInstance()
+                                    .getDynamicDistributionGroup(distribution);
+                            dynamicDistributionGroup.unregist(dynamicPlugin, monitor);
+
+                            monitor.setTaskName(Messages.getString("DynamicBuildConfigurationForm.delete.progress.deleteFile")); //$NON-NLS-1$
+                            String filePath = (String) pluginConfiguration
+                                    .getAttribute(DynamicConstants.ATTR_FILE_PATH);
+                            File file = new File(filePath);
+                            file.delete();
+
+                            monitor.setTaskName(Messages.getString("DynamicBuildConfigurationForm.delete.progress.resetCache")); //$NON-NLS-1$
+                            DynamicDistributionManager.getInstance().resetSystemCache();
+                        } catch (Throwable e) {
+                            throwable[0] = e;
+                        }
+                    }
+
+                });
+            }
+        });
+        if (throwable[0] != null) {
+            throw throwable[0];
+        }
+
+    }
+
+    private boolean checkVersionSelection() {
+        IStructuredSelection selection = (IStructuredSelection) versionCombo.getSelection();
+        boolean canDelete = false;
+
+        try {
+            if (selection != null) {
+                IDynamicPlugin dynamicPlugin = (IDynamicPlugin) selection.getFirstElement();
+                if (dynamicPlugin != null) {
+                    IDynamicPluginConfiguration pluginConfiguration = dynamicPlugin.getPluginConfiguration();
+                    String isBuildinStr = (String) pluginConfiguration.getAttribute(DynamicConstants.ATTR_IS_BUILDIN);
+                    if (!Boolean.valueOf(isBuildinStr)) {
+                        String curProjTechName = ProjectManager.getInstance().getCurrentProject().getTechnicalLabel();
+                        String projTechName = (String) pluginConfiguration
+                                .getAttribute(DynamicConstants.ATTR_PROJECT_TECHNICAL_NAME);
+                        if (StringUtils.equals(curProjTechName, projTechName)) {
+                            canDelete = true;
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            ExceptionHandler.process(e);
+        }
+
+        deleteBtn.setEnabled(canDelete);
+
+        return true;
+    }
+
     @Override
     public boolean isComplete() {
-        return true;
+        boolean checkVersion = checkVersionSelection();
+        return checkVersion;
     }
 
     @Override
@@ -258,6 +525,36 @@ public class DynamicDistributionsForm extends AbstractDynamicDistributionForm {
             return true;
         }
         return false;
+    }
+
+    private class ExistingConfigsLabelProvider extends LabelProvider {
+
+        @Override
+        public String getText(Object element) {
+            if (element instanceof IDynamicPlugin) {
+                IDynamicPluginConfiguration pluginConfiguration = ((IDynamicPlugin) element).getPluginConfiguration();
+                String name = pluginConfiguration.getName();
+                String isBuildinStr = (String) pluginConfiguration.getAttribute(DynamicConstants.ATTR_IS_BUILDIN);
+                boolean isBuildin = Boolean.valueOf(isBuildinStr);
+                String attr = null;
+                if (isBuildin) {
+                    attr = Messages.getString("DynamicDistributionsForm.label.existing.buildin"); //$NON-NLS-1$
+                } else {
+                    Project curProj = ProjectManager.getInstance().getCurrentProject();
+                    String curProjTechName = curProj.getTechnicalLabel();
+                    String projTechName = (String) pluginConfiguration.getAttribute(DynamicConstants.ATTR_PROJECT_TECHNICAL_NAME);
+                    if (StringUtils.equals(curProjTechName, projTechName)) {
+                        attr = Messages.getString("DynamicDistributionsForm.label.existing.currentProject"); //$NON-NLS-1$
+                    } else {
+                        attr = Messages.getString("DynamicDistributionsForm.label.existing.otherProject", projTechName); //$NON-NLS-1$
+                    }
+                }
+                return name + " " + attr; //$NON-NLS-1$
+            } else {
+                return element == null ? "" : element.toString();//$NON-NLS-1$
+            }
+        }
+
     }
 
 }
