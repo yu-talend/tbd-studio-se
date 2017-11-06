@@ -14,6 +14,7 @@ package org.talend.repository.hadoopcluster.ui.dynamic.form;
 
 import java.util.EventListener;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FillLayout;
@@ -81,6 +82,18 @@ public abstract class AbstractDynamicDistributionForm extends Composite {
         return 100;
     }
 
+    public boolean performApply() {
+        return true;
+    }
+
+    public void performDefaults() {
+        // nothing to do
+    }
+
+    public boolean performOk() {
+        return true;
+    }
+
     public ICheckListener getCheckListener() {
         return this.checkListener;
     }
@@ -90,7 +103,24 @@ public abstract class AbstractDynamicDistributionForm extends Composite {
     }
 
     protected void showMessage(String message, int level) {
-        this.checkListener.showMessage(message, level);
+        if (StringUtils.isEmpty(message)) {
+            // means clean message
+            this.checkListener.showMessage(message, level);
+        } else {
+            String existingMessage = getMessage();
+            if (StringUtils.isNotEmpty(existingMessage)) {
+                if (!existingMessage.contains(message)) {
+                    existingMessage = existingMessage + "\n" + message; //$NON-NLS-1$
+                }
+            } else {
+                existingMessage = message;
+            }
+            this.checkListener.showMessage(existingMessage, level);
+        }
+    }
+
+    protected String getMessage() {
+        return this.checkListener.getMessage();
     }
 
     protected void updateButtons() {
@@ -104,6 +134,8 @@ public abstract class AbstractDynamicDistributionForm extends Composite {
     public static interface ICheckListener extends EventListener {
 
         public void showMessage(String message, int level);
+
+        public String getMessage();
 
         public void updateButtons();
 

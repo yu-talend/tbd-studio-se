@@ -42,13 +42,19 @@ public class DynamicDistributionSettingPage extends ProjectSettingPage {
         AbstractDynamicDistributionForm.ICheckListener checkListener = new ICheckListener() {
 
             @Override
+            public String getMessage() {
+                return DynamicDistributionSettingPage.this.getMessage();
+            }
+
+            @Override
             public void showMessage(String message, int level) {
                 setMessage(message, level);
             }
 
             @Override
             public void updateButtons() {
-                getContainer().updateButtons();
+                boolean isValid = getCurrentForm().isComplete();
+                setValid(isValid);
             }
 
         };
@@ -57,13 +63,31 @@ public class DynamicDistributionSettingPage extends ProjectSettingPage {
         DynamicDistributionsForm existingConfigForm = new DynamicDistributionsForm(parent, SWT.NONE, monitor);
         existingConfigForm.setCheckListener(checkListener);
         setCurrentForm(existingConfigForm);
+        boolean isValid = getCurrentForm().isComplete();
+        setValid(isValid);
 
         return existingConfigForm;
     }
 
     @Override
-    public boolean isValid() {
-        return getCurrentForm().isComplete();
+    protected void performApply() {
+        getCurrentForm().performApply();
+        super.performApply();
+    }
+
+    @Override
+    protected void performDefaults() {
+        getCurrentForm().performDefaults();
+        super.performDefaults();
+    }
+
+    @Override
+    public boolean performOk() {
+        boolean isOk = getCurrentForm().performOk();
+        if (!isOk) {
+            return false;
+        }
+        return super.performOk();
     }
 
     private void setCurrentForm(AbstractDynamicDistributionForm distributionForm) {

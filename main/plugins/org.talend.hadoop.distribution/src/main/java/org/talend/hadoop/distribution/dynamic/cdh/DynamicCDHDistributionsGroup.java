@@ -15,6 +15,7 @@ package org.talend.hadoop.distribution.dynamic.cdh;
 import org.talend.hadoop.distribution.constants.cdh.IClouderaDistribution;
 import org.talend.hadoop.distribution.dynamic.AbstractDynamicDistributionsGroup;
 import org.talend.hadoop.distribution.dynamic.IDynamicDistribution;
+import org.talend.hadoop.distribution.dynamic.IDynamicDistributionPreference;
 
 /**
  * DOC cmeng  class global comment. Detailled comment
@@ -34,6 +35,11 @@ public class DynamicCDHDistributionsGroup extends AbstractDynamicDistributionsGr
     @Override
     protected Class<? extends IDynamicDistribution> getDynamicDistributionClass() {
         return IDynamicCDHDistribution.class;
+    }
+
+    @Override
+    public IDynamicDistributionPreference getDynamicDistributionPreference() {
+        return DynamicCDHDistributionPreference.getInstance();
     }
 
 }

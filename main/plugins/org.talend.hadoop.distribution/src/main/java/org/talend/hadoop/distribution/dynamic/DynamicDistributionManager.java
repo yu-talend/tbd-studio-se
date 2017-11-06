@@ -376,6 +376,13 @@ public class DynamicDistributionManager implements IDynamicDistributionManager {
 
     }
 
+    /**
+     * Get DynamicDistributionGroup by distribution name or display name
+     * 
+     * @param distribution name or display name
+     * @return
+     * @throws Exception
+     */
     public IDynamicDistributionsGroup getDynamicDistributionGroup(String distribution) throws Exception {
         if (dynDistriGroupMap == null || dynDistriGroupMap.isEmpty()) {
             dynDistriGroupMap = new HashMap<>();

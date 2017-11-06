@@ -69,4 +69,6 @@ public interface IDynamicDistributionsGroup {
      */
     public List<IDynamicPlugin> filterDynamicPlugins(List<IDynamicPlugin> dynamicPlugins, IDynamicMonitor monitor);
 
+    public IDynamicDistributionPreference getDynamicDistributionPreference();
+
 }

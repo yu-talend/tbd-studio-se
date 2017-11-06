@@ -52,6 +52,11 @@ public class DynamicRetrievePage extends AbstractDynamicConfigurationPage {
                 getContainer().updateButtons();
             }
 
+            @Override
+            public String getMessage() {
+                return DynamicRetrievePage.this.getMessage();
+            }
+
         };
 
         AbstractDynamicDistributionForm setupForm = new DynamicBuildConfigurationForm(parent, SWT.NONE,

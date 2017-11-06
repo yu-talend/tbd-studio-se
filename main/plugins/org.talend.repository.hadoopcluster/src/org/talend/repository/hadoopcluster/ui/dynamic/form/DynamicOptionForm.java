@@ -48,6 +48,7 @@ import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
@@ -336,7 +337,7 @@ public class DynamicOptionForm extends AbstractDynamicDistributionForm {
                     onImportConfigBrowseBtnSelected();
                     updateButtons();
                 } catch (Exception ex) {
-                    importConfigText.setBackground(LoginDialogV2.RED_COLOR);
+                    importConfigText.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
                     importConfigText.setToolTipText(ex.getMessage());
                     showMessage(ex.getMessage(), WizardPage.ERROR);
                     ExceptionHandler.process(ex);
@@ -438,8 +439,7 @@ public class DynamicOptionForm extends AbstractDynamicDistributionForm {
                             dynamicDistributionGroup.unregist(dynamicPlugin, monitor);
 
                             monitor.setTaskName(Messages.getString("DynamicBuildConfigurationForm.delete.progress.deleteFile")); //$NON-NLS-1$
-                            String filePath = (String) pluginConfiguration
-                                    .getAttribute(DynamicConstants.ATTR_FILE_PATH);
+                            String filePath = (String) pluginConfiguration.getAttribute(DynamicConstants.ATTR_FILE_PATH);
                             File file = new File(filePath);
                             file.delete();
 
@@ -568,7 +568,7 @@ public class DynamicOptionForm extends AbstractDynamicDistributionForm {
         if (configName.isEmpty()) {
             String errorMessage = Messages.getString("DynamicDistributionsForm.newConfigName.check.empty"); //$NON-NLS-1$
             showMessage(errorMessage, WizardPage.ERROR);
-            configNameText.setBackground(LoginDialogV2.RED_COLOR);
+            configNameText.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
             configNameText.setToolTipText(errorMessage);
             return false;
         }
@@ -576,14 +576,14 @@ public class DynamicOptionForm extends AbstractDynamicDistributionForm {
             if (isConfigurationNameExist(configName)) {
                 String errorMessage = Messages.getString("DynamicDistributionsForm.newConfigName.check.exist", configName); //$NON-NLS-1$
                 showMessage(errorMessage, WizardPage.ERROR);
-                configNameText.setBackground(LoginDialogV2.RED_COLOR);
+                configNameText.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
                 configNameText.setToolTipText(errorMessage);
                 return false;
             }
         } catch (Exception e) {
             String errorMessage = e.getMessage();
             showMessage(errorMessage, WizardPage.ERROR);
-            configNameText.setBackground(LoginDialogV2.RED_COLOR);
+            configNameText.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
             configNameText.setToolTipText(errorMessage);
             return false;
         }
@@ -648,14 +648,14 @@ public class DynamicOptionForm extends AbstractDynamicDistributionForm {
             if (StringUtils.isEmpty(importConfig)) {
                 String errorMessage = Messages.getString("DynamicOptionForm.importConfigText.check.empty"); //$NON-NLS-1$
                 showMessage(errorMessage, WizardPage.ERROR);
-                importConfigText.setBackground(LoginDialogV2.RED_COLOR);
+                importConfigText.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
                 importConfigText.setToolTipText(errorMessage);
                 return false;
             }
 
             if (importedDynamicPlugin == null) {
                 String errorMessage = Messages.getString("DynamicOptionForm.importConfigText.check.empty"); //$NON-NLS-1$
-                importConfigText.setBackground(LoginDialogV2.RED_COLOR);
+                importConfigText.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
                 importConfigText.setToolTipText(errorMessage);
                 showMessage(errorMessage, WizardPage.ERROR);
                 return false;
@@ -665,7 +665,7 @@ public class DynamicOptionForm extends AbstractDynamicDistributionForm {
             IDynamicPluginConfiguration pluginConfiguration = importedDynamicPlugin.getPluginConfiguration();
             if (pluginConfiguration == null) {
                 String errorMessage = Messages.getString("DynamicOptionForm.importConfigText.check.noConfiguration"); //$NON-NLS-1$
-                importConfigText.setBackground(LoginDialogV2.RED_COLOR);
+                importConfigText.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
                 importConfigText.setToolTipText(errorMessage);
                 showMessage(errorMessage, WizardPage.ERROR);
                 return false;
@@ -677,7 +677,7 @@ public class DynamicOptionForm extends AbstractDynamicDistributionForm {
             if (!dynamicDistributionsGroup.getDistribution().equalsIgnoreCase(pluginConfiguration.getDistribution())) {
                 String errorMessage = Messages.getString("DynamicOptionForm.importConfigText.check.wrongDistribution", //$NON-NLS-1$
                         pluginConfiguration.getDistribution(), dynamicDistributionsGroup.getDistribution());
-                importConfigText.setBackground(LoginDialogV2.RED_COLOR);
+                importConfigText.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
                 importConfigText.setToolTipText(errorMessage);
                 showMessage(errorMessage, WizardPage.ERROR);
                 return false;
@@ -687,14 +687,14 @@ public class DynamicOptionForm extends AbstractDynamicDistributionForm {
             String id = pluginConfiguration.getId();
             if (StringUtils.isEmpty(id)) {
                 String errorMessage = Messages.getString("DynamicOptionForm.importConfigText.check.badId.empty"); //$NON-NLS-1$
-                importConfigText.setBackground(LoginDialogV2.RED_COLOR);
+                importConfigText.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
                 importConfigText.setToolTipText(errorMessage);
                 showMessage(errorMessage, WizardPage.ERROR);
                 return false;
             }
             if (id.contains(".")) { //$NON-NLS-1$
                 String errorMessage = Messages.getString("DynamicOptionForm.importConfigText.check.badId.invalid", id); //$NON-NLS-1$
-                importConfigText.setBackground(LoginDialogV2.RED_COLOR);
+                importConfigText.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
                 importConfigText.setToolTipText(errorMessage);
                 showMessage(errorMessage, WizardPage.ERROR);
                 return false;
@@ -707,13 +707,12 @@ public class DynamicOptionForm extends AbstractDynamicDistributionForm {
                     String errorMessage = Messages.getString(
                             "DynamicOptionForm.importConfigText.check.badId.exist.diffDistribution", id, //$NON-NLS-1$
                             dynamicDistributionsGroup.getDistribution(), distribution); // $NON-NLS-1$
-                    importConfigText.setBackground(LoginDialogV2.RED_COLOR);
+                    importConfigText.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
                     importConfigText.setToolTipText(errorMessage);
                     showMessage(errorMessage, WizardPage.ERROR);
                     return false;
                 }
-                String errorMessage = Messages.getString(
-                        "DynamicOptionForm.importConfigText.check.badId.exist.sameDistribution", //$NON-NLS-1$
+                String errorMessage = Messages.getString("DynamicOptionForm.importConfigText.check.badId.exist.sameDistribution", //$NON-NLS-1$
                         id);
                 messageBuffer.append(errorMessage).append("\n"); //$NON-NLS-1$
             }
@@ -743,7 +742,7 @@ public class DynamicOptionForm extends AbstractDynamicDistributionForm {
             getDynamicBuildConfigurationData().setDynamicPlugin(importedDynamicPlugin);
             return true;
         } catch (Exception e) {
-            importConfigText.setBackground(LoginDialogV2.RED_COLOR);
+            importConfigText.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
             importConfigText.setToolTipText(e.getMessage());
             return false;
         }

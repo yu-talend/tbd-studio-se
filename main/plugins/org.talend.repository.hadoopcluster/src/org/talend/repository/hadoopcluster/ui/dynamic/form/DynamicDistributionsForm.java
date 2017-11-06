@@ -33,7 +33,10 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Point;
@@ -42,6 +45,7 @@ import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
@@ -59,6 +63,7 @@ import org.talend.designer.maven.aether.DummyDynamicMonitor;
 import org.talend.designer.maven.aether.IDynamicMonitor;
 import org.talend.hadoop.distribution.dynamic.DynamicConstants;
 import org.talend.hadoop.distribution.dynamic.DynamicDistributionManager;
+import org.talend.hadoop.distribution.dynamic.IDynamicDistributionPreference;
 import org.talend.hadoop.distribution.dynamic.IDynamicDistributionsGroup;
 import org.talend.hadoop.distribution.dynamic.comparator.DynamicPluginComparator;
 import org.talend.repository.ProjectManager;
@@ -91,6 +96,12 @@ public class DynamicDistributionsForm extends AbstractDynamicDistributionForm {
     private Text userText;
 
     private Text passwordText;
+
+    private String repositoryUrlCache;
+
+    private String usernameCache;
+
+    private String passwordCache;
 
     public DynamicDistributionsForm(Composite parent, int style, IDynamicMonitor monitor) {
         super(parent, style, null);
@@ -332,6 +343,7 @@ public class DynamicDistributionsForm extends AbstractDynamicDistributionForm {
                 } catch (Throwable ex) {
                     ExceptionHandler.process(ex);
                 }
+                updateButtons();
             }
 
         });
@@ -341,6 +353,69 @@ public class DynamicDistributionsForm extends AbstractDynamicDistributionForm {
             @Override
             public void widgetSelected(SelectionEvent e) {
                 onDeleteBtnPressed();
+                updateButtons();
+            }
+        });
+
+        setupDistriCombo.addSelectionChangedListener(new ISelectionChangedListener() {
+
+            @Override
+            public void selectionChanged(SelectionChangedEvent event) {
+                updateButtons();
+            }
+        });
+
+        overrideDefaultSetupBtn.addSelectionListener(new SelectionAdapter() {
+
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                updateButtons();
+            }
+        });
+
+        repositoryText.addModifyListener(new ModifyListener() {
+
+            @Override
+            public void modifyText(ModifyEvent e) {
+                String newRepositoryText = repositoryText.getText();
+                if (StringUtils.equals(newRepositoryText, repositoryUrlCache)) {
+                    return;
+                }
+                repositoryUrlCache = newRepositoryText;
+                updateButtons();
+            }
+        });
+
+        anonymousBtn.addSelectionListener(new SelectionAdapter() {
+
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                updateButtons();
+            }
+        });
+
+        userText.addModifyListener(new ModifyListener() {
+
+            @Override
+            public void modifyText(ModifyEvent e) {
+                String newUsername = userText.getText();
+                if (StringUtils.equals(newUsername, usernameCache)) {
+                    return;
+                }
+                usernameCache = newUsername;
+                updateButtons();
+            }
+        });
+
+        passwordText.addModifyListener(new ModifyListener() {
+
+            @Override
+            public void modifyText(ModifyEvent e) {
+                String newPassword = passwordText.getText();
+                if (StringUtils.equals(newPassword, passwordCache)) {
+                    return;
+                }
+                passwordCache = newPassword;
                 updateButtons();
             }
         });
@@ -358,14 +433,77 @@ public class DynamicDistributionsForm extends AbstractDynamicDistributionForm {
                 }
                 Collections.sort(distributionDisplayNames);
                 distributionCombo.setInput(distributionDisplayNames);
+                setupDistriCombo.setInput(distributionDisplayNames);
                 if (0 < distributionDisplayNames.size()) {
                     distributionCombo.setSelection(new StructuredSelection(distributionDisplayNames.get(0)));
                     refreshVersionList(monitor);
+
+                    setupDistriCombo.setSelection(new StructuredSelection(distributionDisplayNames.get(0)));
                 }
             }
         } catch (Exception e) {
             ExceptionHandler.process(e);
         }
+
+        loadRepositorySetupGroup();
+
+    }
+
+    private void loadRepositorySetupGroup() {
+        IDynamicDistributionsGroup selectedSetupDistriGroup = getSelectedSetupDynamicDistriGroup();
+        if (selectedSetupDistriGroup != null) {
+            IDynamicDistributionPreference dynamicDistributionPreference = selectedSetupDistriGroup
+                    .getDynamicDistributionPreference();
+            boolean overrideDefaultSetup = dynamicDistributionPreference.overrideDefaultSetup();
+            String repositoryUrl = dynamicDistributionPreference.getRepository();
+            boolean isAnonymous = dynamicDistributionPreference.isAnonymous();
+            String username = dynamicDistributionPreference.getUsername();
+            String password = dynamicDistributionPreference.getPassword();
+
+            overrideDefaultSetupBtn.setSelection(overrideDefaultSetup);
+            repositoryText.setText(repositoryUrl);
+
+            anonymousBtn.setSelection(isAnonymous);
+            userText.setText(username);
+            passwordText.setText(password);
+        } else {
+            // exception case, disable all
+            overrideDefaultSetupBtn.setEnabled(false);
+            enableRepositoryText(false);
+            anonymousBtn.setEnabled(false);
+            enableUserPassword(false);
+        }
+    }
+
+    private void enableRepositoryText(boolean enable) {
+        repositoryText.setEnabled(enable);
+    }
+
+    private void enableUserPassword(boolean enable) {
+        userText.setEnabled(enable);
+        passwordText.setEnabled(enable);
+    }
+
+    private IDynamicDistributionsGroup getSelectedSetupDynamicDistriGroup() {
+        IDynamicDistributionsGroup selectedSetupDistriGroup = null;
+        try {
+            IStructuredSelection setupDistriSelection = (IStructuredSelection) setupDistriCombo.getSelection();
+            if (setupDistriSelection != null) {
+                String selectedSetupDistriDisplayName = (String) setupDistriSelection.getFirstElement();
+                if (StringUtils.isNotEmpty(selectedSetupDistriDisplayName)) {
+                    selectedSetupDistriGroup = DynamicDistributionManager.getInstance()
+                            .getDynamicDistributionGroup(selectedSetupDistriDisplayName);
+                }
+            }
+        } catch (Exception e) {
+            ExceptionHandler.process(e);
+            String message = e.getMessage();
+            if (StringUtils.isEmpty(message)) {
+                message = Messages.getString("ExceptionDialog.message.empty"); //$NON-NLS-1$
+            }
+            ExceptionMessageDialog.openError(getShell(), Messages.getString("ExceptionDialog.title"), message, e); //$NON-NLS-1$
+        }
+        return selectedSetupDistriGroup;
     }
 
     private void refreshVersionList(IDynamicMonitor monitor) {
@@ -458,8 +596,7 @@ public class DynamicDistributionsForm extends AbstractDynamicDistributionForm {
                             dynamicDistributionGroup.unregist(dynamicPlugin, monitor);
 
                             monitor.setTaskName(Messages.getString("DynamicBuildConfigurationForm.delete.progress.deleteFile")); //$NON-NLS-1$
-                            String filePath = (String) pluginConfiguration
-                                    .getAttribute(DynamicConstants.ATTR_FILE_PATH);
+                            String filePath = (String) pluginConfiguration.getAttribute(DynamicConstants.ATTR_FILE_PATH);
                             File file = new File(filePath);
                             file.delete();
 
@@ -501,17 +638,98 @@ public class DynamicDistributionsForm extends AbstractDynamicDistributionForm {
             }
         } catch (Exception e) {
             ExceptionHandler.process(e);
+        } finally {
+            boolean isReadonly = isReadonly();
+            if (isReadonly) {
+                deleteBtn.setEnabled(false);
+            } else {
+                deleteBtn.setEnabled(canDelete);
+            }
         }
-
-        deleteBtn.setEnabled(canDelete);
 
         return true;
     }
 
+    private boolean checkRepository() {
+        try {
+            repositoryText.setBackground(null);
+            repositoryText.setToolTipText(""); //$NON-NLS-1$
+            boolean overrideDefaultSetupSelected = overrideDefaultSetupBtn.getSelection();
+            repositoryText.setEditable(overrideDefaultSetupSelected);
+            if (!overrideDefaultSetupSelected) {
+                IDynamicDistributionsGroup selectedSetupDynamicDistriGroup = getSelectedSetupDynamicDistriGroup();
+                if (selectedSetupDynamicDistriGroup != null) {
+                    IDynamicDistributionPreference dynamicDistributionPreference = selectedSetupDynamicDistriGroup
+                            .getDynamicDistributionPreference();
+                    String defaultRepository = dynamicDistributionPreference.getDefaultRepository();
+                    repositoryText.setText(defaultRepository);
+                    repositoryText.setToolTipText(defaultRepository);
+                }
+            } else {
+                String repository = repositoryText.getText();
+                if (StringUtils.isEmpty(repository.trim())) {
+                    String errorMessage = Messages
+                            .getString("DynamicDistributionsForm.exception.setup.override.repository.empty"); //$NON-NLS-1$
+                    repositoryText.setToolTipText(errorMessage);
+                    repositoryText.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
+                    showMessage(errorMessage, WizardPage.ERROR);
+                    return false;
+                } else {
+                    repositoryText.setToolTipText(repository);
+                }
+            }
+        } finally {
+            boolean isReadonly = isReadonly();
+            if (isReadonly) {
+                overrideDefaultSetupBtn.setEnabled(false);
+                repositoryText.setEditable(false);
+            }
+        }
+        return true;
+    }
+
+    private boolean checkUsernamePassword() {
+        try {
+            userText.setBackground(null);
+            userText.setToolTipText(""); //$NON-NLS-1$
+            passwordText.setBackground(null);
+            passwordText.setToolTipText(""); //$NON-NLS-1$
+            boolean isAnonymous = anonymousBtn.getSelection();
+            userText.setEnabled(!isAnonymous);
+            passwordText.setEnabled(!isAnonymous);
+
+            boolean noError = true;
+            if (!isAnonymous) {
+                String username = userText.getText();
+                if (StringUtils.isEmpty(username.trim())) {
+                    String errorMessage = Messages.getString("DynamicDistributionsForm.exception.setup.username.empty"); //$NON-NLS-1$
+                    userText.setToolTipText(errorMessage);
+                    userText.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
+                    showMessage(errorMessage, WizardPage.ERROR);
+                    noError = false;
+                } else {
+                    userText.setToolTipText(username);
+                }
+                // no requirement for password
+            }
+            return noError;
+        } finally {
+            boolean isReadonly = isReadonly();
+            if (isReadonly) {
+                anonymousBtn.setEnabled(false);
+                userText.setEnabled(false);
+                passwordText.setEnabled(false);
+            }
+        }
+    }
+
     @Override
     public boolean isComplete() {
+        showMessage(null, WizardPage.NONE);
         boolean checkVersion = checkVersionSelection();
-        return checkVersion;
+        boolean checkRepository = checkRepository();
+        boolean checkUsernamePassword = checkUsernamePassword();
+        return checkVersion && checkRepository && checkUsernamePassword;
     }
 
     @Override
@@ -525,6 +743,96 @@ public class DynamicDistributionsForm extends AbstractDynamicDistributionForm {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public boolean performOk() {
+        boolean isReadonly = isReadonly();
+        if (isReadonly) {
+            return super.performOk();
+        }
+        boolean isOk = performApply();
+        if (!isOk) {
+            return false;
+        }
+        return super.performOk();
+    }
+
+    @Override
+    public boolean performApply() {
+        boolean isReadonly = isReadonly();
+        if (isReadonly) {
+            return super.performApply();
+        }
+        try {
+            IDynamicDistributionsGroup selectedSetupDynamicDistriGroup = getSelectedSetupDynamicDistriGroup();
+            if (selectedSetupDynamicDistriGroup != null) {
+                IDynamicDistributionPreference dynamicDistributionPreference = selectedSetupDynamicDistriGroup
+                        .getDynamicDistributionPreference();
+                if (dynamicDistributionPreference != null) {
+                    dynamicDistributionPreference.setAnonymous(anonymousBtn.getSelection());
+                    dynamicDistributionPreference.setOverrideDefaultSetup(overrideDefaultSetupBtn.getSelection());
+                    dynamicDistributionPreference.setPassword(passwordText.getText());
+                    dynamicDistributionPreference.setRepository(repositoryText.getText());
+                    dynamicDistributionPreference.setUsername(userText.getText());
+                    dynamicDistributionPreference.save();
+                    isComplete();
+                }
+            }
+        } catch (Exception e) {
+            ExceptionHandler.process(e);
+            String message = e.getMessage();
+            if (StringUtils.isEmpty(message)) {
+                message = Messages.getString("ExceptionDialog.message.empty"); //$NON-NLS-1$
+            }
+            ExceptionMessageDialog.openError(getShell(), Messages.getString("ExceptionDialog.title"), message, e); //$NON-NLS-1$
+        }
+        return super.performApply();
+    }
+
+    @Override
+    public void performDefaults() {
+        boolean isReadonly = isReadonly();
+        if (isReadonly) {
+            super.performDefaults();
+            return;
+        }
+        boolean agree = MessageDialog.openConfirm(getShell(),
+                Messages.getString("DynamicDistributionsForm.performDefaults.confirm.title"), //$NON-NLS-1$
+                Messages.getString("DynamicDistributionsForm.performDefaults.confirm.message")); //$NON-NLS-1$
+        if (!agree) {
+            return;
+        }
+        try {
+            IDynamicDistributionsGroup selectedSetupDynamicDistriGroup = getSelectedSetupDynamicDistriGroup();
+            if (selectedSetupDynamicDistriGroup != null) {
+                IDynamicDistributionPreference dynamicDistributionPreference = selectedSetupDynamicDistriGroup
+                        .getDynamicDistributionPreference();
+                if (dynamicDistributionPreference != null) {
+                    dynamicDistributionPreference.setAnonymous(dynamicDistributionPreference.getDefaultIsAnonymous());
+                    dynamicDistributionPreference
+                            .setOverrideDefaultSetup(dynamicDistributionPreference.getDefaultOverrideDefaultSetup());
+                    dynamicDistributionPreference.setPassword(dynamicDistributionPreference.getDefaultPassword());
+                    dynamicDistributionPreference.setRepository(dynamicDistributionPreference.getDefaultRepository());
+                    dynamicDistributionPreference.setUsername(dynamicDistributionPreference.getDefaultUsername());
+                    dynamicDistributionPreference.save();
+                    loadRepositorySetupGroup();
+                    isComplete();
+                }
+            }
+        } catch (Exception e) {
+            ExceptionHandler.process(e);
+            String message = e.getMessage();
+            if (StringUtils.isEmpty(message)) {
+                message = Messages.getString("ExceptionDialog.message.empty"); //$NON-NLS-1$
+            }
+            ExceptionMessageDialog.openError(getShell(), Messages.getString("ExceptionDialog.title"), message, e); //$NON-NLS-1$
+        }
+        super.performDefaults();
+    }
+
+    private boolean isReadonly() {
+        return ProxyRepositoryFactory.getInstance().isUserReadOnlyOnCurrentProject();
     }
 
     private class ExistingConfigsLabelProvider extends LabelProvider {
