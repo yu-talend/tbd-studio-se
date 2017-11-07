@@ -22,10 +22,11 @@ import java.util.regex.Pattern;
 import org.talend.designer.maven.aether.IDynamicMonitor;
 import org.talend.designer.maven.aether.util.DynamicDistributionAetherUtils;
 import org.talend.hadoop.distribution.dynamic.DynamicConfiguration;
+import org.talend.hadoop.distribution.dynamic.IDynamicDistributionPreference;
 import org.talend.hadoop.distribution.dynamic.resolver.AbstractDependencyResolver;
 
 /**
- * DOC cmeng  class global comment. Detailled comment
+ * DOC cmeng class global comment. Detailled comment
  */
 public class ClouderaDependencyResolver extends AbstractDependencyResolver implements IClouderaDependencyResolver {
 
@@ -36,11 +37,14 @@ public class ClouderaDependencyResolver extends AbstractDependencyResolver imple
             throws Exception {
         DynamicConfiguration configuration = getConfiguration();
         String distributionVersion = configuration.getVersion();
-        String remoteRepositoryUrl = configuration.getRemoteRepositoryUrl();
+        IDynamicDistributionPreference preference = configuration.getPreference();
+        String remoteRepositoryUrl = preference.getRepository();
+        String username = preference.getUsername();
+        String password = preference.getPassword();
         String localRepositoryPath = getLocalRepositoryPath();
 
-        List<String> versionRange = DynamicDistributionAetherUtils.versionRange(remoteRepositoryUrl, localRepositoryPath, groupId,
-                artifactId, null, null, monitor);
+        List<String> versionRange = DynamicDistributionAetherUtils.versionRange(remoteRepositoryUrl, username, password,
+                localRepositoryPath, groupId, artifactId, null, null, monitor);
 
         String dependencyVersion = getVersionByHadoopVersion(versionRange, distributionVersion);
 
@@ -52,10 +56,13 @@ public class ClouderaDependencyResolver extends AbstractDependencyResolver imple
         String groupId = "org.apache.hadoop"; //$NON-NLS-1$
         String artifactId = "hadoop-client"; //$NON-NLS-1$
         DynamicConfiguration configuration = getConfiguration();
-        String remoteRepositoryUrl = configuration.getRemoteRepositoryUrl();
+        IDynamicDistributionPreference preference = configuration.getPreference();
+        String remoteRepositoryUrl = preference.getRepository();
+        String username = preference.getUsername();
+        String password = preference.getPassword();
         String localRepositoryPath = getLocalRepositoryPath();
-        List<String> versionRange = DynamicDistributionAetherUtils.versionRange(remoteRepositoryUrl, localRepositoryPath, groupId,
-                artifactId, baseVersion, topVersion, monitor);
+        List<String> versionRange = DynamicDistributionAetherUtils.versionRange(remoteRepositoryUrl, username, password,
+                localRepositoryPath, groupId, artifactId, baseVersion, topVersion, monitor);
         return getCleanHadoopVersion(versionRange);
     }
 

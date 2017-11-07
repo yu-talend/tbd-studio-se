@@ -26,9 +26,9 @@ public class DynamicConfiguration {
 
     private String name;
 
-    private String remoteRepositoryUrl;
-
     private String description;
+
+    private IDynamicDistributionPreference preference;
 
     public String getId() {
         return this.id;
@@ -63,11 +63,7 @@ public class DynamicConfiguration {
     }
 
     public String getRemoteRepositoryUrl() {
-        return this.remoteRepositoryUrl;
-    }
-
-    public void setRemoteRepositoryUrl(String remoteRepositoryUrl) {
-        this.remoteRepositoryUrl = remoteRepositoryUrl;
+        return preference.getRepository();
     }
 
     public String getDescription() {
@@ -76,6 +72,14 @@ public class DynamicConfiguration {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public IDynamicDistributionPreference getPreference() {
+        return this.preference;
+    }
+
+    public void setPreference(IDynamicDistributionPreference preference) {
+        this.preference = preference;
     }
 
 }

@@ -16,9 +16,11 @@ import org.talend.commons.ui.runtime.image.ImageProvider;
 import org.talend.core.CorePlugin;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.core.runtime.dynamic.IDynamicPlugin;
+import org.talend.core.runtime.dynamic.IDynamicPluginConfiguration;
 import org.talend.designer.maven.aether.AbsDynamicProgressMonitor;
 import org.talend.designer.maven.aether.IDynamicMonitor;
 import org.talend.hadoop.distribution.dynamic.DynamicDistributionManager;
+import org.talend.hadoop.distribution.dynamic.IDynamicDistributionPreference;
 import org.talend.hadoop.distribution.dynamic.adapter.DynamicPluginAdapter;
 import org.talend.repository.RepositoryWorkUnit;
 import org.talend.repository.hadoopcluster.i18n.Messages;
@@ -93,7 +95,12 @@ public class DynamicBuildConfigurationWizard extends Wizard {
                         if (dynamicPlugin != null) {
                             dMonitor.beginTask(Messages.getString("DynamicBuildConfigurationWizard.finish.progress.save"), //$NON-NLS-1$
                                     IDynamicMonitor.UNKNOWN);
-                            DynamicPluginAdapter pluginAdapter = new DynamicPluginAdapter(dynamicPlugin);
+                            IDynamicPluginConfiguration pluginConfiguration = dynamicPlugin.getPluginConfiguration();
+                            String distribution = pluginConfiguration.getDistribution();
+                            IDynamicDistributionPreference dynamicDistributionPreference = DynamicDistributionManager
+                                    .getInstance().getDynamicDistributionGroup(distribution).getDynamicDistributionPreference();
+                            DynamicPluginAdapter pluginAdapter = new DynamicPluginAdapter(dynamicPlugin,
+                                    dynamicDistributionPreference);
                             pluginAdapter.cleanUnusedAndRefresh();
                             IDynamicPlugin fDynPlugin = pluginAdapter.getPlugin();
                             ProxyRepositoryFactory.getInstance().executeRepositoryWorkUnit(new RepositoryWorkUnit<Boolean>(

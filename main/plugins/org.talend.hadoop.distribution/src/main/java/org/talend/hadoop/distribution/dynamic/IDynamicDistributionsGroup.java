@@ -17,6 +17,7 @@ import java.util.List;
 import org.talend.core.runtime.dynamic.IDynamicPlugin;
 import org.talend.designer.maven.aether.IDynamicMonitor;
 import org.talend.hadoop.distribution.dynamic.bean.TemplateBean;
+import org.talend.hadoop.distribution.dynamic.resolver.IDependencyResolver;
 
 /**
  * DOC cmeng  class global comment. Detailled comment
@@ -68,6 +69,8 @@ public interface IDynamicDistributionsGroup {
      * @return
      */
     public List<IDynamicPlugin> filterDynamicPlugins(List<IDynamicPlugin> dynamicPlugins, IDynamicMonitor monitor);
+
+    public IDependencyResolver getDependencyResolver(DynamicConfiguration config);
 
     public IDynamicDistributionPreference getDynamicDistributionPreference();
 

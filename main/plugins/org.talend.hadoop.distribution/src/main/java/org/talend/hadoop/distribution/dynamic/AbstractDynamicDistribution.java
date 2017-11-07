@@ -42,16 +42,14 @@ import org.talend.designer.maven.aether.util.DynamicDistributionAetherUtils;
 import org.talend.hadoop.distribution.dynamic.adapter.DynamicPluginAdapter;
 import org.talend.hadoop.distribution.dynamic.adapter.DynamicTemplateAdapter;
 import org.talend.hadoop.distribution.dynamic.bean.TemplateBean;
-import org.talend.hadoop.distribution.dynamic.resolver.DependencyResolverFactory;
 import org.talend.hadoop.distribution.dynamic.resolver.IDependencyResolver;
 import org.talend.hadoop.distribution.dynamic.util.DynamicDistributionUtils;
 import org.talend.repository.ProjectManager;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-
 /**
- * DOC cmeng  class global comment. Detailled comment
+ * DOC cmeng class global comment. Detailled comment
  */
 public abstract class AbstractDynamicDistribution implements IDynamicDistribution {
 
@@ -59,9 +57,9 @@ public abstract class AbstractDynamicDistribution implements IDynamicDistributio
 
     private List<TemplateBean> templateBeansCache;
 
-    private Map<TemplateBean, List<String>> templateBeanCompatibleVersionMap;
+    private List<String> allVersionList;
 
-    private Map<TemplateBean, List<String>> templateBeanAllVersionMap;
+    private Map<TemplateBean, List<String>> templateBeanCompatibleVersionMap;
 
     private Map<String, DynamicPluginAdapter> registedPluginMap = new HashMap<>();
 
@@ -154,22 +152,22 @@ public abstract class AbstractDynamicDistribution implements IDynamicDistributio
         Set<String> allCompatibleVersion = new HashSet<>();
         List<TemplateBean> templates = getTemplates(monitor);
         if (templates != null) {
+            DynamicDistributionUtils.checkCancelOrNot(monitor);
             templateBeanCompatibleVersionMap = new HashMap<>();
-            Map<String, List<String>> fetchedVersionsMap = new HashMap<>();
-            for (TemplateBean templateBean : templates) {
-                DynamicDistributionUtils.checkCancelOrNot(monitor);
-                String remoteRepositoryUrl = templateBean.getRepository();
-                List<String> allHadoopVersions = fetchedVersionsMap.get(remoteRepositoryUrl);
-                if (allHadoopVersions == null) {
-                    DynamicConfiguration dynamicConfiguration = new DynamicConfiguration();
-                    dynamicConfiguration.setDistribution(getDistributionName());
-                    dynamicConfiguration.setRemoteRepositoryUrl(templateBean.getRepository());
-                    IDependencyResolver dependencyResolver = DependencyResolverFactory.getInstance()
-                            .getDependencyResolver(dynamicConfiguration);
-                    allHadoopVersions = dependencyResolver.listHadoopVersions(null, null, monitor);
-                    fetchedVersionsMap.put(remoteRepositoryUrl, allHadoopVersions);
-                }
-                if (allHadoopVersions != null) {
+            DynamicDistributionManager dynamicDistributionManager = DynamicDistributionManager.getInstance();
+            IDynamicDistributionsGroup dynamicDistributionGroup = dynamicDistributionManager
+                    .getDynamicDistributionGroup(getDistributionName());
+            IDynamicDistributionPreference dynamicDistributionPreference = dynamicDistributionGroup
+                    .getDynamicDistributionPreference();
+
+            DynamicConfiguration dynamicConfiguration = new DynamicConfiguration();
+            dynamicConfiguration.setDistribution(getDistributionName());
+            dynamicConfiguration.setPreference(dynamicDistributionPreference);
+            IDependencyResolver dependencyResolver = dynamicDistributionManager.getDependencyResolver(dynamicConfiguration);
+            List<String> allHadoopVersions = dependencyResolver.listHadoopVersions(null, null, monitor);
+            if (allHadoopVersions != null) {
+                for (TemplateBean templateBean : templates) {
+                    DynamicDistributionUtils.checkCancelOrNot(monitor);
                     String baseVersion = templateBean.getBaseVersion();
                     String topVersion = templateBean.getTopVersion();
                     String versionRange = "["; //$NON-NLS-1$
@@ -201,30 +199,20 @@ public abstract class AbstractDynamicDistribution implements IDynamicDistributio
     public List<String> getAllVersions(IDynamicMonitor monitor) throws Exception {
 
         Set<String> allVersion = new HashSet<>();
-        List<TemplateBean> templates = getTemplates(monitor);
-        if (templates != null) {
-            templateBeanAllVersionMap = new HashMap<>();
-            Map<String, List<String>> fetchedVersionsMap = new HashMap<>();
-            for (TemplateBean templateBean : templates) {
-                String remoteRepositoryUrl = templateBean.getRepository();
-                List<String> allHadoopVersions = fetchedVersionsMap.get(remoteRepositoryUrl);
-                if (allHadoopVersions == null) {
-                    DynamicConfiguration dynamicConfiguration = new DynamicConfiguration();
-                    dynamicConfiguration.setDistribution(getDistributionName());
-                    dynamicConfiguration.setRemoteRepositoryUrl(templateBean.getRepository());
-                    IDependencyResolver dependencyResolver = DependencyResolverFactory.getInstance()
-                            .getDependencyResolver(dynamicConfiguration);
-                    allHadoopVersions = dependencyResolver.listHadoopVersions(null, null, monitor);
-                    fetchedVersionsMap.put(remoteRepositoryUrl, allHadoopVersions);
-                }
-                if (allHadoopVersions != null) {
-                    allVersion.addAll(allHadoopVersions);
-                    templateBeanAllVersionMap.put(templateBean, allHadoopVersions);
-                }
-            }
+        DynamicDistributionManager dynamicDistributionManager = DynamicDistributionManager.getInstance();
+        DynamicConfiguration dynamicConfiguration = new DynamicConfiguration();
+        dynamicConfiguration.setDistribution(getDistributionName());
+        IDynamicDistributionPreference dynamicDistributionPreference = dynamicDistributionManager
+                .getDynamicDistributionGroup(getDistributionName()).getDynamicDistributionPreference();
+        dynamicConfiguration.setPreference(dynamicDistributionPreference);
+        IDependencyResolver dependencyResolver = dynamicDistributionManager.getDependencyResolver(dynamicConfiguration);
+        List<String> allHadoopVersions = dependencyResolver.listHadoopVersions(null, null, monitor);
+        if (allHadoopVersions != null) {
+            allVersion.addAll(allHadoopVersions);
         }
         List<String> versionList = new LinkedList<>(allVersion);
         Collections.sort(versionList, Collections.reverseOrder(new VersionStringComparator()));
+        allVersionList = new ArrayList<>(versionList);
         return versionList;
 
     }
@@ -239,6 +227,9 @@ public abstract class AbstractDynamicDistribution implements IDynamicDistributio
         String version = configuration.getVersion();
 
         // 1. try to get compatible bean
+        if (templateBeanCompatibleVersionMap == null) {
+            getCompatibleVersions(monitor);
+        }
         Set<Entry<TemplateBean, List<String>>> entrySet = templateBeanCompatibleVersionMap.entrySet();
         TemplateBean bestTemplateBean = null;
         // choose the biggest distance, normally means compatible with higher versions
@@ -259,20 +250,26 @@ public abstract class AbstractDynamicDistribution implements IDynamicDistributio
 
         // 2. try to get bean from all beans
         if (bestTemplateBean == null) {
-            entrySet = templateBeanAllVersionMap.entrySet();
-            // choose the biggest distance, normally means compatible with higher versions
+            if (allVersionList == null) {
+                getAllVersions(monitor);
+            }
+            VersionStringComparator versionStringComparator = new VersionStringComparator();
+            // choose the shorted distance, normally means compatible with higher versions
             distance = -1;
             for (Entry<TemplateBean, List<String>> entry : entrySet) {
                 List<String> list = entry.getValue();
-                Collections.sort(list, new VersionStringComparator());
-                int size = list.size();
-                int index = list.indexOf(version);
-                if (0 <= index) {
-                    int curDistance = size - index;
-                    if (distance < curDistance) {
-                        distance = curDistance;
-                        bestTemplateBean = entry.getKey();
-                    }
+                Collections.sort(list, versionStringComparator);
+                String topVersion = list.get(list.size() - 1);
+                String baseVersion = list.get(0);
+                int curDistance = -1;
+                if (versionStringComparator.compare(version, baseVersion) < 0) {
+                    curDistance = allVersionList.indexOf(baseVersion) - allVersionList.indexOf(version);
+                } else {
+                    curDistance = allVersionList.indexOf(version) - allVersionList.indexOf(topVersion);
+                }
+                if (distance < 0 || curDistance < distance) {
+                    distance = curDistance;
+                    bestTemplateBean = entry.getKey();
                 }
             }
         }
@@ -287,10 +284,12 @@ public abstract class AbstractDynamicDistribution implements IDynamicDistributio
 
     @Override
     public void regist(IDynamicPlugin dynamicPlugin, IDynamicMonitor monitor) throws Exception {
+        DynamicDistributionManager dynamicDistributionManager = DynamicDistributionManager.getInstance();
         IDynamicPlugin copiedDynamicPlugin = DynamicFactory.getInstance()
                 .createPluginFromJson(dynamicPlugin.toXmlJson().toString());
-
-        DynamicPluginAdapter pluginAdapter = new DynamicPluginAdapter(copiedDynamicPlugin);
+        IDynamicDistributionPreference dynamicDistributionPreference = dynamicDistributionManager
+                .getDynamicDistributionGroup(getDistributionName()).getDynamicDistributionPreference();
+        DynamicPluginAdapter pluginAdapter = new DynamicPluginAdapter(copiedDynamicPlugin, dynamicDistributionPreference);
         pluginAdapter.adapt();
 
         IDynamicDistributionTemplate distributionTemplate = initTemplate(pluginAdapter, monitor);
@@ -301,21 +300,18 @@ public abstract class AbstractDynamicDistribution implements IDynamicDistributio
 
             IDynamicPluginConfiguration pluginConfiguration = pluginAdapter.getPluginConfiguration();
             String id = pluginConfiguration.getId();
-            String projectName = (String) pluginConfiguration
-                    .getAttribute(DynamicConstants.ATTR_PROJECT_TECHNICAL_NAME);
+            String projectName = (String) pluginConfiguration.getAttribute(DynamicConstants.ATTR_PROJECT_TECHNICAL_NAME);
 
             DynamicPluginAdapter registedPluginAdapter = registedPluginMap.get(id);
             if (registedPluginAdapter != null) {
                 IDynamicPluginConfiguration oldPluginConfiguration = registedPluginAdapter.getPluginConfiguration();
                 String oldProjectName = "unknown"; //$NON-NLS-1$
                 if (oldPluginConfiguration != null) {
-                    oldProjectName = (String) oldPluginConfiguration
-                            .getAttribute(DynamicConstants.ATTR_PROJECT_TECHNICAL_NAME);
+                    oldProjectName = (String) oldPluginConfiguration.getAttribute(DynamicConstants.ATTR_PROJECT_TECHNICAL_NAME);
                 }
-                ExceptionHandler
-                        .log("Plugin " + id + "(project: " + oldProjectName //$NON-NLS-1$ //$NON-NLS-2$
-                                + ") is already registed before, will unregist it and regist the new one(project:" + projectName //$NON-NLS-1$
-                                + " instead."); //$NON-NLS-1$
+                ExceptionHandler.log("Plugin " + id + "(project: " + oldProjectName //$NON-NLS-1$ //$NON-NLS-2$
+                        + ") is already registed before, will unregist it and regist the new one(project:" + projectName //$NON-NLS-1$
+                        + " instead."); //$NON-NLS-1$
                 DynamicServiceUtil.removeContribution(registedPluginAdapter.getPlugin());
             }
             ServiceRegistration registedOsgiService = registedOsgiServiceMap.get(id);
@@ -323,8 +319,7 @@ public abstract class AbstractDynamicDistribution implements IDynamicDistributio
                 IDynamicPluginConfiguration oldPluginConfiguration = registedPluginAdapter.getPluginConfiguration();
                 String oldProjectName = "unknown"; //$NON-NLS-1$
                 if (oldPluginConfiguration != null) {
-                    oldProjectName = (String) oldPluginConfiguration
-                            .getAttribute(DynamicConstants.ATTR_PROJECT_TECHNICAL_NAME);
+                    oldProjectName = (String) oldPluginConfiguration.getAttribute(DynamicConstants.ATTR_PROJECT_TECHNICAL_NAME);
                 }
                 ExceptionHandler.log("OSGi service " + id + "(project: " + oldProjectName //$NON-NLS-1$ //$NON-NLS-2$
                         + ") is already registed before, will unregist it and regist the new one(project:" + projectName //$NON-NLS-1$

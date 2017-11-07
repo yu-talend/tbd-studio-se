@@ -71,6 +71,7 @@ import org.talend.designer.maven.aether.IDynamicMonitor;
 import org.talend.designer.maven.aether.comparator.VersionStringComparator;
 import org.talend.hadoop.distribution.dynamic.DynamicConfiguration;
 import org.talend.hadoop.distribution.dynamic.DynamicDistributionManager;
+import org.talend.hadoop.distribution.dynamic.IDynamicDistributionPreference;
 import org.talend.hadoop.distribution.dynamic.IDynamicDistributionsGroup;
 import org.talend.hadoop.distribution.dynamic.adapter.DynamicLibraryNeededExtensionAdaper;
 import org.talend.hadoop.distribution.dynamic.adapter.DynamicModuleAdapter;
@@ -879,8 +880,11 @@ public class DynamicBuildConfigurationForm extends AbstractDynamicDistributionFo
                 this.dynamicPlugin = dynPlugin;
                 this.tempDynamicPlugin = DynamicFactory.getInstance()
                         .createPluginFromJson(this.dynamicPlugin.toXmlJson().toString());
-
-                pluginAdapter = new DynamicPluginAdapter(tempDynamicPlugin);
+                IDynamicPluginConfiguration pluginConfiguration = tempDynamicPlugin.getPluginConfiguration();
+                String distribution = pluginConfiguration.getDistribution();
+                IDynamicDistributionPreference dynamicDistributionPreference = DynamicDistributionManager.getInstance()
+                        .getDynamicDistributionGroup(distribution).getDynamicDistributionPreference();
+                pluginAdapter = new DynamicPluginAdapter(tempDynamicPlugin, dynamicDistributionPreference);
                 pluginAdapter.buildIdMaps();
                 Set<String> allModuleIds = pluginAdapter.getAllModuleIds();
                 Iterator<String> iter = allModuleIds.iterator();

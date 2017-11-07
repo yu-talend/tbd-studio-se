@@ -180,6 +180,10 @@ public class DynamicDistributionUtils {
         return id.replaceAll("[\\W]", "_"); //$NON-NLS-1$//$NON-NLS-2$
     }
 
+    public static String getMvnUrl(DependencyNode node) {
+        return getMvnUrl(node, null);
+    }
+
     public static String getMvnUrl(DependencyNode node, String repositoryUri) {
         String classifier = node.getClassifier();
         if (StringUtils.isEmpty(classifier)) {

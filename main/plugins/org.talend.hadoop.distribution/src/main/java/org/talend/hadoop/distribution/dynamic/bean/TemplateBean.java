@@ -30,8 +30,6 @@ public class TemplateBean implements IVariable {
 
     public static final String ATTR_DESCRIPTION = "description"; //$NON-NLS-1$
 
-    public static final String ATTR_REPOSITORY = "repository"; //$NON-NLS-1$
-
     public static final String ATTR_PROPERTIES = "properties"; //$NON-NLS-1$
 
     public static final String ATTR_SERVICES = "services"; //$NON-NLS-1$
@@ -54,8 +52,6 @@ public class TemplateBean implements IVariable {
 
     public static final String ATTR_DYNAMIC_VERSION = "dynamicVersion"; //$NON-NLS-1$
 
-    public static final String ATTR_ADD_REPOSITORY_IN_MVNURI = "addRepositoryInMvnUri"; //$NON-NLS-1$
-
     private String id;
 
     private String name;
@@ -68,13 +64,9 @@ public class TemplateBean implements IVariable {
 
     private String description;
 
-    private String repository;
-
     private String baseVersion;
 
     private String topVersion;
-
-    private String addRepositoryInMvnUri;
 
     private Map<String, String> properties;
 
@@ -132,14 +124,6 @@ public class TemplateBean implements IVariable {
         this.description = description;
     }
 
-    public String getRepository() {
-        return this.repository;
-    }
-
-    public void setRepository(String repository) {
-        this.repository = repository;
-    }
-
     public String getBaseVersion() {
         return this.baseVersion;
     }
@@ -154,14 +138,6 @@ public class TemplateBean implements IVariable {
 
     public void setTopVersion(String topVersion) {
         this.topVersion = topVersion;
-    }
-
-    public String getAddRepositoryInMvnUri() {
-        return this.addRepositoryInMvnUri;
-    }
-
-    public void setAddRepositoryInMvnUri(String addRepositoryInMvnUri) {
-        this.addRepositoryInMvnUri = addRepositoryInMvnUri;
     }
 
     public Map<String, String> getProperties() {
@@ -240,9 +216,6 @@ public class TemplateBean implements IVariable {
     public Object getVariableValue(String variable) throws Exception {
         Object value = null;
         switch (variable) {
-        case ATTR_ADD_REPOSITORY_IN_MVNURI:
-            value = getAddRepositoryInMvnUri();
-            break;
         case ATTR_BASE_VERSION:
             value = getBaseVersion();
             break;
@@ -278,9 +251,6 @@ public class TemplateBean implements IVariable {
             break;
         case ATTR_PROPERTIES:
             value = getProperties();
-            break;
-        case ATTR_REPOSITORY:
-            value = getRepository();
             break;
         case ATTR_SERVICES:
             value = getServices();

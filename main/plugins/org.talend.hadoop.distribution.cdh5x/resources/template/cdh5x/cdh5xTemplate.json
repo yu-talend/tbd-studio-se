@@ -6,8 +6,6 @@
     "baseVersion":"5.10.0",
     "topVersion":"5.12.0",
     "dynamicVersion":"will be filled during runtime",
-    "repository": "http://localhost:8081/nexus/content/repositories/central/",
-    "addRepositoryInMvnUri":"true",
     "properties": {
         "context": "plugin:org.talend.hadoop.distribution.cdh5x"
     },

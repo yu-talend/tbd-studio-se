@@ -222,12 +222,7 @@ public class DynamicModuleAdapter extends AbstractDynamicAdapter {
         libraryNeeded.setConfigurationName(TAG_NAME);
 
         String jarname = node.getJarName();
-        String repositoryUri = null;
-        String addRepositoryUri = templateBean.getAddRepositoryInMvnUri();
-        if (Boolean.valueOf(addRepositoryUri)) {
-            repositoryUri = templateBean.getRepository();
-        }
-        String mvnUri = DynamicDistributionUtils.getMvnUrl(node, repositoryUri);
+        String mvnUri = DynamicDistributionUtils.getMvnUrl(node);
 
         libraryNeeded.setAttribute(ATTR_NAME, jarname);
         libraryNeeded.setAttribute(ATTR_MVN_URI, mvnUri);
@@ -345,7 +340,7 @@ public class DynamicModuleAdapter extends AbstractDynamicAdapter {
     private String getMvnUri() {
         String mvnUri = null;
         try {
-            String repository = getTemplateBean().getRepository();
+            String repository = null;
             String group = moduleBean.getGroupId();
             String artifact = moduleBean.getArtifactId();
             String vertion = moduleBean.getVersion();

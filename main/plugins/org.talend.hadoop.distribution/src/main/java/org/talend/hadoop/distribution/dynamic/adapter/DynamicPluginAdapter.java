@@ -23,10 +23,14 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.talend.commons.exception.ExceptionHandler;
 import org.talend.core.runtime.dynamic.IDynamicConfiguration;
 import org.talend.core.runtime.dynamic.IDynamicExtension;
 import org.talend.core.runtime.dynamic.IDynamicPlugin;
 import org.talend.core.runtime.dynamic.IDynamicPluginConfiguration;
+import org.talend.core.runtime.maven.MavenArtifact;
+import org.talend.core.runtime.maven.MavenUrlHelper;
+import org.talend.hadoop.distribution.dynamic.IDynamicDistributionPreference;
 import org.talend.hadoop.distribution.dynamic.comparator.DynamicAttributeComparator;
 
 /**
@@ -38,13 +42,16 @@ public class DynamicPluginAdapter {
 
     private IDynamicPluginConfiguration pluginConfiguration;
 
+    private IDynamicDistributionPreference preference;
+
     private Map<String, IDynamicConfiguration> moduleGroupTemplateMap;
     
     private Map<String, IDynamicConfiguration> moduleMap;
 
-    public DynamicPluginAdapter(IDynamicPlugin plugin) {
+    public DynamicPluginAdapter(IDynamicPlugin plugin, IDynamicDistributionPreference preference) {
         this.plugin = plugin;
         this.pluginConfiguration = this.plugin.getPluginConfiguration();
+        this.preference = preference;
         moduleGroupTemplateMap = new HashMap<>();
         moduleMap = new HashMap<>();
     }
@@ -84,6 +91,14 @@ public class DynamicPluginAdapter {
         if (configurations == null || configurations.isEmpty()) {
             throw new Exception("No libraryModuelGroup configured");
         }
+        
+        String repository = preference.getRepository();
+        if (StringUtils.isEmpty(repository)) {
+            repository = preference.getDefaultRepository();
+        }
+        String username = preference.getUsername();
+        String password = preference.getPassword();
+        
         for (IDynamicConfiguration configuration : configurations) {
             if (DynamicModuleGroupAdapter.TAG_NAME.equals(configuration.getTagName())) {
                 String templateId = (String) configuration.getAttribute(DynamicModuleGroupAdapter.ATTR_GROUP_TEMPLATE_ID);
@@ -98,6 +113,22 @@ public class DynamicPluginAdapter {
                     throw new Exception("Module id is empty!");
                 }
                 moduleMap.put(moduleId, configuration);
+                String mvnUri = (String) configuration.getAttribute(DynamicModuleAdapter.ATTR_MVN_URI);
+                if (StringUtils.isNotEmpty(mvnUri)) {
+                    try {
+                        MavenArtifact ma = MavenUrlHelper.parseMvnUrl(mvnUri);
+                        if (StringUtils.isEmpty(ma.getRepositoryUrl())) {
+                            String newMvnUri = MavenUrlHelper.generateMvnUrl(username, password, repository, ma.getGroupId(),
+                                    ma.getArtifactId(), ma.getVersion(), ma.getType(), ma.getClassifier());
+                            if (StringUtils.isEmpty(newMvnUri)) {
+                                throw new Exception("Convert mvnUri failed! original uri: " + mvnUri);
+                            }
+                            configuration.setAttribute(DynamicModuleAdapter.ATTR_MVN_URI, newMvnUri);
+                        }
+                    } catch (Exception e) {
+                        ExceptionHandler.process(e);
+                    }
+                }
             }
         }
 

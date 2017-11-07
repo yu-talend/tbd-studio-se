@@ -39,6 +39,7 @@ import org.talend.designer.maven.aether.AbsDynamicProgressMonitor;
 import org.talend.designer.maven.aether.DummyDynamicMonitor;
 import org.talend.designer.maven.aether.IDynamicMonitor;
 import org.talend.hadoop.distribution.dynamic.cdh.DynamicCDHDistributionsGroup;
+import org.talend.hadoop.distribution.dynamic.resolver.IDependencyResolver;
 import org.talend.hadoop.distribution.helper.HadoopDistributionsHelper;
 import org.talend.repository.ProjectManager;
 import org.talend.repository.model.RepositoryConstants;
@@ -485,6 +486,19 @@ public class DynamicDistributionManager implements IDynamicDistributionManager {
         }
 
         return usersIdDistributionMap;
+    }
+
+    public IDependencyResolver getDependencyResolver(DynamicConfiguration config) throws Exception {
+        String distribution = config.getDistribution();
+        IDynamicDistributionsGroup dynamicDistributionGroup = getDynamicDistributionGroup(distribution);
+        IDependencyResolver resolver = null;
+        if (dynamicDistributionGroup != null) {
+            resolver = dynamicDistributionGroup.getDependencyResolver(config);
+        }
+        if (resolver == null) {
+            throw new Exception("Can't find DependencyResolver for " + distribution);
+        }
+        return resolver;
     }
 
     public void resetSystemCache() throws Exception {

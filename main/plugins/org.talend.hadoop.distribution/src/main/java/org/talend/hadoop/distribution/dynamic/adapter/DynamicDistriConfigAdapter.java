@@ -40,7 +40,6 @@ public class DynamicDistriConfigAdapter extends AbstractDynamicAdapter {
         DynamicConfiguration configuration = getConfiguration();
 
         String distribution = templateBean.getDistribution();
-        String repository = templateBean.getRepository();
         String templateId = templateBean.getTemplateId();
 
         if (!StringUtils.equals(distribution, configuration.getDistribution())) {
@@ -57,7 +56,7 @@ public class DynamicDistriConfigAdapter extends AbstractDynamicAdapter {
         pluginConfiguration.setDescription(configuration.getDescription());
         pluginConfiguration.setDistribution(distribution);
         pluginConfiguration.setTemplateId(templateId);
-        pluginConfiguration.setRepository(repository);
+        pluginConfiguration.setRepository(configuration.getRemoteRepositoryUrl());
         // pluginConfiguration.setAttribute(DynamicConstants.ATTR_PROJECT_TECHNICAL_NAME, projectTechnicalName);
 
         return pluginConfiguration;

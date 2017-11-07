@@ -48,8 +48,6 @@ public class DynamicClassLoaderExtensionAdaper extends DynamicExtensionAdapter {
         TemplateBean templateBean = getTemplateBean();
         DynamicConfiguration configuration = getConfiguration();
         String id = configuration.getId();
-        String repository = templateBean.getRepository();
-        configuration.setRemoteRepositoryUrl(repository);
 
         String distributionName = templateBean.getDistribution();
         String templateId = templateBean.getId();
