@@ -57,8 +57,6 @@ public abstract class AbstractDynamicDistribution implements IDynamicDistributio
 
     private List<TemplateBean> templateBeansCache;
 
-    private List<String> allVersionList;
-
     private Map<TemplateBean, List<String>> templateBeanCompatibleVersionMap;
 
     private Map<String, DynamicPluginAdapter> registedPluginMap = new HashMap<>();
@@ -155,14 +153,9 @@ public abstract class AbstractDynamicDistribution implements IDynamicDistributio
             DynamicDistributionUtils.checkCancelOrNot(monitor);
             templateBeanCompatibleVersionMap = new HashMap<>();
             DynamicDistributionManager dynamicDistributionManager = DynamicDistributionManager.getInstance();
-            IDynamicDistributionsGroup dynamicDistributionGroup = dynamicDistributionManager
-                    .getDynamicDistributionGroup(getDistributionName());
-            IDynamicDistributionPreference dynamicDistributionPreference = dynamicDistributionGroup
-                    .getDynamicDistributionPreference();
 
             DynamicConfiguration dynamicConfiguration = new DynamicConfiguration();
             dynamicConfiguration.setDistribution(getDistributionName());
-            dynamicConfiguration.setPreference(dynamicDistributionPreference);
             IDependencyResolver dependencyResolver = dynamicDistributionManager.getDependencyResolver(dynamicConfiguration);
             List<String> allHadoopVersions = dependencyResolver.listHadoopVersions(null, null, monitor);
             if (allHadoopVersions != null) {
@@ -202,9 +195,6 @@ public abstract class AbstractDynamicDistribution implements IDynamicDistributio
         DynamicDistributionManager dynamicDistributionManager = DynamicDistributionManager.getInstance();
         DynamicConfiguration dynamicConfiguration = new DynamicConfiguration();
         dynamicConfiguration.setDistribution(getDistributionName());
-        IDynamicDistributionPreference dynamicDistributionPreference = dynamicDistributionManager
-                .getDynamicDistributionGroup(getDistributionName()).getDynamicDistributionPreference();
-        dynamicConfiguration.setPreference(dynamicDistributionPreference);
         IDependencyResolver dependencyResolver = dynamicDistributionManager.getDependencyResolver(dynamicConfiguration);
         List<String> allHadoopVersions = dependencyResolver.listHadoopVersions(null, null, monitor);
         if (allHadoopVersions != null) {
@@ -212,7 +202,6 @@ public abstract class AbstractDynamicDistribution implements IDynamicDistributio
         }
         List<String> versionList = new LinkedList<>(allVersion);
         Collections.sort(versionList, Collections.reverseOrder(new VersionStringComparator()));
-        allVersionList = new ArrayList<>(versionList);
         return versionList;
 
     }
@@ -224,6 +213,7 @@ public abstract class AbstractDynamicDistribution implements IDynamicDistributio
             throw new Exception(
                     "only support to build dynamic plugin of " + getDistributionName() + " instead of " + distribution);
         }
+        VersionStringComparator versionStringComparator = new VersionStringComparator();
         String version = configuration.getVersion();
 
         // 1. try to get compatible bean
@@ -236,7 +226,7 @@ public abstract class AbstractDynamicDistribution implements IDynamicDistributio
         int distance = -1;
         for (Entry<TemplateBean, List<String>> entry : entrySet) {
             List<String> list = entry.getValue();
-            Collections.sort(list, new VersionStringComparator());
+            Collections.sort(list, versionStringComparator);
             int size = list.size();
             int index = list.indexOf(version);
             if (0 <= index) {
@@ -250,10 +240,9 @@ public abstract class AbstractDynamicDistribution implements IDynamicDistributio
 
         // 2. try to get bean from all beans
         if (bestTemplateBean == null) {
-            if (allVersionList == null) {
-                getAllVersions(monitor);
-            }
-            VersionStringComparator versionStringComparator = new VersionStringComparator();
+            List<String> allVersions = getAllVersions(monitor);
+            Collections.sort(allVersions, versionStringComparator);
+
             // choose the shorted distance, normally means compatible with higher versions
             distance = -1;
             for (Entry<TemplateBean, List<String>> entry : entrySet) {
@@ -263,9 +252,9 @@ public abstract class AbstractDynamicDistribution implements IDynamicDistributio
                 String baseVersion = list.get(0);
                 int curDistance = -1;
                 if (versionStringComparator.compare(version, baseVersion) < 0) {
-                    curDistance = allVersionList.indexOf(baseVersion) - allVersionList.indexOf(version);
+                    curDistance = allVersions.indexOf(baseVersion) - allVersions.indexOf(version);
                 } else {
-                    curDistance = allVersionList.indexOf(version) - allVersionList.indexOf(topVersion);
+                    curDistance = allVersions.indexOf(version) - allVersions.indexOf(topVersion);
                 }
                 if (distance < 0 || curDistance < distance) {
                     distance = curDistance;

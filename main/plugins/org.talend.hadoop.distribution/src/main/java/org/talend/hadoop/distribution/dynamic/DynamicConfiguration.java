@@ -12,6 +12,7 @@
 // ============================================================================
 package org.talend.hadoop.distribution.dynamic;
 
+import org.talend.commons.exception.ExceptionHandler;
 
 /**
  * DOC cmeng  class global comment. Detailled comment
@@ -27,8 +28,6 @@ public class DynamicConfiguration {
     private String name;
 
     private String description;
-
-    private IDynamicDistributionPreference preference;
 
     public String getId() {
         return this.id;
@@ -63,7 +62,7 @@ public class DynamicConfiguration {
     }
 
     public String getRemoteRepositoryUrl() {
-        return preference.getRepository();
+        return getPreference().getRepository();
     }
 
     public String getDescription() {
@@ -75,11 +74,13 @@ public class DynamicConfiguration {
     }
 
     public IDynamicDistributionPreference getPreference() {
-        return this.preference;
-    }
-
-    public void setPreference(IDynamicDistributionPreference preference) {
-        this.preference = preference;
+        try {
+            return DynamicDistributionManager.getInstance().getDynamicDistributionGroup(getDistribution())
+                    .getDynamicDistributionPreference();
+        } catch (Exception e) {
+            ExceptionHandler.process(e);
+        }
+        return null;
     }
 
 }
