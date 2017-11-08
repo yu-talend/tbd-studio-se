@@ -13,7 +13,6 @@
 package org.talend.repository.hadoopcluster.ui.dynamic;
 
 import org.talend.core.runtime.dynamic.IDynamicPlugin;
-import org.talend.hadoop.distribution.dynamic.DynamicConfiguration;
 import org.talend.hadoop.distribution.dynamic.IDynamicDistributionsGroup;
 
 /**
@@ -24,8 +23,6 @@ public class DynamicBuildConfigurationData {
     private IDynamicDistributionsGroup dynamicDistributionsGroup;
 
     private IDynamicPlugin dynamicPlugin;
-
-    private DynamicConfiguration newDistrConfigration;
 
     private ActionType actionType;
 
@@ -45,14 +42,6 @@ public class DynamicBuildConfigurationData {
 
     public void setDynamicPlugin(IDynamicPlugin dynamicPlugin) {
         this.dynamicPlugin = dynamicPlugin;
-    }
-
-    public DynamicConfiguration getNewDistrConfigration() {
-        return this.newDistrConfigration;
-    }
-
-    public void setNewDistrConfigration(DynamicConfiguration newDistrConfigration) {
-        this.newDistrConfigration = newDistrConfigration;
     }
 
     public ActionType getActionType() {

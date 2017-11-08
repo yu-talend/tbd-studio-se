@@ -512,22 +512,12 @@ public class DynamicOptionForm extends AbstractDynamicDistributionForm {
         return result.get(0);
     }
 
-    private void updateDistributionDescription(IDynamicPlugin dynamicPlugin) {
-        IDynamicPluginConfiguration pluginConfiguration = dynamicPlugin.getPluginConfiguration();
-        String description = pluginConfiguration.getDescription();
-        if (description == null) {
-            description = ""; //$NON-NLS-1$
-        }
-    }
-
     private void initData(IDynamicMonitor monitor) {
         DynamicBuildConfigurationData dynConfigData = getDynamicBuildConfigurationData();
         IDynamicDistributionsGroup dynamicDistributionsGroup = dynConfigData.getDynamicDistributionsGroup();
 
         dynamicConfiguration = new DynamicConfiguration();
         dynamicConfiguration.setDistribution(dynamicDistributionsGroup.getDistribution());
-
-        dynConfigData.setNewDistrConfigration(dynamicConfiguration);
 
         try {
             refreshExistingConfigsCombo(monitor, dynamicDistributionsGroup);
@@ -824,11 +814,16 @@ public class DynamicOptionForm extends AbstractDynamicDistributionForm {
 
         IDynamicPlugin dynamicPlugin = (IDynamicPlugin) firstElement;
         existingConfigsComboViewer.getControl().setToolTipText(existingConfigsComboViewer.getCombo().getText());
-        updateDistributionDescription(dynamicPlugin);
 
         getDynamicBuildConfigurationData().setDynamicPlugin(dynamicPlugin);
         boolean isBuildin = isBuildinDynamicConfiguration(dynamicPlugin);
         getDynamicBuildConfigurationData().setReadonly(isBuildin || isReadonly());
+
+        if (isBuildin) {
+            String warnMessage = Messages.getString("DynamicOptionForm.editExisting.buildin", //$NON-NLS-1$
+                    dynamicPlugin.getPluginConfiguration().getName());
+            showMessage(warnMessage, WizardPage.WARNING);
+        }
 
         return true;
     }
