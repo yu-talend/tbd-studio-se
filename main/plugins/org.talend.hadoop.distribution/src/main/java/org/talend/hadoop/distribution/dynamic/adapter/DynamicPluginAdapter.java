@@ -119,7 +119,7 @@ public class DynamicPluginAdapter {
                         MavenArtifact ma = MavenUrlHelper.parseMvnUrl(mvnUri);
                         if (StringUtils.isEmpty(ma.getRepositoryUrl())) {
                             String newMvnUri = MavenUrlHelper.generateMvnUrl(username, password, repository, ma.getGroupId(),
-                                    ma.getArtifactId(), ma.getVersion(), ma.getType(), ma.getClassifier());
+                                    ma.getArtifactId(), ma.getVersion(), ma.getType(), ma.getClassifier(), true);
                             if (StringUtils.isEmpty(newMvnUri)) {
                                 throw new Exception("Convert mvnUri failed! original uri: " + mvnUri);
                             }

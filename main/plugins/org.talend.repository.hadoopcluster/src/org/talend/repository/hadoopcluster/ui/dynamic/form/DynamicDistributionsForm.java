@@ -857,7 +857,7 @@ public class DynamicDistributionsForm extends AbstractDynamicDistributionForm {
                         attr = Messages.getString("DynamicDistributionsForm.label.existing.otherProject", projTechName); //$NON-NLS-1$
                     }
                 }
-                return name + " " + attr; //$NON-NLS-1$
+                return name + "        " + attr; //$NON-NLS-1$
             } else {
                 return element == null ? "" : element.toString();//$NON-NLS-1$
             }
