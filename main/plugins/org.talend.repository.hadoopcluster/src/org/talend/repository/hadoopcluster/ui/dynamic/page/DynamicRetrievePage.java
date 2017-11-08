@@ -77,4 +77,9 @@ public class DynamicRetrievePage extends AbstractDynamicConfigurationPage {
         return getCurrentForm().isComplete();
     }
 
+    @Override
+    public boolean performFinish() {
+        return getCurrentForm().performOk();
+    }
+
 }

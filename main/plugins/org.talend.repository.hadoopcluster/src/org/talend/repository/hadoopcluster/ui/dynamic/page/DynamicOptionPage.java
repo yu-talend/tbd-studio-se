@@ -57,4 +57,9 @@ public class DynamicOptionPage extends AbstractDynamicConfigurationPage {
         return getCurrentForm().isComplete();
     }
 
+    @Override
+    public boolean performFinish() {
+        return getCurrentForm().performOk();
+    }
+
 }

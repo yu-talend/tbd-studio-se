@@ -19,6 +19,7 @@ import org.talend.hadoop.distribution.dynamic.IDynamicDistribution;
 import org.talend.hadoop.distribution.dynamic.IDynamicDistributionPreference;
 import org.talend.hadoop.distribution.dynamic.resolver.IDependencyResolver;
 import org.talend.hadoop.distribution.dynamic.resolver.cdh.ClouderaDependencyResolver;
+import org.talend.hadoop.distribution.dynamic.util.DynamicDistributionUtils;
 
 /**
  * DOC cmeng  class global comment. Detailled comment
@@ -50,6 +51,17 @@ public class DynamicCDHDistributionsGroup extends AbstractDynamicDistributionsGr
     @Override
     public IDynamicDistributionPreference getDynamicDistributionPreference() {
         return DynamicCDHDistributionPreference.getInstance();
+    }
+
+    @Override
+    public String generateVersionName(String version) {
+        return "Cloudera CDH" + version + " (Dynamic)"; //$NON-NLS-1$//$NON-NLS-2$
+    }
+
+    @Override
+    public String generateVersionId(String version) {
+        String versionStr = DynamicDistributionUtils.formatId(version);
+        return "Cloudera_CDH" + versionStr + "_dynamic"; //$NON-NLS-1$//$NON-NLS-2$
     }
 
 }

@@ -176,6 +176,11 @@ public class DynamicDistributionUtils {
         return timestamp;
     }
 
+    public static String appendTimestamp(String versionId) {
+        String timestamp = DynamicDistributionUtils.generateTimestampId();
+        return versionId + "_" + timestamp; //$NON-NLS-1$
+    }
+
     public static String formatId(String id) {
         return id.replaceAll("[\\W]", "_"); //$NON-NLS-1$//$NON-NLS-2$
     }

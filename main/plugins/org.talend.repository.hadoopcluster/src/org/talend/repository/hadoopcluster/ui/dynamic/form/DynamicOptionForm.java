@@ -14,6 +14,7 @@ package org.talend.repository.hadoopcluster.ui.dynamic.form;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -27,7 +28,6 @@ import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -39,8 +39,6 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FormAttachment;
@@ -56,6 +54,7 @@ import org.talend.commons.exception.ExceptionHandler;
 import org.talend.commons.exception.LoginException;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.commons.ui.runtime.exception.ExceptionMessageDialog;
+import org.talend.core.CorePlugin;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.core.runtime.dynamic.DynamicFactory;
 import org.talend.core.runtime.dynamic.DynamicServiceUtil;
@@ -64,11 +63,14 @@ import org.talend.core.runtime.dynamic.IDynamicPluginConfiguration;
 import org.talend.designer.maven.aether.AbsDynamicProgressMonitor;
 import org.talend.designer.maven.aether.DummyDynamicMonitor;
 import org.talend.designer.maven.aether.IDynamicMonitor;
+import org.talend.designer.maven.aether.comparator.VersionStringComparator;
 import org.talend.hadoop.distribution.dynamic.DynamicConfiguration;
-import org.talend.hadoop.distribution.dynamic.DynamicConstants;
 import org.talend.hadoop.distribution.dynamic.DynamicDistributionManager;
+import org.talend.hadoop.distribution.dynamic.IDynamicDistributionPreference;
 import org.talend.hadoop.distribution.dynamic.IDynamicDistributionsGroup;
+import org.talend.hadoop.distribution.dynamic.adapter.DynamicPluginAdapter;
 import org.talend.hadoop.distribution.dynamic.comparator.DynamicPluginComparator;
+import org.talend.hadoop.distribution.dynamic.util.DynamicDistributionUtils;
 import org.talend.repository.ProjectManager;
 import org.talend.repository.RepositoryWorkUnit;
 import org.talend.repository.hadoopcluster.i18n.Messages;
@@ -87,17 +89,17 @@ public class DynamicOptionForm extends AbstractDynamicDistributionForm {
 
     private Button importConfigBtn;
 
-    private Button deleteExistingConfigBtn;
-
-    private Text configNameText;
-
     private ComboViewer existingConfigsComboViewer;
+
+    private ComboViewer versionsComboViewer;
+
+    private Button showOnlyCompatibleBtn;
+
+    private Button refreshButton;
 
     private Text importConfigText;
 
     private Button importConfigBrowseBtn;
-
-    private Text descriptionText;
 
     private Composite newConfigGroup;
 
@@ -109,8 +111,6 @@ public class DynamicOptionForm extends AbstractDynamicDistributionForm {
 
     private Map<String, IDynamicPlugin> existingConfigurationIdMap;
 
-    private String userInputDescription = ""; //$NON-NLS-1$
-
     private IDynamicPlugin importedDynamicPlugin;
 
     private DynamicConfiguration dynamicConfiguration;
@@ -119,8 +119,13 @@ public class DynamicOptionForm extends AbstractDynamicDistributionForm {
 
     private List<IDynamicPlugin> allCurrentUsersDynamicPlugins;
 
+    private Map<String, IDynamicPlugin> namePluginMap;
+
+    private boolean isDebugging = false;
+
     public DynamicOptionForm(Composite parent, int style, DynamicBuildConfigurationData configData, IDynamicMonitor monitor) {
         super(parent, style, configData);
+        isDebugging = CorePlugin.getDefault().isDebugging();
         createControl();
         initData(monitor);
 
@@ -137,13 +142,15 @@ public class DynamicOptionForm extends AbstractDynamicDistributionForm {
 
         Composite container = createFormContainer(parent);
 
-        int ALIGN_VERTICAL = getAlignVertical();
-        int ALIGN_VERTICAL_INNER = getAlignVerticalInner();
-        int ALIGN_HORIZON = getAlignHorizon();
-        int HORZON_WIDTH = getHorizonWidth();
+        final int ALIGN_VERTICAL = getAlignVertical();
+        final int ALIGN_VERTICAL_INNER = getAlignVerticalInner();
+        final int ALIGN_HORIZON = getAlignHorizon();
+        final int HORZON_WIDTH = getHorizonWidth();
+        final int ALIGN_HORIZON_VERSION_LABEL = ALIGN_HORIZON * 2;
 
         newConfigBtn = new Button(container, SWT.RADIO);
         newConfigBtn.setText(Messages.getString("DynamicOptionForm.form.newConfigBtn")); //$NON-NLS-1$
+        newConfigBtn.setSelection(true);
         FormData formData = new FormData();
         formData.top = new FormAttachment(0);
         formData.left = new FormAttachment(0);
@@ -152,25 +159,45 @@ public class DynamicOptionForm extends AbstractDynamicDistributionForm {
 
         newConfigGroup = new Composite(container, SWT.NONE);
         formData = new FormData();
-        formData.top = new FormAttachment(newConfigBtn, ALIGN_VERTICAL_INNER, SWT.BOTTOM);
+        formData.top = new FormAttachment(newConfigBtn, 0, SWT.BOTTOM);
         formData.left = new FormAttachment(newConfigBtn, 0, SWT.LEFT);
         formData.right = new FormAttachment(newConfigBtn, 0, SWT.RIGHT);
         newConfigGroup.setLayoutData(formData);
         newConfigGroup.setLayout(new FormLayout());
 
-        configNameText = new Text(newConfigGroup, SWT.BORDER);
+        int refreshButtonWidth = 0;
+        refreshButton = new Button(newConfigGroup, SWT.PUSH);
+        refreshButton.setText(Messages.getString("DynamicOptionForm.form.refresh.label")); //$NON-NLS-1$
         formData = new FormData();
-        formData.top = new FormAttachment();
-        formData.left = new FormAttachment(0, HORZON_WIDTH);
+        formData.top = new FormAttachment(0, ALIGN_VERTICAL_INNER);
+        refreshButtonWidth = getNewButtonSize(refreshButton).x;
+        formData.width = refreshButtonWidth;
         formData.right = new FormAttachment(100);
-        configNameText.setLayoutData(formData);
+        refreshButton.setLayoutData(formData);
 
-        Label nameLabel = new Label(newConfigGroup, SWT.NONE);
-        nameLabel.setText(Messages.getString("DynamicOptionForm.form.nameLabel")); //$NON-NLS-1$
+        Label versionLabel = new Label(newConfigGroup, SWT.NONE);
+        versionLabel.setText(Messages.getString("DynamicOptionForm.form.versionLabel")); //$NON-NLS-1$
         formData = new FormData();
-        formData.top = new FormAttachment(configNameText, 0, SWT.CENTER);
-        formData.right = new FormAttachment(configNameText, -1 * ALIGN_HORIZON, SWT.LEFT);
-        nameLabel.setLayoutData(formData);
+        formData.top = new FormAttachment(refreshButton, 0, SWT.CENTER);
+        formData.right = new FormAttachment(0, HORZON_WIDTH);
+        versionLabel.setLayoutData(formData);
+
+        versionsComboViewer = new ComboViewer(newConfigGroup, SWT.READ_ONLY);
+        versionsComboViewer.setContentProvider(ArrayContentProvider.getInstance());
+        versionsComboViewer.setLabelProvider(new LabelProvider());
+        formData = new FormData();
+        formData.top = new FormAttachment(refreshButton, 0, SWT.CENTER);
+        formData.left = new FormAttachment(versionLabel, ALIGN_HORIZON_VERSION_LABEL, SWT.RIGHT);
+        formData.right = new FormAttachment(refreshButton, -1 * ALIGN_HORIZON, SWT.LEFT);
+        versionsComboViewer.getControl().setLayoutData(formData);
+
+        showOnlyCompatibleBtn = new Button(newConfigGroup, SWT.CHECK);
+        showOnlyCompatibleBtn.setText(Messages.getString("DynamicOptionForm.form.showOnlyCompatible.label")); //$NON-NLS-1$
+        showOnlyCompatibleBtn.setSelection(true);
+        formData = new FormData();
+        formData.top = new FormAttachment(versionsComboViewer.getControl(), ALIGN_VERTICAL_INNER, SWT.BOTTOM);
+        formData.right = new FormAttachment(versionsComboViewer.getControl(), 0, SWT.RIGHT);
+        showOnlyCompatibleBtn.setLayoutData(formData);
 
         editExistingConfigBtn = new Button(container, SWT.RADIO);
         editExistingConfigBtn.setText(Messages.getString("DynamicOptionForm.form.editExistingConfigBtn")); //$NON-NLS-1$
@@ -182,7 +209,7 @@ public class DynamicOptionForm extends AbstractDynamicDistributionForm {
 
         editExistingGroup = new Composite(container, SWT.NONE);
         formData = new FormData();
-        formData.top = new FormAttachment(editExistingConfigBtn, ALIGN_VERTICAL_INNER, SWT.BOTTOM);
+        formData.top = new FormAttachment(editExistingConfigBtn, 0, SWT.BOTTOM);
         formData.left = new FormAttachment(editExistingConfigBtn, 0, SWT.LEFT);
         formData.right = new FormAttachment(editExistingConfigBtn, 0, SWT.RIGHT);
         editExistingGroup.setLayoutData(formData);
@@ -192,21 +219,18 @@ public class DynamicOptionForm extends AbstractDynamicDistributionForm {
         existingConfigsComboViewer.setContentProvider(ArrayContentProvider.getInstance());
         existingConfigsComboViewer.setLabelProvider(new ExistingConfigsLabelProvider());
 
-        deleteExistingConfigBtn = new Button(editExistingGroup, SWT.PUSH);
-        deleteExistingConfigBtn.setText(Messages.getString("DynamicOptionForm.form.deleteExistingConfigBtn")); //$NON-NLS-1$
-
-        formData = new FormData();
-        formData.top = new FormAttachment(0);
-        formData.left = new FormAttachment(0, HORZON_WIDTH);
-        formData.right = new FormAttachment(deleteExistingConfigBtn, -1 * ALIGN_HORIZON, SWT.LEFT);
-        existingConfigsComboViewer.getControl().setLayoutData(formData);
-
+        Label existVersionLabel = new Label(editExistingGroup, SWT.NONE);
+        existVersionLabel.setText(Messages.getString("DynamicOptionForm.form.versionLabel")); //$NON-NLS-1$
         formData = new FormData();
         formData.top = new FormAttachment(existingConfigsComboViewer.getControl(), 0, SWT.CENTER);
-        // formData.bottom = new FormAttachment(existingConfigsComboViewer.getControl(), 0, SWT.BOTTOM);
+        formData.right = new FormAttachment(0, HORZON_WIDTH);
+        existVersionLabel.setLayoutData(formData);
+
+        formData = new FormData();
+        formData.top = new FormAttachment(0, ALIGN_VERTICAL_INNER);
+        formData.left = new FormAttachment(existVersionLabel, ALIGN_HORIZON_VERSION_LABEL, SWT.RIGHT);
         formData.right = new FormAttachment(100);
-        formData.width = getNewButtonSize(deleteExistingConfigBtn).x;
-        deleteExistingConfigBtn.setLayoutData(formData);
+        existingConfigsComboViewer.getControl().setLayoutData(formData);
 
         importConfigBtn = new Button(container, SWT.RADIO);
         importConfigBtn.setText(Messages.getString("DynamicOptionForm.form.importConfigBtn")); //$NON-NLS-1$
@@ -218,7 +242,7 @@ public class DynamicOptionForm extends AbstractDynamicDistributionForm {
 
         importConfigGroup = new Composite(container, SWT.NONE);
         formData = new FormData();
-        formData.top = new FormAttachment(importConfigBtn, ALIGN_VERTICAL_INNER, SWT.BOTTOM);
+        formData.top = new FormAttachment(importConfigBtn, 0, SWT.BOTTOM);
         formData.left = new FormAttachment(importConfigBtn, 0, SWT.LEFT);
         formData.right = new FormAttachment(importConfigBtn, 0, SWT.RIGHT);
         importConfigGroup.setLayoutData(formData);
@@ -230,24 +254,16 @@ public class DynamicOptionForm extends AbstractDynamicDistributionForm {
         importConfigBrowseBtn = new Button(importConfigGroup, SWT.PUSH);
         importConfigBrowseBtn.setText(Messages.getString("DynamicOptionForm.form.importConfig.browse")); //$NON-NLS-1$
         formData = new FormData();
-        formData.top = new FormAttachment(0);
+        formData.top = new FormAttachment(0, ALIGN_VERTICAL_INNER);
         formData.left = new FormAttachment(100, -1 * getNewButtonSize(importConfigBrowseBtn).x);
         formData.right = new FormAttachment(100);
         importConfigBrowseBtn.setLayoutData(formData);
 
         formData = new FormData();
         formData.top = new FormAttachment(importConfigBrowseBtn, 0, SWT.CENTER);
-        formData.left = new FormAttachment(0, HORZON_WIDTH);
+        formData.left = new FormAttachment(0, HORZON_WIDTH + ALIGN_HORIZON_VERSION_LABEL);
         formData.right = new FormAttachment(importConfigBrowseBtn, -1 * ALIGN_HORIZON, SWT.LEFT);
         importConfigText.setLayoutData(formData);
-
-        descriptionText = new Text(container, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.WRAP);
-        formData = new FormData();
-        formData.top = new FormAttachment(importConfigGroup, ALIGN_VERTICAL, SWT.BOTTOM);
-        formData.left = new FormAttachment(importConfigGroup, 0, SWT.LEFT);
-        formData.right = new FormAttachment(importConfigGroup, 0, SWT.RIGHT);
-        formData.bottom = new FormAttachment(100);
-        descriptionText.setLayoutData(formData);
 
     }
 
@@ -269,6 +285,33 @@ public class DynamicOptionForm extends AbstractDynamicDistributionForm {
 
         });
 
+        versionsComboViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+
+            @Override
+            public void selectionChanged(SelectionChangedEvent event) {
+                onSelectVersion();
+                updateButtons();
+            }
+        });
+
+        refreshButton.addSelectionListener(new SelectionAdapter() {
+
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                onRefreshBtnClicked();
+                updateButtons();
+            }
+        });
+
+        showOnlyCompatibleBtn.addSelectionListener(new SelectionAdapter() {
+
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                onRefreshBtnClicked();
+                updateButtons();
+            }
+        });
+
         editExistingConfigBtn.addSelectionListener(new SelectionAdapter() {
 
             @Override
@@ -285,16 +328,6 @@ public class DynamicOptionForm extends AbstractDynamicDistributionForm {
 
         });
 
-        deleteExistingConfigBtn.addSelectionListener(new SelectionAdapter() {
-
-            @Override
-            public void widgetSelected(SelectionEvent e) {
-                onDeleteExistingSelected();
-                updateButtons();
-            }
-
-        });
-
         importConfigBtn.addSelectionListener(new SelectionAdapter() {
 
             @Override
@@ -306,15 +339,6 @@ public class DynamicOptionForm extends AbstractDynamicDistributionForm {
             @Override
             public void widgetDefaultSelected(SelectionEvent e) {
                 onImportConfigSelected(importConfigBtn.getSelection());
-                updateButtons();
-            }
-
-        });
-
-        configNameText.addModifyListener(new ModifyListener() {
-
-            @Override
-            public void modifyText(ModifyEvent e) {
                 updateButtons();
             }
 
@@ -346,16 +370,6 @@ public class DynamicOptionForm extends AbstractDynamicDistributionForm {
 
         });
 
-        descriptionText.addModifyListener(new ModifyListener() {
-
-            @Override
-            public void modifyText(ModifyEvent e) {
-                String description = descriptionText.getText();
-                descriptionText.setToolTipText(description);
-                dynamicConfiguration.setDescription(description);
-            }
-        });
-
     }
 
     private void onNewConfigSelected(boolean selected) {
@@ -364,15 +378,40 @@ public class DynamicOptionForm extends AbstractDynamicDistributionForm {
             getDynamicBuildConfigurationData().setReadonly(false);
         }
 
-        // newConfigGroup.setEnabled(selected);
-        configNameText.setEditable(selected);
-        descriptionText.setEditable(selected);
-        if (selected) {
-            configNameText.selectAll();
-            configNameText.forceFocus();
-            descriptionText.setText(userInputDescription);
-        } else {
-            userInputDescription = descriptionText.getText();
+        versionsComboViewer.getControl().setEnabled(selected);
+        refreshButton.setEnabled(selected);
+        showOnlyCompatibleBtn.setEnabled(selected);
+    }
+
+    private void onSelectVersion() {
+        // will do them in checkNewConfig()
+        // IStructuredSelection selection = (IStructuredSelection) versionsComboViewer.getSelection();
+        // if (selection != null) {
+        // String selectedVersion = (String) selection.getFirstElement();
+        // if (StringUtils.isNotEmpty(selectedVersion)) {
+        // DynamicBuildConfigurationData dynamicBuildConfigurationData = getDynamicBuildConfigurationData();
+        // IDynamicDistributionsGroup dynamicDistributionsGroup = dynamicBuildConfigurationData
+        // .getDynamicDistributionsGroup();
+        // String versionId = dynamicDistributionsGroup.generateVersionId(selectedVersion);
+        // versionId = DynamicDistributionUtils.appendTimestamp(versionId);
+        // String versionName = dynamicDistributionsGroup.generateVersionName(selectedVersion);
+        // dynamicConfiguration.setId(versionId);
+        // dynamicConfiguration.setName(versionName);
+        // dynamicConfiguration.setVersion(selectedVersion);
+        // }
+        // }
+    }
+
+    private void onRefreshBtnClicked() {
+        try {
+            List<String> versionList = getVersionList();
+            if (versionList != null && !versionList.isEmpty()) {
+                Collections.sort(versionList, Collections.reverseOrder(new VersionStringComparator()));
+                versionsComboViewer.setInput(versionList);
+                versionsComboViewer.setSelection(new StructuredSelection(versionList.get(0)));
+            }
+        } catch (Exception ex) {
+            ExceptionHandler.process(ex);
         }
     }
 
@@ -384,79 +423,6 @@ public class DynamicOptionForm extends AbstractDynamicDistributionForm {
 
         // editExistingGroup.setEnabled(selected);
         existingConfigsComboViewer.getControl().setEnabled(selected);
-        deleteExistingConfigBtn.setEnabled(selected);
-    }
-
-    private void onDeleteExistingSelected() {
-        boolean agree = MessageDialog.openConfirm(getShell(),
-                Messages.getString("DynamicOptionForm.form.deleteExistingConfig.confirm.dialog.title"), //$NON-NLS-1$
-                Messages.getString("DynamicOptionForm.form.deleteExistingConfig.confirm.dialog.message")); //$NON-NLS-1$
-        if (agree) {
-            try {
-                IStructuredSelection selection = (IStructuredSelection) existingConfigsComboViewer.getSelection();
-                final IDynamicPlugin dynamicPlugin = (IDynamicPlugin) selection.getFirstElement();
-                doDelete(dynamicPlugin);
-                IDynamicMonitor monitor = new DummyDynamicMonitor();
-                refreshExistingConfigsCombo(monitor, getDynamicBuildConfigurationData().getDynamicDistributionsGroup());
-            } catch (Throwable e) {
-                ExceptionHandler.process(e);
-                String message = e.getMessage();
-                if (StringUtils.isEmpty(message)) {
-                    message = Messages.getString("ExceptionDialog.message.empty"); //$NON-NLS-1$
-                }
-                ExceptionMessageDialog.openError(getShell(), Messages.getString("ExceptionDialog.title"), message, e); //$NON-NLS-1$
-            }
-        }
-    }
-
-    private void doDelete(IDynamicPlugin dynamicPlugin) throws Throwable {
-        final Throwable throwable[] = new Throwable[1];
-        ProgressMonitorDialog progressDialog = new ProgressMonitorDialog(getShell());
-        progressDialog.run(true, false, new IRunnableWithProgress() {
-
-            @Override
-            public void run(IProgressMonitor pMonitor) throws InvocationTargetException, InterruptedException {
-
-                ProxyRepositoryFactory.getInstance().executeRepositoryWorkUnit(new RepositoryWorkUnit<Boolean>(
-                        Messages.getString("DynamicOptionForm.form.deleteExistingConfig.workunit.title")) { //$NON-NLS-1$
-
-                    @Override
-                    protected void run() throws LoginException, PersistenceException {
-                        IDynamicMonitor monitor = new AbsDynamicProgressMonitor(pMonitor) {
-
-                            @Override
-                            public void writeMessage(String message) {
-                                // nothing to do
-                            }
-                        };
-                        try {
-                            monitor.beginTask(Messages.getString("DynamicBuildConfigurationForm.delete.progress.unregist"), //$NON-NLS-1$
-                                    IDynamicMonitor.UNKNOWN);
-                            IDynamicPluginConfiguration pluginConfiguration = dynamicPlugin.getPluginConfiguration();
-                            String distribution = pluginConfiguration.getDistribution();
-                            IDynamicDistributionsGroup dynamicDistributionGroup = DynamicDistributionManager.getInstance()
-                                    .getDynamicDistributionGroup(distribution);
-                            dynamicDistributionGroup.unregist(dynamicPlugin, monitor);
-
-                            monitor.setTaskName(Messages.getString("DynamicBuildConfigurationForm.delete.progress.deleteFile")); //$NON-NLS-1$
-                            String filePath = (String) pluginConfiguration.getAttribute(DynamicConstants.ATTR_FILE_PATH);
-                            File file = new File(filePath);
-                            file.delete();
-
-                            monitor.setTaskName(Messages.getString("DynamicBuildConfigurationForm.delete.progress.resetCache")); //$NON-NLS-1$
-                            DynamicDistributionManager.getInstance().resetSystemCache();
-                        } catch (Throwable e) {
-                            throwable[0] = e;
-                        }
-                    }
-
-                });
-            }
-        });
-        if (throwable[0] != null) {
-            throw throwable[0];
-        }
-
     }
 
     private void onImportConfigSelected(boolean selected) {
@@ -468,9 +434,6 @@ public class DynamicOptionForm extends AbstractDynamicDistributionForm {
         // importConfigGroup.setEnabled(selected);
         // importConfigText.setEnabled(selected);
         importConfigBrowseBtn.setEnabled(selected);
-        if (selected) {
-            descriptionText.setText(""); //$NON-NLS-1$
-        }
     }
 
     private void onImportConfigBrowseBtnSelected() throws Exception {
@@ -492,14 +455,68 @@ public class DynamicOptionForm extends AbstractDynamicDistributionForm {
         }
     }
 
+    private List<String> getVersionList() throws Exception {
+        final List<List<String>> result = new ArrayList<>();
+
+        try {
+            DynamicBuildConfigurationData dynConfigData = getDynamicBuildConfigurationData();
+            IDynamicDistributionsGroup dynDistrGroup = dynConfigData.getDynamicDistributionsGroup();
+            final Throwable throwable[] = new Throwable[1];
+
+            ProgressMonitorDialog progressDialog = new ProgressMonitorDialog(getShell());
+            final boolean showOnlyCompatibleVersions = showOnlyCompatibleBtn.getSelection();
+            progressDialog.run(true, true, new IRunnableWithProgress() {
+
+                @Override
+                public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+                    try {
+                        IDynamicMonitor dMonitor = new AbsDynamicProgressMonitor(monitor) {
+
+                            @Override
+                            public void writeMessage(String message) {
+                                if (isDebugging) {
+                                    System.out.print(message);
+                                }
+                            }
+                        };
+                        dMonitor.beginTask(Messages.getString("DynamicOptionForm.progress.fetchVersions"), //$NON-NLS-1$
+                                IDynamicMonitor.UNKNOWN);
+                        List<String> version = null;
+                        if (showOnlyCompatibleVersions) {
+                            version = dynDistrGroup.getCompatibleVersions(dMonitor);
+                        } else {
+                            version = dynDistrGroup.getAllVersions(dMonitor);
+                        }
+                        result.add(version);
+                    } catch (Exception e) {
+                        throwable[0] = e;
+                    }
+                }
+            });
+
+            if (throwable[0] != null) {
+                throw throwable[0];
+            }
+
+        } catch (Throwable ex) {
+            ExceptionHandler.process(ex);
+            String message = ex.getMessage();
+            if (StringUtils.isEmpty(message)) {
+                message = Messages.getString("ExceptionDialog.message.empty"); //$NON-NLS-1$
+            }
+            ExceptionMessageDialog.openError(getShell(), Messages.getString("ExceptionDialog.title"), message, ex); //$NON-NLS-1$
+        }
+        if (result.isEmpty()) {
+            return null;
+        }
+        return result.get(0);
+    }
+
     private void updateDistributionDescription(IDynamicPlugin dynamicPlugin) {
         IDynamicPluginConfiguration pluginConfiguration = dynamicPlugin.getPluginConfiguration();
         String description = pluginConfiguration.getDescription();
         if (description == null) {
             description = ""; //$NON-NLS-1$
-        }
-        if (!description.equals(descriptionText.getText())) {
-            descriptionText.setText(description);
         }
     }
 
@@ -560,39 +577,30 @@ public class DynamicOptionForm extends AbstractDynamicDistributionForm {
         return distriDynamicPlugins;
     }
 
-    private boolean checkNewConfigNameValid() {
-        if (!newConfigBtn.getSelection()) {
-            return true;
-        }
-        String configName = configNameText.getText().trim();
-        if (configName.isEmpty()) {
-            String errorMessage = Messages.getString("DynamicDistributionsForm.newConfigName.check.empty"); //$NON-NLS-1$
-            showMessage(errorMessage, WizardPage.ERROR);
-            configNameText.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
-            configNameText.setToolTipText(errorMessage);
-            return false;
-        }
-        try {
-            if (isConfigurationNameExist(configName)) {
-                String errorMessage = Messages.getString("DynamicDistributionsForm.newConfigName.check.exist", configName); //$NON-NLS-1$
-                showMessage(errorMessage, WizardPage.ERROR);
-                configNameText.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
-                configNameText.setToolTipText(errorMessage);
-                return false;
+    private Map<String, IDynamicPlugin> getNamePluginMap() throws Exception {
+        if (namePluginMap == null || namePluginMap.isEmpty()) {
+            namePluginMap = new HashMap<>();
+            DynamicBuildConfigurationData dynamicBuildConfigurationData = getDynamicBuildConfigurationData();
+            if (allBuildinDynamicPlugins == null || allBuildinDynamicPlugins.isEmpty()) {
+                copyAllUsersDynamicPlugins(new DummyDynamicMonitor(),
+                        dynamicBuildConfigurationData.getDynamicDistributionsGroup());
             }
-        } catch (Exception e) {
-            String errorMessage = e.getMessage();
-            showMessage(errorMessage, WizardPage.ERROR);
-            configNameText.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
-            configNameText.setToolTipText(errorMessage);
-            return false;
+            if (allBuildinDynamicPlugins != null) {
+                for (IDynamicPlugin plugin : allBuildinDynamicPlugins) {
+                    IDynamicPluginConfiguration pluginConfiguration = plugin.getPluginConfiguration();
+                    String name = pluginConfiguration.getName();
+                    namePluginMap.put(name, plugin);
+                }
+            }
+            if (allCurrentUsersDynamicPlugins != null) {
+                for (IDynamicPlugin plugin : allCurrentUsersDynamicPlugins) {
+                    IDynamicPluginConfiguration pluginConfiguration = plugin.getPluginConfiguration();
+                    String name = pluginConfiguration.getName();
+                    namePluginMap.put(name, plugin);
+                }
+            }
         }
-        configNameText.setBackground(null);
-        configNameText.setToolTipText(configNameText.getText());
-
-        dynamicConfiguration.setName(configName);
-
-        return true;
+        return namePluginMap;
     }
 
     private boolean isConfigurationNameExist(String name) throws Exception {
@@ -634,7 +642,59 @@ public class DynamicOptionForm extends AbstractDynamicDistributionForm {
         }
     }
 
+    private boolean checkNewConfig() {
+        if (isReadonly()) {
+            return false;
+        }
+        try {
+            if (!newConfigBtn.getSelection()) {
+                return true;
+            }
+            List<String> versionList = (List<String>) versionsComboViewer.getInput();
+            if (versionList == null || versionList.isEmpty()) {
+                String errorMessage = Messages.getString("DynamicOptionForm.newConfig.check.empty", refreshButton.getText()); //$NON-NLS-1$
+                showMessage(errorMessage, WizardPage.ERROR);
+                return false;
+            }
+            String selectedVersion = ""; //$NON-NLS-1$
+            IStructuredSelection selection = (IStructuredSelection) versionsComboViewer.getSelection();
+            if (selection != null) {
+                selectedVersion = (String) selection.getFirstElement();
+            }
+            if (StringUtils.isEmpty(selectedVersion)) {
+                String errorMessage = Messages.getString("DynamicOptionForm.newConfig.check.empty", refreshButton.getText()); //$NON-NLS-1$
+                showMessage(errorMessage, WizardPage.ERROR);
+                return false;
+            }
+
+            DynamicBuildConfigurationData dynamicBuildConfigurationData = getDynamicBuildConfigurationData();
+            IDynamicDistributionsGroup dynamicDistributionsGroup = dynamicBuildConfigurationData.getDynamicDistributionsGroup();
+            String versionName = dynamicDistributionsGroup.generateVersionName(selectedVersion);
+
+            if (getNamePluginMap().containsKey(versionName)) {
+                String errorMessage = Messages.getString("DynamicOptionForm.newConfig.check.nameExist", versionName, //$NON-NLS-1$
+                        editExistingConfigBtn.getText());
+                showMessage(errorMessage, WizardPage.ERROR);
+                return false;
+            }
+
+            String versionId = dynamicDistributionsGroup.generateVersionId(selectedVersion);
+            versionId = DynamicDistributionUtils.appendTimestamp(versionId);
+            dynamicConfiguration.setId(versionId);
+            dynamicConfiguration.setName(versionName);
+            dynamicConfiguration.setVersion(selectedVersion);
+
+            return true;
+        } catch (Exception e) {
+            ExceptionHandler.process(e);
+            return false;
+        }
+    }
+
     private boolean checkImportConfigText() {
+        if (isReadonly()) {
+            return false;
+        }
         try {
             if (!importConfigBtn.getSelection()) {
                 return true;
@@ -643,7 +703,6 @@ public class DynamicOptionForm extends AbstractDynamicDistributionForm {
 
             importConfigText.setBackground(null);
             importConfigText.setToolTipText(importConfigText.getText());
-            descriptionText.setText(""); //$NON-NLS-1$
             String importConfig = importConfigText.getText();
             if (StringUtils.isEmpty(importConfig)) {
                 String errorMessage = Messages.getString("DynamicOptionForm.importConfigText.check.empty"); //$NON-NLS-1$
@@ -737,8 +796,6 @@ public class DynamicOptionForm extends AbstractDynamicDistributionForm {
                 showMessage(warnMessage, WizardPage.WARNING);
             }
 
-            descriptionText.setText(pluginConfiguration.getDescription());
-
             getDynamicBuildConfigurationData().setDynamicPlugin(importedDynamicPlugin);
             return true;
         } catch (Exception e) {
@@ -752,7 +809,6 @@ public class DynamicOptionForm extends AbstractDynamicDistributionForm {
         if (!editExistingConfigBtn.getSelection()) {
             return true;
         }
-        deleteExistingConfigBtn.setEnabled(false);
         IStructuredSelection selection = (IStructuredSelection) existingConfigsComboViewer.getSelection();
         if (selection == null) {
             String errorMessage = Messages.getString("DynamicOptionForm.importConfigText.check.existingConfig.empty"); //$NON-NLS-1$
@@ -772,9 +828,7 @@ public class DynamicOptionForm extends AbstractDynamicDistributionForm {
 
         getDynamicBuildConfigurationData().setDynamicPlugin(dynamicPlugin);
         boolean isBuildin = isBuildinDynamicConfiguration(dynamicPlugin);
-        getDynamicBuildConfigurationData().setReadonly(isBuildin);
-
-        deleteExistingConfigBtn.setEnabled(!isBuildin);
+        getDynamicBuildConfigurationData().setReadonly(isBuildin || isReadonly());
 
         return true;
     }
@@ -783,7 +837,7 @@ public class DynamicOptionForm extends AbstractDynamicDistributionForm {
     public boolean isComplete() {
         try {
             clearErrorStatus();
-            if (!checkNewConfigNameValid()) {
+            if (!checkNewConfig()) {
                 return false;
             }
             if (!checkImportConfigText()) {
@@ -794,17 +848,112 @@ public class DynamicOptionForm extends AbstractDynamicDistributionForm {
             }
             return true;
         } finally {
-            String description = descriptionText.getText();
-            descriptionText.setToolTipText(description);
-            dynamicConfiguration.setDescription(description);
         }
+    }
+
+    private boolean createNewDynamicDistribution() {
+        try {
+            final IDynamicPlugin[] result = new IDynamicPlugin[1];
+            final Throwable throwable[] = new Throwable[1];
+
+            ProgressMonitorDialog progressDialog = new ProgressMonitorDialog(getShell());
+            progressDialog.run(true, true, new IRunnableWithProgress() {
+
+                @Override
+                public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+                    try {
+                        DynamicBuildConfigurationData dynConfigData = getDynamicBuildConfigurationData();
+                        IDynamicDistributionsGroup dynDistrGroup = dynConfigData.getDynamicDistributionsGroup();
+
+                        IDynamicMonitor dMonitor = new AbsDynamicProgressMonitor(monitor) {
+
+                            @Override
+                            public void writeMessage(String message) {
+                                if (isDebugging) {
+                                    System.out.print(message);
+                                }
+                            }
+                        };
+
+                        // step 1. build dynamic plugin basing on template
+                        dMonitor.beginTask(
+                                Messages.getString("DynamicOptionForm.progress.building", dynamicConfiguration.getName()), //$NON-NLS-1$
+                                IDynamicMonitor.UNKNOWN);
+                        IDynamicPlugin dynamicPlugin = dynDistrGroup.buildDynamicPlugin(dMonitor, dynamicConfiguration);
+                        result[0] = dynamicPlugin;
+
+                        // step 2. save dynamic plugin and refresh cache
+                        if (dynamicPlugin != null) {
+                            dMonitor.beginTask(
+                                    Messages.getString("DynamicOptionForm.progress.saveing", dynamicConfiguration.getName()), //$NON-NLS-1$
+                                    IDynamicMonitor.UNKNOWN);
+                            // 2.1 clean unused modules
+                            IDynamicDistributionPreference dynamicDistributionPreference = dynDistrGroup
+                                    .getDynamicDistributionPreference();
+                            DynamicPluginAdapter pluginAdapter = new DynamicPluginAdapter(dynamicPlugin,
+                                    dynamicDistributionPreference);
+                            pluginAdapter.cleanUnusedAndRefresh();
+
+                            // 2.2 save
+                            IDynamicPlugin fDynPlugin = pluginAdapter.getPlugin();
+                            ProxyRepositoryFactory.getInstance().executeRepositoryWorkUnit(new RepositoryWorkUnit<Boolean>(
+                                    Messages.getString("DynamicBuildConfigurationWizard.repositoryWorkUnit.title")) { //$NON-NLS-1$
+
+                                @Override
+                                protected void run() throws LoginException, PersistenceException {
+                                    result = false;
+                                    try {
+                                        DynamicDistributionManager.getInstance().saveUsersDynamicPlugin(fDynPlugin, dMonitor);
+                                    } catch (Exception e) {
+                                        throw new PersistenceException(e);
+                                    }
+                                    result = true;
+                                }
+
+                            });
+
+                            // 2.3 regist
+                            dMonitor.setTaskName(
+                                    Messages.getString("DynamicOptionForm.progress.registing", dynamicConfiguration.getName())); //$NON-NLS-1$
+                            dynDistrGroup.regist(fDynPlugin, dMonitor);
+
+                            // 2.4 reset system cache
+                            dMonitor.setTaskName(Messages.getString("DynamicOptionForm.progress.resetCache")); //$NON-NLS-1$
+                            DynamicDistributionManager.getInstance().resetSystemCache();
+                        }
+                    } catch (Throwable e) {
+                        throwable[0] = e;
+                    }
+                }
+            });
+
+            if (throwable[0] != null) {
+                throw throwable[0];
+            }
+
+            IDynamicPlugin newDynamicPlugin = result[0];
+            if (newDynamicPlugin == null) {
+                throw new Exception(Messages.getString("DynamicOptionForm.newConfig.exception.noPluginGenerated")); //$NON-NLS-1$
+            }
+            return true;
+        } catch (Throwable e) {
+            ExceptionHandler.process(e);
+            String message = e.getMessage();
+            if (StringUtils.isEmpty(message)) {
+                message = Messages.getString("ExceptionDialog.message.empty"); //$NON-NLS-1$
+            }
+            ExceptionMessageDialog.openError(getShell(), Messages.getString("DynamicModuleGroupWizard.title"), message, e); //$NON-NLS-1$
+        }
+        return false;
+    }
+
+    @Override
+    public boolean performOk() {
+        return createNewDynamicDistribution();
     }
 
     private void clearErrorStatus() {
         showMessage(null, WizardPage.NONE);
-
-        configNameText.setBackground(null);
-        configNameText.setToolTipText(""); //$NON-NLS-1$
 
         importConfigText.setBackground(null);
         importConfigText.setToolTipText(""); //$NON-NLS-1$
@@ -822,6 +971,9 @@ public class DynamicOptionForm extends AbstractDynamicDistributionForm {
 
     @Override
     public boolean canFlipToNextPage() {
+        if (newConfigBtn.getSelection()) {
+            return false;
+        }
         if (!isComplete()) {
             return false;
         }
@@ -830,7 +982,14 @@ public class DynamicOptionForm extends AbstractDynamicDistributionForm {
 
     @Override
     public boolean canFinish() {
+        if (newConfigBtn.getSelection()) {
+            return isComplete();
+        }
         return false;
+    }
+
+    private boolean isReadonly() {
+        return ProxyRepositoryFactory.getInstance().isUserReadOnlyOnCurrentProject();
     }
 
     private DynamicConfiguration buildDynamicConfiguration(IDynamicPlugin plugin) {

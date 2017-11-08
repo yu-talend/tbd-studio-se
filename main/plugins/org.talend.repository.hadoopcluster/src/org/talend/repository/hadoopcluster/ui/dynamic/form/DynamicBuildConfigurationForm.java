@@ -699,9 +699,8 @@ public class DynamicBuildConfigurationForm extends AbstractDynamicDistributionFo
     private String generateId(String distribution, String version) {
         String versionStr = DynamicDistributionUtils.formatId(version);
         String timestamp = DynamicDistributionUtils.generateTimestampId();
-        // String id = distribution.toUpperCase() + "_" + versionStr.toUpperCase() + "_" + timestamp; //$NON-NLS-1$
-        // //$NON-NLS-2$
-        String id = DynamicDistributionUtils.formatId(distribution.toUpperCase() + "_" + timestamp); //$NON-NLS-1$
+        String id = distribution.toUpperCase() + "_" + versionStr.toUpperCase() + "_" + timestamp; //$NON-NLS-1$ //$NON-NLS-2$
+        // String id = DynamicDistributionUtils.formatId(distribution.toUpperCase() + "_" + timestamp); //$NON-NLS-1$
         return id;
     }
 

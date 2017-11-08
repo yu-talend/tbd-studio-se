@@ -48,4 +48,6 @@ public abstract class AbstractDynamicConfigurationPage extends WizardPage {
         return getCurrentForm().canFlipToNextPage();
     }
 
+    abstract public boolean performFinish();
+
 }

@@ -74,4 +74,8 @@ public interface IDynamicDistributionsGroup {
 
     public IDynamicDistributionPreference getDynamicDistributionPreference();
 
+    public String generateVersionName(String version);
+
+    public String generateVersionId(String version);
+
 }
