@@ -12,6 +12,7 @@
 // ============================================================================
 package org.talend.repository.hadoopcluster.ui.dynamic.page;
 
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -19,14 +20,14 @@ import org.talend.designer.maven.aether.DummyDynamicMonitor;
 import org.talend.designer.maven.aether.IDynamicMonitor;
 import org.talend.repository.hadoopcluster.ui.dynamic.form.AbstractDynamicDistributionForm;
 import org.talend.repository.hadoopcluster.ui.dynamic.form.AbstractDynamicDistributionForm.ICheckListener;
-import org.talend.repository.hadoopcluster.ui.dynamic.form.DynamicDistributionsForm;
+import org.talend.repository.hadoopcluster.ui.dynamic.form.DynamicDistributionPreferenceForm;
 import org.talend.repository.preference.ProjectSettingPage;
 
 
 /**
  * DOC cmeng  class global comment. Detailled comment
  */
-public class DynamicDistributionSettingPage extends ProjectSettingPage {
+public class DynamicDistributionPreferencePage extends ProjectSettingPage {
 
     private AbstractDynamicDistributionForm distributionForm;
 
@@ -43,7 +44,7 @@ public class DynamicDistributionSettingPage extends ProjectSettingPage {
 
             @Override
             public String getMessage() {
-                return DynamicDistributionSettingPage.this.getMessage();
+                return DynamicDistributionPreferencePage.this.getMessage();
             }
 
             @Override
@@ -57,10 +58,15 @@ public class DynamicDistributionSettingPage extends ProjectSettingPage {
                 setValid(isValid);
             }
 
+            @Override
+            public void run(boolean fork, boolean cancelable, IRunnableWithProgress runnable) throws Exception {
+                throw new Exception("Please implement it if needed"); //$NON-NLS-1$
+            }
+
         };
 
         IDynamicMonitor monitor = new DummyDynamicMonitor();
-        DynamicDistributionsForm existingConfigForm = new DynamicDistributionsForm(parent, SWT.NONE, monitor);
+        DynamicDistributionPreferenceForm existingConfigForm = new DynamicDistributionPreferenceForm(parent, SWT.NONE, monitor);
         existingConfigForm.setCheckListener(checkListener);
         setCurrentForm(existingConfigForm);
         boolean isValid = getCurrentForm().isComplete();

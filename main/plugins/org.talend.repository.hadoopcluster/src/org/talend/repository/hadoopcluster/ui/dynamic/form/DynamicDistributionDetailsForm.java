@@ -13,6 +13,7 @@
 package org.talend.repository.hadoopcluster.ui.dynamic.form;
 
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -23,8 +24,10 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
@@ -36,6 +39,8 @@ import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.custom.TableEditor;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FormAttachment;
@@ -44,12 +49,14 @@ import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DirectoryDialog;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 import org.talend.commons.exception.ExceptionHandler;
+import org.talend.commons.ui.runtime.exception.ExceptionMessageDialog;
 import org.talend.core.context.RepositoryContext;
 import org.talend.core.model.properties.User;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
@@ -75,9 +82,9 @@ import org.talend.repository.hadoopcluster.ui.dynamic.DynamicModuleGroupWizard;
 import org.talend.repository.ui.login.LoginDialogV2;
 
 /**
- * DOC cmeng  class global comment. Detailled comment
+ * DOC cmeng class global comment. Detailled comment
  */
-public class DynamicBuildConfigurationForm extends AbstractDynamicDistributionForm {
+public class DynamicDistributionDetailsForm extends AbstractDynamicDistributionSetupForm {
 
     private Text dynamicConfigNameText;
 
@@ -85,9 +92,11 @@ public class DynamicBuildConfigurationForm extends AbstractDynamicDistributionFo
 
     private TableViewer baseJarsTable;
 
+    private IDynamicPlugin dynamicPluginCache;
+
     private String originName;
 
-    public DynamicBuildConfigurationForm(Composite parent, int style, DynamicBuildConfigurationData configData,
+    public DynamicDistributionDetailsForm(Composite parent, int style, DynamicBuildConfigurationData configData,
             IDynamicMonitor monitor) {
         super(parent, style, configData);
         createControl();
@@ -104,7 +113,7 @@ public class DynamicBuildConfigurationForm extends AbstractDynamicDistributionFo
         int ALIGN_HORIZON = getAlignHorizon();
 
         Label distriNameLabel = new Label(container, SWT.NONE);
-        distriNameLabel.setText(Messages.getString("DynamicBuildConfigurationForm.form.distriName")); //$NON-NLS-1$
+        distriNameLabel.setText(Messages.getString("DynamicDistributionDetailsForm.form.distriName")); //$NON-NLS-1$
 
         dynamicConfigNameText = new Text(container, SWT.BORDER);
 
@@ -121,11 +130,11 @@ public class DynamicBuildConfigurationForm extends AbstractDynamicDistributionFo
 
         baseJarsTable = new TableViewer(container, SWT.BORDER | SWT.FULL_SELECTION);
         TableViewerColumn indexColumn = new TableViewerColumn(baseJarsTable, SWT.RIGHT);
-        indexColumn.getColumn().setText(Messages.getString("DynamicBuildConfigurationForm.baseJars.table.index")); //$NON-NLS-1$
+        indexColumn.getColumn().setText(Messages.getString("DynamicDistributionDetailsForm.baseJars.table.index")); //$NON-NLS-1$
         indexColumn.getColumn().setWidth(50);
         indexColumn.setLabelProvider(new RowNumberLabelProvider());
         TableViewerColumn groupNameColumn = new TableViewerColumn(baseJarsTable, SWT.LEFT);
-        groupNameColumn.getColumn().setText(Messages.getString("DynamicBuildConfigurationForm.baseJars.table.groupName")); //$NON-NLS-1$
+        groupNameColumn.getColumn().setText(Messages.getString("DynamicDistributionDetailsForm.baseJars.table.groupName")); //$NON-NLS-1$
         groupNameColumn.getColumn().setWidth(300);
         BaseJarTableDetailLabelProvider detailLabelProvider = new BaseJarTableDetailLabelProvider();
         groupNameColumn.setLabelProvider(detailLabelProvider);
@@ -144,7 +153,7 @@ public class DynamicBuildConfigurationForm extends AbstractDynamicDistributionFo
         formData.bottom = new FormAttachment(exportConfigBtn, -1 * ALIGN_VERTICAL, SWT.TOP);
         baseJarsTable.getTable().setLayoutData(formData);
 
-        exportConfigBtn.setText(Messages.getString("DynamicBuildConfigurationForm.exportConfigBtn")); //$NON-NLS-1$
+        exportConfigBtn.setText(Messages.getString("DynamicDistributionDetailsForm.exportConfigBtn")); //$NON-NLS-1$
         formData = new FormData();
         // formData.top = new FormAttachment(baseJarsTable.getTable(), ALIGN_VERTICAL, SWT.BOTTOM);
         formData.left = new FormAttachment(baseJarsTable.getTable(), 0, SWT.LEFT);
@@ -155,36 +164,53 @@ public class DynamicBuildConfigurationForm extends AbstractDynamicDistributionFo
     }
 
     private void initData() {
-
-        DynamicBuildConfigurationData dynConfigData = getDynamicBuildConfigurationData();
-        IDynamicPlugin dynamicPlugin = dynConfigData.getDynamicPlugin();
-        IDynamicPluginConfiguration pluginConfiguration = dynamicPlugin.getPluginConfiguration();
-        String name = pluginConfiguration.getName();
-        originName = name;
-        ActionType actionType = dynConfigData.getActionType();
-        if (ActionType.EditExisting.equals(actionType)) {
-            if (!isReadonly()) {
-                String userName = null;
-                RepositoryContext repositoryContext = ProxyRepositoryFactory.getInstance().getRepositoryContext();
-                if (repositoryContext != null) {
-                    User user = repositoryContext.getUser();
-                    if (user != null) {
-                        userName = Messages.getString("DynamicBuildConfigurationForm.name.updatedBy.fullNameWithFamilyName", //$NON-NLS-1$
-                                user.getFirstName(), user.getLastName());
+        try {
+            DynamicBuildConfigurationData dynConfigData = getDynamicBuildConfigurationData();
+            dynamicPluginCache = DynamicFactory.getInstance()
+                    .createPluginFromJson(dynConfigData.getDynamicPlugin().toXmlString());
+            IDynamicPluginConfiguration pluginConfiguration = dynamicPluginCache.getPluginConfiguration();
+            String name = pluginConfiguration.getName();
+            originName = name;
+            ActionType actionType = dynConfigData.getActionType();
+            if (ActionType.EditExisting.equals(actionType)) {
+                if (!isReadonly()) {
+                    String userName = null;
+                    RepositoryContext repositoryContext = ProxyRepositoryFactory.getInstance().getRepositoryContext();
+                    if (repositoryContext != null) {
+                        User user = repositoryContext.getUser();
+                        if (user != null) {
+                            userName = Messages.getString("DynamicDistributionDetailsForm.name.updatedBy.fullNameWithFamilyName", //$NON-NLS-1$
+                                    user.getFirstName(), user.getLastName());
+                        }
+                    }
+                    if (StringUtils.isNotEmpty(userName)) {
+                        name = name + " " + Messages.getString("DynamicDistributionDetailsForm.name.updatedBy", userName); //$NON-NLS-1$//$NON-NLS-2$
                     }
                 }
-                if (StringUtils.isNotEmpty(userName)) {
-                    name = name + " " + Messages.getString("DynamicBuildConfigurationForm.name.updatedBy", userName); //$NON-NLS-1$//$NON-NLS-2$
-                }
             }
-        }
-        dynamicConfigNameText.setText(name);
+            dynamicConfigNameText.setText(name);
 
-        initTableViewData(dynamicPlugin);
+            initTableViewData(dynamicPluginCache);
+        } catch (Exception e) {
+            ExceptionHandler.process(e);
+            String message = e.getMessage();
+            if (StringUtils.isEmpty(message)) {
+                message = Messages.getString("ExceptionDialog.message.empty"); //$NON-NLS-1$
+            }
+            ExceptionMessageDialog.openError(getShell(), Messages.getString("ExceptionDialog.title"), message, e); //$NON-NLS-1$
+        }
 
     }
 
     private void addListeners() {
+
+        dynamicConfigNameText.addModifyListener(new ModifyListener() {
+
+            @Override
+            public void modifyText(ModifyEvent e) {
+                updateButtons();
+            }
+        });
 
         exportConfigBtn.addSelectionListener(new SelectionAdapter() {
 
@@ -212,8 +238,8 @@ public class DynamicBuildConfigurationForm extends AbstractDynamicDistributionFo
                 File file = new File(filePath);
                 if (file.exists()) {
                     boolean agree = MessageDialog.openQuestion(getShell(),
-                            Messages.getString("DynamicBuildConfigurationForm.exportConfig.dialog.fileExist.title"), //$NON-NLS-1$
-                            Messages.getString("DynamicBuildConfigurationForm.exportConfig.dialog.fileExist.message", //$NON-NLS-1$
+                            Messages.getString("DynamicDistributionDetailsForm.exportConfig.dialog.fileExist.title"), //$NON-NLS-1$
+                            Messages.getString("DynamicDistributionDetailsForm.exportConfig.dialog.fileExist.message", //$NON-NLS-1$
                                     file.getCanonicalPath()));
                     if (!agree) {
                         return;
@@ -223,8 +249,8 @@ public class DynamicBuildConfigurationForm extends AbstractDynamicDistributionFo
                 IDynamicMonitor monitor = new DummyDynamicMonitor();
                 DynamicDistributionManager.getInstance().saveUsersDynamicPlugin(dynamicPlugin, filePath, monitor);
                 MessageDialog.openInformation(getShell(),
-                        Messages.getString("DynamicBuildConfigurationForm.exportConfig.dialog.title"), //$NON-NLS-1$
-                        Messages.getString("DynamicBuildConfigurationForm.exportConfig.dialog.message", //$NON-NLS-1$
+                        Messages.getString("DynamicDistributionDetailsForm.exportConfig.dialog.title"), //$NON-NLS-1$
+                        Messages.getString("DynamicDistributionDetailsForm.exportConfig.dialog.message", //$NON-NLS-1$
                                 new File(filePath).getCanonicalPath()));
             } catch (Exception e) {
                 ExceptionHandler.process(e);
@@ -246,13 +272,33 @@ public class DynamicBuildConfigurationForm extends AbstractDynamicDistributionFo
             initData();
             enableUI();
             showMessage(null, WizardPage.INFORMATION);
-            return true;
+            boolean checkName = checkDynamicDistributionName();
+            return checkName && !isReadonly();
         } catch (Exception e) {
             ExceptionHandler.process(e);
             return false;
         } finally {
             exportConfigBtn.setEnabled(true);
         }
+    }
+
+    private boolean checkDynamicDistributionName() {
+        dynamicConfigNameText.setBackground(null);
+        String newDistriName = getUserDynamicDistrMame();
+        if (StringUtils.equals(originName, newDistriName)) {
+            return true;
+        }
+        if (getDynamicBuildConfigurationData().getNamePluginMap().containsKey(newDistriName)) {
+            String errorMessage = Messages.getString("DynamicDistributionDetailsForm.name.exception.nameExist", newDistriName); //$NON-NLS-1$
+            showMessage(errorMessage, WizardPage.ERROR);
+            dynamicConfigNameText.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
+            return false;
+        }
+        return true;
+    }
+
+    private String getUserDynamicDistrMame() {
+        return dynamicConfigNameText.getText().trim();
     }
 
     private void enableUI() {
@@ -295,6 +341,40 @@ public class DynamicBuildConfigurationForm extends AbstractDynamicDistributionFo
         return false;
     }
 
+    @Override
+    public boolean performOk() {
+
+        try {
+            final Throwable throwable[] = new Throwable[1];
+
+            run(true, true, new IRunnableWithProgress() {
+
+                @Override
+                public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+                    DynamicBuildConfigurationData dynamicBuildConfigurationData = getDynamicBuildConfigurationData();
+                    try {
+                        saveDynamicDistribution(dynamicPluginCache, dynamicBuildConfigurationData.getDynamicDistributionsGroup(),
+                                dynamicBuildConfigurationData.getActionType(), null);
+                    } catch (Exception e) {
+                        throwable[0] = e;
+                    }
+                }
+            });
+            if (throwable[0] != null) {
+                throw throwable[0];
+            }
+            return true;
+        } catch (Throwable e) {
+            ExceptionHandler.process(e);
+            String message = e.getMessage();
+            if (StringUtils.isEmpty(message)) {
+                message = Messages.getString("ExceptionDialog.message.empty"); //$NON-NLS-1$
+            }
+            ExceptionMessageDialog.openError(getShell(), Messages.getString("ExceptionDialog.title"), message, e); //$NON-NLS-1$
+        }
+        return false;
+    }
+
     protected boolean isReadonly() {
         return getDynamicBuildConfigurationData().isReadonly();
     }
@@ -310,7 +390,7 @@ public class DynamicBuildConfigurationForm extends AbstractDynamicDistributionFo
         @Override
         public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
             this.detailLabelProvider.clearBtns();
-            this.detailLabelProvider.setDynamicPlugin(getDynamicBuildConfigurationData().getDynamicPlugin());
+            this.detailLabelProvider.setDynamicPlugin(dynamicPluginCache);
             this.detailLabelProvider.setReadonly(isReadonly());
         }
 
@@ -358,7 +438,7 @@ public class DynamicBuildConfigurationForm extends AbstractDynamicDistributionFo
                 label.setBackground(LoginDialogV2.WHITE_COLOR);
                 label.setText(text);
                 Button button = new Button(composite, SWT.PUSH);
-                button.setText(Messages.getString("DynamicBuildConfigurationForm.baseJars.table.groupDetails.btn")); //$NON-NLS-1$
+                button.setText(Messages.getString("DynamicDistributionDetailsForm.baseJars.table.groupDetails.btn")); //$NON-NLS-1$
                 addDetailBtnListener(button, getModuleGroupTemplateId(element));
 
                 FormData formData = new FormData();

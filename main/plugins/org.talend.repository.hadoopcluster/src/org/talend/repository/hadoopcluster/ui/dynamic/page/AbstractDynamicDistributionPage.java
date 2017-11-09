@@ -16,13 +16,13 @@ import org.eclipse.jface.wizard.WizardPage;
 import org.talend.repository.hadoopcluster.ui.dynamic.DynamicBuildConfigurationData;
 import org.talend.repository.hadoopcluster.ui.dynamic.form.AbstractDynamicDistributionForm;
 
-public abstract class AbstractDynamicConfigurationPage extends WizardPage {
+public abstract class AbstractDynamicDistributionPage extends WizardPage {
 
     private AbstractDynamicDistributionForm currentForm;
 
     private DynamicBuildConfigurationData configData;
 
-    protected AbstractDynamicConfigurationPage(String pageName, DynamicBuildConfigurationData configData) {
+    protected AbstractDynamicDistributionPage(String pageName, DynamicBuildConfigurationData configData) {
         super(pageName);
         this.configData = configData;
     }

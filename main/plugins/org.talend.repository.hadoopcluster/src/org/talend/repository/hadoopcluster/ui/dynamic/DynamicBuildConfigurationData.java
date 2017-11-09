@@ -12,6 +12,8 @@
 // ============================================================================
 package org.talend.repository.hadoopcluster.ui.dynamic;
 
+import java.util.Map;
+
 import org.talend.core.runtime.dynamic.IDynamicPlugin;
 import org.talend.hadoop.distribution.dynamic.IDynamicDistributionsGroup;
 
@@ -27,6 +29,8 @@ public class DynamicBuildConfigurationData {
     private ActionType actionType;
 
     private boolean isReadonly;
+
+    private Map<String, IDynamicPlugin> namePluginMap;
 
     public IDynamicDistributionsGroup getDynamicDistributionsGroup() {
         return this.dynamicDistributionsGroup;
@@ -58,6 +62,14 @@ public class DynamicBuildConfigurationData {
 
     public void setReadonly(boolean isReadonly) {
         this.isReadonly = isReadonly;
+    }
+
+    public Map<String, IDynamicPlugin> getNamePluginMap() {
+        return this.namePluginMap;
+    }
+
+    public void setNamePluginMap(Map<String, IDynamicPlugin> namePluginMap) {
+        this.namePluginMap = namePluginMap;
     }
 
     public static enum ActionType {

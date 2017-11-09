@@ -12,6 +12,7 @@
 // ============================================================================
 package org.talend.repository.hadoopcluster.ui.dynamic.page;
 
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.talend.designer.maven.aether.DummyDynamicMonitor;
@@ -20,18 +21,18 @@ import org.talend.repository.hadoopcluster.i18n.Messages;
 import org.talend.repository.hadoopcluster.ui.dynamic.DynamicBuildConfigurationData;
 import org.talend.repository.hadoopcluster.ui.dynamic.form.AbstractDynamicDistributionForm;
 import org.talend.repository.hadoopcluster.ui.dynamic.form.AbstractDynamicDistributionForm.ICheckListener;
-import org.talend.repository.hadoopcluster.ui.dynamic.form.DynamicBuildConfigurationForm;
+import org.talend.repository.hadoopcluster.ui.dynamic.form.DynamicDistributionDetailsForm;
 
 
 /**
  * DOC cmeng  class global comment. Detailled comment
  */
-public class DynamicRetrievePage extends AbstractDynamicConfigurationPage {
+public class DynamicDistributionDetailsPage extends AbstractDynamicDistributionPage {
 
-    public DynamicRetrievePage(DynamicBuildConfigurationData configData) {
-        super(DynamicRetrievePage.class.getSimpleName(), configData);
-        setTitle(Messages.getString("DynamicRetrievePage.title")); //$NON-NLS-1$
-        setDescription(Messages.getString("DynamicRetrievePage.description")); //$NON-NLS-1$
+    public DynamicDistributionDetailsPage(DynamicBuildConfigurationData configData) {
+        super(DynamicDistributionDetailsPage.class.getSimpleName(), configData);
+        setTitle(Messages.getString("DynamicDistributionDetailsPage.title")); //$NON-NLS-1$
+        setDescription(Messages.getString("DynamicDistributionDetailsPage.description")); //$NON-NLS-1$
     }
 
     @Override
@@ -54,12 +55,17 @@ public class DynamicRetrievePage extends AbstractDynamicConfigurationPage {
 
             @Override
             public String getMessage() {
-                return DynamicRetrievePage.this.getMessage();
+                return DynamicDistributionDetailsPage.this.getMessage();
+            }
+
+            @Override
+            public void run(boolean fork, boolean cancelable, IRunnableWithProgress runnable) throws Exception {
+                getContainer().run(fork, cancelable, runnable);
             }
 
         };
 
-        AbstractDynamicDistributionForm setupForm = new DynamicBuildConfigurationForm(parent, SWT.NONE,
+        AbstractDynamicDistributionForm setupForm = new DynamicDistributionDetailsForm(parent, SWT.NONE,
                 getDynamicBuildConfigurationData(), monitor);
         setupForm.setCheckListener(checkListener);
 

@@ -319,7 +319,7 @@
          point="org.talend.repository.projectsetting_page">
       <page
             category="general"
-            class="org.talend.repository.hadoopcluster.ui.dynamic.page.DynamicDistributionSettingPage"
+            class="org.talend.repository.hadoopcluster.ui.dynamic.page.DynamicDistributionPreferencePage"
             id="org.talend.repository.hadoopcluster.ui.dynamic.DynamicDistributionSettingPage"
             order="0"
             title="%projectsetting.dynamicDistributionSetting">

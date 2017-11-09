@@ -15,6 +15,7 @@ package org.talend.repository.hadoopcluster.ui.dynamic.form;
 import java.util.EventListener;
 
 import org.apache.commons.lang3.StringUtils;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FillLayout;
@@ -23,9 +24,8 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.talend.repository.hadoopcluster.ui.dynamic.DynamicBuildConfigurationData;
 
-
 /**
- * DOC cmeng  class global comment. Detailled comment
+ * DOC cmeng class global comment. Detailled comment
  */
 public abstract class AbstractDynamicDistributionForm extends Composite {
 
@@ -127,6 +127,10 @@ public abstract class AbstractDynamicDistributionForm extends Composite {
         this.checkListener.updateButtons();
     }
 
+    protected void run(boolean fork, boolean cancelable, IRunnableWithProgress runnable) throws Exception {
+        this.checkListener.run(fork, cancelable, runnable);
+    }
+
     protected DynamicBuildConfigurationData getDynamicBuildConfigurationData() {
         return this.configData;
     }
@@ -138,6 +142,8 @@ public abstract class AbstractDynamicDistributionForm extends Composite {
         public String getMessage();
 
         public void updateButtons();
+
+        public void run(boolean fork, boolean cancelable, IRunnableWithProgress runnable) throws Exception;
 
     }
 }

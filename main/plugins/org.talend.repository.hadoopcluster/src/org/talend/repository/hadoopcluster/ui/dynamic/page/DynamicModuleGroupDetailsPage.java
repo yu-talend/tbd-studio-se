@@ -21,14 +21,14 @@ import org.talend.repository.hadoopcluster.ui.dynamic.form.AbstractModuleGroupDe
 import org.talend.repository.hadoopcluster.ui.dynamic.form.ModuleGroupDetailsForm;
 
 /**
- * DOC cmeng  class global comment. Detailled comment
+ * DOC cmeng class global comment. Detailled comment
  */
 public class DynamicModuleGroupDetailsPage extends AbsDynamicModuleGroupDetailsPage {
 
     public DynamicModuleGroupDetailsPage(DynamicModuleGroupData groupData) {
         super(DynamicModuleGroupDetailsPage.class.getSimpleName(), groupData); // $NON-NLS-1$
-        setTitle(Messages.getString("DynamicModuleGroupPage.title")); //$NON-NLS-1$
-        setDescription(Messages.getString("DynamicModuleGroupPage.description")); //$NON-NLS-1$
+        setTitle(Messages.getString("DynamicModuleGroupDetailsPage.title")); //$NON-NLS-1$
+        setDescription(Messages.getString("DynamicModuleGroupDetailsPage.description")); //$NON-NLS-1$
     }
 
     @Override
@@ -52,7 +52,7 @@ public class DynamicModuleGroupDetailsPage extends AbsDynamicModuleGroupDetailsP
 
         setControl(detailForm);
         setCurrentForm(detailForm);
-        
+
         setPageComplete(false);
     }
 
