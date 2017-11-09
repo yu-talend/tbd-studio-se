@@ -69,8 +69,8 @@ import org.talend.hadoop.distribution.dynamic.comparator.DynamicPluginComparator
 import org.talend.repository.ProjectManager;
 import org.talend.repository.RepositoryWorkUnit;
 import org.talend.repository.hadoopcluster.i18n.Messages;
-import org.talend.repository.hadoopcluster.ui.dynamic.DynamicBuildConfigurationData;
-import org.talend.repository.hadoopcluster.ui.dynamic.DynamicBuildConfigurationWizard;
+import org.talend.repository.hadoopcluster.ui.dynamic.DynamicDistributionSetupData;
+import org.talend.repository.hadoopcluster.ui.dynamic.DynamicDistributionSetupWizard;
 
 /**
  * DOC cmeng class global comment. Detailled comment
@@ -329,9 +329,9 @@ public class DynamicDistributionPreferenceForm extends AbstractDynamicDistributi
                     }
                     IDynamicDistributionsGroup dynamicDistributionsGroup = DynamicDistributionManager.getInstance()
                             .getDynamicDistributionGroup(distribution);
-                    DynamicBuildConfigurationData configData = new DynamicBuildConfigurationData();
+                    DynamicDistributionSetupData configData = new DynamicDistributionSetupData();
                     configData.setDynamicDistributionsGroup(dynamicDistributionsGroup);
-                    DynamicBuildConfigurationWizard wizard = new DynamicBuildConfigurationWizard(configData);
+                    DynamicDistributionSetupWizard wizard = new DynamicDistributionSetupWizard(configData);
                     WizardDialog wizardDialog = new WizardDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
                             wizard);
                     wizardDialog.setMinimumPageSize(600, 400);
@@ -547,13 +547,14 @@ public class DynamicDistributionPreferenceForm extends AbstractDynamicDistributi
     }
 
     private void onDeleteBtnPressed() {
+        IStructuredSelection selection = (IStructuredSelection) versionCombo.getSelection();
+        final IDynamicPlugin dynamicPlugin = (IDynamicPlugin) selection.getFirstElement();
         boolean agree = MessageDialog.openConfirm(getShell(),
                 Messages.getString("DynamicDistributionPreferenceForm.form.deleteExistingConfig.confirm.dialog.title"), //$NON-NLS-1$
-                Messages.getString("DynamicDistributionPreferenceForm.form.deleteExistingConfig.confirm.dialog.message")); //$NON-NLS-1$
+                Messages.getString("DynamicDistributionPreferenceForm.form.deleteExistingConfig.confirm.dialog.message", //$NON-NLS-1$
+                        dynamicPlugin.getPluginConfiguration().getName()));
         if (agree) {
             try {
-                IStructuredSelection selection = (IStructuredSelection) versionCombo.getSelection();
-                final IDynamicPlugin dynamicPlugin = (IDynamicPlugin) selection.getFirstElement();
                 doDelete(dynamicPlugin);
                 IDynamicMonitor monitor = new DummyDynamicMonitor();
                 refreshVersionList(monitor);
@@ -589,20 +590,22 @@ public class DynamicDistributionPreferenceForm extends AbstractDynamicDistributi
                             }
                         };
                         try {
-                            monitor.beginTask(Messages.getString("DynamicBuildConfigurationForm.delete.progress.unregist"), //$NON-NLS-1$
-                                    IDynamicMonitor.UNKNOWN);
                             IDynamicPluginConfiguration pluginConfiguration = dynamicPlugin.getPluginConfiguration();
+                            monitor.beginTask(Messages.getString("DynamicDistributionPreferenceForm.delete.progress.unregist", //$NON-NLS-1$
+                                    pluginConfiguration.getName()), IDynamicMonitor.UNKNOWN);
                             String distribution = pluginConfiguration.getDistribution();
                             IDynamicDistributionsGroup dynamicDistributionGroup = DynamicDistributionManager.getInstance()
                                     .getDynamicDistributionGroup(distribution);
                             dynamicDistributionGroup.unregist(dynamicPlugin, monitor);
 
-                            monitor.setTaskName(Messages.getString("DynamicBuildConfigurationForm.delete.progress.deleteFile")); //$NON-NLS-1$
+                            monitor.setTaskName(Messages.getString("DynamicDistributionPreferenceForm.delete.progress.deleteFile", //$NON-NLS-1$
+                                    pluginConfiguration.getName()));
                             String filePath = (String) pluginConfiguration.getAttribute(DynamicConstants.ATTR_FILE_PATH);
                             File file = new File(filePath);
                             file.delete();
 
-                            monitor.setTaskName(Messages.getString("DynamicBuildConfigurationForm.delete.progress.resetCache")); //$NON-NLS-1$
+                            monitor.setTaskName(
+                                    Messages.getString("DynamicDistributionPreferenceForm.delete.progress.resetCache")); //$NON-NLS-1$
                             DynamicDistributionManager.getInstance().resetSystemCache();
                         } catch (Throwable e) {
                             throwable[0] = e;

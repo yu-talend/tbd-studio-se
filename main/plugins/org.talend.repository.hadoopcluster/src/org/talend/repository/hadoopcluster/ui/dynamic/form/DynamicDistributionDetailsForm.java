@@ -65,6 +65,7 @@ import org.talend.core.runtime.dynamic.IDynamicConfiguration;
 import org.talend.core.runtime.dynamic.IDynamicExtension;
 import org.talend.core.runtime.dynamic.IDynamicPlugin;
 import org.talend.core.runtime.dynamic.IDynamicPluginConfiguration;
+import org.talend.designer.maven.aether.AbsDynamicProgressMonitor;
 import org.talend.designer.maven.aether.DummyDynamicMonitor;
 import org.talend.designer.maven.aether.IDynamicMonitor;
 import org.talend.hadoop.distribution.dynamic.DynamicDistributionManager;
@@ -75,8 +76,8 @@ import org.talend.hadoop.distribution.dynamic.adapter.DynamicModuleGroupAdapter;
 import org.talend.hadoop.distribution.dynamic.adapter.DynamicPluginAdapter;
 import org.talend.hadoop.distribution.dynamic.comparator.DynamicAttributeComparator;
 import org.talend.repository.hadoopcluster.i18n.Messages;
-import org.talend.repository.hadoopcluster.ui.dynamic.DynamicBuildConfigurationData;
-import org.talend.repository.hadoopcluster.ui.dynamic.DynamicBuildConfigurationData.ActionType;
+import org.talend.repository.hadoopcluster.ui.dynamic.DynamicDistributionSetupData;
+import org.talend.repository.hadoopcluster.ui.dynamic.DynamicDistributionSetupData.ActionType;
 import org.talend.repository.hadoopcluster.ui.dynamic.DynamicModuleGroupData;
 import org.talend.repository.hadoopcluster.ui.dynamic.DynamicModuleGroupWizard;
 import org.talend.repository.ui.login.LoginDialogV2;
@@ -92,11 +93,13 @@ public class DynamicDistributionDetailsForm extends AbstractDynamicDistributionS
 
     private TableViewer baseJarsTable;
 
-    private IDynamicPlugin dynamicPluginCache;
+    private IDynamicPlugin newDynamicPluginCache;
 
-    private String originName;
+    private IDynamicPlugin originPluginCache;
 
-    public DynamicDistributionDetailsForm(Composite parent, int style, DynamicBuildConfigurationData configData,
+    private String nameCache;
+
+    public DynamicDistributionDetailsForm(Composite parent, int style, DynamicDistributionSetupData configData,
             IDynamicMonitor monitor) {
         super(parent, style, configData);
         createControl();
@@ -165,12 +168,16 @@ public class DynamicDistributionDetailsForm extends AbstractDynamicDistributionS
 
     private void initData() {
         try {
-            DynamicBuildConfigurationData dynConfigData = getDynamicBuildConfigurationData();
-            dynamicPluginCache = DynamicFactory.getInstance()
-                    .createPluginFromJson(dynConfigData.getDynamicPlugin().toXmlString());
-            IDynamicPluginConfiguration pluginConfiguration = dynamicPluginCache.getPluginConfiguration();
+            DynamicDistributionSetupData dynConfigData = getDynamicDistributionSetupData();
+            IDynamicPlugin originPlugin = dynConfigData.getDynamicPlugin();
+            if (originPlugin == originPluginCache) {
+                return;
+            }
+            originPluginCache = originPlugin;
+
+            newDynamicPluginCache = DynamicFactory.getInstance().createPluginFromJson(originPluginCache.toXmlJson().toString());
+            IDynamicPluginConfiguration pluginConfiguration = newDynamicPluginCache.getPluginConfiguration();
             String name = pluginConfiguration.getName();
-            originName = name;
             ActionType actionType = dynConfigData.getActionType();
             if (ActionType.EditExisting.equals(actionType)) {
                 if (!isReadonly()) {
@@ -179,8 +186,19 @@ public class DynamicDistributionDetailsForm extends AbstractDynamicDistributionS
                     if (repositoryContext != null) {
                         User user = repositoryContext.getUser();
                         if (user != null) {
-                            userName = Messages.getString("DynamicDistributionDetailsForm.name.updatedBy.fullNameWithFamilyName", //$NON-NLS-1$
-                                    user.getFirstName(), user.getLastName());
+                            String firstName = user.getFirstName();
+                            if (firstName == null) {
+                                firstName = ""; //$NON-NLS-1$
+                            }
+                            String lastName = user.getLastName();
+                            if (lastName == null) {
+                                lastName = ""; //$NON-NLS-1$
+                            }
+                            if (StringUtils.isNotEmpty(firstName) || StringUtils.isNotEmpty(lastName)) {
+                                userName = Messages.getString(
+                                        "DynamicDistributionDetailsForm.name.updatedBy.fullNameWithFamilyName", //$NON-NLS-1$
+                                        user.getFirstName(), user.getLastName());
+                            }
                         }
                     }
                     if (StringUtils.isNotEmpty(userName)) {
@@ -188,9 +206,10 @@ public class DynamicDistributionDetailsForm extends AbstractDynamicDistributionS
                     }
                 }
             }
+            nameCache = name.trim();
             dynamicConfigNameText.setText(name);
 
-            initTableViewData(dynamicPluginCache);
+            initTableViewData(newDynamicPluginCache);
         } catch (Exception e) {
             ExceptionHandler.process(e);
             String message = e.getMessage();
@@ -208,6 +227,11 @@ public class DynamicDistributionDetailsForm extends AbstractDynamicDistributionS
 
             @Override
             public void modifyText(ModifyEvent e) {
+                String newName = getUserDynamicDistrMame();
+                if (StringUtils.equals(nameCache, newName)) {
+                    return;
+                }
+                nameCache = newName;
                 updateButtons();
             }
         });
@@ -229,7 +253,7 @@ public class DynamicDistributionDetailsForm extends AbstractDynamicDistributionS
         String folderPath = dirDialog.open();
         if (StringUtils.isNotEmpty(folderPath)) {
             try {
-                IDynamicPlugin dynamicPlugin = getDynamicBuildConfigurationData().getDynamicPlugin();
+                IDynamicPlugin dynamicPlugin = getDynamicDistributionSetupData().getDynamicPlugin();
                 IDynamicPluginConfiguration pluginConfiguration = dynamicPlugin.getPluginConfiguration();
                 String id = pluginConfiguration.getId();
                 String fileName = id + "." + DynamicDistributionManager.DISTRIBUTION_FILE_EXTENSION; //$NON-NLS-1$
@@ -282,18 +306,37 @@ public class DynamicDistributionDetailsForm extends AbstractDynamicDistributionS
         }
     }
 
+    private String getOriginName() {
+        if (originPluginCache != null) {
+            return originPluginCache.getPluginConfiguration().getName();
+        }
+        return ""; //$NON-NLS-1$
+    }
+
     private boolean checkDynamicDistributionName() {
         dynamicConfigNameText.setBackground(null);
         String newDistriName = getUserDynamicDistrMame();
-        if (StringUtils.equals(originName, newDistriName)) {
+        dynamicConfigNameText.setToolTipText(newDistriName);
+        if (StringUtils.equals(getOriginName(), newDistriName)) {
+            newDynamicPluginCache.getPluginConfiguration().setName(newDistriName);
             return true;
         }
-        if (getDynamicBuildConfigurationData().getNamePluginMap().containsKey(newDistriName)) {
-            String errorMessage = Messages.getString("DynamicDistributionDetailsForm.name.exception.nameExist", newDistriName); //$NON-NLS-1$
+
+        if (StringUtils.isEmpty(newDistriName)) {
+            String errorMessage = Messages.getString("DynamicDistributionDetailsForm.check.name.empty"); //$NON-NLS-1$
             showMessage(errorMessage, WizardPage.ERROR);
+            dynamicConfigNameText.setToolTipText(errorMessage);
             dynamicConfigNameText.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
             return false;
         }
+        if (getDynamicDistributionSetupData().getNamePluginMap().containsKey(newDistriName)) {
+            String errorMessage = Messages.getString("DynamicDistributionDetailsForm.name.exception.nameExist", newDistriName); //$NON-NLS-1$
+            showMessage(errorMessage, WizardPage.ERROR);
+            dynamicConfigNameText.setToolTipText(errorMessage);
+            dynamicConfigNameText.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
+            return false;
+        }
+        newDynamicPluginCache.getPluginConfiguration().setName(newDistriName);
         return true;
     }
 
@@ -351,10 +394,20 @@ public class DynamicDistributionDetailsForm extends AbstractDynamicDistributionS
 
                 @Override
                 public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-                    DynamicBuildConfigurationData dynamicBuildConfigurationData = getDynamicBuildConfigurationData();
+                    DynamicDistributionSetupData dynamicBuildConfigurationData = getDynamicDistributionSetupData();
                     try {
-                        saveDynamicDistribution(dynamicPluginCache, dynamicBuildConfigurationData.getDynamicDistributionsGroup(),
-                                dynamicBuildConfigurationData.getActionType(), null);
+                        IDynamicMonitor dMonitor = new AbsDynamicProgressMonitor(monitor) {
+
+                            @Override
+                            public void writeMessage(String message) {
+                                if (isDebuging()) {
+                                    System.out.print(message);
+                                }
+                            }
+                        };
+                        saveDynamicDistribution(newDynamicPluginCache,
+                                dynamicBuildConfigurationData.getDynamicDistributionsGroup(),
+                                dynamicBuildConfigurationData.getActionType(), dMonitor);
                     } catch (Exception e) {
                         throwable[0] = e;
                     }
@@ -376,7 +429,7 @@ public class DynamicDistributionDetailsForm extends AbstractDynamicDistributionS
     }
 
     protected boolean isReadonly() {
-        return getDynamicBuildConfigurationData().isReadonly();
+        return getDynamicDistributionSetupData().isReadonly();
     }
 
     protected class BaseJarTableContentProvider extends ArrayContentProvider {
@@ -390,7 +443,7 @@ public class DynamicDistributionDetailsForm extends AbstractDynamicDistributionS
         @Override
         public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
             this.detailLabelProvider.clearBtns();
-            this.detailLabelProvider.setDynamicPlugin(dynamicPluginCache);
+            this.detailLabelProvider.setDynamicPlugin(newDynamicPluginCache);
             this.detailLabelProvider.setReadonly(isReadonly());
         }
 

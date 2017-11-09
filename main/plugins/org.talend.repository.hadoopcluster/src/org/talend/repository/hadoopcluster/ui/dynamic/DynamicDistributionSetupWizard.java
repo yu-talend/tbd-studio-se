@@ -9,15 +9,15 @@ import org.talend.repository.hadoopcluster.ui.dynamic.page.DynamicDistributionDe
 import org.talend.repository.hadoopcluster.ui.dynamic.page.DynamicDistributionOptionPage;
 import org.talend.repository.hadoopcluster.util.EHadoopClusterImage;
 
-public class DynamicBuildConfigurationWizard extends Wizard {
+public class DynamicDistributionSetupWizard extends Wizard {
 
     private DynamicDistributionOptionPage optionPage;
 
     private DynamicDistributionDetailsPage retrivePage;
 
-    private DynamicBuildConfigurationData configData;
+    private DynamicDistributionSetupData configData;
 
-    public DynamicBuildConfigurationWizard(DynamicBuildConfigurationData configData) {
+    public DynamicDistributionSetupWizard(DynamicDistributionSetupData configData) {
         super();
         this.configData = configData;
         setNeedsProgressMonitor(true);
@@ -26,7 +26,7 @@ public class DynamicBuildConfigurationWizard extends Wizard {
 
     @Override
     public String getWindowTitle() {
-        return Messages.getString("DynamicBuildConfigurationWizard.title"); //$NON-NLS-1$
+        return Messages.getString("DynamicDistributionSetupWizard.title"); //$NON-NLS-1$
     }
 
     @Override

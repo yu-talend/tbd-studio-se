@@ -28,7 +28,6 @@ import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
@@ -52,7 +51,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.talend.commons.exception.ExceptionHandler;
 import org.talend.commons.ui.runtime.exception.ExceptionMessageDialog;
-import org.talend.core.CorePlugin;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.core.runtime.dynamic.DynamicFactory;
 import org.talend.core.runtime.dynamic.DynamicServiceUtil;
@@ -69,8 +67,8 @@ import org.talend.hadoop.distribution.dynamic.comparator.DynamicPluginComparator
 import org.talend.hadoop.distribution.dynamic.util.DynamicDistributionUtils;
 import org.talend.repository.ProjectManager;
 import org.talend.repository.hadoopcluster.i18n.Messages;
-import org.talend.repository.hadoopcluster.ui.dynamic.DynamicBuildConfigurationData;
-import org.talend.repository.hadoopcluster.ui.dynamic.DynamicBuildConfigurationData.ActionType;
+import org.talend.repository.hadoopcluster.ui.dynamic.DynamicDistributionSetupData;
+import org.talend.repository.hadoopcluster.ui.dynamic.DynamicDistributionSetupData.ActionType;
 import org.talend.repository.ui.login.LoginDialogV2;
 
 /**
@@ -116,12 +114,9 @@ public class DynamicDistributionOptionForm extends AbstractDynamicDistributionSe
 
     private Map<String, IDynamicPlugin> namePluginMap;
 
-    private boolean isDebugging = false;
-
-    public DynamicDistributionOptionForm(Composite parent, int style, DynamicBuildConfigurationData configData,
+    public DynamicDistributionOptionForm(Composite parent, int style, DynamicDistributionSetupData configData,
             IDynamicMonitor monitor) {
         super(parent, style, configData);
-        isDebugging = CorePlugin.getDefault().isDebugging();
         createControl();
         initData(monitor);
 
@@ -370,8 +365,8 @@ public class DynamicDistributionOptionForm extends AbstractDynamicDistributionSe
 
     private void onNewConfigSelected(boolean selected) {
         if (selected) {
-            getDynamicBuildConfigurationData().setActionType(ActionType.NewConfig);
-            getDynamicBuildConfigurationData().setReadonly(false);
+            getDynamicDistributionSetupData().setActionType(ActionType.NewConfig);
+            getDynamicDistributionSetupData().setReadonly(false);
         }
 
         versionsComboViewer.getControl().setEnabled(selected);
@@ -413,8 +408,8 @@ public class DynamicDistributionOptionForm extends AbstractDynamicDistributionSe
 
     private void onEditExistingSelected(boolean selected) {
         if (selected) {
-            getDynamicBuildConfigurationData().setActionType(ActionType.EditExisting);
-            getDynamicBuildConfigurationData().setReadonly(true);
+            getDynamicDistributionSetupData().setActionType(ActionType.EditExisting);
+            getDynamicDistributionSetupData().setReadonly(true);
         }
 
         // editExistingGroup.setEnabled(selected);
@@ -423,8 +418,8 @@ public class DynamicDistributionOptionForm extends AbstractDynamicDistributionSe
 
     private void onImportConfigSelected(boolean selected) {
         if (selected) {
-            getDynamicBuildConfigurationData().setActionType(ActionType.Import);
-            getDynamicBuildConfigurationData().setReadonly(false);
+            getDynamicDistributionSetupData().setActionType(ActionType.Import);
+            getDynamicDistributionSetupData().setReadonly(false);
         }
 
         // importConfigGroup.setEnabled(selected);
@@ -455,13 +450,12 @@ public class DynamicDistributionOptionForm extends AbstractDynamicDistributionSe
         final List<List<String>> result = new ArrayList<>();
 
         try {
-            DynamicBuildConfigurationData dynConfigData = getDynamicBuildConfigurationData();
+            DynamicDistributionSetupData dynConfigData = getDynamicDistributionSetupData();
             IDynamicDistributionsGroup dynDistrGroup = dynConfigData.getDynamicDistributionsGroup();
             final Throwable throwable[] = new Throwable[1];
 
-            ProgressMonitorDialog progressDialog = new ProgressMonitorDialog(getShell());
             final boolean showOnlyCompatibleVersions = showOnlyCompatibleBtn.getSelection();
-            progressDialog.run(true, true, new IRunnableWithProgress() {
+            run(true, true, new IRunnableWithProgress() {
 
                 @Override
                 public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
@@ -470,7 +464,7 @@ public class DynamicDistributionOptionForm extends AbstractDynamicDistributionSe
 
                             @Override
                             public void writeMessage(String message) {
-                                if (isDebugging) {
+                                if (isDebuging()) {
                                     System.out.print(message);
                                 }
                             }
@@ -511,12 +505,12 @@ public class DynamicDistributionOptionForm extends AbstractDynamicDistributionSe
     private void initData(IDynamicMonitor monitor) {
         try {
             namePluginMap = getNamePluginMap();
-            getDynamicBuildConfigurationData().setNamePluginMap(namePluginMap);
+            getDynamicDistributionSetupData().setNamePluginMap(namePluginMap);
         } catch (Exception e) {
             ExceptionHandler.process(e);
         }
 
-        DynamicBuildConfigurationData dynConfigData = getDynamicBuildConfigurationData();
+        DynamicDistributionSetupData dynConfigData = getDynamicDistributionSetupData();
         IDynamicDistributionsGroup dynamicDistributionsGroup = dynConfigData.getDynamicDistributionsGroup();
 
         dynamicConfiguration = new DynamicConfiguration();
@@ -573,7 +567,7 @@ public class DynamicDistributionOptionForm extends AbstractDynamicDistributionSe
     private Map<String, IDynamicPlugin> getNamePluginMap() throws Exception {
         if (namePluginMap == null || namePluginMap.isEmpty()) {
             namePluginMap = new HashMap<>();
-            DynamicBuildConfigurationData dynamicBuildConfigurationData = getDynamicBuildConfigurationData();
+            DynamicDistributionSetupData dynamicBuildConfigurationData = getDynamicDistributionSetupData();
             if (allBuildinDynamicPlugins == null || allBuildinDynamicPlugins.isEmpty()) {
                 copyAllUsersDynamicPlugins(new DummyDynamicMonitor(),
                         dynamicBuildConfigurationData.getDynamicDistributionsGroup());
@@ -659,7 +653,7 @@ public class DynamicDistributionOptionForm extends AbstractDynamicDistributionSe
                 return false;
             }
 
-            DynamicBuildConfigurationData dynamicBuildConfigurationData = getDynamicBuildConfigurationData();
+            DynamicDistributionSetupData dynamicBuildConfigurationData = getDynamicDistributionSetupData();
             IDynamicDistributionsGroup dynamicDistributionsGroup = dynamicBuildConfigurationData.getDynamicDistributionsGroup();
             String versionName = dynamicDistributionsGroup.generateVersionName(selectedVersion);
 
@@ -718,7 +712,7 @@ public class DynamicDistributionOptionForm extends AbstractDynamicDistributionSe
                 showMessage(errorMessage, WizardPage.ERROR);
                 return false;
             }
-            DynamicBuildConfigurationData dynamicBuildConfigurationData = getDynamicBuildConfigurationData();
+            DynamicDistributionSetupData dynamicBuildConfigurationData = getDynamicDistributionSetupData();
 
             // 2. check distribution
             IDynamicDistributionsGroup dynamicDistributionsGroup = dynamicBuildConfigurationData.getDynamicDistributionsGroup();
@@ -732,6 +726,7 @@ public class DynamicDistributionOptionForm extends AbstractDynamicDistributionSe
             }
 
             // 3. check id
+            boolean isIdSame = false;
             String id = pluginConfiguration.getId();
             if (StringUtils.isEmpty(id)) {
                 String errorMessage = Messages.getString("DynamicDistributionOptionForm.importConfigText.check.badId.empty"); //$NON-NLS-1$
@@ -765,11 +760,12 @@ public class DynamicDistributionOptionForm extends AbstractDynamicDistributionSe
                         "DynamicDistributionOptionForm.importConfigText.check.badId.exist.sameDistribution", //$NON-NLS-1$
                         id);
                 messageBuffer.append(errorMessage).append("\n"); //$NON-NLS-1$
+                isIdSame = true;
             }
 
             // 4. check name
             String name = pluginConfiguration.getName();
-            if (isConfigurationNameExist(name)) {
+            if (!isIdSame && isConfigurationNameExist(name)) {
                 Calendar cal = Calendar.getInstance();
                 Date date = cal.getTime();
                 String newName = name
@@ -788,7 +784,7 @@ public class DynamicDistributionOptionForm extends AbstractDynamicDistributionSe
                 showMessage(warnMessage, WizardPage.WARNING);
             }
 
-            getDynamicBuildConfigurationData().setDynamicPlugin(importedDynamicPlugin);
+            getDynamicDistributionSetupData().setDynamicPlugin(importedDynamicPlugin);
             return true;
         } catch (Exception e) {
             importConfigText.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
@@ -817,9 +813,9 @@ public class DynamicDistributionOptionForm extends AbstractDynamicDistributionSe
         IDynamicPlugin dynamicPlugin = (IDynamicPlugin) firstElement;
         existingConfigsComboViewer.getControl().setToolTipText(existingConfigsComboViewer.getCombo().getText());
 
-        getDynamicBuildConfigurationData().setDynamicPlugin(dynamicPlugin);
+        getDynamicDistributionSetupData().setDynamicPlugin(dynamicPlugin);
         boolean isBuildin = isBuildinDynamicConfiguration(dynamicPlugin);
-        getDynamicBuildConfigurationData().setReadonly(isBuildin || isReadonly());
+        getDynamicDistributionSetupData().setReadonly(isBuildin || isReadonly());
 
         if (isBuildin) {
             String warnMessage = Messages.getString("DynamicDistributionOptionForm.editExisting.buildin", //$NON-NLS-1$
@@ -852,14 +848,14 @@ public class DynamicDistributionOptionForm extends AbstractDynamicDistributionSe
                 @Override
                 public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
                     try {
-                        DynamicBuildConfigurationData dynConfigData = getDynamicBuildConfigurationData();
+                        DynamicDistributionSetupData dynConfigData = getDynamicDistributionSetupData();
                         IDynamicDistributionsGroup dynDistrGroup = dynConfigData.getDynamicDistributionsGroup();
 
                         IDynamicMonitor dMonitor = new AbsDynamicProgressMonitor(monitor) {
 
                             @Override
                             public void writeMessage(String message) {
-                                if (isDebugging) {
+                                if (isDebuging()) {
                                     System.out.print(message);
                                 }
                             }

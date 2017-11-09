@@ -31,7 +31,7 @@ public class DynamicCDHDistributionPreference implements IDynamicDistributionPre
 
     private static final String PREF_REPOSITORY = "distribution.dynamic.repository.cdh.repository"; //$NON-NLS-1$
 
-    private static final String PREF_REPOSITORY_DEFAULT = "https://talend-update.talend.com/nexus/content/repositories/cloudera-repos/"; //$NON-NLS-1$
+    private static final String PREF_REPOSITORY_DEFAULT = "https://talend-update.talend.com/nexus/content/repositories/cdh-releases-rcs/"; //$NON-NLS-1$
 
     private static final String PREF_ANONYMOUS = "distribution.dynamic.repository.cdh.isAnonymous"; //$NON-NLS-1$
 

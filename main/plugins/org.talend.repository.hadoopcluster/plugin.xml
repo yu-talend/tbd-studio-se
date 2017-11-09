@@ -320,7 +320,7 @@
       <page
             category="general"
             class="org.talend.repository.hadoopcluster.ui.dynamic.page.DynamicDistributionPreferencePage"
-            id="org.talend.repository.hadoopcluster.ui.dynamic.DynamicDistributionSettingPage"
+            id="org.talend.repository.hadoopcluster.ui.dynamic.page.DynamicDistributionPreferencePage"
             order="0"
             title="%projectsetting.dynamicDistributionSetting">
       </page>

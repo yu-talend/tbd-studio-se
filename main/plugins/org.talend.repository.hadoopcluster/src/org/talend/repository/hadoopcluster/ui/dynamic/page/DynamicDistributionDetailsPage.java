@@ -18,7 +18,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.talend.designer.maven.aether.DummyDynamicMonitor;
 import org.talend.designer.maven.aether.IDynamicMonitor;
 import org.talend.repository.hadoopcluster.i18n.Messages;
-import org.talend.repository.hadoopcluster.ui.dynamic.DynamicBuildConfigurationData;
+import org.talend.repository.hadoopcluster.ui.dynamic.DynamicDistributionSetupData;
 import org.talend.repository.hadoopcluster.ui.dynamic.form.AbstractDynamicDistributionForm;
 import org.talend.repository.hadoopcluster.ui.dynamic.form.AbstractDynamicDistributionForm.ICheckListener;
 import org.talend.repository.hadoopcluster.ui.dynamic.form.DynamicDistributionDetailsForm;
@@ -29,7 +29,7 @@ import org.talend.repository.hadoopcluster.ui.dynamic.form.DynamicDistributionDe
  */
 public class DynamicDistributionDetailsPage extends AbstractDynamicDistributionPage {
 
-    public DynamicDistributionDetailsPage(DynamicBuildConfigurationData configData) {
+    public DynamicDistributionDetailsPage(DynamicDistributionSetupData configData) {
         super(DynamicDistributionDetailsPage.class.getSimpleName(), configData);
         setTitle(Messages.getString("DynamicDistributionDetailsPage.title")); //$NON-NLS-1$
         setDescription(Messages.getString("DynamicDistributionDetailsPage.description")); //$NON-NLS-1$

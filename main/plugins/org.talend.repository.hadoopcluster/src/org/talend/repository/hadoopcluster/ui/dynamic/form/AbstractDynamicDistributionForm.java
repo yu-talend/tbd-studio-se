@@ -22,7 +22,7 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.talend.repository.hadoopcluster.ui.dynamic.DynamicBuildConfigurationData;
+import org.talend.repository.hadoopcluster.ui.dynamic.DynamicDistributionSetupData;
 
 /**
  * DOC cmeng class global comment. Detailled comment
@@ -31,9 +31,9 @@ public abstract class AbstractDynamicDistributionForm extends Composite {
 
     private ICheckListener checkListener;
 
-    private DynamicBuildConfigurationData configData;
+    private DynamicDistributionSetupData configData;
 
-    public AbstractDynamicDistributionForm(Composite parent, int style, DynamicBuildConfigurationData configData) {
+    public AbstractDynamicDistributionForm(Composite parent, int style, DynamicDistributionSetupData configData) {
         super(parent, style);
         this.setLayout(new FillLayout());
         this.configData = configData;
@@ -131,7 +131,7 @@ public abstract class AbstractDynamicDistributionForm extends Composite {
         this.checkListener.run(fork, cancelable, runnable);
     }
 
-    protected DynamicBuildConfigurationData getDynamicBuildConfigurationData() {
+    protected DynamicDistributionSetupData getDynamicDistributionSetupData() {
         return this.configData;
     }
 

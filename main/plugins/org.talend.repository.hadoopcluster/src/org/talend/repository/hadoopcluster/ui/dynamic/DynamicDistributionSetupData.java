@@ -20,7 +20,7 @@ import org.talend.hadoop.distribution.dynamic.IDynamicDistributionsGroup;
 /**
  * DOC cmeng  class global comment. Detailled comment
  */
-public class DynamicBuildConfigurationData {
+public class DynamicDistributionSetupData {
 
     private IDynamicDistributionsGroup dynamicDistributionsGroup;
 

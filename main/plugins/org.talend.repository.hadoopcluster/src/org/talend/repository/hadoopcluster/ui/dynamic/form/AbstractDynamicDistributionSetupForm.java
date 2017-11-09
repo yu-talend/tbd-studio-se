@@ -15,6 +15,7 @@ package org.talend.repository.hadoopcluster.ui.dynamic.form;
 import org.eclipse.swt.widgets.Composite;
 import org.talend.commons.exception.LoginException;
 import org.talend.commons.exception.PersistenceException;
+import org.talend.core.CorePlugin;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.core.runtime.dynamic.IDynamicPlugin;
 import org.talend.core.runtime.dynamic.IDynamicPluginConfiguration;
@@ -25,16 +26,19 @@ import org.talend.hadoop.distribution.dynamic.IDynamicDistributionsGroup;
 import org.talend.hadoop.distribution.dynamic.adapter.DynamicPluginAdapter;
 import org.talend.repository.RepositoryWorkUnit;
 import org.talend.repository.hadoopcluster.i18n.Messages;
-import org.talend.repository.hadoopcluster.ui.dynamic.DynamicBuildConfigurationData;
-import org.talend.repository.hadoopcluster.ui.dynamic.DynamicBuildConfigurationData.ActionType;
+import org.talend.repository.hadoopcluster.ui.dynamic.DynamicDistributionSetupData;
+import org.talend.repository.hadoopcluster.ui.dynamic.DynamicDistributionSetupData.ActionType;
 
 /**
  * DOC cmeng class global comment. Detailled comment
  */
 public abstract class AbstractDynamicDistributionSetupForm extends AbstractDynamicDistributionForm {
 
-    public AbstractDynamicDistributionSetupForm(Composite parent, int style, DynamicBuildConfigurationData configData) {
+    private boolean isDebugging = false;
+
+    public AbstractDynamicDistributionSetupForm(Composite parent, int style, DynamicDistributionSetupData configData) {
         super(parent, style, configData);
+        isDebugging = CorePlugin.getDefault().isDebugging();
     }
 
     protected void saveDynamicDistribution(IDynamicPlugin dynamicPlugin, IDynamicDistributionsGroup dynDistrGroup,
@@ -77,6 +81,10 @@ public abstract class AbstractDynamicDistributionSetupForm extends AbstractDynam
         // step 4: reset system cache
         dMonitor.setTaskName(Messages.getString("AbstractDynamicDistributionSetupForm.progress.resetCache")); //$NON-NLS-1$
         DynamicDistributionManager.getInstance().resetSystemCache();
+    }
+
+    protected boolean isDebuging() {
+        return isDebugging;
     }
 
 }
