@@ -54,6 +54,7 @@ import org.talend.commons.exception.ExceptionHandler;
 import org.talend.commons.exception.LoginException;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.commons.ui.runtime.exception.ExceptionMessageDialog;
+import org.talend.core.hadoop.BigDataBasicUtil;
 import org.talend.core.model.general.Project;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.core.runtime.dynamic.IDynamicPlugin;
@@ -775,16 +776,37 @@ public class DynamicDistributionPreferenceForm extends AbstractDynamicDistributi
                 IDynamicDistributionPreference dynamicDistributionPreference = selectedSetupDynamicDistriGroup
                         .getDynamicDistributionPreference();
                 if (dynamicDistributionPreference != null) {
-                    dynamicDistributionPreference.setAnonymous(anonymousBtn.getSelection());
-                    dynamicDistributionPreference.setOverrideDefaultSetup(overrideDefaultSetupBtn.getSelection());
-                    dynamicDistributionPreference.setPassword(passwordText.getText());
-                    dynamicDistributionPreference.setRepository(repositoryText.getText());
-                    dynamicDistributionPreference.setUsername(userText.getText());
+                    boolean changed = false;
+
+                    boolean isAnonymous = anonymousBtn.getSelection();
+                    changed = changed || dynamicDistributionPreference.isAnonymous() != isAnonymous;
+                    dynamicDistributionPreference.setAnonymous(isAnonymous);
+
+                    boolean overrideDefaultSetup = overrideDefaultSetupBtn.getSelection();
+                    changed = changed || dynamicDistributionPreference.overrideDefaultSetup() != overrideDefaultSetup;
+                    dynamicDistributionPreference.setOverrideDefaultSetup(overrideDefaultSetup);
+
+                    String password = passwordText.getText();
+                    changed = changed || !StringUtils.equals(dynamicDistributionPreference.getPassword(), password);
+                    dynamicDistributionPreference.setPassword(password);
+
+                    String repository = repositoryText.getText();
+                    changed = changed || !StringUtils.equals(dynamicDistributionPreference.getRepository(), repository);
+                    dynamicDistributionPreference.setRepository(repository);
+
+                    String username = userText.getText();
+                    changed = changed || !StringUtils.equals(dynamicDistributionPreference.getUsername(), username);
+                    dynamicDistributionPreference.setUsername(username);
+
                     dynamicDistributionPreference.save();
                     isComplete();
+
+                    if (changed) {
+                        reloadDynamicDistributions();
+                    }
                 }
             }
-        } catch (Exception e) {
+        } catch (Throwable e) {
             ExceptionHandler.process(e);
             String message = e.getMessage();
             if (StringUtils.isEmpty(message)) {
@@ -814,18 +836,39 @@ public class DynamicDistributionPreferenceForm extends AbstractDynamicDistributi
                 IDynamicDistributionPreference dynamicDistributionPreference = selectedSetupDynamicDistriGroup
                         .getDynamicDistributionPreference();
                 if (dynamicDistributionPreference != null) {
-                    dynamicDistributionPreference.setAnonymous(dynamicDistributionPreference.getDefaultIsAnonymous());
+                    boolean changed = false;
+
+                    boolean isAnonymous = dynamicDistributionPreference.getDefaultIsAnonymous();
+                    changed = changed || dynamicDistributionPreference.isAnonymous() != isAnonymous;
+                    dynamicDistributionPreference.setAnonymous(isAnonymous);
+
+                    boolean overrideDefaultSetup = dynamicDistributionPreference.getDefaultOverrideDefaultSetup();
+                    changed = changed || dynamicDistributionPreference.overrideDefaultSetup() != overrideDefaultSetup;
                     dynamicDistributionPreference
-                            .setOverrideDefaultSetup(dynamicDistributionPreference.getDefaultOverrideDefaultSetup());
-                    dynamicDistributionPreference.setPassword(dynamicDistributionPreference.getDefaultPassword());
-                    dynamicDistributionPreference.setRepository(dynamicDistributionPreference.getDefaultRepository());
-                    dynamicDistributionPreference.setUsername(dynamicDistributionPreference.getDefaultUsername());
+                            .setOverrideDefaultSetup(overrideDefaultSetup);
+
+                    String password = dynamicDistributionPreference.getDefaultPassword();
+                    changed = changed || !StringUtils.equals(dynamicDistributionPreference.getPassword(), password);
+                    dynamicDistributionPreference.setPassword(password);
+
+                    String repository = dynamicDistributionPreference.getDefaultRepository();
+                    changed = changed || !StringUtils.equals(dynamicDistributionPreference.getRepository(), repository);
+                    dynamicDistributionPreference.setRepository(repository);
+
+                    String username = dynamicDistributionPreference.getDefaultUsername();
+                    changed = changed || !StringUtils.equals(dynamicDistributionPreference.getUsername(), username);
+                    dynamicDistributionPreference.setUsername(username);
+
                     dynamicDistributionPreference.save();
                     loadRepositorySetupGroup();
                     isComplete();
+
+                    if (changed) {
+                        reloadDynamicDistributions();
+                    }
                 }
             }
-        } catch (Exception e) {
+        } catch (Throwable e) {
             ExceptionHandler.process(e);
             String message = e.getMessage();
             if (StringUtils.isEmpty(message)) {
@@ -834,6 +877,27 @@ public class DynamicDistributionPreferenceForm extends AbstractDynamicDistributi
             ExceptionMessageDialog.openError(getShell(), Messages.getString("ExceptionDialog.title"), message, e); //$NON-NLS-1$
         }
         super.performDefaults();
+    }
+
+    private void reloadDynamicDistributions() throws Throwable {
+        final Throwable throwable[] = new Throwable[1];
+        ProgressMonitorDialog progressDialog = new ProgressMonitorDialog(getShell());
+        progressDialog.run(true, false, new IRunnableWithProgress() {
+
+            @Override
+            public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+                monitor.beginTask(Messages.getString("DynamicDistributionPreferenceForm.progress.reload"), //$NON-NLS-1$
+                        IProgressMonitor.UNKNOWN);
+                try {
+                    BigDataBasicUtil.reloadAllDynamicDistributions(monitor);
+                } catch (Exception e) {
+                    throwable[0] = e;
+                }
+            }
+        });
+        if (throwable[0] != null) {
+            throw throwable[0];
+        }
     }
 
     private boolean isReadonly() {

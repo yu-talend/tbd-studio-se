@@ -247,10 +247,12 @@ public class DynamicDistributionManager implements IDynamicDistributionManager {
         return fileList;
     }
 
-    public void registAll(IDynamicMonitor monitor) throws Exception {
+    public void registAll(IDynamicMonitor monitor, boolean resetCache) throws Exception {
         registAllBuildin(monitor, false);
         registAllUsers(monitor, false);
-        resetSystemCache();
+        if (resetCache) {
+            resetSystemCache();
+        }
     }
 
     public void registAllBuildin(IDynamicMonitor monitor, boolean cleanCache) throws Exception {
@@ -313,10 +315,12 @@ public class DynamicDistributionManager implements IDynamicDistributionManager {
 
     }
 
-    public void unregistAll(IDynamicMonitor monitor) throws Exception {
+    public void unregistAll(IDynamicMonitor monitor, boolean resetCache) throws Exception {
         unregistAllUsers(monitor, false);
         unregistAllBuildin(monitor, false);
-        resetSystemCache();
+        if (resetCache) {
+            resetSystemCache();
+        }
     }
 
     public void unregistAllBuildin(IDynamicMonitor monitor, boolean cleanCache) throws Exception {
@@ -401,7 +405,7 @@ public class DynamicDistributionManager implements IDynamicDistributionManager {
     }
 
     @Override
-    public void reloadAllUsersDynamicDistributions(IProgressMonitor monitor) throws Exception {
+    public void reloadAllDynamicDistributions(IProgressMonitor monitor) throws Exception {
         if (monitor == null) {
             monitor = new NullProgressMonitor();
         }
@@ -412,9 +416,9 @@ public class DynamicDistributionManager implements IDynamicDistributionManager {
                 // nothing to do
             }
         };
-        unregistAllUsers(dynamicMonitor, false);
+        unregistAll(dynamicMonitor, false);
         usersPluginsCache = null;
-        registAllUsers(dynamicMonitor, false);
+        registAll(dynamicMonitor, false);
         resetSystemCache();
     }
 
