@@ -13,9 +13,12 @@
 package org.talend.hadoop.distribution.dynamic.cdh;
 
 import org.apache.commons.lang.StringUtils;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.preference.IPersistentPreferenceStore;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.talend.core.runtime.CoreRuntimePlugin;
+import org.talend.core.runtime.projectsetting.ProjectPreferenceManager;
 import org.talend.hadoop.distribution.dynamic.IDynamicDistributionPreference;
 import org.talend.utils.security.CryptoHelper;
 
@@ -157,6 +160,15 @@ public class DynamicCDHDistributionPreference implements IDynamicDistributionPre
     @Override
     public void save() throws Exception {
         ((IPersistentPreferenceStore) prefStore).save();
+    }
+
+    @Override
+    public String getPreferencePath() {
+        ProjectPreferenceManager projectPreferenceManager = CoreRuntimePlugin.getInstance().getProjectPreferenceManager();
+        IPath path = projectPreferenceManager.getLocation();
+        IProject project = projectPreferenceManager.getProject();
+        path = path.makeRelativeTo(project.getLocation());
+        return path.toPortableString();
     }
 
 }

@@ -52,4 +52,6 @@ public interface IDynamicDistributionPreference {
 
     void save() throws Exception;
 
+    String getPreferencePath();
+
 }

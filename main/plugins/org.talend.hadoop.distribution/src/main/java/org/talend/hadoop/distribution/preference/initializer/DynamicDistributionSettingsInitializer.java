@@ -12,6 +12,10 @@
 // ============================================================================
 package org.talend.hadoop.distribution.preference.initializer;
 
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.talend.hadoop.distribution.dynamic.cdh.DynamicCDHDistributionPreference;
 
@@ -28,6 +32,13 @@ public class DynamicDistributionSettingsInitializer extends AbstractPreferenceIn
     @Override
     public void initializeDefaultPreferences() {
         DynamicCDHDistributionPreference.getInstance().initDefaultPreference();
+    }
+
+    public Collection<String> getPreferencePaths() {
+        Set<String> paths = new HashSet<>();
+        String cdhPath = DynamicCDHDistributionPreference.getInstance().getPreferencePath();
+        paths.add(cdhPath);
+        return paths;
     }
 
 }

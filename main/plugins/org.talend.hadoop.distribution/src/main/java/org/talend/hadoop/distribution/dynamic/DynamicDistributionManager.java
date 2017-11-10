@@ -15,6 +15,7 @@ package org.talend.hadoop.distribution.dynamic;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -41,6 +42,7 @@ import org.talend.designer.maven.aether.IDynamicMonitor;
 import org.talend.hadoop.distribution.dynamic.cdh.DynamicCDHDistributionsGroup;
 import org.talend.hadoop.distribution.dynamic.resolver.IDependencyResolver;
 import org.talend.hadoop.distribution.helper.HadoopDistributionsHelper;
+import org.talend.hadoop.distribution.preference.initializer.DynamicDistributionSettingsInitializer;
 import org.talend.repository.ProjectManager;
 import org.talend.repository.model.RepositoryConstants;
 
@@ -532,5 +534,10 @@ public class DynamicDistributionManager implements IDynamicDistributionManager {
 
     private String getFolderPath() {
         return USERS_DISTRIBUTIONS_ROOT_FOLDER;
+    }
+
+    @Override
+    public Collection<String> getPreferencePaths() {
+        return new DynamicDistributionSettingsInitializer().getPreferencePaths();
     }
 }

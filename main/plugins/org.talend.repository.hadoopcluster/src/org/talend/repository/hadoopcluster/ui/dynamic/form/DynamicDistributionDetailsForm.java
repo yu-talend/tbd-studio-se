@@ -68,6 +68,7 @@ import org.talend.core.runtime.dynamic.IDynamicPluginConfiguration;
 import org.talend.designer.maven.aether.AbsDynamicProgressMonitor;
 import org.talend.designer.maven.aether.DummyDynamicMonitor;
 import org.talend.designer.maven.aether.IDynamicMonitor;
+import org.talend.hadoop.distribution.dynamic.DynamicConstants;
 import org.talend.hadoop.distribution.dynamic.DynamicDistributionManager;
 import org.talend.hadoop.distribution.dynamic.IDynamicDistributionPreference;
 import org.talend.hadoop.distribution.dynamic.adapter.DynamicLibraryNeededExtensionAdaper;
@@ -77,7 +78,6 @@ import org.talend.hadoop.distribution.dynamic.adapter.DynamicPluginAdapter;
 import org.talend.hadoop.distribution.dynamic.comparator.DynamicAttributeComparator;
 import org.talend.repository.hadoopcluster.i18n.Messages;
 import org.talend.repository.hadoopcluster.ui.dynamic.DynamicDistributionSetupData;
-import org.talend.repository.hadoopcluster.ui.dynamic.DynamicDistributionSetupData.ActionType;
 import org.talend.repository.hadoopcluster.ui.dynamic.DynamicModuleGroupData;
 import org.talend.repository.hadoopcluster.ui.dynamic.DynamicModuleGroupWizard;
 import org.talend.repository.ui.login.LoginDialogV2;
@@ -178,35 +178,17 @@ public class DynamicDistributionDetailsForm extends AbstractDynamicDistributionS
             newDynamicPluginCache = DynamicFactory.getInstance().createPluginFromJson(originPluginCache.toXmlJson().toString());
             IDynamicPluginConfiguration pluginConfiguration = newDynamicPluginCache.getPluginConfiguration();
             String name = pluginConfiguration.getName();
-            ActionType actionType = dynConfigData.getActionType();
-            if (ActionType.EditExisting.equals(actionType)) {
-                if (!isReadonly()) {
-                    String userName = null;
-                    RepositoryContext repositoryContext = ProxyRepositoryFactory.getInstance().getRepositoryContext();
-                    if (repositoryContext != null) {
-                        User user = repositoryContext.getUser();
-                        if (user != null) {
-                            String firstName = user.getFirstName();
-                            if (firstName == null) {
-                                firstName = ""; //$NON-NLS-1$
-                            }
-                            String lastName = user.getLastName();
-                            if (lastName == null) {
-                                lastName = ""; //$NON-NLS-1$
-                            }
-                            if (StringUtils.isNotEmpty(firstName) || StringUtils.isNotEmpty(lastName)) {
-                                userName = Messages.getString(
-                                        "DynamicDistributionDetailsForm.name.updatedBy.fullNameWithFamilyName", //$NON-NLS-1$
-                                        user.getFirstName(), user.getLastName());
-                            }
-                        }
-                    }
-                    if (StringUtils.isNotEmpty(userName)) {
-                        name = name + " " + Messages.getString("DynamicDistributionDetailsForm.name.updatedBy", userName); //$NON-NLS-1$//$NON-NLS-2$
-                    }
+
+            String lastModifiedUser = (String) pluginConfiguration.getAttribute(DynamicConstants.ATTR_LAST_MODIFIED_USER);
+            if (StringUtils.isNotEmpty(lastModifiedUser)) {
+                String lastModified = generateLastModified(lastModifiedUser);
+                int index = name.lastIndexOf(lastModified);
+                if (0 < index) {
+                    name = name.substring(0, index);
                 }
             }
-            nameCache = name.trim();
+
+            nameCache = name;
             dynamicConfigNameText.setText(name);
 
             initTableViewData(newDynamicPluginCache);
@@ -317,9 +299,14 @@ public class DynamicDistributionDetailsForm extends AbstractDynamicDistributionS
     private boolean checkDynamicDistributionName() {
         dynamicConfigNameText.setBackground(null);
         String newDistriName = getUserDynamicDistrMame();
+        String newModificationUser = generateNewModificationUser();
         dynamicConfigNameText.setToolTipText(newDistriName);
-        if (StringUtils.equals(getOriginName(), newDistriName)) {
-            newDynamicPluginCache.getPluginConfiguration().setName(newDistriName);
+
+        String distriNameWithLastModifiedBy = appendModifiedBy(newDistriName, newModificationUser);
+        newDynamicPluginCache.getPluginConfiguration().setName(distriNameWithLastModifiedBy);
+        newDynamicPluginCache.getPluginConfiguration().setAttribute(DynamicConstants.ATTR_LAST_MODIFIED_USER, newModificationUser);
+
+        if (StringUtils.equals(getOriginName(), distriNameWithLastModifiedBy)) {
             return true;
         }
 
@@ -330,15 +317,38 @@ public class DynamicDistributionDetailsForm extends AbstractDynamicDistributionS
             dynamicConfigNameText.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
             return false;
         }
-        if (getDynamicDistributionSetupData().getNamePluginMap().containsKey(newDistriName)) {
-            String errorMessage = Messages.getString("DynamicDistributionDetailsForm.name.exception.nameExist", newDistriName); //$NON-NLS-1$
+        if (getDynamicDistributionSetupData().getNamePluginMap().containsKey(distriNameWithLastModifiedBy)) {
+            String errorMessage = Messages.getString("DynamicDistributionDetailsForm.name.exception.nameExist", //$NON-NLS-1$
+                    distriNameWithLastModifiedBy);
             showMessage(errorMessage, WizardPage.ERROR);
             dynamicConfigNameText.setToolTipText(errorMessage);
             dynamicConfigNameText.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
             return false;
         }
-        newDynamicPluginCache.getPluginConfiguration().setName(newDistriName);
         return true;
+    }
+
+    private String generateNewModificationUser() {
+        RepositoryContext repositoryContext = ProxyRepositoryFactory.getInstance().getRepositoryContext();
+        if (repositoryContext != null) {
+            User user = repositoryContext.getUser();
+            if (user != null) {
+                String login = user.getLogin();
+                if (StringUtils.isNotEmpty(login)) {
+                    return login;
+                }
+            }
+        }
+        return Messages.getString("DynamicDistributionDetailsForm.name.lastModifiedBy.unknown"); //$NON-NLS-1$
+    }
+
+    private String generateLastModified(String user) {
+        return " " + Messages.getString("DynamicDistributionDetailsForm.name.lastModifiedBy", user); //$NON-NLS-1$//$NON-NLS-2$
+    }
+
+    private String appendModifiedBy(String name, String user) {
+        name = name + generateLastModified(user);
+        return name;
     }
 
     private String getUserDynamicDistrMame() {
