@@ -233,7 +233,6 @@ public final class DistributionsManager implements IDistributionsManager {
         String key = getKey(hc);
         DistributionBean distributionBean = disctributionsMap.get(key);
         if (distributionBean == null) {
-            clearCache();
             distributionBean = new DistributionBean(type, distribution, distributionName);
             disctributionsMap.put(key, distributionBean);
         } else {// check the name and displayName
@@ -242,6 +241,7 @@ public final class DistributionsManager implements IDistributionsManager {
                 return;
             }
         }
+        clearCache();
 
         final String version = hc.getVersion();
         // if (version!=null){ //sometimes, will be null, like Custom. but still need add the null version.
@@ -276,6 +276,7 @@ public final class DistributionsManager implements IDistributionsManager {
                 // return;
             }
         }
+        clearCache();
 
         final String version = hc.getVersion();
         // if (version!=null){ //sometimes, will be null, like Custom. but still need add the null version.
@@ -289,7 +290,6 @@ public final class DistributionsManager implements IDistributionsManager {
         DistributionVersion[] versions = distributionBean.getVersions();
         if (versions == null || versions.length <= 0) {
             distributionsMap.remove(key);
-            clearCache();
         }
     }
 

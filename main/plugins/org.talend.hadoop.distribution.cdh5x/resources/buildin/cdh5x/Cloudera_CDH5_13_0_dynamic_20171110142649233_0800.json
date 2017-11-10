@@ -15777,7 +15777,7 @@
       "tagName" : "libraryNeededGroup",
       "templateId" : "SQOOP-PARQUET-LIB-DYNAMIC"
     } ],
-    "id" : "DYNAMIC_Cloudera_CDH5_13_0_dynamic_20171110142649233_0800_org_talend_core_runtime_librariesNeeded",
+    "id" : "DYNAMIC_Cloudera_CDH5_13_0_dynamic_20171110142649233_0800_org_talend_core_runtime_librariesNeeded.extensionId",
     "point" : "org.talend.core.runtime.librariesNeeded",
     "tagName" : "extension"
   }, {
@@ -15836,7 +15836,7 @@
       "moduleGroupTemplateId" : "HDFS-LIB-DYNAMIC",
       "tagName" : "classloader"
     } ],
-    "id" : "DYNAMIC_Cloudera_CDH5_13_0_dynamic_20171110142649233_0800_org_talend_core_runtime_classloader_provider",
+    "id" : "DYNAMIC_Cloudera_CDH5_13_0_dynamic_20171110142649233_0800_org_talend_core_runtime_classloader_provider.extensionId",
     "point" : "org.talend.core.runtime.classloader_provider",
     "tagName" : "extension"
   } ],

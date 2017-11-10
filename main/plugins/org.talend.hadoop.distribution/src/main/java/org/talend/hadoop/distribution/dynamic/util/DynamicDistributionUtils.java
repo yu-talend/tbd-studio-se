@@ -161,6 +161,11 @@ public class DynamicDistributionUtils {
         return variables;
     }
 
+    public static String getExtensionId(String id) {
+        // MUST have a DOT .!!!
+        return id + ".extensionId"; //$NON-NLS-1$
+    }
+
     public static String getPluginKey(String distri, String version, String id, String module) {
         String key = "DYNAMIC_" + id + "_" + module; //$NON-NLS-1$ //$NON-NLS-2$
         key = formatId(key);

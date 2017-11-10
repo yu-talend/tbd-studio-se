@@ -53,7 +53,8 @@ public class DynamicClassLoaderExtensionAdaper extends DynamicExtensionAdapter {
         String templateId = templateBean.getId();
 
         IDynamicExtension classLoaderExtension = DynamicFactory.getInstance().createDynamicExtension();
-        classLoaderExtension.setExtensionId(DynamicDistributionUtils.getPluginKey(distributionName, templateId, id, ATTR_POINT));
+        classLoaderExtension.setExtensionId(DynamicDistributionUtils
+                .getExtensionId(DynamicDistributionUtils.getPluginKey(distributionName, templateId, id, ATTR_POINT)));
         classLoaderExtension.setExtensionPoint(ATTR_POINT);
 
         List<ClassLoaderBean> classLoaders = templateBean.getClassLoaders();
