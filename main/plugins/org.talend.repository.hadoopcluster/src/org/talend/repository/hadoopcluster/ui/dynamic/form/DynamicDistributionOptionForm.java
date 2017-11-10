@@ -634,6 +634,7 @@ public class DynamicDistributionOptionForm extends AbstractDynamicDistributionSe
             if (!newConfigBtn.getSelection()) {
                 return true;
             }
+            versionsComboViewer.getControl().setEnabled(false);
             List<String> versionList = (List<String>) versionsComboViewer.getInput();
             if (versionList == null || versionList.isEmpty()) {
                 String errorMessage = Messages.getString("DynamicDistributionOptionForm.newConfig.check.empty", //$NON-NLS-1$
@@ -652,6 +653,8 @@ public class DynamicDistributionOptionForm extends AbstractDynamicDistributionSe
                 showMessage(errorMessage, WizardPage.ERROR);
                 return false;
             }
+
+            versionsComboViewer.getControl().setEnabled(true);
 
             DynamicDistributionSetupData dynamicBuildConfigurationData = getDynamicDistributionSetupData();
             IDynamicDistributionsGroup dynamicDistributionsGroup = dynamicBuildConfigurationData.getDynamicDistributionsGroup();

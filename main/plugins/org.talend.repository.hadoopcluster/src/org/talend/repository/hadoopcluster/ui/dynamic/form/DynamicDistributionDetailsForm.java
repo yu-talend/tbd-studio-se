@@ -253,7 +253,8 @@ public class DynamicDistributionDetailsForm extends AbstractDynamicDistributionS
         String folderPath = dirDialog.open();
         if (StringUtils.isNotEmpty(folderPath)) {
             try {
-                IDynamicPlugin dynamicPlugin = getDynamicDistributionSetupData().getDynamicPlugin();
+                // IDynamicPlugin dynamicPlugin = getDynamicDistributionSetupData().getDynamicPlugin();
+                IDynamicPlugin dynamicPlugin = newDynamicPluginCache;
                 IDynamicPluginConfiguration pluginConfiguration = dynamicPlugin.getPluginConfiguration();
                 String id = pluginConfiguration.getId();
                 String fileName = id + "." + DynamicDistributionManager.DISTRIBUTION_FILE_EXTENSION; //$NON-NLS-1$
