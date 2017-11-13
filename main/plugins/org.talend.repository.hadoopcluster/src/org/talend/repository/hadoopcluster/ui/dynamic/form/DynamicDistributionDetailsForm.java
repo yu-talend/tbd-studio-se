@@ -177,15 +177,10 @@ public class DynamicDistributionDetailsForm extends AbstractDynamicDistributionS
 
             newDynamicPluginCache = DynamicFactory.getInstance().createPluginFromJson(originPluginCache.toXmlJson().toString());
             IDynamicPluginConfiguration pluginConfiguration = newDynamicPluginCache.getPluginConfiguration();
-            String name = pluginConfiguration.getName();
 
-            String lastModifiedUser = (String) pluginConfiguration.getAttribute(DynamicConstants.ATTR_LAST_MODIFIED_USER);
-            if (StringUtils.isNotEmpty(lastModifiedUser)) {
-                String lastModified = generateLastModified(lastModifiedUser);
-                int index = name.lastIndexOf(lastModified);
-                if (0 < index) {
-                    name = name.substring(0, index);
-                }
+            String name = (String) pluginConfiguration.getAttribute(DynamicConstants.ATTR_USER_INPUTED_NAME);
+            if (StringUtils.isEmpty(name)) {
+                name = pluginConfiguration.getName();
             }
 
             nameCache = name;
@@ -304,6 +299,7 @@ public class DynamicDistributionDetailsForm extends AbstractDynamicDistributionS
 
         String distriNameWithLastModifiedBy = appendModifiedBy(newDistriName, newModificationUser);
         newDynamicPluginCache.getPluginConfiguration().setName(distriNameWithLastModifiedBy);
+        newDynamicPluginCache.getPluginConfiguration().setAttribute(DynamicConstants.ATTR_USER_INPUTED_NAME, newDistriName);
         newDynamicPluginCache.getPluginConfiguration().setAttribute(DynamicConstants.ATTR_LAST_MODIFIED_USER, newModificationUser);
 
         if (StringUtils.equals(getOriginName(), distriNameWithLastModifiedBy)) {

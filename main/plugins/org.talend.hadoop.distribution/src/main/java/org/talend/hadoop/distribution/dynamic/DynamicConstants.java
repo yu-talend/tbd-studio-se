@@ -29,4 +29,6 @@ public class DynamicConstants {
 
     public static final String ATTR_LAST_MODIFIED_USER = "lastModifiedUser"; //$NON-NLS-1$
 
+    public static final String ATTR_USER_INPUTED_NAME = "userInputedName"; //$NON-NLS-1$
+
 }
