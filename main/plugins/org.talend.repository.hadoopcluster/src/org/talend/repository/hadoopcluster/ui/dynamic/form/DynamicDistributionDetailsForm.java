@@ -306,6 +306,10 @@ public class DynamicDistributionDetailsForm extends AbstractDynamicDistributionS
             return true;
         }
 
+        if (isReadonly()) {
+            return true;
+        }
+
         if (StringUtils.isEmpty(newDistriName)) {
             String errorMessage = Messages.getString("DynamicDistributionDetailsForm.check.name.empty"); //$NON-NLS-1$
             showMessage(errorMessage, WizardPage.ERROR);

@@ -547,8 +547,9 @@ public class DynamicDistributionOptionForm extends AbstractDynamicDistributionSe
             distriDynamicPlugins.addAll(allBuildinDynamicPlugins);
         }
 
-        List<IDynamicPlugin> allUsersDynamicPlugins = DynamicDistributionManager.getInstance()
-                .getAllUsersDynamicPluginsForProject(ProjectManager.getInstance().getCurrentProject(), monitor);
+        // List<IDynamicPlugin> allUsersDynamicPlugins = DynamicDistributionManager.getInstance()
+        // .getAllUsersDynamicPluginsForProject(ProjectManager.getInstance().getCurrentProject(), monitor);
+        List<IDynamicPlugin> allUsersDynamicPlugins = DynamicDistributionManager.getInstance().getAllUsersDynamicPlugins(monitor);
         if (allUsersDynamicPlugins != null && !allUsersDynamicPlugins.isEmpty()) {
             List<IDynamicPlugin> filterDynamicPlugins = dynamicDistributionsGroup.filterDynamicPlugins(allUsersDynamicPlugins,
                     monitor);
