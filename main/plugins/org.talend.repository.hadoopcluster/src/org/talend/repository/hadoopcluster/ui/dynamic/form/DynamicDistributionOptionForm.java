@@ -61,6 +61,7 @@ import org.talend.designer.maven.aether.DummyDynamicMonitor;
 import org.talend.designer.maven.aether.IDynamicMonitor;
 import org.talend.designer.maven.aether.comparator.VersionStringComparator;
 import org.talend.hadoop.distribution.dynamic.DynamicConfiguration;
+import org.talend.hadoop.distribution.dynamic.DynamicConstants;
 import org.talend.hadoop.distribution.dynamic.DynamicDistributionManager;
 import org.talend.hadoop.distribution.dynamic.IDynamicDistributionsGroup;
 import org.talend.hadoop.distribution.dynamic.comparator.DynamicPluginComparator;
@@ -69,6 +70,7 @@ import org.talend.repository.ProjectManager;
 import org.talend.repository.hadoopcluster.i18n.Messages;
 import org.talend.repository.hadoopcluster.ui.dynamic.DynamicDistributionSetupData;
 import org.talend.repository.hadoopcluster.ui.dynamic.DynamicDistributionSetupData.ActionType;
+import org.talend.repository.hadoopcluster.ui.dynamic.form.labelprovider.DynamicDistributionsLabelProvider;
 import org.talend.repository.ui.login.LoginDialogV2;
 
 /**
@@ -208,7 +210,7 @@ public class DynamicDistributionOptionForm extends AbstractDynamicDistributionSe
 
         existingConfigsComboViewer = new ComboViewer(editExistingGroup, SWT.READ_ONLY);
         existingConfigsComboViewer.setContentProvider(ArrayContentProvider.getInstance());
-        existingConfigsComboViewer.setLabelProvider(new ExistingConfigsLabelProvider());
+        existingConfigsComboViewer.setLabelProvider(new DynamicDistributionsLabelProvider());
 
         Label existVersionLabel = new Label(editExistingGroup, SWT.NONE);
         existVersionLabel.setText(Messages.getString("DynamicDistributionOptionForm.form.versionLabel")); //$NON-NLS-1$
@@ -817,12 +819,21 @@ public class DynamicDistributionOptionForm extends AbstractDynamicDistributionSe
         existingConfigsComboViewer.getControl().setToolTipText(existingConfigsComboViewer.getCombo().getText());
 
         getDynamicDistributionSetupData().setDynamicPlugin(dynamicPlugin);
+        IDynamicPluginConfiguration pluginConfiguration = dynamicPlugin.getPluginConfiguration();
         boolean isBuildin = isBuildinDynamicConfiguration(dynamicPlugin);
-        getDynamicDistributionSetupData().setReadonly(isBuildin || isReadonly());
+        boolean isInCurrentProject = isInCurrentProject(dynamicPlugin);
+        getDynamicDistributionSetupData().setReadonly(isBuildin || !isInCurrentProject || isReadonly());
 
         if (isBuildin) {
             String warnMessage = Messages.getString("DynamicDistributionOptionForm.editExisting.buildin", //$NON-NLS-1$
-                    dynamicPlugin.getPluginConfiguration().getName());
+                    pluginConfiguration.getName());
+            showMessage(warnMessage, WizardPage.WARNING);
+        }
+
+        if (!isInCurrentProject) {
+            String warnMessage = Messages.getString("DynamicDistributionOptionForm.editExisting.notInCurrentProject", //$NON-NLS-1$
+                    pluginConfiguration.getName(),
+                    pluginConfiguration.getAttribute(DynamicConstants.ATTR_PROJECT_TECHNICAL_NAME));
             showMessage(warnMessage, WizardPage.WARNING);
         }
 
@@ -922,6 +933,13 @@ public class DynamicDistributionOptionForm extends AbstractDynamicDistributionSe
         return isBuildin;
     }
 
+    private boolean isInCurrentProject(IDynamicPlugin dynamicPlugin) {
+        IDynamicPluginConfiguration pluginConfiguration = dynamicPlugin.getPluginConfiguration();
+        String projLabel = (String) pluginConfiguration.getAttribute(DynamicConstants.ATTR_PROJECT_TECHNICAL_NAME);
+        String curProjLabel = ProjectManager.getInstance().getCurrentProject().getTechnicalLabel();
+        return StringUtils.equals(projLabel, curProjLabel);
+    }
+
     @Override
     public boolean canFlipToNextPage() {
         if (newConfigBtn.getSelection()) {
@@ -957,21 +975,6 @@ public class DynamicDistributionOptionForm extends AbstractDynamicDistributionSe
         config.setName(pluginConfiguration.getName());
         config.setVersion(pluginConfiguration.getVersion());
         return config;
-    }
-
-    private class ExistingConfigsLabelProvider extends LabelProvider {
-
-        @Override
-        public String getText(Object element) {
-            if (element instanceof IDynamicPlugin) {
-                IDynamicPluginConfiguration pluginConfiguration = ((IDynamicPlugin) element).getPluginConfiguration();
-                String name = pluginConfiguration.getName();
-                return name;
-            } else {
-                return element == null ? "" : element.toString();//$NON-NLS-1$
-            }
-        }
-
     }
 
 }

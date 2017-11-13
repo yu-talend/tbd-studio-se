@@ -55,7 +55,6 @@ import org.talend.commons.exception.LoginException;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.commons.ui.runtime.exception.ExceptionMessageDialog;
 import org.talend.core.hadoop.BigDataBasicUtil;
-import org.talend.core.model.general.Project;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.core.runtime.dynamic.IDynamicPlugin;
 import org.talend.core.runtime.dynamic.IDynamicPluginConfiguration;
@@ -72,6 +71,7 @@ import org.talend.repository.RepositoryWorkUnit;
 import org.talend.repository.hadoopcluster.i18n.Messages;
 import org.talend.repository.hadoopcluster.ui.dynamic.DynamicDistributionSetupData;
 import org.talend.repository.hadoopcluster.ui.dynamic.DynamicDistributionSetupWizard;
+import org.talend.repository.hadoopcluster.ui.dynamic.form.labelprovider.DynamicDistributionsLabelProvider;
 
 /**
  * DOC cmeng class global comment. Detailled comment
@@ -196,7 +196,7 @@ public class DynamicDistributionPreferenceForm extends AbstractDynamicDistributi
         deleteBtn = new Button(group, SWT.PUSH);
 
         versionCombo.setContentProvider(ArrayContentProvider.getInstance());
-        versionCombo.setLabelProvider(new ExistingConfigsLabelProvider());
+        versionCombo.setLabelProvider(new DynamicDistributionsLabelProvider());
         formData = new FormData();
         formData.top = new FormAttachment(versionLabel, 0, SWT.CENTER);
         formData.left = new FormAttachment(versionLabel, ALIGN_HORIZON, SWT.RIGHT);
@@ -902,36 +902,6 @@ public class DynamicDistributionPreferenceForm extends AbstractDynamicDistributi
 
     private boolean isReadonly() {
         return ProxyRepositoryFactory.getInstance().isUserReadOnlyOnCurrentProject();
-    }
-
-    private class ExistingConfigsLabelProvider extends LabelProvider {
-
-        @Override
-        public String getText(Object element) {
-            if (element instanceof IDynamicPlugin) {
-                IDynamicPluginConfiguration pluginConfiguration = ((IDynamicPlugin) element).getPluginConfiguration();
-                String name = pluginConfiguration.getName();
-                String isBuildinStr = (String) pluginConfiguration.getAttribute(DynamicConstants.ATTR_IS_BUILDIN);
-                boolean isBuildin = Boolean.valueOf(isBuildinStr);
-                String attr = null;
-                if (isBuildin) {
-                    attr = Messages.getString("DynamicDistributionPreferenceForm.label.existing.buildin"); //$NON-NLS-1$
-                } else {
-                    Project curProj = ProjectManager.getInstance().getCurrentProject();
-                    String curProjTechName = curProj.getTechnicalLabel();
-                    String projTechName = (String) pluginConfiguration.getAttribute(DynamicConstants.ATTR_PROJECT_TECHNICAL_NAME);
-                    if (StringUtils.equals(curProjTechName, projTechName)) {
-                        attr = Messages.getString("DynamicDistributionPreferenceForm.label.existing.currentProject"); //$NON-NLS-1$
-                    } else {
-                        attr = Messages.getString("DynamicDistributionPreferenceForm.label.existing.otherProject", projTechName); //$NON-NLS-1$
-                    }
-                }
-                return name + "        " + attr; //$NON-NLS-1$
-            } else {
-                return element == null ? "" : element.toString();//$NON-NLS-1$
-            }
-        }
-
     }
 
 }

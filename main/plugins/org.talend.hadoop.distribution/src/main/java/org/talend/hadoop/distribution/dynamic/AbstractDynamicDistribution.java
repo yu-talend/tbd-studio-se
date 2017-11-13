@@ -44,6 +44,7 @@ import org.talend.hadoop.distribution.dynamic.adapter.DynamicTemplateAdapter;
 import org.talend.hadoop.distribution.dynamic.bean.TemplateBean;
 import org.talend.hadoop.distribution.dynamic.resolver.IDependencyResolver;
 import org.talend.hadoop.distribution.dynamic.util.DynamicDistributionUtils;
+import org.talend.hadoop.distribution.i18n.Messages;
 import org.talend.repository.ProjectManager;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -280,6 +281,20 @@ public abstract class AbstractDynamicDistribution implements IDynamicDistributio
                 .getDynamicDistributionGroup(getDistributionName()).getDynamicDistributionPreference();
         DynamicPluginAdapter pluginAdapter = new DynamicPluginAdapter(copiedDynamicPlugin, dynamicDistributionPreference);
         pluginAdapter.adapt();
+        IDynamicPluginConfiguration pluginConfiguration = pluginAdapter.getPluginConfiguration();
+        boolean isBuildin = Boolean.parseBoolean((String) pluginConfiguration.getAttribute(DynamicConstants.ATTR_IS_BUILDIN));
+        if (isBuildin) {
+            pluginConfiguration.setName(Messages.getString("DynamicDistribution.name.buildin", pluginConfiguration.getName())); //$NON-NLS-1$
+        } else {
+            Project currentProject = ProjectManager.getInstance().getCurrentProject();
+            String curProjLabel = currentProject.getTechnicalLabel();
+            String projLabel = (String) pluginConfiguration.getAttribute(DynamicConstants.ATTR_PROJECT_TECHNICAL_NAME);
+            if (StringUtils.equals(curProjLabel, projLabel)) {
+                projLabel = Messages.getString("DynamicDistribution.name.current"); //$NON-NLS-1$
+            }
+            pluginConfiguration.setName(Messages.getString("DynamicDistribution.name.project", pluginConfiguration.getName(), //$NON-NLS-1$
+                    projLabel));
+        }
 
         IDynamicDistributionTemplate distributionTemplate = initTemplate(pluginAdapter, monitor);
         IDynamicPlugin plugin = pluginAdapter.getPlugin();
@@ -287,7 +302,6 @@ public abstract class AbstractDynamicDistribution implements IDynamicDistributio
         try {
             Bundle bundle = getBundle();
 
-            IDynamicPluginConfiguration pluginConfiguration = pluginAdapter.getPluginConfiguration();
             String id = pluginConfiguration.getId();
             String projectName = (String) pluginConfiguration.getAttribute(DynamicConstants.ATTR_PROJECT_TECHNICAL_NAME);
 
@@ -300,7 +314,7 @@ public abstract class AbstractDynamicDistribution implements IDynamicDistributio
                 }
                 ExceptionHandler.log("Plugin " + id + "(project: " + oldProjectName //$NON-NLS-1$ //$NON-NLS-2$
                         + ") is already registed before, will unregist it and regist the new one(project:" + projectName //$NON-NLS-1$
-                        + " instead."); //$NON-NLS-1$
+                        + ") instead."); //$NON-NLS-1$
                 DynamicServiceUtil.removeContribution(registedPluginAdapter.getPlugin());
             }
             ServiceRegistration registedOsgiService = registedOsgiServiceMap.get(id);
@@ -312,7 +326,7 @@ public abstract class AbstractDynamicDistribution implements IDynamicDistributio
                 }
                 ExceptionHandler.log("OSGi service " + id + "(project: " + oldProjectName //$NON-NLS-1$ //$NON-NLS-2$
                         + ") is already registed before, will unregist it and regist the new one(project:" + projectName //$NON-NLS-1$
-                        + " instead."); //$NON-NLS-1$ //$NON-NLS-2$
+                        + ") instead."); //$NON-NLS-1$ //$NON-NLS-2$
                 DynamicServiceUtil.unregistOSGiService(registedOsgiService);
             }
 
