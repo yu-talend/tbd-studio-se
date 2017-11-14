@@ -12,6 +12,7 @@
 // ============================================================================
 package org.talend.hadoop.distribution.dynamic.cdh;
 
+import org.talend.core.model.general.Project;
 import org.talend.hadoop.distribution.constants.cdh.IClouderaDistribution;
 import org.talend.hadoop.distribution.dynamic.AbstractDynamicDistributionsGroup;
 import org.talend.hadoop.distribution.dynamic.DynamicConfiguration;
@@ -49,8 +50,8 @@ public class DynamicCDHDistributionsGroup extends AbstractDynamicDistributionsGr
     }
 
     @Override
-    public IDynamicDistributionPreference getDynamicDistributionPreference() {
-        return DynamicCDHDistributionPreference.getInstance();
+    public IDynamicDistributionPreference getDynamicDistributionPreference(Project project) throws Exception {
+        return DynamicCDHDistributionPreference.getDynamicDistributionPreference(project);
     }
 
     @Override
@@ -62,6 +63,11 @@ public class DynamicCDHDistributionsGroup extends AbstractDynamicDistributionsGr
     public String generateVersionId(String version) {
         String versionStr = DynamicDistributionUtils.formatId(version);
         return "Cloudera_CDH" + versionStr + "_dynamic"; //$NON-NLS-1$//$NON-NLS-2$
+    }
+
+    @Override
+    public void resetCache() throws Exception {
+        DynamicCDHDistributionPreference.clearAllPreferenceCache();
     }
 
 }

@@ -24,6 +24,7 @@ import org.talend.hadoop.distribution.dynamic.DynamicDistributionManager;
 import org.talend.hadoop.distribution.dynamic.IDynamicDistributionPreference;
 import org.talend.hadoop.distribution.dynamic.IDynamicDistributionsGroup;
 import org.talend.hadoop.distribution.dynamic.adapter.DynamicPluginAdapter;
+import org.talend.repository.ProjectManager;
 import org.talend.repository.RepositoryWorkUnit;
 import org.talend.repository.hadoopcluster.i18n.Messages;
 import org.talend.repository.hadoopcluster.ui.dynamic.DynamicDistributionSetupData;
@@ -48,7 +49,8 @@ public abstract class AbstractDynamicDistributionSetupForm extends AbstractDynam
                 Messages.getString("AbstractDynamicDistributionSetupForm.progress.saving", pluginConfiguration.getName()), //$NON-NLS-1$
                 IDynamicMonitor.UNKNOWN);
         // step 1: clean unused modules
-        IDynamicDistributionPreference dynamicDistributionPreference = dynDistrGroup.getDynamicDistributionPreference();
+        IDynamicDistributionPreference dynamicDistributionPreference = dynDistrGroup
+                .getDynamicDistributionPreference(ProjectManager.getInstance().getCurrentProject());
         DynamicPluginAdapter pluginAdapter = new DynamicPluginAdapter(dynamicPlugin, dynamicDistributionPreference);
         pluginAdapter.cleanUnusedAndRefresh();
 

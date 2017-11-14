@@ -77,10 +77,10 @@ public final class DistributionsManager implements IDistributionsManager {
         this(serviceName, componentType, false);
     }
 
-    public DistributionsManager(String serviceName, ComponentType componentType, boolean registListener) {
+    public DistributionsManager(String serviceName, ComponentType compType, boolean registListener) {
         super();
         this.serviceName = serviceName;
-        this.componentType = componentType;
+        this.componentType = compType;
         this.distributionsMap = new HashMap<String, DistributionBean>();
         if (registListener) {
             this.serviceListener = new ServiceListener() {
@@ -93,13 +93,10 @@ public final class DistributionsManager implements IDistributionsManager {
                             BundleContext bc = getBundleContext();
                             Object obj = bc.getService(sr);
                             if (obj instanceof HadoopComponent) {
-                                Map<String, DistributionBean> map;
-                                if (distributionsMap.isEmpty()) {
-                                    map = new HashMap<>();
-                                } else {
-                                    map = distributionsMap;
+                                if (!distributionsMap.isEmpty()) {
+                                    addDistribution(bc, distributionsMap, componentType,
+                                            (ServiceReference<? extends HadoopComponent>) sr);
                                 }
-                                addDistribution(bc, map, componentType, (ServiceReference<? extends HadoopComponent>) sr);
                             }
                         }
                     } else if (event.getType() == ServiceEvent.UNREGISTERING) {
@@ -108,13 +105,10 @@ public final class DistributionsManager implements IDistributionsManager {
                             BundleContext bc = getBundleContext();
                             Object obj = bc.getService(sr);
                             if (obj instanceof HadoopComponent) {
-                                Map<String, DistributionBean> map;
-                                if (distributionsMap.isEmpty()) {
-                                    map = new HashMap<>();
-                                } else {
-                                    map = distributionsMap;
+                                if (!distributionsMap.isEmpty()) {
+                                    removeDistribution(bc, distributionsMap, componentType,
+                                            (ServiceReference<? extends HadoopComponent>) sr);
                                 }
-                                removeDistribution(bc, map, componentType, (ServiceReference<? extends HadoopComponent>) sr);
                             }
                         }
                     }

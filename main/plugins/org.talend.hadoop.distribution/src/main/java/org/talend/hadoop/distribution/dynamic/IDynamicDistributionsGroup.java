@@ -14,6 +14,7 @@ package org.talend.hadoop.distribution.dynamic;
 
 import java.util.List;
 
+import org.talend.core.model.general.Project;
 import org.talend.core.runtime.dynamic.IDynamicPlugin;
 import org.talend.designer.maven.aether.IDynamicMonitor;
 import org.talend.hadoop.distribution.dynamic.bean.TemplateBean;
@@ -72,10 +73,12 @@ public interface IDynamicDistributionsGroup {
 
     public IDependencyResolver getDependencyResolver(DynamicConfiguration config);
 
-    public IDynamicDistributionPreference getDynamicDistributionPreference();
+    public IDynamicDistributionPreference getDynamicDistributionPreference(Project project) throws Exception;
 
     public String generateVersionName(String version);
 
     public String generateVersionId(String version);
+
+    public void resetCache() throws Exception;
 
 }

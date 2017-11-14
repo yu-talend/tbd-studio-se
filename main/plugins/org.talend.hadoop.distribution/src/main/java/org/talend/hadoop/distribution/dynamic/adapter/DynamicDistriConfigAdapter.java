@@ -17,9 +17,11 @@ import org.talend.core.runtime.dynamic.DynamicFactory;
 import org.talend.core.runtime.dynamic.IDynamicPluginConfiguration;
 import org.talend.designer.maven.aether.IDynamicMonitor;
 import org.talend.hadoop.distribution.dynamic.DynamicConfiguration;
+import org.talend.hadoop.distribution.dynamic.DynamicConstants;
 import org.talend.hadoop.distribution.dynamic.bean.TemplateBean;
 import org.talend.hadoop.distribution.dynamic.util.DynamicDistributionUtils;
 import org.talend.hadoop.distribution.i18n.Messages;
+import org.talend.repository.ProjectManager;
 
 /**
  * DOC cmeng class global comment. Detailled comment
@@ -47,7 +49,7 @@ public class DynamicDistriConfigAdapter extends AbstractDynamicAdapter {
                     Messages.getString("DynamicDistriConfigAdapter.diffDistri", distribution, configuration.getDistribution())); //$NON-NLS-1$
         }
 
-        // String projectTechnicalName = ProjectManager.getInstance().getCurrentProject().getTechnicalLabel();
+        String projectTechnicalName = ProjectManager.getInstance().getCurrentProject().getTechnicalLabel();
         // String id = projectTechnicalName + "_" + configuration.getId(); //$NON-NLS-1$
         String id = configuration.getId();
         pluginConfiguration.setId(id);
@@ -57,7 +59,7 @@ public class DynamicDistriConfigAdapter extends AbstractDynamicAdapter {
         pluginConfiguration.setDistribution(distribution);
         pluginConfiguration.setTemplateId(templateId);
         pluginConfiguration.setRepository(configuration.getRemoteRepositoryUrl());
-        // pluginConfiguration.setAttribute(DynamicConstants.ATTR_PROJECT_TECHNICAL_NAME, projectTechnicalName);
+        pluginConfiguration.setAttribute(DynamicConstants.ATTR_PROJECT_TECHNICAL_NAME, projectTechnicalName);
 
         return pluginConfiguration;
     }

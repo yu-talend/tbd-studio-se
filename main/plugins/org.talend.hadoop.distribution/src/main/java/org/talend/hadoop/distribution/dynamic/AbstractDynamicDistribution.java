@@ -277,10 +277,15 @@ public abstract class AbstractDynamicDistribution implements IDynamicDistributio
         DynamicDistributionManager dynamicDistributionManager = DynamicDistributionManager.getInstance();
         IDynamicPlugin copiedDynamicPlugin = DynamicFactory.getInstance()
                 .createPluginFromJson(dynamicPlugin.toXmlJson().toString());
+
+        Project project = ProjectManager.getInstance().getProjectFromProjectTechLabel(
+                (String) copiedDynamicPlugin.getPluginConfiguration().getAttribute(DynamicConstants.ATTR_PROJECT_TECHNICAL_NAME));
         IDynamicDistributionPreference dynamicDistributionPreference = dynamicDistributionManager
-                .getDynamicDistributionGroup(getDistributionName()).getDynamicDistributionPreference();
+                .getDynamicDistributionGroup(getDistributionName()).getDynamicDistributionPreference(project);
+
         DynamicPluginAdapter pluginAdapter = new DynamicPluginAdapter(copiedDynamicPlugin, dynamicDistributionPreference);
         pluginAdapter.adapt();
+
         IDynamicPluginConfiguration pluginConfiguration = pluginAdapter.getPluginConfiguration();
         boolean isBuildin = Boolean.parseBoolean((String) pluginConfiguration.getAttribute(DynamicConstants.ATTR_IS_BUILDIN));
         if (isBuildin) {

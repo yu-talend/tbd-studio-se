@@ -39,8 +39,12 @@ public class ClouderaDependencyResolver extends AbstractDependencyResolver imple
         String distributionVersion = configuration.getVersion();
         IDynamicDistributionPreference preference = configuration.getPreference();
         String remoteRepositoryUrl = preference.getRepository();
-        String username = preference.getUsername();
-        String password = preference.getPassword();
+        String username = null;
+        String password = null;
+        if (!preference.isAnonymous()) {
+            username = preference.getUsername();
+            password = preference.getPassword();
+        }
         String localRepositoryPath = getLocalRepositoryPath();
 
         List<String> versionRange = DynamicDistributionAetherUtils.versionRange(remoteRepositoryUrl, username, password,
@@ -58,8 +62,12 @@ public class ClouderaDependencyResolver extends AbstractDependencyResolver imple
         DynamicConfiguration configuration = getConfiguration();
         IDynamicDistributionPreference preference = configuration.getPreference();
         String remoteRepositoryUrl = preference.getRepository();
-        String username = preference.getUsername();
-        String password = preference.getPassword();
+        String username = null;
+        String password = null;
+        if (!preference.isAnonymous()) {
+            username = preference.getUsername();
+            password = preference.getPassword();
+        }
         String localRepositoryPath = getLocalRepositoryPath();
         List<String> versionRange = DynamicDistributionAetherUtils.versionRange(remoteRepositoryUrl, username, password,
                 localRepositoryPath, groupId, artifactId, baseVersion, topVersion, monitor);

@@ -42,8 +42,12 @@ public abstract class AbstractDependencyResolver implements IDependencyResolver 
 
         IDynamicDistributionPreference preference = configuration.getPreference();
         String remoteRepositoryUrl = preference.getRepository();
-        String username = preference.getUsername();
-        String password = preference.getPassword();
+        String username = null;
+        String password = null;
+        if (!preference.isAnonymous()) {
+            username = preference.getUsername();
+            password = preference.getPassword();
+        }
         String localRepositoryPath = getLocalRepositoryPath();
         DependencyNode node = DynamicDistributionAetherUtils.collectDepencencies(remoteRepositoryUrl, username, password,
                 localRepositoryPath, baseNode, monitor);

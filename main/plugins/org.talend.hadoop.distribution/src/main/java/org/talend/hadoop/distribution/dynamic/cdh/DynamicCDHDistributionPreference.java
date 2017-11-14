@@ -12,11 +12,19 @@
 // ============================================================================
 package org.talend.hadoop.distribution.dynamic.cdh;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.preference.IPersistentPreferenceStore;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.ui.preferences.ScopedPreferenceStore;
+import org.talend.commons.exception.ExceptionHandler;
+import org.talend.commons.utils.workbench.resources.ResourceUtils;
+import org.talend.core.model.general.Project;
 import org.talend.core.runtime.CoreRuntimePlugin;
 import org.talend.core.runtime.projectsetting.ProjectPreferenceManager;
 import org.talend.hadoop.distribution.dynamic.IDynamicDistributionPreference;
@@ -52,18 +60,29 @@ public class DynamicCDHDistributionPreference implements IDynamicDistributionPre
 
     private CryptoHelper cryptoHelper;
 
-    private static DynamicCDHDistributionPreference instance;
+    private static Map<String, IDynamicDistributionPreference> projectLabelPreferenceMap = new HashMap<>();
 
-    public static DynamicCDHDistributionPreference getInstance() {
-        if (instance == null) {
-            instance = new DynamicCDHDistributionPreference();
-        }
-        return instance;
+    private DynamicCDHDistributionPreference(ScopedPreferenceStore store) {
+        prefStore = store;
+        cryptoHelper = CryptoHelper.getDefault();
+        initDefaultPreference();
     }
 
-    private DynamicCDHDistributionPreference() {
-        prefStore = CoreRuntimePlugin.getInstance().getProjectPreferenceManager().getPreferenceStore();
-        cryptoHelper = CryptoHelper.getDefault();
+    public static IDynamicDistributionPreference getDynamicDistributionPreference(Project project) throws Exception {
+        String projectTechLabel = project.getTechnicalLabel();
+        IDynamicDistributionPreference distributionPreference = projectLabelPreferenceMap.get(projectTechLabel);
+        if (distributionPreference == null) {
+            String qualifier = CoreRuntimePlugin.getInstance().getProjectPreferenceManager().getQualifier();
+            IProject iProject = ResourceUtils.getProject(projectTechLabel);
+            if (iProject == null) {
+                throw new Exception("Can't find project: " + projectTechLabel);
+            }
+            ProjectScope projectScope = new ProjectScope(iProject);
+            ScopedPreferenceStore store = new ScopedPreferenceStore(projectScope, qualifier);
+            distributionPreference = new DynamicCDHDistributionPreference(store);
+            projectLabelPreferenceMap.put(projectTechLabel, distributionPreference);
+        }
+        return distributionPreference;
     }
 
     @Override
@@ -169,6 +188,31 @@ public class DynamicCDHDistributionPreference implements IDynamicDistributionPre
         IProject project = projectPreferenceManager.getProject();
         path = path.makeRelativeTo(project.getLocation());
         return path.toPortableString();
+    }
+
+    @Override
+    public void clearCache() throws Exception {
+        /**
+         * DON'T save here, it may bring bugs when switching branches(and even for reference projects), we SHOULD save
+         * preference immediately after changed instead of saving here;
+         */
+        // save();
+    }
+
+    public static void clearAllPreferenceCache() throws Exception {
+        if (projectLabelPreferenceMap == null || projectLabelPreferenceMap.isEmpty()) {
+            return;
+        }
+
+        for (IDynamicDistributionPreference preference : projectLabelPreferenceMap.values()) {
+            try {
+                preference.clearCache();
+            } catch (Exception e) {
+                ExceptionHandler.process(e);
+            }
+        }
+
+        projectLabelPreferenceMap.clear();
     }
 
 }

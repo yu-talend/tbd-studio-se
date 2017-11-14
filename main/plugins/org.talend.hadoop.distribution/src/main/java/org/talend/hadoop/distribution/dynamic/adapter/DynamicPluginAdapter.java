@@ -96,8 +96,12 @@ public class DynamicPluginAdapter {
         if (StringUtils.isEmpty(repository)) {
             repository = preference.getDefaultRepository();
         }
-        String username = preference.getUsername();
-        String password = preference.getPassword();
+        String username = null;
+        String password = null;
+        if (!preference.isAnonymous()) {
+            username = preference.getUsername();
+            password = preference.getPassword();
+        }
         
         for (IDynamicConfiguration configuration : configurations) {
             if (DynamicModuleGroupAdapter.TAG_NAME.equals(configuration.getTagName())) {

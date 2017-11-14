@@ -54,4 +54,6 @@ public interface IDynamicDistributionPreference {
 
     String getPreferencePath();
 
+    void clearCache() throws Exception;
+
 }

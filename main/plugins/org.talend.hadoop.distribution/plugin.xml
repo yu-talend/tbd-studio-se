@@ -8,10 +8,4 @@
             serviceId="IHadoopDistributionService">
       </Service>
    </extension>
-   <extension
-         point="org.eclipse.core.runtime.preferences">
-      <initializer
-            class="org.talend.hadoop.distribution.preference.initializer.DynamicDistributionSettingsInitializer">
-      </initializer>
-   </extension>
 </plugin>

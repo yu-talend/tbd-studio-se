@@ -443,19 +443,18 @@ public class DynamicDistributionPreferenceForm extends AbstractDynamicDistributi
                     setupDistriCombo.setSelection(new StructuredSelection(distributionDisplayNames.get(0)));
                 }
             }
+            loadRepositorySetupGroup();
         } catch (Exception e) {
             ExceptionHandler.process(e);
         }
 
-        loadRepositorySetupGroup();
-
     }
 
-    private void loadRepositorySetupGroup() {
+    private void loadRepositorySetupGroup() throws Exception {
         IDynamicDistributionsGroup selectedSetupDistriGroup = getSelectedSetupDynamicDistriGroup();
         if (selectedSetupDistriGroup != null) {
             IDynamicDistributionPreference dynamicDistributionPreference = selectedSetupDistriGroup
-                    .getDynamicDistributionPreference();
+                    .getDynamicDistributionPreference(ProjectManager.getInstance().getCurrentProject());
             boolean overrideDefaultSetup = dynamicDistributionPreference.overrideDefaultSetup();
             String repositoryUrl = dynamicDistributionPreference.getRepository();
             boolean isAnonymous = dynamicDistributionPreference.isAnonymous();
@@ -666,7 +665,7 @@ public class DynamicDistributionPreferenceForm extends AbstractDynamicDistributi
                 IDynamicDistributionsGroup selectedSetupDynamicDistriGroup = getSelectedSetupDynamicDistriGroup();
                 if (selectedSetupDynamicDistriGroup != null) {
                     IDynamicDistributionPreference dynamicDistributionPreference = selectedSetupDynamicDistriGroup
-                            .getDynamicDistributionPreference();
+                            .getDynamicDistributionPreference(ProjectManager.getInstance().getCurrentProject());
                     String defaultRepository = dynamicDistributionPreference.getDefaultRepository();
                     repositoryText.setText(defaultRepository);
                     repositoryText.setToolTipText(defaultRepository);
@@ -684,6 +683,9 @@ public class DynamicDistributionPreferenceForm extends AbstractDynamicDistributi
                     repositoryText.setToolTipText(repository);
                 }
             }
+        } catch (Exception e) {
+            ExceptionHandler.process(e);
+            return false;
         } finally {
             boolean isReadonly = isReadonly();
             if (isReadonly) {
@@ -774,7 +776,7 @@ public class DynamicDistributionPreferenceForm extends AbstractDynamicDistributi
             IDynamicDistributionsGroup selectedSetupDynamicDistriGroup = getSelectedSetupDynamicDistriGroup();
             if (selectedSetupDynamicDistriGroup != null) {
                 IDynamicDistributionPreference dynamicDistributionPreference = selectedSetupDynamicDistriGroup
-                        .getDynamicDistributionPreference();
+                        .getDynamicDistributionPreference(ProjectManager.getInstance().getCurrentProject());
                 if (dynamicDistributionPreference != null) {
                     boolean changed = false;
 
@@ -834,7 +836,7 @@ public class DynamicDistributionPreferenceForm extends AbstractDynamicDistributi
             IDynamicDistributionsGroup selectedSetupDynamicDistriGroup = getSelectedSetupDynamicDistriGroup();
             if (selectedSetupDynamicDistriGroup != null) {
                 IDynamicDistributionPreference dynamicDistributionPreference = selectedSetupDynamicDistriGroup
-                        .getDynamicDistributionPreference();
+                        .getDynamicDistributionPreference(ProjectManager.getInstance().getCurrentProject());
                 if (dynamicDistributionPreference != null) {
                     boolean changed = false;
 

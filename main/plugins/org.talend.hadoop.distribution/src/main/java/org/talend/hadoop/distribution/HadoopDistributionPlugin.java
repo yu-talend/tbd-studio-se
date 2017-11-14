@@ -8,7 +8,6 @@ import org.eclipse.core.runtime.Plugin;
 import org.osgi.framework.BundleContext;
 import org.talend.commons.exception.ExceptionHandler;
 import org.talend.core.model.general.ModuleNeeded;
-import org.talend.hadoop.distribution.preference.initializer.DynamicDistributionSettingsInitializer;
 import org.talend.librariesmanager.model.ModulesNeededProvider;
 
 public class HadoopDistributionPlugin extends Plugin {
@@ -46,7 +45,6 @@ public class HadoopDistributionPlugin extends Plugin {
         } catch (Exception e) {
             ExceptionHandler.process(e);
         }
-        new DynamicDistributionSettingsInitializer().initializeDefaultPreferences();
     }
 
     public Map<String, ModuleNeeded> getExistingModuleMap() {

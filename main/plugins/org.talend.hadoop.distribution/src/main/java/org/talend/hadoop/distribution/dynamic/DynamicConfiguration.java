@@ -13,6 +13,7 @@
 package org.talend.hadoop.distribution.dynamic;
 
 import org.talend.commons.exception.ExceptionHandler;
+import org.talend.repository.ProjectManager;
 
 /**
  * DOC cmeng  class global comment. Detailled comment
@@ -76,7 +77,7 @@ public class DynamicConfiguration {
     public IDynamicDistributionPreference getPreference() {
         try {
             return DynamicDistributionManager.getInstance().getDynamicDistributionGroup(getDistribution())
-                    .getDynamicDistributionPreference();
+                    .getDynamicDistributionPreference(ProjectManager.getInstance().getCurrentProject());
         } catch (Exception e) {
             ExceptionHandler.process(e);
         }

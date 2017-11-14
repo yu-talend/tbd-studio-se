@@ -790,6 +790,8 @@ public class DynamicDistributionOptionForm extends AbstractDynamicDistributionSe
                 showMessage(warnMessage, WizardPage.WARNING);
             }
 
+            pluginConfiguration.setAttribute(DynamicConstants.ATTR_PROJECT_TECHNICAL_NAME,
+                    ProjectManager.getInstance().getCurrentProject().getTechnicalLabel());
             getDynamicDistributionSetupData().setDynamicPlugin(importedDynamicPlugin);
             return true;
         } catch (Exception e) {

@@ -76,6 +76,7 @@ import org.talend.hadoop.distribution.dynamic.adapter.DynamicModuleAdapter;
 import org.talend.hadoop.distribution.dynamic.adapter.DynamicModuleGroupAdapter;
 import org.talend.hadoop.distribution.dynamic.adapter.DynamicPluginAdapter;
 import org.talend.hadoop.distribution.dynamic.comparator.DynamicAttributeComparator;
+import org.talend.repository.ProjectManager;
 import org.talend.repository.hadoopcluster.i18n.Messages;
 import org.talend.repository.hadoopcluster.ui.dynamic.DynamicDistributionSetupData;
 import org.talend.repository.hadoopcluster.ui.dynamic.DynamicModuleGroupData;
@@ -584,7 +585,9 @@ public class DynamicDistributionDetailsForm extends AbstractDynamicDistributionS
                 IDynamicPluginConfiguration pluginConfiguration = tempDynamicPlugin.getPluginConfiguration();
                 String distribution = pluginConfiguration.getDistribution();
                 IDynamicDistributionPreference dynamicDistributionPreference = DynamicDistributionManager.getInstance()
-                        .getDynamicDistributionGroup(distribution).getDynamicDistributionPreference();
+                        .getDynamicDistributionGroup(distribution)
+                        .getDynamicDistributionPreference(ProjectManager.getInstance().getProjectFromProjectTechLabel(
+                                (String) pluginConfiguration.getAttribute(DynamicConstants.ATTR_PROJECT_TECHNICAL_NAME)));
                 pluginAdapter = new DynamicPluginAdapter(tempDynamicPlugin, dynamicDistributionPreference);
                 pluginAdapter.buildIdMaps();
                 Set<String> allModuleIds = pluginAdapter.getAllModuleIds();

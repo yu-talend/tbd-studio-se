@@ -17,6 +17,7 @@ import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -42,7 +43,6 @@ import org.talend.designer.maven.aether.IDynamicMonitor;
 import org.talend.hadoop.distribution.dynamic.cdh.DynamicCDHDistributionsGroup;
 import org.talend.hadoop.distribution.dynamic.resolver.IDependencyResolver;
 import org.talend.hadoop.distribution.helper.HadoopDistributionsHelper;
-import org.talend.hadoop.distribution.preference.initializer.DynamicDistributionSettingsInitializer;
 import org.talend.repository.ProjectManager;
 import org.talend.repository.model.RepositoryConstants;
 
@@ -67,10 +67,13 @@ public class DynamicDistributionManager implements IDynamicDistributionManager {
 
     private String usersIdDistributionMapCacheVersion;
 
+    private Collection<String> dynamicDistributionPreferencePaths;
+
     private boolean isLoaded;
 
     private DynamicDistributionManager() {
         isLoaded = false;
+        dynamicDistributionPreferencePaths = new HashSet<>();
     }
 
     public static DynamicDistributionManager getInstance() {
@@ -509,9 +512,27 @@ public class DynamicDistributionManager implements IDynamicDistributionManager {
 
     public void resetSystemCache() throws Exception {
 
-        // 1. reset modulesNeeded cache
+        // 1. reset Dynamic Distribution Groups
+        resetDynamicDistributionGroups();
+
+        // 2. reset path cache
+        dynamicDistributionPreferencePaths.clear();
+
+        // 3. reset modulesNeeded cache
         getLibrariesService().resetModulesNeeded();
 
+    }
+
+    private void resetDynamicDistributionGroups() throws Exception {
+        if (dynamicDistributionsGroups != null && !dynamicDistributionsGroups.isEmpty()) {
+            for (IDynamicDistributionsGroup group : dynamicDistributionsGroups) {
+                try {
+                    group.resetCache();
+                } catch (Exception e) {
+                    ExceptionHandler.process(e);
+                }
+            }
+        }
     }
 
     private static ILibrariesService getLibrariesService() {
@@ -538,6 +559,28 @@ public class DynamicDistributionManager implements IDynamicDistributionManager {
 
     @Override
     public Collection<String> getPreferencePaths() {
-        return new DynamicDistributionSettingsInitializer().getPreferencePaths();
+        if (dynamicDistributionPreferencePaths.isEmpty()) {
+            ProjectManager pm = ProjectManager.getInstance();
+            List<Project> allProjects = new ArrayList<>();
+            List<Project> allReferenceProjects = pm.getAllReferencedProjects();
+            if (allReferenceProjects != null && !allReferenceProjects.isEmpty()) {
+                allProjects.addAll(allReferenceProjects);
+            }
+            allProjects.add(pm.getCurrentProject());
+            for (Project project : allProjects) {
+                for (IDynamicDistributionsGroup distributionGroup : dynamicDistributionsGroups) {
+                    try {
+                        IDynamicDistributionPreference preference = distributionGroup.getDynamicDistributionPreference(project);
+                        String preferencePath = preference.getPreferencePath();
+                        if (StringUtils.isNotEmpty(preferencePath)) {
+                            dynamicDistributionPreferencePaths.add(preferencePath);
+                        }
+                    } catch (Exception e) {
+                        ExceptionHandler.process(e);
+                    }
+                }
+            }
+        }
+        return dynamicDistributionPreferencePaths;
     }
 }
