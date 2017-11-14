@@ -189,6 +189,10 @@ public class DynamicDistributionManager implements IDynamicDistributionManager {
             }
         }
 
+        /**
+         * MUST put dynamic plugins of current project AT THE END OF THE LIST!!!<br>
+         * so that they can overwrite the same id dynamic plugins from reference projects
+         */
         tempDynPlugins = getAllUsersDynamicPluginsForProject(projectManager.getCurrentProject(), monitor);
         if (tempDynPlugins != null && 0 < tempDynPlugins.size()) {
             dynamicPlugins.addAll(tempDynPlugins);
