@@ -87,7 +87,7 @@ public class DynamicDistributionManager implements IDynamicDistributionManager {
 
     public List<IDynamicDistributionsGroup> getDynamicDistributionsGroups() throws Exception {
 
-        if (dynamicDistributionsGroups != null) {
+        if (dynamicDistributionsGroups != null && !dynamicDistributionsGroups.isEmpty()) {
             return dynamicDistributionsGroups;
         }
 
@@ -560,25 +560,31 @@ public class DynamicDistributionManager implements IDynamicDistributionManager {
     @Override
     public Collection<String> getPreferencePaths() {
         if (dynamicDistributionPreferencePaths.isEmpty()) {
-            ProjectManager pm = ProjectManager.getInstance();
-            List<Project> allProjects = new ArrayList<>();
-            List<Project> allReferenceProjects = pm.getAllReferencedProjects();
-            if (allReferenceProjects != null && !allReferenceProjects.isEmpty()) {
-                allProjects.addAll(allReferenceProjects);
-            }
-            allProjects.add(pm.getCurrentProject());
-            for (Project project : allProjects) {
-                for (IDynamicDistributionsGroup distributionGroup : dynamicDistributionsGroups) {
-                    try {
-                        IDynamicDistributionPreference preference = distributionGroup.getDynamicDistributionPreference(project);
-                        String preferencePath = preference.getPreferencePath();
-                        if (StringUtils.isNotEmpty(preferencePath)) {
-                            dynamicDistributionPreferencePaths.add(preferencePath);
+            try {
+                ProjectManager pm = ProjectManager.getInstance();
+                List<Project> allProjects = new ArrayList<>();
+                List<Project> allReferenceProjects = pm.getAllReferencedProjects();
+                if (allReferenceProjects != null && !allReferenceProjects.isEmpty()) {
+                    allProjects.addAll(allReferenceProjects);
+                }
+                allProjects.add(pm.getCurrentProject());
+                List<IDynamicDistributionsGroup> groups = getDynamicDistributionsGroups();
+                for (Project project : allProjects) {
+                    for (IDynamicDistributionsGroup distributionGroup : groups) {
+                        try {
+                            IDynamicDistributionPreference preference = distributionGroup
+                                    .getDynamicDistributionPreference(project);
+                            String preferencePath = preference.getPreferencePath();
+                            if (StringUtils.isNotEmpty(preferencePath)) {
+                                dynamicDistributionPreferencePaths.add(preferencePath);
+                            }
+                        } catch (Exception e) {
+                            ExceptionHandler.process(e);
                         }
-                    } catch (Exception e) {
-                        ExceptionHandler.process(e);
                     }
                 }
+            } catch (Exception e) {
+                ExceptionHandler.process(e);
             }
         }
         return dynamicDistributionPreferencePaths;
