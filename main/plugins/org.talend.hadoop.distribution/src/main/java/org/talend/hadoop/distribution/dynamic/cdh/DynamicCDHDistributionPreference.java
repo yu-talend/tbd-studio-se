@@ -46,15 +46,15 @@ public class DynamicCDHDistributionPreference implements IDynamicDistributionPre
 
     private static final String PREF_ANONYMOUS = "distribution.dynamic.repository.cdh.isAnonymous"; //$NON-NLS-1$
 
-    private static final boolean PREF_ANONYMOUS_DEFAULT = true;
+    private static final boolean PREF_ANONYMOUS_DEFAULT = false;
 
     private static final String PREF_USERNAME = "distribution.dynamic.repository.cdh.username"; //$NON-NLS-1$
 
-    private static final String PREF_USERNAME_DEFAULT = ""; //$NON-NLS-1$
+    private static final String PREF_USERNAME_DEFAULT = "studio-dl-client"; //$NON-NLS-1$
 
     private static final String PREF_PASSWORD = "distribution.dynamic.repository.cdh.password"; //$NON-NLS-1$
 
-    private static final String PREF_PASSWORD_DEFAULT = ""; //$NON-NLS-1$
+    private static final String PREF_PASSWORD_DEFAULT = "studio-dl-client"; //$NON-NLS-1$
 
     private IPreferenceStore prefStore;
 
