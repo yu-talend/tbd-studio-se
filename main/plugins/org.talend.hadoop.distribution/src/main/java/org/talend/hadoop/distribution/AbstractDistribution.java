@@ -305,4 +305,12 @@ public abstract class AbstractDistribution {
     public boolean doSupportAzureDataLakeStorage() {
         return false;
     }
+    
+    public boolean doImportSparkHiveContextDependencies() {
+        return false;
+    }
+    
+    public boolean isActivated() {
+        return true;
+    }
 }
