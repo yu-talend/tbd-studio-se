@@ -235,17 +235,6 @@ public final class DistributionsManager implements IDistributionsManager {
                     CommonExceptionHandler.warn(" There are different distribution name for " + distributionBean); //$NON-NLS-1$
                     return;
                 }
-
-                final String version = hc.getVersion();
-                // if (version!=null){ //sometimes, will be null, like Custom. but still need add the null version.
-                DistributionVersion versionBean = new DistributionVersion(hc, distributionBean, version, hc.getVersionName(type));
-                versionBean.addModuleGroups(hc.getModuleGroups(type));
-                // special condition for current version
-                versionBean.displayCondition = hc.getDisplayCondition(type);
-                distributionBean.addVersion(versionBean);
-
-                // add all version conditions ?
-                distributionBean.addCondition(hc.getDisplayCondition(type));
             }
             clearCache();
 
