@@ -149,7 +149,30 @@
             "groupId": "org.apache.sqoop",
             "artifactId": "sqoop",
             "classifier": "",
-            "description": ""
+            "description": "",
+            "exclusions": [
+                {
+                    "groupId": "org.apache.curator",
+                    "artifactId": "apache-curator",
+                    "classifier": "",
+                    "extension": "",
+                    "description": ""
+                },
+                {
+                    "groupId": "eigenbase",
+                    "artifactId": "eigenbase-properties",
+                    "classifier": "",
+                    "extension": "",
+                    "description": ""
+                },
+                {
+                    "groupId": "org.pentaho",
+                    "artifactId": "pentaho-aggdesigner-algorithm",
+                    "classifier": "",
+                    "extension": "",
+                    "description": ""
+                }
+            ]
         },
         {
             "id": "avro-mapred",
@@ -291,6 +314,16 @@
             "description": ""
         },
         {
+            "id": "jodd",
+            "type": "BASE",
+            "context": "{properties.context}",
+            "groupId": "org.jodd",
+            "artifactId": "jodd-core",
+            "version": "3.5.2",
+            "classifier": "",
+            "description": ""
+        },
+        {
             "id": "MODULE_COMMONS_CODEC",
             "type": "REFERENCE",
             "context": "{properties.context}",
@@ -333,7 +366,8 @@
                 "hadoop-mapreduce-client-app",
                 "hadoop-mapreduce-client-jobclient",
                 "commons-httpclient-3.1-dynamic",
-                "htrace-core"
+                "htrace-core",
+                "jodd"
             ]
         },
         {
