@@ -334,6 +334,16 @@
 		},
 
 		{
+			"id": "hive-jdbc-for-impala",
+			"type": "BASE",
+			"context": "{properties.context}",
+			"groupId": "org.apache.hive",
+			"artifactId": "hive-jdbc",
+			"classifier": "",
+			"description": ""
+		},
+
+		{
 			"id": "hive-jdbc",
 			"type": "BASE",
 			"context": "{properties.context}",
@@ -1941,7 +1951,7 @@
 			"modules": 
 			[
 				"hadoop-client",
-				"hive-jdbc",
+				"hive-jdbc-for-impala",
 				"hive-exec"
 			]
 		},
