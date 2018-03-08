@@ -461,7 +461,7 @@ public class MapR600Distribution extends AbstractMapRDistribution implements HDF
     // the changes backported to all earlier versions
     @Override
     public boolean doSupportAzureDataLakeStorage() {
-        return false;
+        return true;
     }
     // End
     
