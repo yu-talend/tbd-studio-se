@@ -1102,6 +1102,7 @@
 			"id": "MAPREDUCE-LIB-DYNAMIC",
 			"description": "",
 			"modules": [
+				"avro-mapred",
 				"hadoop-client",
 				"jodd"
 			]
