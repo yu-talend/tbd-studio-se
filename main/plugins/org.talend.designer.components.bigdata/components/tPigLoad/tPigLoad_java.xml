@@ -978,6 +978,10 @@
 			<IMPORT MODULE_GROUP="PIG-HCAT-LIB-MAPR50X_LASTEST"
 				REQUIRED_IF="(LOCAL == 'false' AND PIG_VERSION=='MAPR500' AND LOAD=='HCATLOADER') AND DISTRIBUTION!='CUSTOM'" />
 
+			<!-- QUBOLE -->
+			<IMPORT MODULE_GROUP="PIG-LIB-QUBOLE"
+				REQUIRED_IF="(LOCAL=='false') AND (DISTRIBUTION=='QUBOLE')" />
+
 			<!-- MAPR2 -->
 			<IMPORT NAME="automaton.jar" MODULE="automaton.jar"
 				MVN="mvn:org.talend.libraries/automaton/6.0.0"

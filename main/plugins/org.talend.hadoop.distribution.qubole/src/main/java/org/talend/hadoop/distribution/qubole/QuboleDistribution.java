@@ -29,8 +29,11 @@ import org.talend.hadoop.distribution.component.PigComponent;
 import org.talend.hadoop.distribution.component.SparkBatchComponent;
 import org.talend.hadoop.distribution.component.SparkStreamingComponent;
 import org.talend.hadoop.distribution.condition.ComponentCondition;
+import org.talend.hadoop.distribution.condition.SimpleComponentCondition;
+import org.talend.hadoop.distribution.constants.PigConstant;
 import org.talend.hadoop.distribution.constants.qubole.IQuboleDistribution;
 import org.talend.hadoop.distribution.qubole.modulegroup.QuboleHDFSModuleGroup;
+import org.talend.hadoop.distribution.qubole.modulegroup.QubolePigModuleGroup;
 import org.talend.hadoop.distribution.qubole.modulegroup.QuboleSparkBatchModuleGroup;
 import org.talend.hadoop.distribution.qubole.modulegroup.QuboleSparkStreamingModuleGroup;
 import org.talend.hadoop.distribution.constants.qubole.IQuboleDistribution;
@@ -59,7 +62,8 @@ public class QuboleDistribution extends AbstractDistribution implements HDFSComp
     }
 
     protected Map<ComponentType, ComponentCondition> buildDisplayConditions() {
-        return new HashMap<>();
+        Map<ComponentType, ComponentCondition> componentConditions = new HashMap<>();
+        return componentConditions;
     }
 
     protected Map<ComponentType, String> buildCustomVersionDisplayNames() {
@@ -70,12 +74,15 @@ public class QuboleDistribution extends AbstractDistribution implements HDFSComp
     protected Map<ComponentType, Set<DistributionModuleGroup>> buildModuleGroups() {
         Map<ComponentType, Set<DistributionModuleGroup>> result = new HashMap<>();
         result.put(ComponentType.HDFS, QuboleHDFSModuleGroup.getModuleGroups());
+        result.put(ComponentType.PIG, QubolePigModuleGroup.getModuleGroups());
         //result.put(ComponentType.SPARKSTREAMING, QuboleSparkStreamingModuleGroup.getModuleGroups());
         return result;
     }
 
     protected Map<NodeComponentTypeBean, Set<DistributionModuleGroup>> buildNodeModuleGroups(String distribution, String version) {
         Map<NodeComponentTypeBean, Set<DistributionModuleGroup>> result = new HashMap<>();
+        
+        result.put(new NodeComponentTypeBean(ComponentType.PIG, PigConstant.PIGLOAD_COMPONENT), QubolePigModuleGroup.getModuleGroups());
         // DynamoDB ...
         /*Set<DistributionModuleGroup> dynamoDBNodeModuleGroups = QuboleSparkDynamoDBNodeModuleGroup.getModuleGroups(distribution,
                 version, "USE_EXISTING_CONNECTION == 'false'");

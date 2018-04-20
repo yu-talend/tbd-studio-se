@@ -29,6 +29,7 @@
 	org.talend.hadoop.distribution.component.PigComponent pigDistrib = null;
 	if(!isLocal) {
     	try {
+    		// TODO: check whether QuboleDistribution is created when distribution is qubole
     		pigDistrib = (org.talend.hadoop.distribution.component.PigComponent) org.talend.hadoop.distribution.DistributionFactory.buildDistribution(distribution, pigVersion);
     	} catch (java.lang.Exception e) {
     		e.printStackTrace();
