@@ -89,7 +89,12 @@ imports="
 %>
         <%@ include file="@{org.talend.designer.components.localprovider}/components/templates/Hive/GetDataprocConnection.javajet"%>
 <%
-    } else { // normal mode
+	} else if (hiveDistrib.isQuboleDistribution()) {
+		// Distribution: Qubole
+%>
+		// Qubole codes
+<%
+    } else {
 %>
         <%@ include file="@{org.talend.designer.components.localprovider}/components/templates/Hive/GetConnection.javajet"%>
 <%

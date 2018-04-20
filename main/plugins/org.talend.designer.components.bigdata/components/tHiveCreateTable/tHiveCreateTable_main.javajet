@@ -90,6 +90,11 @@ imports="
 %>
         <%@ include file="@{org.talend.designer.components.localprovider}/components/templates/Hive/GetDataprocConnection.javajet"%>
 <%
+	} else if (hiveDistrib.isQuboleDistribution()) {
+		// Distribution: Qubole
+%>
+		// Qubole codes
+<%
     } else { // normal mode
 %>
     <%@ include file="@{org.talend.designer.components.localprovider}/components/templates/Hive/GetConnection.javajet"%>
@@ -152,9 +157,7 @@ imports="
     boolean isParquetSupported = isCustom || hiveDistrib.doSupportParquetFormat();
     if(storeAsParquet && !isParquetSupported) {
 %>
-        if(true) {
-            throw new java.lang.UnsupportedOperationException("Parquet is only supported if the distribution uses embedded Hive version 0.10 or later.");
-        }
+		throw new java.lang.UnsupportedOperationException("Parquet is only supported if the distribution uses embedded Hive version 0.10 or later.");
 <%
     }
 
@@ -231,7 +234,8 @@ imports="
                                 bw_<%=cid%>.write("ADD JAR " + wasbPath_<%=cid%> + new java.io.File(getJarsToRegister_<%=cid %>.replaceJarPaths("<%=jars.get(j)%>")).getName() + ";");
                                 libjars_<%=cid%>.append(getJarsToRegister_<%=cid %>.replaceJarPaths("<%=jars.get(j)%>") + ",");
 <%
-                            } else { // dataproc
+                            }
+                            if (hiveDistrib.isGoogleDataprocDistribution()) {
                                 if(isLog4jEnabled) {
 %>
                                     log.debug("Query for <%=cid%>: " + "ADD JAR " + stagingBucketPath_<%=cid%> + new java.io.File(getJarsToRegister_<%=cid %>.replaceJarPaths("<%=jars.get(j)%>")).getName() + ";");
@@ -241,6 +245,11 @@ imports="
                                 instance_<%=cid%>.addQuery("ADD JAR " + stagingBucketPath_<%=cid%> + new java.io.File(getJarsToRegister_<%=cid %>.replaceJarPaths("<%=jars.get(j)%>")).getName() + ";");
                                 libjars_<%=cid%>.append(getJarsToRegister_<%=cid %>.replaceJarPaths("<%=jars.get(j)%>") + ",");
 <%
+                            }
+                            if (hiveDistrib.isQuboleDistribution()) {
+                            %>
+                            	// register jar
+                            <%
                             }
                         }
                     }
@@ -361,7 +370,8 @@ if(likeTable) {
 %>
                 }
 <%
-            } else { // dataproc
+            }
+            if (hiveDistrib.isGoogleDataprocDistribution()) {
                 if(isLog4jEnabled) {
 %>
                     log.debug("Query for <%=cid%>: " + querySQL_<%=cid %>.replace("';'", "'\\;'") + ";");
@@ -394,6 +404,11 @@ if(likeTable) {
 %>
                 }
 <%
+            }
+            if (hiveDistrib.isQuboleDistribution()) {
+            %>
+            	// post processing
+            <%
             }
         }
     return stringBuffer.toString();
@@ -723,7 +738,8 @@ if(originalHadoopUsername_<%=cid%>!=null) {
 %>
             }
 <%
-        } else { // Dataproc
+        }
+        if (hiveDistrib.isGoogleDataprocDistribution()) {
             if(isLog4jEnabled) {
 %>
                 log.debug("Query for <%=cid%>: " + querySQL_<%=cid %>.replace("';'", "'\\;'") + ";");
@@ -754,6 +770,11 @@ if(originalHadoopUsername_<%=cid%>!=null) {
 %>
             }
 <%
-        } // else part of if(hiveDistrib.isExecutedThroughWebHCat()) 
+        }
+        if (hiveDistrib.isQuboleDistribution()) {
+        %>
+        	// 
+        <%
+        }
     } // else port of useCloudLauncher
 %>

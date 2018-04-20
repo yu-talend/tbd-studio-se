@@ -2,9 +2,48 @@
 <?eclipse version="3.4"?>
 <plugin>
     <extension point="org.talend.core.runtime.librariesNeeded">
-        <libraryNeeded context="plugin:org.talend.hadoop.distribution.qubole" id="talend-bigdata-launcher-1.2.2-20180101.jar" name="talend-bigdata-launcher-1.2.2-20180101.jar" mvn_uri="mvn:org.talend.libraries/talend-bigdata-launcher-1.2.2-20180101/6.0.0" />
+        <!-- Big Data launcher libraries -->
+        <libraryNeeded context="plugin:org.talend.hadoop.distribution.qubole" id="talend-bigdata-launcher-1.2.2-20180101" name="talend-bigdata-launcher-1.2.2-20180101" mvn_uri="mvn:org.talend.libraries/talend-bigdata-launcher-1.2.2-20180101/6.0.0" />
 
-        <!-- HDFS related libraries -->
+        <!-- Hive module group: defines the jars loaded when Distribution is selected as Quble in Hive components -->
+        <libraryNeededGroup description="Pig libraries for tPigLoad" id="HIVE-LIB-QUBOLE" name="HIVE-LIB-QUBOLE">
+            <library id="qubole sdk + big data launcher ?" />
+        </libraryNeededGroup>
+
+        <!-- Pig module group: defines the jars loaded when Distribution is selected as Qubole in tPigLoad -->
+        <libraryNeededGroup description="Pig libraries for tPigLoad" id="PIG-LIB-QUBOLE" name="PIG-LIB-QUBOLE">
+            <library id="qubole sdk + big data launcher ?" />
+        </libraryNeededGroup>
+
+        <!-- Big Data launcher group: one for all ? -->
+        <libraryNeededGroup description="Big Data launcher libraries for Qubole" id="BIGDATA-LAUNCHER-LIB-QUBOLE" name="BIGDATA-LAUNCHER-LIB-QUBOLE ">
+            <library id="talend-bigdata-launcher-1.2.2-20180101" />
+            <!--
+            <library id="google-api-client-1.22.0" />
+            <library id="google-api-client-appengine-1.21.0" />
+            <library id="google-api-client-servlet-1.21.0" />
+            <library id="google-api-services-storage-v1-rev85-1.22.0" />
+            <library id="google-api-services-dataproc-v1-rev46-1.22.0" />
+            <library id="google-http-client-1.21.0" />
+            <library id="google-http-client-appengine-1.21.0" />
+            <library id="google-http-client-jackson-1.21.0" />
+            <library id="google-http-client-jackson2-1.22.0" />
+            <library id="google-oauth-client-1.22.0" />
+            <library id="google-cloud-storage-0.9.4-beta" />
+            <library id="google-cloud-core-0.9.4-alpha" />
+            <library id="google-auth-library-credentials-0.6.0" />
+            <library id="google-auth-library-oauth2-http-0.6.0" />
+            <library id="gax-0.1.4" />
+            <library id="json-20151123" />
+            <library id="guava-19.0" />
+            <library id="jackson-core-2.5.4" />
+            <library id="jackson-core-asl-1.9.14-TALEND" />
+            <library id="jackson-mapper-asl-1.9.14-TALEND" />
+            <library id="commons-lang-2.6" />
+            -->
+        </libraryNeededGroup>
+
+        <!-- HDFS related libraries 
         <libraryNeeded context="plugin:org.talend.hadoop.distribution.qubole" id="activation-1.1.1.jar" name="activation-1.1.1.jar" mvn_uri="mvn:org.talend.libraries/activation-1.1.1/6.0.0" />
         <libraryNeeded context="plugin:org.talend.hadoop.distribution.qubole" id="apache-log4j-extras-1.2.17.jar" name="apache-log4j-extras-1.2.17.jar" mvn_uri="mvn:org.talend.libraries/apache-log4j-extras-1.2.17/6.0.0" />
         <libraryNeeded context="plugin:org.talend.hadoop.distribution.qubole" id="apacheds-i18n-2.0.0-M15.jar" name="apacheds-i18n-2.0.0-M15.jar" mvn_uri="mvn:org.talend.libraries/apacheds-i18n-2.0.0-M15/6.0.0" />
@@ -130,12 +169,14 @@
         <libraryNeeded context="plugin:org.talend.hadoop.distribution.qubole" id="xmlenc-0.52.jar" name="xmlenc-0.52.jar" mvn_uri="mvn:org.talend.libraries/xmlenc-0.52/6.0.0" />
         <libraryNeeded context="plugin:org.talend.hadoop.distribution.qubole" id="xz-1.0.jar" name="xz-1.0.jar" mvn_uri="mvn:org.talend.libraries/xz-1.0/6.0.0" />
         <libraryNeeded context="plugin:org.talend.hadoop.distribution.qubole" id="zookeeper-3.4.6.jar" name="zookeeper-3.4.6.jar" mvn_uri="mvn:org.talend.libraries/zookeeper-3.4.6/6.0.0" />
+		-->
 
-        <!-- Hive related libraries -->
+        <!-- Hive related libraries 
         <libraryNeeded context="plugin:org.talend.hadoop.distribution.qubole" id="jets3t-0.9.0" name="jets3t-0.9.0.jar" mvn_uri="mvn:org.talend.libraries/jets3t-0.9.0/6.0.0" />
         <libraryNeeded context="plugin:org.talend.hadoop.distribution.qubole" id="hive-jdbc-dataproc11" name="hive-jdbc-2.1.1-dataproc11.jar" mvn_uri="mvn:org.talend.libraries/hive-jdbc-2.1.1-dataproc11/6.0.0" />
         <libraryNeeded context="plugin:org.talend.hadoop.distribution.qubole" id="hive-service-dataproc11" name="hive-service-2.1.1-dataproc11.jar" mvn_uri="mvn:org.talend.libraries/hive-service-2.1.1-dataproc11/6.0.0" />
         <libraryNeeded context="plugin:org.talend.hadoop.distribution.qubole" id="hive-service-rpc-dataproc11" name="hive-service-rpc-2.1.1-dataproc11.jar" mvn_uri="mvn:org.talend.libraries/hive-service-rpc-2.1.1-dataproc11/6.0.0" />
+		-->
 
         <!-- Pig related libraries 
         <libraryNeeded context="plugin:org.talend.hadoop.distribution.qubole" id="jets3t-0.9.0" name="jets3t-0.9.0.jar" mvn_uri="mvn:org.talend.libraries/jets3t-0.9.0/6.0.0" />
@@ -144,47 +185,7 @@
         <libraryNeeded context="plugin:org.talend.hadoop.distribution.qubole" id="hive-service-rpc-dataproc11" name="hive-service-rpc-2.1.1-dataproc11.jar" mvn_uri="mvn:org.talend.libraries/hive-service-rpc-2.1.1-dataproc11/6.0.0" />
 		-->
 
-        <!-- Pig module group: define the jars loaded when we choose Qubole in tPigLoad -->
-        <libraryNeededGroup description="Pig libraries for tPigLoad" id="HIVE-LIB-QUBOLE" name="HIVE-LIB-QUBOLE">
-            <library id="qubole sdk pig" />
-        </libraryNeededGroup>
-
-        <!-- Big Data launcher libraries -->
-        <libraryNeeded context="plugin:org.talend.hadoop.distribution.qubole" id="talend-bigdata-launcher-1.2.1-20170511" name="talend-bigdata-launcher-1.2.1-20170511.jar" mvn_uri="mvn:org.talend.libraries/talend-bigdata-launcher-1.2.1-20170511/6.0.0" />
-        <libraryNeeded context="plugin:org.talend.hadoop.distribution.qubole" id="talend-bigdata-launcher-1.2.2-20170613" name="talend-bigdata-launcher-1.2.2-20170613.jar" mvn_uri="mvn:org.talend.libraries/talend-bigdata-launcher-1.2.2-20170613/6.0.0" />
-
-        <!-- Big Data launcher group -->
-        <libraryNeededGroup description="Big Data launcher libraries for Qubole" id="BIGDATA-LAUNCHER-LIB-QUBOLE" name="BIGDATA-LAUNCHER-LIB-QUBOLE ">
-            <library id="talend-bigdata-launcher-1.2.1-20170511" />
-            <library id="google-api-client-1.22.0" />
-            <library id="google-api-client-appengine-1.21.0" />
-            <library id="google-api-client-servlet-1.21.0" />
-            <library id="google-api-services-storage-v1-rev85-1.22.0" />
-            <library id="google-api-services-dataproc-v1-rev46-1.22.0" />
-            <library id="google-http-client-1.21.0" />
-            <library id="google-http-client-appengine-1.21.0" />
-            <library id="google-http-client-jackson-1.21.0" />
-            <library id="google-http-client-jackson2-1.22.0" />
-            <library id="google-oauth-client-1.22.0" />
-            <library id="google-cloud-storage-0.9.4-beta" />
-            <library id="google-cloud-core-0.9.4-alpha" />
-            <library id="google-auth-library-credentials-0.6.0" />
-            <library id="google-auth-library-oauth2-http-0.6.0" />
-            <library id="gax-0.1.4" />
-            <library id="json-20151123" />
-            <library id="guava-19.0" />
-            <library id="jackson-core-2.5.4" />
-            <library id="jackson-core-asl-1.9.14-TALEND" />
-            <library id="jackson-mapper-asl-1.9.14-TALEND" />
-            <library id="commons-lang-2.6" />
-        </libraryNeededGroup>
-
-        <!-- Hive group -->
-        <libraryNeededGroup description="Hive libraries for Qubole" id="HIVE-LIB-QUBOLE" name="HIVE-LIB-QUBOLE">
-            <library id="jets3t-0.9.0" />
-        </libraryNeededGroup>
-
-        <!-- HDFS group -->
+        <!-- HDFS group
         <libraryNeededGroup description="HDFS libraries for Qubole" id="HDFS-LIB-QUBOLE" name="HDFS-LIB-QUBOLE">
             <library id="activation-1.1.1.jar" />
             <library id="apache-log4j-extras-1.2.17.jar" />
@@ -312,6 +313,7 @@
             <library id="xz-1.0.jar" />
             <library id="zookeeper-3.4.6.jar" />
         </libraryNeededGroup>
+        -->
 
         <!-- Spark S3 group MRREQUIRED 
         <libraryNeededGroup
