@@ -217,8 +217,19 @@
 	boolean useTez = !isLocal && pigDistrib != null && pigDistrib.doSupportTezForPig() && "TEZ".equals(ElementParameterParser.getValue(node, "__ENGINE__"));
 %>
 	<%@ include file="@{org.talend.designer.components.bigdata}/components/templates/Pig/PigHeader.javajet"%>
+
+	<%
+	// If qubole pig execution is totally different from others (the pig server), start qubole codes here.
+	// (pig server has registerQuery, registerJar, registerScript, registerFunction, how about on qubole sdk ?)
+	if (pigDistrib.doSupportQubole()) {
+	%>
+	// Qubole sdk codes. remove all bellow codes, or adapt it 
+	<%
+	}
+	%>
 <%
 	if(generateRegisterJarCodeForAll) {
+	// TODO: register jar ? possible on qubole ?
 %>
 		routines.system.GetJarsToRegister getJarsToRegister_<%=cid %> = new routines.system.GetJarsToRegister();
 <%
