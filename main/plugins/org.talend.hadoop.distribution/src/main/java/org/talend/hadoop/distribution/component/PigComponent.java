@@ -38,11 +38,4 @@ public interface PigComponent extends MRComponent {
      * @return true if the distribution supports TEZ for Pig.
      */
     public boolean doSupportTezForPig();
-    
-    /**
-     * To determine if the Distribution is selected as Qubole in Pig components.
-     */
-    default public boolean doSupportQubole() {
-        return false;
-    }
 }

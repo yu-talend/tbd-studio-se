@@ -29,7 +29,6 @@
 	org.talend.hadoop.distribution.component.PigComponent pigDistrib = null;
 	if(!isLocal) {
     	try {
-    		// TODO: check whether QuboleDistribution is created when distribution is qubole
     		pigDistrib = (org.talend.hadoop.distribution.component.PigComponent) org.talend.hadoop.distribution.DistributionFactory.buildDistribution(distribution, pigVersion);
     	} catch (java.lang.Exception e) {
     		e.printStackTrace();
@@ -219,17 +218,17 @@
 	<%@ include file="@{org.talend.designer.components.bigdata}/components/templates/Pig/PigHeader.javajet"%>
 
 	<%
-	// If qubole pig execution is totally different from others (the pig server), start qubole codes here.
-	// (pig server has registerQuery, registerJar, registerScript, registerFunction, how about on qubole sdk ?)
-	if (pigDistrib.doSupportQubole()) {
+	// See qubole sdk api, exclude all below codes or adapt
+	// (pig server has registerQuery, registerJar, registerScript, registerFunction, supported on qubole ?)
+	if (pigDistrib.isQuboleDistribution()) {
 	%>
-	// Qubole sdk codes. remove all bellow codes, or adapt it 
+	// Qubole codes
 	<%
 	}
 	%>
 <%
 	if(generateRegisterJarCodeForAll) {
-	// TODO: register jar ? possible on qubole ?
+		// TODO: register jar ? possible on qubole ?
 %>
 		routines.system.GetJarsToRegister getJarsToRegister_<%=cid %> = new routines.system.GetJarsToRegister();
 <%

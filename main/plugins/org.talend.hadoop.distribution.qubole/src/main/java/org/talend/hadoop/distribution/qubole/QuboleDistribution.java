@@ -26,17 +26,12 @@ import org.talend.hadoop.distribution.NodeComponentTypeBean;
 import org.talend.hadoop.distribution.component.HDFSComponent;
 import org.talend.hadoop.distribution.component.HiveComponent;
 import org.talend.hadoop.distribution.component.PigComponent;
-import org.talend.hadoop.distribution.component.SparkBatchComponent;
-import org.talend.hadoop.distribution.component.SparkStreamingComponent;
 import org.talend.hadoop.distribution.condition.ComponentCondition;
-import org.talend.hadoop.distribution.condition.SimpleComponentCondition;
 import org.talend.hadoop.distribution.constants.PigConstant;
 import org.talend.hadoop.distribution.constants.qubole.IQuboleDistribution;
 import org.talend.hadoop.distribution.qubole.modulegroup.QuboleHDFSModuleGroup;
+import org.talend.hadoop.distribution.qubole.modulegroup.QuboleHiveModuleGroup;
 import org.talend.hadoop.distribution.qubole.modulegroup.QubolePigModuleGroup;
-import org.talend.hadoop.distribution.qubole.modulegroup.QuboleSparkBatchModuleGroup;
-import org.talend.hadoop.distribution.qubole.modulegroup.QuboleSparkStreamingModuleGroup;
-import org.talend.hadoop.distribution.constants.qubole.IQuboleDistribution;
 
 public class QuboleDistribution extends AbstractDistribution implements HDFSComponent, PigComponent, HiveComponent, IQuboleDistribution {
 
@@ -71,18 +66,24 @@ public class QuboleDistribution extends AbstractDistribution implements HDFSComp
         return result;
     }
 
+    /**
+     * Add needed libraries (module group) for correspondent components
+     */
     protected Map<ComponentType, Set<DistributionModuleGroup>> buildModuleGroups() {
-        Map<ComponentType, Set<DistributionModuleGroup>> result = new HashMap<>();
-        result.put(ComponentType.HDFS, QuboleHDFSModuleGroup.getModuleGroups());
-        result.put(ComponentType.PIG, QubolePigModuleGroup.getModuleGroups());
-        //result.put(ComponentType.SPARKSTREAMING, QuboleSparkStreamingModuleGroup.getModuleGroups());
-        return result;
+        Map<ComponentType, Set<DistributionModuleGroup>> componentsMap = new HashMap<>();
+        componentsMap.put(ComponentType.HDFS, QuboleHDFSModuleGroup.getModuleGroups());
+        componentsMap.put(ComponentType.HIVE, QuboleHiveModuleGroup.getModuleGroups());
+        return componentsMap;
     }
 
+    /**
+     * Add needed libraries (module group) for correspondent nodes
+     */
     protected Map<NodeComponentTypeBean, Set<DistributionModuleGroup>> buildNodeModuleGroups(String distribution, String version) {
-        Map<NodeComponentTypeBean, Set<DistributionModuleGroup>> result = new HashMap<>();
-        
-        result.put(new NodeComponentTypeBean(ComponentType.PIG, PigConstant.PIGLOAD_COMPONENT), QubolePigModuleGroup.getModuleGroups());
+        Map<NodeComponentTypeBean, Set<DistributionModuleGroup>> nodesMap = new HashMap<>();
+        nodesMap.put(new NodeComponentTypeBean(ComponentType.PIG, PigConstant.PIGLOAD_COMPONENT), QubolePigModuleGroup.getModuleGroups());
+        return nodesMap;
+
         // DynamoDB ...
         /*Set<DistributionModuleGroup> dynamoDBNodeModuleGroups = QuboleSparkDynamoDBNodeModuleGroup.getModuleGroups(distribution,
                 version, "USE_EXISTING_CONNECTION == 'false'");
@@ -104,7 +105,6 @@ public class QuboleDistribution extends AbstractDistribution implements HDFSComp
                 dynamoDBNodeModuleGroups);
         result.put(new NodeComponentTypeBean(ComponentType.SPARKSTREAMING,
                 SparkStreamingConstant.DYNAMODB_CONFIGURATION_COMPONENT), dynamoDBConfigurationModuleGroups);*/
-        return result;
     }
 
     @Override
@@ -313,9 +313,4 @@ public class QuboleDistribution extends AbstractDistribution implements HDFSComp
     public boolean doSupportHDFSEncryption() {
         return true;
     }
-	
-	@Override
-	public boolean doSupportQubole() {
-	    return true;
-	}
 }
