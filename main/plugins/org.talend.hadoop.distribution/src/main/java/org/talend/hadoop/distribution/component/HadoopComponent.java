@@ -217,4 +217,8 @@ public interface HadoopComponent {
     public boolean isActivated();
     
     public boolean isDynamicDistribution();
+    
+    public boolean doSupportAzureDataLakeStorage();
+    
+    public boolean doSupportWebHDFS();
 }
