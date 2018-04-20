@@ -313,4 +313,9 @@ public class QuboleDistribution extends AbstractDistribution implements HDFSComp
     public boolean doSupportHDFSEncryption() {
         return true;
     }
+	
+	@Override
+	public boolean doSupportQubole() {
+	    return true;
+	}
 }
