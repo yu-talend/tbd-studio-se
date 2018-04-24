@@ -2,45 +2,21 @@
 <?eclipse version="3.4"?>
 <plugin>
     <extension point="org.talend.core.runtime.librariesNeeded">
-        <!-- Big Data launcher libraries -->
-        <libraryNeeded context="plugin:org.talend.hadoop.distribution.qubole" id="talend-bigdata-launcher-1.2.2-20180101" name="talend-bigdata-launcher-1.2.2-20180101" mvn_uri="mvn:org.talend.libraries/talend-bigdata-launcher-1.2.2-20180101/6.0.0" />
+        <libraryNeeded context="plugin:org.talend.hadoop.distribution.qubole" id="new talend-bigdata-launcher jar" name="talend bigdata launcher" mvn_uri="mvn:org.talend.libraries/talend-bigdata-launcher-1.2.2-20180101/6.0.0" />
+        <libraryNeeded context="plugin:org.talend.hadoop.distribution.qubole" id="qds-sdk-java-0.9.1" name="qubole java sdk" mvn_uri="mvn:org.talend.libraries/qds-sdk-java-0.9.1/6.0.0" />
 
         <!-- Hive module group: defines the jars loaded when Distribution is selected as Quble in Hive components -->
         <libraryNeededGroup description="Pig libraries for tPigLoad" id="HIVE-LIB-QUBOLE" name="HIVE-LIB-QUBOLE">
-            <library id="qubole sdk + big data launcher ?" />
         </libraryNeededGroup>
 
         <!-- Pig module group: defines the jars loaded when Distribution is selected as Qubole in tPigLoad -->
         <libraryNeededGroup description="Pig libraries for tPigLoad" id="PIG-LIB-QUBOLE" name="PIG-LIB-QUBOLE">
-            <library id="qubole sdk + big data launcher ?" />
         </libraryNeededGroup>
 
-        <!-- Big Data launcher group: one for all ? -->
-        <libraryNeededGroup description="Big Data launcher libraries for Qubole" id="BIGDATA-LAUNCHER-LIB-QUBOLE" name="BIGDATA-LAUNCHER-LIB-QUBOLE ">
-            <library id="talend-bigdata-launcher-1.2.2-20180101" />
-            <!--
-            <library id="google-api-client-1.22.0" />
-            <library id="google-api-client-appengine-1.21.0" />
-            <library id="google-api-client-servlet-1.21.0" />
-            <library id="google-api-services-storage-v1-rev85-1.22.0" />
-            <library id="google-api-services-dataproc-v1-rev46-1.22.0" />
-            <library id="google-http-client-1.21.0" />
-            <library id="google-http-client-appengine-1.21.0" />
-            <library id="google-http-client-jackson-1.21.0" />
-            <library id="google-http-client-jackson2-1.22.0" />
-            <library id="google-oauth-client-1.22.0" />
-            <library id="google-cloud-storage-0.9.4-beta" />
-            <library id="google-cloud-core-0.9.4-alpha" />
-            <library id="google-auth-library-credentials-0.6.0" />
-            <library id="google-auth-library-oauth2-http-0.6.0" />
-            <library id="gax-0.1.4" />
-            <library id="json-20151123" />
-            <library id="guava-19.0" />
-            <library id="jackson-core-2.5.4" />
-            <library id="jackson-core-asl-1.9.14-TALEND" />
-            <library id="jackson-mapper-asl-1.9.14-TALEND" />
-            <library id="commons-lang-2.6" />
-            -->
+        <!-- Big Data launcher group -->
+        <libraryNeededGroup description="big-data launcher jar and the wrapped qubole sdk" id="BIGDATA-LAUNCHER-LIB-QUBOLE" name="BIGDATA-LAUNCHER-LIB-QUBOLE ">
+            <library id="new talend-bigdata-launcher jar" />
+            <library id="qds-sdk-java-0.9.1" />
         </libraryNeededGroup>
 
         <!-- HDFS related libraries 

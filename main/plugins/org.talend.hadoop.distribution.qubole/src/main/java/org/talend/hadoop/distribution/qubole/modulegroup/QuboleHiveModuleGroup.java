@@ -23,9 +23,11 @@ public class QuboleHiveModuleGroup {
     public static Set<DistributionModuleGroup> getModuleGroups() {
         Set<DistributionModuleGroup> moduleGroups = new HashSet<>();
         moduleGroups.add(new DistributionModuleGroup(QuboleConstant.HIVE_MODULE_GROUP.getModuleName()));
+        moduleGroups.add(new DistributionModuleGroup(QuboleConstant.BIGDATALAUNCHER_MODULE_GROUP.getModuleName()));
+        return moduleGroups;
+
 //        moduleGroups.add(new DistributionModuleGroup(QuboleConstant.HDFS_MODULE_GROUP.getModuleName()));
         //moduleGroups.add(new DistributionModuleGroup(QuboleConstant.MAPREDUCE_MODULE_GROUP.getModuleName()));
-        return moduleGroups;
 
         // The following condition instance stands for:
         // (isShow[STORE_BY_HBASE] AND STORE_BY_HBASE=='true')
