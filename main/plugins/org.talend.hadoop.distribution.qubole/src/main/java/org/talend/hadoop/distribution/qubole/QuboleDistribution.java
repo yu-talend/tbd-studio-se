@@ -37,7 +37,7 @@ public class QuboleDistribution extends AbstractDistribution implements HDFSComp
 
     public final static String VERSION = "Qubole";
 
-    public static final String VERSION_DISPLAY = "Qubole (YARN mode)";
+    public static final String VERSION_DISPLAY = "Qubole Java SDK 0.9.1";
 
     private final static String YARN_APPLICATION_CLASSPATH = "$HADOOP_CONF_DIR,$HADOOP_COMMON_HOME/*,$HADOOP_COMMON_HOME/lib/*,$HADOOP_HDFS_HOME/*,$HADOOP_HDFS_HOME/lib/*,$HADOOP_MAPRED_HOME/*,$HADOOP_MAPRED_HOME/lib/*,$YARN_HOME/*,$YARN_HOME/lib/*,$HADOOP_YARN_HOME/*,$HADOOP_YARN_HOME/lib/*,$HADOOP_COMMON_HOME/share/hadoop/common/*,$HADOOP_COMMON_HOME/share/hadoop/common/lib/*,$HADOOP_HDFS_HOME/share/hadoop/hdfs/*,$HADOOP_HDFS_HOME/share/hadoop/hdfs/lib/*,$HADOOP_YARN_HOME/share/hadoop/yarn/*,$HADOOP_YARN_HOME/share/hadoop/yarn/lib/*"; //$NON-NLS-1$
 
@@ -234,13 +234,13 @@ public class QuboleDistribution extends AbstractDistribution implements HDFSComp
 	@Override
 	public boolean doSupportHive1() {
 		// TODO Auto-generated method stub
-		return true;
+		return false;
 	}
 
 	@Override
 	public boolean doSupportHive2() {
 		// TODO Auto-generated method stub
-		return true;
+		return false;
 	}
 
 	@Override
