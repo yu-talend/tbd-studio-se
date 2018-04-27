@@ -25,6 +25,8 @@
 	String previous_node="";
 	String start_node="";
 	boolean isExecutedThroughWebHCat = false;
+	boolean isQuboleDistribution = false;
+	boolean isCloudDistribution = false;
 
 	String previousOutputConnectionName = "";
 	
@@ -47,7 +49,9 @@
     			return "";
     		}
     
-    		isExecutedThroughWebHCat = loadPigDistrib != null && loadPigDistrib.isExecutedThroughWebHCat();
+    		isExecutedThroughWebHCat = !isLocal && loadPigDistrib != null && loadPigDistrib.isExecutedThroughWebHCat();
+			isQuboleDistribution = !isLocal && loadPigDistrib != null && loadPigDistrib.isQuboleDistribution();
+			isCloudDistribution = !isLocal && loadPigDistrib != null && loadPigDistrib.isCloudDistribution();
     	}
     	
 		previousOutputConnectionName = connection.getName();
@@ -306,7 +310,7 @@
 	            pigServer_<%=start_node%>.deleteFile("s3n://" + <%=s3username%> + ":" + decryptedS3Password_<%=cid%> + "@" + <%=s3bucket%>);
 	        }
 <%
-		} else if(!isExecutedThroughWebHCat) {
+		} else if(!isCloudDistribution) {
 %>
     		if (pigServer_<%=start_node%>.existsFile(<%=resultFile%>)) {
     			pigServer_<%=start_node%>.deleteFile(<%=resultFile%>);
@@ -639,7 +643,7 @@
 	<%@ include file="@{org.talend.designer.components.bigdata}/components/templates/Pig/RegisterPigLatin.javajet"%>
 	
 <%
-	if(NodeUtil.isSubTreeEnd(node) && !isExecutedThroughWebHCat) {
+	if(NodeUtil.isSubTreeEnd(node) && !isCloudDistribution) {
 %>
 	pigServer_<%=start_node%>.executeBatch();
 	String currentClientPathSeparator_<%=cid%> = (String)globalMap.get("current_client_path_separator");
