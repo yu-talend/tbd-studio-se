@@ -92,6 +92,10 @@
 	boolean isExecutedThroughWebHCat = !isLocal && pigDistrib != null && pigDistrib.isExecutedThroughWebHCat();
 	boolean isQuboleDistribution = !isLocal && pigDistrib != null && pigDistrib.isQuboleDistribution();
 	boolean isCloudDistribution = !isLocal && pigDistrib != null && pigDistrib.isCloudDistribution();
+	String quboleEndpoint = "";
+	if (isQuboleDistribution && ElementParameterParser.getBooleanValue(node, "__QUBOLE_ENDPOINT__")) {
+		quboleEndpoint = ElementParameterParser.getValue(node, "__QUBOLE_ENDPOINT_URL__");
+	}
 
 	String hcatPackage = (pigDistrib != null && pigDistrib.pigVersionPriorTo_0_12() && !isCustom) ? "org.apache.hcatalog.pig" : "org.apache.hive.hcatalog.pig";
 
@@ -323,6 +327,7 @@
 	try (org.talend.bigdata.launcher.qubole.QubolePigJob quboleJob_<%=cid%> =
 			new org.talend.bigdata.launcher.qubole.QubolePigJob.Builder()
 			.setApiKey(api_token_<%=cid%>)
+			<% if (quboleEndpoint != "") {%> .setApiEndpoint(<%=quboleEndpoint%>) <%} %>
 			.build()) {
 	
 		StringBuilder statements_<%=cid%> = new StringBuilder();

@@ -32,6 +32,7 @@ import org.talend.hadoop.distribution.constants.qubole.IQuboleDistribution;
 import org.talend.hadoop.distribution.qubole.modulegroup.QuboleHDFSModuleGroup;
 import org.talend.hadoop.distribution.qubole.modulegroup.QuboleHiveModuleGroup;
 import org.talend.hadoop.distribution.qubole.modulegroup.QubolePigModuleGroup;
+import org.talend.hadoop.distribution.qubole.modulegroup.QubolePigOutputModuleGroup;
 
 public class QuboleDistribution extends AbstractDistribution implements HDFSComponent, PigComponent, HiveComponent, IQuboleDistribution {
 
@@ -73,6 +74,8 @@ public class QuboleDistribution extends AbstractDistribution implements HDFSComp
         Map<ComponentType, Set<DistributionModuleGroup>> componentsMap = new HashMap<>();
         componentsMap.put(ComponentType.HDFS, QuboleHDFSModuleGroup.getModuleGroups());
         componentsMap.put(ComponentType.HIVE, QuboleHiveModuleGroup.getModuleGroups());
+        componentsMap.put(ComponentType.PIG, QubolePigModuleGroup.getModuleGroups());
+        // componentsMap.put(ComponentType.PIGOUTPUT, QubolePigOutputModuleGroup.getModuleGroups());
         return componentsMap;
     }
 
@@ -83,28 +86,6 @@ public class QuboleDistribution extends AbstractDistribution implements HDFSComp
         Map<NodeComponentTypeBean, Set<DistributionModuleGroup>> nodesMap = new HashMap<>();
         nodesMap.put(new NodeComponentTypeBean(ComponentType.PIG, PigConstant.PIGLOAD_COMPONENT), QubolePigModuleGroup.getModuleGroups());
         return nodesMap;
-
-        // DynamoDB ...
-        /*Set<DistributionModuleGroup> dynamoDBNodeModuleGroups = QuboleSparkDynamoDBNodeModuleGroup.getModuleGroups(distribution,
-                version, "USE_EXISTING_CONNECTION == 'false'");
-        Set<DistributionModuleGroup> dynamoDBConfigurationModuleGroups = QuboleSparkDynamoDBNodeModuleGroup.getModuleGroups(
-                distribution, version, null);*/
-        /*// ... in Spark batch
-        result.put(new NodeComponentTypeBean(ComponentType.SPARKBATCH, SparkBatchConstant.DYNAMODB_INPUT_COMPONENT),
-                dynamoDBNodeModuleGroups);
-        result.put(new NodeComponentTypeBean(ComponentType.SPARKBATCH, SparkBatchConstant.DYNAMODB_OUTPUT_COMPONENT),
-                dynamoDBNodeModuleGroups);
-        result.put(new NodeComponentTypeBean(ComponentType.SPARKBATCH, SparkBatchConstant.DYNAMODB_CONFIGURATION_COMPONENT),
-                dynamoDBConfigurationModuleGroups);
-        result.put(new NodeComponentTypeBean(ComponentType.SPARKBATCH, SparkBatchConstant.MATCH_PREDICT_COMPONENT),
-                QuboleSparkGraphFramesNodeModuleGroup.getModuleGroups(distribution, version, null));
-        // ... in Spark streaming
-        result.put(new NodeComponentTypeBean(ComponentType.SPARKSTREAMING, SparkStreamingConstant.DYNAMODB_INPUT_COMPONENT),
-                dynamoDBNodeModuleGroups);
-        result.put(new NodeComponentTypeBean(ComponentType.SPARKSTREAMING, SparkStreamingConstant.DYNAMODB_OUTPUT_COMPONENT),
-                dynamoDBNodeModuleGroups);
-        result.put(new NodeComponentTypeBean(ComponentType.SPARKSTREAMING,
-                SparkStreamingConstant.DYNAMODB_CONFIGURATION_COMPONENT), dynamoDBConfigurationModuleGroups);*/
     }
 
     @Override

@@ -24,11 +24,12 @@
 
 	String previous_node="";
 	String start_node="";
+	String previousOutputConnectionName = "";
+
 	boolean isExecutedThroughWebHCat = false;
 	boolean isQuboleDistribution = false;
 	boolean isCloudDistribution = false;
-
-	String previousOutputConnectionName = "";
+	String quboleClusterLabel = "";
 	
 	if(node.getIncomingConnections()!=null && node.getIncomingConnections().size()>0) {
 		IConnection connection = node.getIncomingConnections().get(0);
@@ -52,6 +53,9 @@
     		isExecutedThroughWebHCat = !isLocal && loadPigDistrib != null && loadPigDistrib.isExecutedThroughWebHCat();
 			isQuboleDistribution = !isLocal && loadPigDistrib != null && loadPigDistrib.isQuboleDistribution();
 			isCloudDistribution = !isLocal && loadPigDistrib != null && loadPigDistrib.isCloudDistribution();
+			if (isQuboleDistribution && ElementParameterParser.getBooleanValue(loadNode, "__QUBOLE_CLUSTER__")) {
+				quboleClusterLabel = ElementParameterParser.getValue(loadNode, "__QUBOLE_CLUSTER_LABEL__");
+			}
     	}
     	
 		previousOutputConnectionName = connection.getName();
@@ -331,9 +335,16 @@
 		%>
 			<% if(isLog4jEnabled) {%>
 				log.info("deleting " + <%=resultFile%> + " on hdfs.");
-			<%}%>
+			<%}
+			if (quboleClusterLabel == "") {%>
 			quboleJob_<%=start_node%>.execShell("hadoop fs -rm -r -f " + <%=resultFile%>);
-			<% if(isLog4jEnabled) {%>
+			<%
+			} else {
+			%>
+			quboleJob_<%=start_node%>.execShell("hadoop fs -rm -r -f " + <%=resultFile%>, <%=quboleClusterLabel%>);
+			<%
+			}
+			if(isLog4jEnabled) {%>
 				log.info(<%=resultFile%> + " deleted.");
 			<%}%>
 		<%
