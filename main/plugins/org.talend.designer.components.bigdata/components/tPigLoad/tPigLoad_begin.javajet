@@ -89,9 +89,9 @@
     boolean setMapRHadoopLogin = ElementParameterParser.getBooleanValue(node, "__SET_HADOOP_LOGIN__");
     String mapRHadoopLogin = ElementParameterParser.getValue(node, "__HADOOP_LOGIN__");
 	
-	boolean isExecutedThroughWebHCat = !isLocal && (pigDistrib != null && pigDistrib.isExecutedThroughWebHCat());
-	boolean isQuboleDistribution = !isLocal && (pigDistrib != null && pigDistrib.isQuboleDistribution());
-	boolean isCloudDistribution = !isLocal && (pigDistrib != null && pigDistrib.isCloudDistribution());
+	boolean isExecutedThroughWebHCat = !isLocal && pigDistrib != null && pigDistrib.isExecutedThroughWebHCat();
+	boolean isQuboleDistribution = !isLocal && pigDistrib != null && pigDistrib.isQuboleDistribution();
+	boolean isCloudDistribution = !isLocal && pigDistrib != null && pigDistrib.isCloudDistribution();
 
 	String hcatPackage = (pigDistrib != null && pigDistrib.pigVersionPriorTo_0_12() && !isCustom) ? "org.apache.hcatalog.pig" : "org.apache.hive.hcatalog.pig";
 
@@ -308,9 +308,24 @@
 	} // END IF01
 
 	if (inMain && isQuboleDistribution) {
+		if (ElementParameterParser.canEncrypt(node, "__QUBOLE_API_TOKEN__")) {
+			String encryptedToken = ElementParameterParser.getEncryptedValue(node, "__QUBOLE_API_TOKEN__");
+			%>
+			String api_token_<%=cid%> = routines.system.PasswordEncryptUtil.decryptPassword(<%=encryptedToken%>);
+			<%
+		} else {
+		%>
+			String api_token_<%=cid%> = <%= ElementParameterParser.getValue(node, "__QUBOLE_API_TOKEN__")%>;
+		<%
+		}
 	%>
 
-	try (org.talend.bigdata.launcher.qubole.QubolePigJob quboleJob_<%=cid%> = new org.talend.bigdata.launcher.qubole.QubolePigJob("api_endpoint", "api_key", "cluster_label")) {
+	try (org.talend.bigdata.launcher.qubole.QubolePigJob quboleJob_<%=cid%> =
+			new org.talend.bigdata.launcher.qubole.QubolePigJob.Builder()
+			.setApiKey(api_token_<%=cid%>)
+			.build()) {
+	
+		StringBuilder statements_<%=cid%> = new StringBuilder();
 	<%
 	} else {
 %>

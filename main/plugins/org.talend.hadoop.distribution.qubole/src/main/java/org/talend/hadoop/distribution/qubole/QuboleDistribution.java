@@ -147,7 +147,7 @@ public class QuboleDistribution extends AbstractDistribution implements HDFSComp
 
     @Override
     public boolean doSupportUseDatanodeHostname() {
-        return true;
+        return false;
     }
 
     @Override

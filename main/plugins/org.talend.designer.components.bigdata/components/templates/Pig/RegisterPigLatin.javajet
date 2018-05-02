@@ -17,7 +17,7 @@
 <%					
 				} else if (isQuboleDistribution) {
 				%>
-					quboleJob_<%=cid%>.execCommandAsync(pigLatin_<%=cid%>[1]);
+					statements_<%=start_node%>.append(pigLatin_<%=cid%>[1]);
 				<%
 				} else {
 %>
@@ -35,7 +35,7 @@
 <%					
 				} else if (isQuboleDistribution) {
 				%>
-					quboleJob_<%=cid%>.execCommandAsync("REGISTER " + pigLatin_<%=cid%>[1]);
+					// registering udf with jars is currently not supported on qubole.
 				<%
 				} else {
 %>
@@ -60,23 +60,24 @@
 				}
 			<%
 			}
-			if (!isQuboleDistribution) {%>
-				if("function".equals(type_<%=cid%>)) {
+			%>
+			if("function".equals(type_<%=cid%>)) {
 <%
 					if(isExecutedThroughWebHCat) {
 %>
-						bw_<%=start_node%>.write("DEFINE " + pigLatin_<%=cid%>[1] + " " + pigLatin_<%=cid%>[2] + ";");
+					bw_<%=start_node%>.write("DEFINE " + pigLatin_<%=cid%>[1] + " " + pigLatin_<%=cid%>[2] + ";");
 <%					
+					} else if (isQuboleDistribution) {
+%>
+						// DEFINE is not supported on qubole.
+<%
 					} else {
 %>
-						pigServer_<%=start_node%>.registerFunction(pigLatin_<%=cid%>[1], new org.apache.pig.FuncSpec(pigLatin_<%=cid%>[2]));
+					pigServer_<%=start_node%>.registerFunction(pigLatin_<%=cid%>[1], new org.apache.pig.FuncSpec(pigLatin_<%=cid%>[2]));
 <%
 					}
 %>
-				}
-			<%
 			}
-			%>
 		}
 <%
 	} else {

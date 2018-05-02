@@ -2,22 +2,64 @@
 <?eclipse version="3.4"?>
 <plugin>
     <extension point="org.talend.core.runtime.librariesNeeded">
-        <libraryNeeded context="plugin:org.talend.hadoop.distribution.qubole" id="new talend-bigdata-launcher jar" name="talend bigdata launcher" mvn_uri="mvn:org.talend.libraries/talend-bigdata-launcher-1.2.2-20180101/6.0.0" />
-        <libraryNeeded context="plugin:org.talend.hadoop.distribution.qubole" id="qds-sdk-java-0.9.1" name="qubole java sdk" mvn_uri="mvn:org.talend.libraries/qds-sdk-java-0.9.1/6.0.0" />
+        <!-- Big Data launcher group -->
+        <libraryNeededGroup description="big-data launcher jar and the wrapped qubole sdk" id="BIGDATA-LAUNCHER-LIB-QUBOLE" name="BIGDATA-LAUNCHER-LIB-QUBOLE ">
+            <library id="talend-bigdata-launcher-1.2.3-20180501" />
+            <library id="qds-sdk-java-0.9.1" />
+        </libraryNeededGroup>
 
-        <!-- Hive module group: defines the jars loaded when Distribution is selected as Quble in Hive components -->
+        <!-- supplement jars for hive jobs -->
         <libraryNeededGroup description="Pig libraries for tPigLoad" id="HIVE-LIB-QUBOLE" name="HIVE-LIB-QUBOLE">
         </libraryNeededGroup>
 
-        <!-- Pig module group: defines the jars loaded when Distribution is selected as Qubole in tPigLoad -->
+        <!-- supplement jars for pig jobs -->
         <libraryNeededGroup description="Pig libraries for tPigLoad" id="PIG-LIB-QUBOLE" name="PIG-LIB-QUBOLE">
+            <library id="javax.ws.rs-api-2.0" />
+            <library id="jersey-client-2.5" />
+            <library id="guava-16.0.1" />
+            <library id="hk2-api-2.2.0-b21" />
+            <library id="jersey-common-2.5" />
+            <library id="jackson-mapper-asl-1.9.13" />
+            <library id="jackson-core-asl-1.9.13" />
+            <library id="jersey-media-json-jackson-2.5" />
+            <library id="javax.annotation-api-1.2" />
+            <library id="hk2-locator-2.2.0-b21" />
+            <library id="hk2-utils-2.2.0-b21" />
+            <library id="cglib-2.2.0-b21" />
+            <library id="jackson-jaxrs-1.9.13" />
+            <library id="jackson-xc-1.9.13" />
         </libraryNeededGroup>
 
-        <!-- Big Data launcher group -->
-        <libraryNeededGroup description="big-data launcher jar and the wrapped qubole sdk" id="BIGDATA-LAUNCHER-LIB-QUBOLE" name="BIGDATA-LAUNCHER-LIB-QUBOLE ">
-            <library id="new talend-bigdata-launcher jar" />
-            <library id="qds-sdk-java-0.9.1" />
-        </libraryNeededGroup>
+        <libraryNeeded context="plugin:org.talend.hadoop.distribution.qubole" id="talend-bigdata-launcher-1.2.3-20180501" name="talend bigdata launcher" mvn_uri="mvn:org.talend.libraries/talend-bigdata-launcher-1.2.3-20180501/7.1.0" />
+        <libraryNeeded context="plugin:org.talend.hadoop.distribution.qubole" id="qds-sdk-java-0.9.1" name="qubole java sdk" mvn_uri="mvn:com.qubole.qds-sdk-java/qds-sdk-java/0.9.1" />
+        <libraryNeeded context="plugin:org.talend.hadoop.distribution.qubole" id="javax.inject" name="" mvn_uri="mvn:javax.inject/javax.inject/1" />
+        <libraryNeeded context="plugin:org.talend.hadoop.distribution.qubole" id="jersey-client-2.5" name="" mvn_uri="org.glassfish.jersey.core/jersey-client/2.5" />
+		<libraryNeeded context="plugin:org.talend.hadoop.distribution.qubole" id="jersey-common-2.5" name="" mvn_uri="org.glassfish.jersey.core/jersey-common/2.5" />
+		<libraryNeeded context="plugin:org.talend.hadoop.distribution.qubole" id="javax.annotation-api-1.2" name="" mvn_uri="javax.annotation/javax.annotation-api/1.2" />
+		<libraryNeeded context="plugin:org.talend.hadoop.distribution.qubole" id="osgi-resource-locator-1.0.1" name="" mvn_uri="org.glassfish.hk2/osgi-resource-locator/1.0.1" />
+		<libraryNeeded context="plugin:org.talend.hadoop.distribution.qubole" id="javax.ws.rs-api-2.0" name="" mvn_uri="javax.ws.rs/javax.ws.rs-api/2.0" />
+		<libraryNeeded context="plugin:org.talend.hadoop.distribution.qubole" id="hk2-api-2.2.0-b21" name="" mvn_uri="org.glassfish.hk2/hk2-api/2.2.0-b21" />
+		<libraryNeeded context="plugin:org.talend.hadoop.distribution.qubole" id="hk2-utils-2.2.0-b21" name="" mvn_uri="org.glassfish.hk2/hk2-utils/2.2.0-b21" />
+		<libraryNeeded context="plugin:org.talend.hadoop.distribution.qubole" id="javax.inject-2.2.0-b21" name="" mvn_uri="org.glassfish.hk2.external/javax.inject/2.2.0-b21" />
+		<libraryNeeded context="plugin:org.talend.hadoop.distribution.qubole" id="hk2-locator-2.2.0-b21" name="" mvn_uri="org.glassfish.hk2/hk2-locator/2.2.0-b21" />
+		<libraryNeeded context="plugin:org.talend.hadoop.distribution.qubole" id="asm-all-repackaged-2.2.0-b21" name="" mvn_uri="org.glassfish.hk2.external/asm-all-repackaged/2.2.0-b21" />
+		<libraryNeeded context="plugin:org.talend.hadoop.distribution.qubole" id="cglib-2.2.0-b21" name="" mvn_uri="org.glassfish.hk2.external/cglib/2.2.0-b21" />
+		<libraryNeeded context="plugin:org.talend.hadoop.distribution.qubole" id="jersey-media-json-jackson-2.5" name="" mvn_uri="org.glassfish.jersey.media/jersey-media-json-jackson/2.5" />
+		<libraryNeeded context="plugin:org.talend.hadoop.distribution.qubole" id="jackson-core-asl-1.9.13" name="" mvn_uri="org.codehaus.jackson/jackson-core-asl/1.9.13" />
+		<libraryNeeded context="plugin:org.talend.hadoop.distribution.qubole" id="jackson-mapper-asl-1.9.13" name="" mvn_uri="org.codehaus.jackson/jackson-mapper-asl/1.9.13" />
+		<libraryNeeded context="plugin:org.talend.hadoop.distribution.qubole" id="jackson-jaxrs-1.9.13" name="" mvn_uri="org.codehaus.jackson/jackson-jaxrs/1.9.13" />
+		<libraryNeeded context="plugin:org.talend.hadoop.distribution.qubole" id="jackson-xc-1.9.13" name="" mvn_uri="org.codehaus.jackson/jackson-xc/1.9.13" />
+		<libraryNeeded context="plugin:org.talend.hadoop.distribution.qubole" id="guava-16.0.1" name="" mvn_uri="com.google.guava/guava/16.0.1" />
+		<libraryNeeded context="plugin:org.talend.hadoop.distribution.qubole" id="aws-java-sdk-1.7.9" name="" mvn_uri="com.amazonaws/aws-java-sdk/1.7.9" />
+		<libraryNeeded context="plugin:org.talend.hadoop.distribution.qubole" id="commons-logging-1.1.1" name="" mvn_uri="commons-logging/commons-logging/1.1.1" />
+		<libraryNeeded context="plugin:org.talend.hadoop.distribution.qubole" id="httpclient-4.2" name="" mvn_uri="org.apache.httpcomponents/httpclient/4.2" />
+		<libraryNeeded context="plugin:org.talend.hadoop.distribution.qubole" id="httpcore-4.2" name="" mvn_uri="org.apache.httpcomponents/httpcore/4.2" />
+		<libraryNeeded context="plugin:org.talend.hadoop.distribution.qubole" id="commons-codec-1.3" name="" mvn_uri="commons-codec/commons-codec/1.3" />
+		<libraryNeeded context="plugin:org.talend.hadoop.distribution.qubole" id="jackson-core-2.1.1" name="" mvn_uri="com.fasterxml.jackson.core/jackson-core/2.1.1" />
+		<libraryNeeded context="plugin:org.talend.hadoop.distribution.qubole" id="jackson-databind-2.1.1" name="" mvn_uri="com.fasterxml.jackson.core/jackson-databind/2.1.1" />
+		<libraryNeeded context="plugin:org.talend.hadoop.distribution.qubole" id="jackson-annotations-2.1.1" name="" mvn_uri="com.fasterxml.jackson.core/jackson-annotations/2.1.1" />
+		<libraryNeeded context="plugin:org.talend.hadoop.distribution.qubole" id="joda-time-2.9.9" name="" mvn_uri="joda-time/joda-time/2.9.9" />
+
 
         <!-- HDFS related libraries 
         <libraryNeeded context="plugin:org.talend.hadoop.distribution.qubole" id="activation-1.1.1.jar" name="activation-1.1.1.jar" mvn_uri="mvn:org.talend.libraries/activation-1.1.1/6.0.0" />

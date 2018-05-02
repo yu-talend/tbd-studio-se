@@ -310,13 +310,15 @@
 	            pigServer_<%=start_node%>.deleteFile("s3n://" + <%=s3username%> + ":" + decryptedS3Password_<%=cid%> + "@" + <%=s3bucket%>);
 	        }
 <%
-		} else if(!isCloudDistribution) {
+		}
+		if (!isCloudDistribution) {
 %>
     		if (pigServer_<%=start_node%>.existsFile(<%=resultFile%>)) {
     			pigServer_<%=start_node%>.deleteFile(<%=resultFile%>);
         	}
 <%
-		} else {
+		}
+		if (isExecutedThroughWebHCat) {
 %>
 
 			org.talend.bigdata.launcher.fs.FileSystem azureFs_<%=cid%> = (org.talend.bigdata.launcher.fs.AzureFileSystem)instance_<%=start_node%>.getFileSystem();
@@ -324,6 +326,17 @@
 			String resultFolder_<%=cid%> = <%=resultFile%>;
 			azureFs_<%=cid%>.delete(org.talend.bigdata.launcher.utils.Utils.removeFirstSlash(resultFolder_<%=cid%>));
 <%
+		}
+		if (isQuboleDistribution) {
+		%>
+			<% if(isLog4jEnabled) {%>
+				log.info("deleting " + <%=resultFile%> + " on hdfs.");
+			<%}%>
+			quboleJob_<%=start_node%>.execShell("hadoop fs -rm -r -f " + <%=resultFile%>);
+			<% if(isLog4jEnabled) {%>
+				log.info(<%=resultFile%> + " deleted.");
+			<%}%>
+		<%
 		}
 	} 
 %>

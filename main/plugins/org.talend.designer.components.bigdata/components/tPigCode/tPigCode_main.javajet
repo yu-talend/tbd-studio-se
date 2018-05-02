@@ -18,6 +18,8 @@
 	
 	boolean inMain = true;
 	boolean isExecutedThroughWebHCat = false;
+	boolean isQuboleDistribution = false;
+	boolean isCloudDistribution = false;
 
 	if(node.getIncomingConnections()!=null && node.getIncomingConnections().size()>0) {
 		INode loadNode = node.getDesignSubjobStartNode();
@@ -38,6 +40,8 @@
 
             boolean isCustom = pigDistrib instanceof org.talend.hadoop.distribution.custom.CustomDistribution;
             isExecutedThroughWebHCat = !isCustom && pigDistrib != null && pigDistrib.isExecutedThroughWebHCat();
+			isQuboleDistribution = !isLocal && pigDistrib != null && pigDistrib.isQuboleDistribution();
+			isCloudDistribution = !isLocal && pigDistrib != null && pigDistrib.isCloudDistribution();
         }
 
 		inMain = loadNode.isSubtreeStart();
