@@ -1258,8 +1258,7 @@
 				REQUIRED_IF="((STORE=='AVROSTORAGE') AND (HBASE_VERSION=='MAPR500')) AND DISTRIBUTION!='CUSTOM'" />
 			<!-- AVRO Support End -->
 
-			<!-- Parquet Support Begin -->
-
+			<!-- Parquet jars for pig storer -->
 			<IMPORT NAME="parquet-pig-bundle-1.3.2" MODULE="parquet-pig-bundle-1.3.2.jar"
 				MVN="mvn:org.talend.libraries/parquet-pig-bundle-1.3.2/6.0.0"
 				UrlPath="platform:/plugin/org.talend.libraries.hadoop/lib/parquet-pig-bundle-1.3.2.jar"
@@ -1278,6 +1277,12 @@
 				MVN="mvn:org.talend.libraries/parquet-pig-bundle-1.2.5-cdh5.0.4/6.0.0"
 				UrlPath="platform:/plugin/org.talend.libraries.hadoop/lib/parquet-pig-bundle-1.2.5-cdh5.0.4.jar"
 				REQUIRED_IF="(STORE=='PARQUETSTORER') AND DISTRIB[#LINK@NODE.ASSOCIATED_PIG_LOAD.DISTRIBUTION, #LINK@NODE.ASSOCIATED_PIG_LOAD.PIG_VERSION].doSupportOldImportMode[] AND (DISTRIBUTION!='CUSTOM') AND (#LINK@NODE.ASSOCIATED_PIG_LOAD.PIG_VERSION=='Cloudera_CDH5')" />
+
+			<!--  Using the old style way to import jars for qubole -->
+			<!-- Pig Storer: Parquet -->
+			<IMPORT NAME="parquet-pig-bundle-1.6.0.jar" MODULE="parquet-pig-bundle-1.6.0.jar"
+				MVN="mvn:org.talend.libraries/parquet-pig-bundle-1.6.0/6.0.0"
+				REQUIRED_IF="(STORE=='PARQUETSTORER') AND DISTRIB[#LINK@NODE.ASSOCIATED_PIG_LOAD.DISTRIBUTION, #LINK@NODE.ASSOCIATED_PIG_LOAD.PIG_VERSION].isQuboleDistribution[] AND (DISTRIBUTION!='CUSTOM')" />
 
 		</IMPORTS>
 	</CODEGENERATION>

@@ -21,6 +21,10 @@
 	boolean isQuboleDistribution = false;
 	boolean isCloudDistribution = false;
 
+	boolean isQuboleS3Resource = false;
+	String quboleS3ResourceBucketName = new String();
+	String quboleS3ResourceBucketKey = new String();
+
 	if(node.getIncomingConnections()!=null && node.getIncomingConnections().size()>0) {
 		INode loadNode = node.getDesignSubjobStartNode();
 		start_node = loadNode.getUniqueName();
@@ -42,6 +46,10 @@
             isExecutedThroughWebHCat = !isCustom && pigDistrib != null && pigDistrib.isExecutedThroughWebHCat();
 			isQuboleDistribution = !isLocal && pigDistrib != null && pigDistrib.isQuboleDistribution();
 			isCloudDistribution = !isLocal && pigDistrib != null && pigDistrib.isCloudDistribution();
+			if (isQuboleDistribution && ElementParameterParser.getBooleanValue(loadNode, "__QUBOLE_S3__")) {
+				quboleS3ResourceBucketName = ElementParameterParser.getValue(loadNode, "__QUBOLE_S3_BUCKET_NAME__");
+				quboleS3ResourceBucketKey = ElementParameterParser.getValue(loadNode, "__QUBOLE_S3_BUCKET_KEY__");
+			}
         }
 
 		inMain = loadNode.isSubtreeStart();

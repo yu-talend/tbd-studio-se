@@ -28,6 +28,7 @@ import org.talend.hadoop.distribution.component.HiveComponent;
 import org.talend.hadoop.distribution.component.PigComponent;
 import org.talend.hadoop.distribution.condition.ComponentCondition;
 import org.talend.hadoop.distribution.constants.PigConstant;
+import org.talend.hadoop.distribution.constants.PigOutputConstant;
 import org.talend.hadoop.distribution.constants.qubole.IQuboleDistribution;
 import org.talend.hadoop.distribution.qubole.modulegroup.QuboleHDFSModuleGroup;
 import org.talend.hadoop.distribution.qubole.modulegroup.QuboleHiveModuleGroup;
@@ -75,7 +76,7 @@ public class QuboleDistribution extends AbstractDistribution implements HDFSComp
         componentsMap.put(ComponentType.HDFS, QuboleHDFSModuleGroup.getModuleGroups());
         componentsMap.put(ComponentType.HIVE, QuboleHiveModuleGroup.getModuleGroups());
         componentsMap.put(ComponentType.PIG, QubolePigModuleGroup.getModuleGroups());
-        // componentsMap.put(ComponentType.PIGOUTPUT, QubolePigOutputModuleGroup.getModuleGroups());
+        componentsMap.put(ComponentType.PIGOUTPUT, QubolePigOutputModuleGroup.getModuleGroups());
         return componentsMap;
     }
 
@@ -85,6 +86,7 @@ public class QuboleDistribution extends AbstractDistribution implements HDFSComp
     protected Map<NodeComponentTypeBean, Set<DistributionModuleGroup>> buildNodeModuleGroups(String distribution, String version) {
         Map<NodeComponentTypeBean, Set<DistributionModuleGroup>> nodesMap = new HashMap<>();
         nodesMap.put(new NodeComponentTypeBean(ComponentType.PIG, PigConstant.PIGLOAD_COMPONENT), QubolePigModuleGroup.getModuleGroups());
+        nodesMap.put(new NodeComponentTypeBean(ComponentType.PIG, PigOutputConstant.PIGSTORE_COMPONENT), QubolePigModuleGroup.getModuleGroups());
         return nodesMap;
     }
 
@@ -250,20 +252,17 @@ public class QuboleDistribution extends AbstractDistribution implements HDFSComp
 
 	@Override
 	public boolean doSupportAvroFormat() {
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	@Override
 	public boolean doSupportParquetFormat() {
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	@Override
 	public boolean doSupportStoreAsParquet() {
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	@Override

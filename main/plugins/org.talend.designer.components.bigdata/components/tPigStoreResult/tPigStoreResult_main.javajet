@@ -31,6 +31,10 @@
 	boolean isCloudDistribution = false;
 	String quboleClusterLabel = "";
 	
+	boolean isQuboleS3Resource = false;
+	String quboleS3ResourceBucketName = new String();
+	String quboleS3ResourceBucketKey = new String();
+	
 	if(node.getIncomingConnections()!=null && node.getIncomingConnections().size()>0) {
 		IConnection connection = node.getIncomingConnections().get(0);
 		previous_node = connection.getSource().getUniqueName();
@@ -55,6 +59,10 @@
 			isCloudDistribution = !isLocal && loadPigDistrib != null && loadPigDistrib.isCloudDistribution();
 			if (isQuboleDistribution && ElementParameterParser.getBooleanValue(loadNode, "__QUBOLE_CLUSTER__")) {
 				quboleClusterLabel = ElementParameterParser.getValue(loadNode, "__QUBOLE_CLUSTER_LABEL__");
+			}
+			if (isQuboleDistribution && ElementParameterParser.getBooleanValue(loadNode, "__QUBOLE_S3__")) {
+				quboleS3ResourceBucketName = ElementParameterParser.getValue(loadNode, "__QUBOLE_S3_BUCKET_NAME__");
+				quboleS3ResourceBucketKey = ElementParameterParser.getValue(loadNode, "__QUBOLE_S3_BUCKET_KEY__");
 			}
     	}
     	
@@ -334,7 +342,7 @@
 		if (isQuboleDistribution) {
 		%>
 			<% if(isLog4jEnabled) {%>
-				log.info("deleting " + <%=resultFile%> + " on hdfs.");
+				log.info("<%=cid%> - deleting " + <%=resultFile%> + " on hdfs.");
 			<%}
 			if (quboleClusterLabel == "") {%>
 			quboleJob_<%=start_node%>.execShell("hadoop fs -rm -r -f " + <%=resultFile%>);
@@ -345,7 +353,7 @@
 			<%
 			}
 			if(isLog4jEnabled) {%>
-				log.info(<%=resultFile%> + " deleted.");
+				log.info("<%=cid%> - " + <%=resultFile%> + " deleted.");
 			<%}%>
 		<%
 		}
@@ -362,9 +370,8 @@
 			for(int j=0; j<jars.size(); j++) {
 				if(jars.get(j).contains(jarToRegister)) {
 %>
-					helper_<%=cid%>.add("jar",getJarsToRegister_<%=cid %>.replaceJarPaths("<%=jars.get(j)%>"));
+					helper_<%=cid%>.add("jar", getJarsToRegister_<%=cid %>.replaceJarPaths("<%=jars.get(j)%>"));
 <%
-
 				}
 			}
 		}
@@ -375,7 +382,7 @@
 			if(defineJarsToRegister && registerJarForHCatalog.size() > 0){
 				for(Map<String, String> item : registerJarForHCatalog){
 %>
-					helper_<%=cid%>.add("jar",<%=item.get("JAR_PATH") %>);
+					helper_<%=cid%>.add("jar", <%=item.get("JAR_PATH") %>);
 <% 
 				} 
 			}

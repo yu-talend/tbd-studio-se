@@ -35,7 +35,18 @@
 <%					
 				} else if (isQuboleDistribution) {
 				%>
-					// registering udf with jars is currently not supported on qubole.
+					String jarName = new String();
+					String[] pathSplit = pigLatin_<%=cid%>[1].split("/");
+					if (pathSplit.length > 1) {
+            			jarName = pathSplit[pathSplit.length - 1];
+        			} else {
+            			throw new IllegalArgumentException("Incorrect jar path: " + pigLatin_<%=cid%>[1]);
+        			}
+					s3Client_<%=start_node%>.putObject(<%=quboleS3ResourceBucketName%>, <%=quboleS3ResourceBucketKey%> + "/" + jarName, new java.io.File(pigLatin_<%=cid%>[1]));
+					statements_<%=start_node%>.append("REGISTER s3a://" + <%=quboleS3ResourceBucketName%> + "/" + <%=quboleS3ResourceBucketKey%> + "/" + jarName + ";");
+					<%if(isLog4jEnabled){%>
+						log.info("<%=cid%> - jar uploaded: " + pigLatin_<%=cid%>[1] + " --> s3a://" + <%=quboleS3ResourceBucketName%> + "/" + <%=quboleS3ResourceBucketKey%> + "/" + jarName);
+					<%}%>
 				<%
 				} else {
 %>

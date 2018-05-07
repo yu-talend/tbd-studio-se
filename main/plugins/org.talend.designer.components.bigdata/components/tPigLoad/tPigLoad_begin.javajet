@@ -96,6 +96,13 @@
 	if (isQuboleDistribution && ElementParameterParser.getBooleanValue(node, "__QUBOLE_ENDPOINT__")) {
 		quboleEndpoint = ElementParameterParser.getValue(node, "__QUBOLE_ENDPOINT_URL__");
 	}
+	boolean isQuboleS3Resource = false;
+	String quboleS3ResourceBucketName = new String();
+	String quboleS3ResourceBucketKey = new String();
+	if (isQuboleDistribution && ElementParameterParser.getBooleanValue(node, "__QUBOLE_S3__")) {
+		quboleS3ResourceBucketName = ElementParameterParser.getValue(node, "__QUBOLE_S3_BUCKET_NAME__");
+		quboleS3ResourceBucketKey = ElementParameterParser.getValue(node, "__QUBOLE_S3_BUCKET_KEY__");
+	}
 
 	String hcatPackage = (pigDistrib != null && pigDistrib.pigVersionPriorTo_0_12() && !isCustom) ? "org.apache.hcatalog.pig" : "org.apache.hive.hcatalog.pig";
 
@@ -329,9 +336,17 @@
 			.setApiKey(api_token_<%=cid%>)
 			<% if (quboleEndpoint != "") {%> .setApiEndpoint(<%=quboleEndpoint%>) <%} %>
 			.build()) {
-	
 		StringBuilder statements_<%=cid%> = new StringBuilder();
-	<%
+		<% if (ElementParameterParser.getBooleanValue(node, "__QUBOLE_S3__")) { %>
+			com.amazonaws.auth.BasicAWSCredentials awsCredentials_<%=cid%> = new com.amazonaws.auth.BasicAWSCredentials(
+				<%= ElementParameterParser.getValue(node, "__QUBOLE_S3_ACCESS_KEY__")%>,
+				routines.system.PasswordEncryptUtil.decryptPassword(<%= ElementParameterParser.getValue(node, "__QUBOLE_S3_SECRET_KEY__")%>));
+			com.amazonaws.services.s3.AmazonS3 s3Client_<%=cid%> = com.amazonaws.services.s3.AmazonS3ClientBuilder.standard()
+                .withRegion(<%= ElementParameterParser.getValue(node, "__QUBOLE_S3_REGION__")%>)
+                .withCredentials(new com.amazonaws.auth.AWSStaticCredentialsProvider(awsCredentials_<%=cid%>))
+                .build();
+<%
+		}
 	} else {
 %>
 	try {
@@ -818,7 +833,7 @@
 				for(int j=0; j<jars.size(); j++) {
 					if(jars.get(j).contains(jarToRegister) && jars.get(j).endsWith(".jar")) {
 %>
-						helper_<%=cid%>.add("jar",getJarsToRegister_<%=cid %>.replaceJarPaths("<%=jars.get(j)%>"));
+						helper_<%=cid%>.add("jar", getJarsToRegister_<%=cid %>.replaceJarPaths("<%=jars.get(j)%>"));
 <%
 					}
 				}
