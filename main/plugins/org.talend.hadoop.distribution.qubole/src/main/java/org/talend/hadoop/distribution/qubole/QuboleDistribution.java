@@ -85,8 +85,8 @@ public class QuboleDistribution extends AbstractDistribution implements HDFSComp
      */
     protected Map<NodeComponentTypeBean, Set<DistributionModuleGroup>> buildNodeModuleGroups(String distribution, String version) {
         Map<NodeComponentTypeBean, Set<DistributionModuleGroup>> nodesMap = new HashMap<>();
-        nodesMap.put(new NodeComponentTypeBean(ComponentType.PIG, PigConstant.PIGLOAD_COMPONENT), QubolePigModuleGroup.getModuleGroups());
-        nodesMap.put(new NodeComponentTypeBean(ComponentType.PIG, PigOutputConstant.PIGSTORE_COMPONENT), QubolePigModuleGroup.getModuleGroups());
+//        nodesMap.put(new NodeComponentTypeBean(ComponentType.PIG, PigConstant.PIGLOAD_COMPONENT), QubolePigModuleGroup.getModuleGroups());
+        nodesMap.put(new NodeComponentTypeBean(ComponentType.PIG, PigOutputConstant.PIGSTORE_COMPONENT), QubolePigOutputModuleGroup.getModuleGroups());
         return nodesMap;
     }
 

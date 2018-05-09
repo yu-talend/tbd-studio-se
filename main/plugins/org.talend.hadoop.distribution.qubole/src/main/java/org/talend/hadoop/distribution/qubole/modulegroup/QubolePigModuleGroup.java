@@ -33,6 +33,9 @@ public class QubolePigModuleGroup {
         moduleGroups.add(new DistributionModuleGroup(QuboleConstant.PIG_MODULE_GROUP.getModuleName()));
         moduleGroups.add(new DistributionModuleGroup(QuboleConstant.BIGDATALAUNCHER_MODULE_GROUP.getModuleName()));
         
+        // to add conditions
+        moduleGroups.add(new DistributionModuleGroup(QuboleConstant.S3_MODULE_GROUP.getModuleName()));
+        
         ComponentCondition conditionParquet = new MultiComponentCondition(
                 new BasicExpression(PigConstant.LOADER_PARAMETER, EqualityOperator.EQ, PigConstant.PARQUET_LOADER_VALUE),
                 BooleanOperator.OR,

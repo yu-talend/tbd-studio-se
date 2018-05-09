@@ -80,9 +80,9 @@
 			<ITEMS DEFAULT="PIGSTORAGE">
 				<ITEM NAME="PIGSTORAGE" VALUE="PigStorage" />
 				<ITEM NAME="BINSTORAGE" VALUE="BinStorage" />
-				<ITEM NAME="PIGDUMP" VALUE="PigDump" />
-				<ITEM NAME="HCATSTORER" VALUE="HCatStorer" />
-				<ITEM NAME="HBASESTORAGE" VALUE="HBaseStorage" />
+				<ITEM NAME="PIGDUMP" VALUE="PigDump" NOT_SHOW_IF="DISTRIB[#LINK@NODE.ASSOCIATED_PIG_LOAD.DISTRIBUTION, #LINK@NODE.ASSOCIATED_PIG_LOAD.PIG_VERSION].isQuboleDistribution[]" />
+				<ITEM NAME="HCATSTORER" VALUE="HCatStorer" NOT_SHOW_IF="DISTRIB[#LINK@NODE.ASSOCIATED_PIG_LOAD.DISTRIBUTION, #LINK@NODE.ASSOCIATED_PIG_LOAD.PIG_VERSION].isQuboleDistribution[]" />
+				<ITEM NAME="HBASESTORAGE" VALUE="HBaseStorage" NOT_SHOW_IF="DISTRIB[#LINK@NODE.ASSOCIATED_PIG_LOAD.DISTRIBUTION, #LINK@NODE.ASSOCIATED_PIG_LOAD.PIG_VERSION].isQuboleDistribution[]" />
 				<ITEM NAME="SEQUENCEFILESTORAGE" VALUE="SequenceFileStorage" />
 				<ITEM NAME="RCFILEPIGSTORAGE" VALUE="RCFilePigStorage" />
 				<ITEM NAME="AVROSTORAGE" VALUE="AvroStorage" />
@@ -1277,12 +1277,6 @@
 				MVN="mvn:org.talend.libraries/parquet-pig-bundle-1.2.5-cdh5.0.4/6.0.0"
 				UrlPath="platform:/plugin/org.talend.libraries.hadoop/lib/parquet-pig-bundle-1.2.5-cdh5.0.4.jar"
 				REQUIRED_IF="(STORE=='PARQUETSTORER') AND DISTRIB[#LINK@NODE.ASSOCIATED_PIG_LOAD.DISTRIBUTION, #LINK@NODE.ASSOCIATED_PIG_LOAD.PIG_VERSION].doSupportOldImportMode[] AND (DISTRIBUTION!='CUSTOM') AND (#LINK@NODE.ASSOCIATED_PIG_LOAD.PIG_VERSION=='Cloudera_CDH5')" />
-
-			<!--  Using the old style way to import jars for qubole -->
-			<!-- Pig Storer: Parquet -->
-			<IMPORT NAME="parquet-pig-bundle-1.6.0.jar" MODULE="parquet-pig-bundle-1.6.0.jar"
-				MVN="mvn:org.talend.libraries/parquet-pig-bundle-1.6.0/6.0.0"
-				REQUIRED_IF="(STORE=='PARQUETSTORER') AND DISTRIB[#LINK@NODE.ASSOCIATED_PIG_LOAD.DISTRIBUTION, #LINK@NODE.ASSOCIATED_PIG_LOAD.PIG_VERSION].isQuboleDistribution[] AND (DISTRIBUTION!='CUSTOM')" />
 
 		</IMPORTS>
 	</CODEGENERATION>
