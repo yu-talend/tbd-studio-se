@@ -35,7 +35,7 @@ public class QuboleSparkStreamingModuleGroupTest {
         expectedGroups.put(QuboleConstant.S3_MODULE_GROUP.getModuleName(), null);
 
         Set<DistributionModuleGroup> moduleGroups = QuboleSparkStreamingModuleGroup.getModuleGroups();
-        assertEquals(5, moduleGroups.size());
+        assertEquals(expectedGroups.size(), moduleGroups.size());
 
         for (DistributionModuleGroup group : moduleGroups) {
             assertEquals(expectedGroups.get(group.getModuleName()), group.getRequiredIf() == null ? null : group.getRequiredIf().getConditionString());
